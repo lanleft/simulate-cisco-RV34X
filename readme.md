@@ -1,4 +1,4 @@
-# Simulate RV34X cisco
+# Simulate RV34X Cisco
 
 
 ### Step 0: Install qemu-system
@@ -14,7 +14,7 @@ account login:
 - username: root
 - password: root
 
-### Step 2: Copy ubiroot file system of cisco to qemu sandbox
+### Step 2: Copy ubiroot file system of Cisco to qemu sandbox
 ```
 scp -P 2222 fw_22.tar root@localhost:/root
 
