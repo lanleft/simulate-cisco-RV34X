@@ -21,7 +21,7 @@ scp -P 2222 fw_22.tar root@localhost:/root
 chmod -R 777 ubifs-root
 ```
 
-### Start service cisco
+### Step 3: Start service cisco
 ```
 /etc/init.d/boot boot
 generate_default_cert
