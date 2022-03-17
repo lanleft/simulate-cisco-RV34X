@@ -14,7 +14,6 @@ mount --bind /proc /fw_26/proc
 mount --bind /dev /fw_26/dev
 
 echo '[+] Start emulate service'
-chroot fw_26/ cisco.sh
-
+chroot fw_26/ /cisco.sh
 
 

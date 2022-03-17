@@ -1,5 +1,6 @@
 # Simulate RV34X Cisco
 
+Example with Cisco fimware version ...26
 
 ### Step 0: Install qemu-system
 ```
@@ -16,15 +17,11 @@ account login:
 
 ### Step 2: Copy ubiroot file system of Cisco to qemu sandbox
 ```
-scp -P 2222 fw_22.tar root@localhost:/root
-
-chmod -R 777 ubifs-root
+scp -P 2222 fw_26.tar root@localhost:/root
+scp -P 2222 start.sh root@localhost:/root
 ```
-
 ### Step 3: Start service cisco
+In qemu vm, you run command:
 ```
-/etc/init.d/boot boot
-generate_default_cert
-/etc/init.d/confd start
-/etc/init.d/nginx start
+./start.sh
 ```
