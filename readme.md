@@ -17,11 +17,16 @@ account login:
 
 ### Step 2: Copy ubiroot file system of Cisco to qemu sandbox
 ```
+# version 26
 scp -P 2222 fw_26.tar root@localhost:/root
+
+# version 22
+scp -P 2222 fw_22.tar root@localhost:/root
+
 scp -P 2222 start.sh root@localhost:/root
 ```
 ### Step 3: Start service cisco
-In qemu vm, you run command:
+In qemu vm, you run command to simulate fimware version 26:
 ```
-./start.sh
+./start.sh 26
 ```
