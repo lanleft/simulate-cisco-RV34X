@@ -33,7 +33,7 @@ In qemu vm, you run command to simulate fimware version 26:
 ./start.sh 26
 ```
 ## Debug CGI web file
-Because Cisco websevice is handled by `nginx`, it receives json data and sends to `cgi` files, so it's difficult to debug webServices directly. Luckily Cisco's device includes `python2`, so I can write a simple python script to handle web requests:
+Because Cisco webSevices is handled by `nginx`, it receives json data and sends to `cgi` files, so it's difficult to debug webServices directly. Luckily Cisco's device includes `python2`, so I can write a simple python script to handle web requests:
 ```python
 #!/usr/bin/python
 
