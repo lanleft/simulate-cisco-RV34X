@@ -32,3 +32,27 @@ In qemu vm, you run command to simulate fimware version 26:
 ```
 ./start.sh 26
 ```
+## Debug CGI web file
+Because Cisco websevice is handled by `nginx`, it receives json data and sends to `cgi` files, so it's difficult to debug webServices directly. Luckily Cisco's device includes `python2`, so I can write a simple python script to handle web requests:
+```python
+#!/usr/bin/python
+
+from subprocess import Popen, PIPE, STDOUT, check_output
+import base64
+
+#passwd_enc = base64.b64encode(b"A"*150)
+passwd_enc = b"\x01"*200
+
+# you can fill your json data request here
+request = b"{\"jsonrpc\":\"2.0\",\"method\":\"login\",\"params\":{\"user\":\"sssss\",\"pass\":\"" + passwd_enc + "\",\"lang\":\"English\"}}"
+
+print (request)
+print ("[+] content length: %d" %len(request))
+p = Popen(['/tmp/gdbserver', ':9999', '/www/cgi-bin/jsonrpc.cgi'], stdin=PIPE, stdout=PIPE)
+p.stdin.write(request)
+out, err = p.communicate()
+print (out)
+
+```
+My script works when I debug `blockpage.cgi` file. Hope it cans help you!
+
