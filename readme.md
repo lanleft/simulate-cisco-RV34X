@@ -54,5 +54,5 @@ out, err = p.communicate()
 print (out)
 
 ```
-My script works when I debug `blockpage.cgi` file. Hope it cans help you!
+My script works when I debug `blockpage.cgi` file, I hope this can help you!
 
