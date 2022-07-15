@@ -1,0 +1,101 @@
+module ciscosb-gui{
+    namespace "http://cisco.com/ns/ciscosb/gui";
+    prefix ciscosb-gui;
+    import ietf-yang-types { prefix yang; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains GUI prefernce settings.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-07 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-22 {
+        description "Proposed";
+        reference "TODO";
+    }
+    identity language {
+        description
+                "Base language type";
+    }
+    identity English {
+        base language;
+    }
+    identity Chinese {
+        base language;
+    }
+    identity Japanese {
+        base language;
+    }
+    typedef langauge-type {
+        type identityref {
+            base "language";
+        }
+        description "The language supported on GUI.";
+    }
+    container gui {
+     leaf disable-startup-page {
+      description
+                "Do not show Getting Started page ";
+      type boolean;
+      default false;
+     }
+     leaf hide-initial-setup {
+      description
+                "Hide initial router setup ";
+      type boolean;
+      default true;
+     }
+        leaf save-icon-blinking {
+            description
+                        "Whether to blink save icon on top of GUI page ";
+            type boolean;
+            default true;
+        }
+        leaf default-language {
+            description
+                        "Default language of GUI.
+      Priority 1: Language setting in HTTP cookies.
+      Priority 2: Browser language setting if it is supported by language package.
+      Priority 3: Default Language";
+            type langauge-type;
+        }
+    }
+    container language-package-state {
+        config false;
+        leaf version {
+            description "Lastest language applied version in current image";
+            type string;
+        }
+        leaf latest-update-time {
+            description "The time when we performed language update last time";
+            type yang:date-and-time;
+        }
+        leaf available-version {
+            description "This is latest version available on cisco.com";
+            type string;
+        }
+        leaf last-check-time {
+            type yang:date-and-time;
+            description "The last time for ASD client to check against cisco.com";
+        }
+    }
+    container language-package {
+     leaf version {
+      type string;
+     }
+     leaf-list supported-languages {
+      type langauge-type;
+     }
+     leaf md5-checksum {
+      type string;
+     }
+    }
+}

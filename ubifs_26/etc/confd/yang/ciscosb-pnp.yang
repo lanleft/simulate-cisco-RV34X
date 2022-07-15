@@ -1,0 +1,55 @@
+module ciscosb-pnp {
+    namespace "http://cisco.com/ns/ciscosb/pnp";
+    prefix ciscosb-pnp;
+    import ietf-inet-types { prefix inet; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Cisco PnP configuration.
+            Copyright (c) 2016 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2016-06-08 {
+        description
+            "Initial revision.";
+        reference
+            "";
+    }
+    typedef transport-type {
+        type enumeration {
+            enum "http";
+            enum "https";
+        }
+    }
+    typedef mode-type {
+        type enumeration{
+            enum "auto";
+            enum "static";
+        }
+    }
+    container pnp {
+        leaf enabled{
+            type boolean;
+        }
+        container transport {
+            leaf mode{
+                type mode-type;
+            }
+            leaf type {
+                type transport-type;
+            }
+            leaf address {
+                type inet:host;
+            }
+            leaf port {
+                type inet:port-number;
+            }
+            leaf ca-certificate{
+                type string;
+            }
+        }
+    }
+}

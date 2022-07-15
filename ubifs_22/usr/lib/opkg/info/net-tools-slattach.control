@@ -1,0 +1,11 @@
+Package: net-tools-slattach
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Source: package/openwrt/net/net-tools
+Section: net
+Architecture: comcerto2000
+Installed-Size: 6983
+Description:  Program slattach from net-tools.  Attaches a
+ network interface to a serial line. This allows
+ to use normal terminal lines for point-to-point
+ links to other computers.

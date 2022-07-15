@@ -1,0 +1,8 @@
+Package: rdisc6
+Version: 1.0.2-1
+Depends: libc, librt, libpthread, libpthread, librt
+Source: package/openwrt/ipv6/ndisc
+Section: ipv6
+Architecture: comcerto2000
+Installed-Size: 6473
+Description:  An ICMPv6 router discovery tool

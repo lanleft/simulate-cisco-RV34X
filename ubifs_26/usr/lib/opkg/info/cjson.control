@@ -1,0 +1,8 @@
+Package: cjson
+Version: 0.1
+Depends: libc, librt, libpthread
+Source: package/utils/cjson
+Section: base
+Architecture: comcerto2000
+Installed-Size: 8375
+Description:  cjson parser to parse JSON messages.

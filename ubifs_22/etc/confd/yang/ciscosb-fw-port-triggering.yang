@@ -1,0 +1,85 @@
+module ciscosb-fw-port-triggering {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-port-triggering";
+  prefix "fw-port-triggering-rules";
+  import ciscosb-service { prefix "fw-service"; }
+  import ietf-interfaces { prefix if; }
+  import ietf-inet-types { prefix inet; }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines a component that describes the configuration of firewall related modules.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall module";
+    reference "RFC 6020";
+  }
+  container port-triggering-rules {
+    description "This container contains list of port triggering rules";
+    list port-triggering-entry {
+      key name;
+      ordered-by user;
+      description "Port triggering entry";
+      leaf name {
+       type string;
+       description "Name of the application for reference";
+      }
+      leaf trigger-service {
+        type leafref {
+            path "/fw-service:services/fw-service:service/fw-service:name";
+        }
+        description "Name of the Trigger service";
+      }
+      leaf incoming-service {
+        type leafref {
+            path "/fw-service:services/fw-service:service/fw-service:name";
+        }
+        description "Name of the incoming service";
+      }
+      leaf interface {
+       type if:interface-ref;
+       description "Port forwarding interface";
+      }
+      leaf status {
+       type boolean;
+       description "Enable/disable port triggering";
+      }
+    }
+  }
+  container port-triggering-state {
+      config false;
+      list port-triggering {
+          key id;
+          leaf id {
+              type uint32;
+          }
+          leaf application {
+              type string;
+          }
+          leaf triggering-service {
+              type string;
+          }
+          leaf incoming-service {
+              type string;
+          }
+          leaf interface {
+              type string;
+          }
+          leaf to-host {
+              type inet:ip-address-no-zone;
+          }
+          leaf to-port {
+              type uint16;
+          }
+      }
+  }
+}

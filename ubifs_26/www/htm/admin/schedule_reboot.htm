@@ -1,0 +1,58 @@
+<form ng-controller="ScheduleRebootCtrl" name="scheduleRebootForm" id="schedule-reboot" novalidate ng-modification="dataReady">
+	<div ng-if="dataReady">
+		<div class="page-title-container">
+			<div class="page-title" ng-bind="DICT('Schedule_Reboot')"></div>
+			<div class="page-button-container">
+				<button type="button" class="btn-apply" ng-disabled="scheduleform.$invalid || userAccessFlag === 'RO'" ng-click="funs.save()">
+					<span ng-bind="DICT('Schedule_Apply')"></span>
+				</button>
+				<button type="button" class="btn-cancel" ng-click="funs.cancel()">
+					<span ng-bind="DICT('Schedule_Cancel')"></span>
+				</button>
+			</div>
+		</div>
+		<confirmsave ng-show="success"></confirmsave>
+		<div class="page-content-container">
+			<table class="page-block-tb-list control-input-200">
+				<tr>
+					<td ng-bind="DICT('Schedule_Reboot_Colon')"></td>
+					<td>
+						<input type="radio" ng-model="recovery.enable" ng-value="true"></input>
+						<span ng-bind="DICT('Schedule_Reboot_Enable')"></span>
+						<input type="radio" ng-model="recovery.enable" ng-value="false"></input>
+						<span ng-bind="DICT('Schedule_Reboot_Disabled')"></span>
+					</td>
+				</tr>
+				<tr ng-if="recovery.enable">
+					<td ng-bind="DICT('Schedule_Reboot_Option')"></td>
+					<td>
+						<select ng-model="recovery.action" ng-options="m.id as m.name for m in recover_opts"></select>
+					</td>
+				</tr>
+				<tr ng-if="recovery.enable">
+					<td ng-bind="DICT('Schedule_Reboot_Reboot_Every')"></td>
+					<td>
+						<select ng-model="recovery.frequency" ng-options="m.id as m.name for m in frequencys"></select>
+					</td>
+				</tr>
+				<tr ng-if="recovery.enable">
+					<td></td>
+					<td>
+						<span  ng-if="recovery.frequency === 'month'">
+							<select ng-model="recovery.day" class="time" ng-options="m.id as m.name for m in days"></select>
+							<span ng-bind="DICT('Schedule_Reboot_Day_Of_Month')"></span>
+						</span>
+						<span ng-if="recovery.frequency === 'weekday'">
+							<select ng-model="recovery.weekday" class="weekday" ng-options="m.id as m.name for m in weekdays"></select>
+							<span ng-bind="DICT('Schedule_Reboot_Day_Of_Week')"></span>
+						</span>
+						<select ng-model="recovery.hour" class="time" ng-options="m.id as m.name for m in hours"></select>
+						<span ng-bind="DICT('Schedule_Reboot_Hours')"></span>
+						<select ng-model="recovery.minute" class="time" ng-options="m.id as m.name for m in minutes"></select>
+						<span ng-bind="DICT('Schedule_Reboot_Minuties')"></span>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>

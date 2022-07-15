@@ -1,0 +1,8 @@
+Package: confd_relay
+Version: 1.0-1
+Depends: libc, librt, libpthread, confd
+Source: package/confd_relay
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 5959
+Description:  This binary is used to relay authentications from external apps tp confd

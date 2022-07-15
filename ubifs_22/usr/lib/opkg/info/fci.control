@@ -1,0 +1,9 @@
+Package: fci
+Version: 2.00-3
+Depends: libc, librt, libpthread
+Source: package/freescale/fci
+Section: opt
+Maintainer: Freescale Semiconductors
+Architecture: comcerto2000
+Installed-Size: 2558
+Description:  kernel module managing communication between user space and kernel space.

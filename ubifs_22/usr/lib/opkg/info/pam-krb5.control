@@ -1,0 +1,8 @@
+Package: pam-krb5
+Version: 4.7-1
+Depends: libc, librt, libpthread, krb5-libs, libpam, openldap-server
+Source: package/pam_krb5
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 23378
+Description:  PAM module for Kerbers 5

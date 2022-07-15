@@ -1,0 +1,8 @@
+Package: libeventlog
+Version: 0.2.13-1
+Depends: libc, librt, libpthread
+Source: package/libs/libeventlog
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 5674
+Description:  A new API to format and send structured log messages.

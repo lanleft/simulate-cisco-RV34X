@@ -1,0 +1,9 @@
+Package: liblocaldb
+Version: 1.0-1
+Depends: libc, librt, libpthread, libpam, openldap-server
+Source: package/liblocaldb
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 8239
+Description:  This library is for local authorisation and authentication. 
+ 

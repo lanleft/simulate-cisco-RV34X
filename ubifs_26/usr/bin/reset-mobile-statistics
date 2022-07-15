@@ -1,0 +1,22 @@
+#!/bin/sh
+
+errcode=1
+errstring="Invalid Arguments"
+SAVEFILE="/tmp/bwmgmt/data"
+MNTFILE="/mnt/configcert/bwmgmt/data"
+
+iface=`echo $@ | awk '{for (I=1;I<=NF;I=I+2) if ($I == "interface-name") {print $(I+1)};}'`
+
+if [ -n "$iface" ];then
+	sed -i "s/[0-9]\+,[0-9]\+$/0,0/g" "$SAVEFILE/$iface"
+	sed -i "s/[0-9]\+,[0-9]\+$/0,0/g" "$MNTFILE/$iface"
+
+        errcode=$?
+
+        if [ "$errcode" -ne 0 ];then
+                errstring="Monthly usage for Interface are not clear"
+        else
+                errstring="Monthly usage for Interface are cleared"
+        fi
+fi
+echo "code $errcode errstr \"$errstring\""

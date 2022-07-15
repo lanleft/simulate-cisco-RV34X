@@ -1,0 +1,35 @@
+#!/usr/bin/perl
+
+my $total = $#ARGV + 1;
+my $counter = 1;
+
+#$mac  = "FF:FF:FF:FF:FF:FF";
+#$name = "TestPC";
+#$type = "Computer";
+#$os   = "Windows";
+
+foreach my $a(@ARGV)
+{
+	if (($counter%12) == 0)
+	{
+		system("lcstat dev set $mac \"$name\" \"$type\" \"$os\" > /dev/null");
+	}
+	elsif (($counter%12) == 4)
+	{
+		$mac = $a
+	}
+	elsif (($counter%12) == 6)
+	{
+		$name = $a
+	}
+	elsif (($counter%12) == 8)
+	{
+		$type = $a
+	}
+	elsif (($counter%12) == 10)
+	{
+		$os = $a
+	}
+
+	$counter++;
+}

@@ -1,0 +1,146 @@
+module ciscosb-interfaces {
+    namespace "http://cisco.com/ns/ciscosb/interfaces";
+    prefix ciscosb-interfaces;
+    import ietf-interfaces { prefix if; }
+    import iana-if-type { prefix ianaift; }
+    import ietf-yang-types { prefix yang; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module enhance ietf-interfaces to add some rpc and statistics";
+    revision 2016-06-01 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2016-05-09 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity mode-auto {
+        base mode;
+        description
+                "auto ";
+    }
+    identity mode-10m-half {
+        base mode;
+        description
+                "10M half ";
+    }
+    identity mode-10m-full {
+        base mode;
+        description
+                "10M half ";
+    }
+    identity mode-100m-half {
+        base mode;
+        description
+                "100M half ";
+    }
+    identity mode-100m-full {
+        base mode;
+        description
+                "100M half ";
+    }
+    identity mode {
+        description
+                "Base mode identity  ";
+    }
+    typedef Mode-type {
+        type identityref {
+            base "mode";
+        }
+        description "Mode type.";
+    }
+    container jumbo{
+        leaf enable {
+            type boolean;
+        }
+    }
+    rpc reset-counters {
+        description
+                "reset interfaces conters";
+    }
+    rpc reset-wifi-counters {
+        description
+                "reset wifi interfaces conters";
+    }
+    rpc refresh-counters {
+        description
+                "refresh interfaces conters";
+    }
+    augment "/if:interfaces/if:interface" {
+     leaf ifIndex {
+      type int32;
+     }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd' or 'ianaift:channel'"{
+        }
+        leaf transceiver {
+            type enumeration {
+                enum copper;
+                enum sfp;
+            }
+        }
+            leaf link-status {
+                type enumeration {
+             enum NotConnected;
+                enum Connected;
+                enum Disabled;
+                }
+            }
+            leaf port-activity {
+                type enumeration {
+                    enum enable;
+                    enum disable;
+                }
+            }
+            leaf duplex-status {
+                type enumeration {
+                    enum half;
+                    enum full;
+                }
+            }
+            leaf speed-status {
+                type uint16;
+                units "m";
+            }
+            leaf auto-negotiated {
+                type boolean;
+            }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd' or 'ianaift:channel'"{
+        }
+            leaf port-mode {
+             type Mode-type;
+            }
+            leaf flow-control {
+                type boolean;
+            }
+            leaf auto-join {
+             type enumeration {
+              enum enable;
+              enum disable;
+             }
+            }
+    }
+    augment "/if:interfaces-state/if:interface/if:statistics" {
+     leaf in-collision-pkts {
+            type yang:counter64;
+            description
+              "The number of inbound collision packets";
+          }
+     leaf out-collision-pkts {
+            type yang:counter64;
+            description
+              "The number of outbound collision packets";
+          }
+    }
+}

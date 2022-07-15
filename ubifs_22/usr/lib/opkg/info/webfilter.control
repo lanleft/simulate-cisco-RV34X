@@ -1,0 +1,8 @@
+Package: webfilter
+Version: fsl-1
+Depends: libc, librt, libpthread, epavis-dpi, bccsdk, libopenssl, libcommon
+Source: package/freescale/webfilter
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 267347
+Description:  Webfiltering application leveraging BCCSDK API from Webroot and WCF infra from LIONIC.

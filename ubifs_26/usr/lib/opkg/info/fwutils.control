@@ -1,0 +1,8 @@
+Package: fwutils
+Version: 1
+Depends: libc, librt, libpthread, libopenssl
+Source: package/freescale/fwutils
+Section: Freescale
+Architecture: comcerto2000
+Installed-Size: 4219
+Description:  fwutils

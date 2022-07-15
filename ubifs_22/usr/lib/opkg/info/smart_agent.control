@@ -1,0 +1,8 @@
+Package: smart_agent
+Version: 1.0.0-7
+Depends: libc, librt, libpthread, xoslib, firmware
+Source: package/cisco/smart_agent
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 184707
+Description:  smart_agent.

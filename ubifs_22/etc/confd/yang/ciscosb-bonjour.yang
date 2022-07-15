@@ -1,0 +1,45 @@
+module ciscosb-bonjour {
+    namespace "http://cisco.com/ns/ciscosb/bonjour";
+    prefix ciscosb-bonjour;
+    import ietf-interfaces { prefix if; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module augments ietf-interfaces to add support for static.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-02-17 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    container bonjour-global {
+        leaf enable {
+            type boolean;
+            default "true";
+        }
+        leaf-list services {
+            description "Indicate services which will be included in bonjour advertisment";
+            type enumeration {
+                enum _csco-sb;
+                enum _https;
+                enum _http;
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container bonjour {
+            leaf enable {
+                type boolean;
+                default "false";
+            }
+        }
+    }
+}

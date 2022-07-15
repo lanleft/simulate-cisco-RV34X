@@ -1,0 +1,8 @@
+Package: snmpmod
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, libuci
+Source: package/freescale/snmpmod
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 58063
+Description:  Operation data statistics module.

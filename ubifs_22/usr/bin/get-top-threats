@@ -1,0 +1,26 @@
+#!/bin/sh
+
+db="/tmp/stat.db"
+IPSFILE=/tmp/ipsttfile
+
+# This is being called as
+# get-top-threats num 10
+
+num=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "num") {print $(I+1)};}'`
+
+sql="SELECT sid,threat,actions,count(*) AS x from av GROUP BY sid ORDER BY x DESC LIMIT $num"
+
+sqlite3 "$db" "$sql" >$IPSFILE
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  #echo $line
+  sid=`echo $line | awk -F'|' '{print $1}'`
+  threat=`echo $line | awk -F'|' '{print $2}'`
+  actions=`echo $line | awk -F'|' '{print $3}'`
+  cc=`echo $line | awk -F'|' '{print $4}'`
+
+  echo "attacks __BEGIN"
+  echo "id $sid name \"$threat\" category \"$actions\" clients-count $cc"
+  #echo "id 8004090 category \"unattempted-user\" name \"RSERVICES rlogin login failure\""
+  echo "attacks __END"
+done < $IPSFILE

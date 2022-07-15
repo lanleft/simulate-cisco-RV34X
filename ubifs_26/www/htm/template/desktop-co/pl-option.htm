@@ -1,0 +1,20 @@
+<fieldset style="margin:2px;height:26px;">
+	<!-- ng-form name="innerForm" -->
+		
+		<span for="{{forname}}" class="col-xs-4 col-sm-3" ng-hide="title==''" >{{title}}</span>
+		
+		<span class="col-xs-8 col-sm-8">
+			<span ng-transclude >
+			</span>
+			<span>{{unit}}</span>
+			<span class="tip-info">{{tipinfo}}</span>
+			<!-- input type=text ng-model="data2"></input ->
+			<!-- div ng-show="innerForm.{{forname}}.$error.email">Not a Email</div -->
+			<!-- div ng-bind="innerForm | json"></div -->
+		</span>
+	<!-- /ng-form -->
+</fieldset>
+
+
+
+

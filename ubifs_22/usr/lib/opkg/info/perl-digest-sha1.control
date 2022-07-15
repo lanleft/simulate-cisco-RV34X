@@ -1,0 +1,8 @@
+Package: perl-digest-sha1
+Version: 2.13-1
+Depends: libc, librt, libpthread, perl
+Source: package/perlextmod/digest-sha1
+Section: lang
+Architecture: comcerto2000
+Installed-Size: 7567
+Description:  Perl Digest SHA1 encryption module

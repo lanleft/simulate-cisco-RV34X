@@ -1,0 +1,8 @@
+Package: pd69200
+Version: 2_0_18
+Depends: libc, librt, libpthread
+Source: package/microsemisdk/pd69200
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 104
+Description:  Microsemi SDK for PD69200 Serial Communication Protocol.

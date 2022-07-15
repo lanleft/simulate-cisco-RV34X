@@ -1,0 +1,81 @@
+<div ng-controller="automaticUpdateCtrl">
+	<form name="form" ng-modification="dataReady">
+        <div ng-if="dataReady">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Automatic_Updates')"></div>
+                <div class="page-button-container">
+                    <button class="btn-apply" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                        <span ng-bind="DICT('Automatic_Updates_Apply')"></span>
+                    </button>
+                    <button class="btn-cancel" ng-click="funs.cancel()">
+                        <span ng-bind="DICT('Automatic_Updates_Cancel')"></span>
+                    </button>
+                </div>
+            </div>
+            <confirmsave ng-show="success"></confirmsave>
+            <div class="page-content-container">
+                <div ng-if="checkNowFail" class="warning-msg">
+                    <img src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+                    {{errstr}}
+                </div>
+                <div ng-if="checkNowSuccess">
+                    <img src="themes/img/icon/Status_success_icon.png"></img>
+                    {{errstr}}
+                </div>
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('Automatic_Updates_Check_Every')"></td>
+                        <td>
+                            <select id="slct_frequency" ng-model="model.auto_update_global.check_frequency"
+                                    ng-options="m.id as m.displayName for m in model.schema.checkFrequencys">
+                            </select>
+                        </td>
+                        <td>
+                            <button ng-disabled="model.checking_status === 'checking'" ng-click="funs.checkNow()">
+                                <span ng-bind="DICT('Automatic_Updates_Check_Now')"></span></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Automatic_Updates_Notify_Via')"></td>
+                        <td>
+                            <div ng-class="{nopHint: true}">
+                                <input type="checkbox" id="chk_admingui" ng-model="model.auto_update_global.bGUI"></input>
+                                <span ng-bind="DICT('Automatic_Updates_Admin_GUI')"></span>
+                            </div>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div>
+                                <input type="checkbox" id="chk_emailto" ng-model="model.auto_update_global.bEmail"></input>
+                                <span ng-bind="DICT('Automatic_Updates_Email_To')"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="text" id="txt_email" email ng-disabled="!model.auto_update_global.bEmail" ng-model="model.auto_update_global.email"></input>
+                        </td>
+                        <td style="min-width: 350px">
+                            <span>
+                                <div ng-bind="DICT('Automatic_Updates_Msg1')"></div>
+                                <div pg-bind-html="notification_msg"></div>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                <hr class="page-content-seperator"></hr>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Automatic_Updates_Auto')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridAutoUpdateOptions"></div>
+                    </div>
+                </div>
+                <div class="page-block-title-cntr">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,494 @@
+<div>
+    <form name="form" ng-controller="system_summary_main" class="ng-hide" ng-show="loadReady" id="system-summary">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('System_Summary')"></div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div>
+                <table class="page-block-tb-split2">
+                    <tr>
+                        <td>
+                            <table class="page-block-tb-list">
+                                <tr>
+                                    <td class="bold" ng-bind="DICT('System_Summary_Sys_Info')"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Host_Name')"></td>
+                                    <td>
+                                        <a ng-click="jumpToPage('System_Config_System')">
+                                            <span ng-bind="model['system'].hostname"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Serial_Number')"></td>
+                                    <td>
+                                        <span ng-bind="model['system-state'].platform.sn"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Up_Time')"></td>
+                                    <td ng-bind="model.bootup_time"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Current_Time')"></td>
+                                    <td ng-if="loadReady">
+                                        <a ng-click="jumpToPage('System_Config_Time')">
+                                            <span ng-bind="model.current_time"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_CPU_Memory_Usage')"></td>
+                                    <td ng-bind="cpuMemUsage"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Pid_Vid')"></td>
+                                    <td>
+                                        <span ng-bind="model['system-state'].platform.pid"></span>
+                                        <span ng-bind="model['system-state'].platform.vid"></span>
+                                    </td>
+                                </tr>
+                                <!--
+                                    <tr>
+                                    <td>Mode:</td>
+                                    <td>
+                                    <span>{{model.system['device-mode'].routing}} {{model.system['device-mode'].wireless}}</span>
+                                    </td>
+                                    </tr>
+                                -->
+                            </table>
+                        </td>
+                        <td>
+                            <table class="page-block-tb-list">
+                                <tr>
+                                    <td class="bold" ng-bind="DICT('System_Summary_Firmware_Info')"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Firmware_Ver')"></td>
+                                    <td>
+                                        <a ng-click="jumpToPage('Admin_File_Management')">
+                                            <span ng-bind="show_firmware_value('^active', 'version') || ''"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Firmware_Md5')"></td>
+                                    <td>
+                                        <span ng-if="loadReady"
+                                              ng-bind="show_firmware_value('^active', 'file-md5') || '' "
+                                              ></span>
+                                    </td>
+                                </tr>
+                                <tr ng-if="false">
+                                    <td ng-bind="DICT('System_Summary_Locale')"></td>
+                                    <td>
+                                        <span ng-bind="model['system-state'].location"></span>
+                                    </td>
+                                </tr>
+                                <tr ng-if="false">
+                                    <td ng-bind="DICT('System_Summary_Language_Ver')"></td>
+                                    <td>
+                                        <span ng-bind="model['language-package'].version"></span>
+                                    </td>
+                                </tr>
+                                <tr ng-if="false">
+                                    <td ng-bind="DICT('System_Summary_Language_Md5')"></td>
+                                    <td>
+                                        <span ng-bind="model['language-package']['md5-checksum']"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Wan1_Mac_Addr')"></td>
+                                    <td>
+                                        <span ng-bind="wan1MAC"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Wan2_Mac_Addr')"></td>
+                                    <td>
+                                        <span ng-bind="wan2MAC"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('System_Summary_Lan_Mac_Addr')"></td>
+                                    <td>
+                                        <span ng-bind="vlanMAC"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <!-- Don't remove below 2 divs, for wrapper auto height -->
+<!--                <div style="clear: both;"></div> -->
+<!--                <div></div>-->
+            </div>
+
+            <!-- Port Status - Begin -->
+            <div class="page-content-seperator"></div>
+            <div>
+                <div class="grid-cntr">
+                    <div class="grid-tb-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('System_Summary_Port_Status')"></div>
+                    </div>
+                    <div class="grid-tb-list-cntr">
+                        <div ng-repeat="j in checkRepeat" >
+                            <div ng-if="j > 0" style="height: 27px;"></div>
+                            <table class="grid-tb-list" ng-if="loadReady" data-x-tmp="{{ availPortList = collect_port_list(j) }}">
+                                <tr class="grid-header-cntr ngHeaderContainer">
+                                    <td width="100px" ng-bind="DICT('System_Summary_Port_Id')"></td>
+                                    <td width="150px" ng-repeat="ifref in availPortList track by $index">
+                                        {{model['system-state'].platform.pid.search('RV345') >=0 ? schema.RV345PortNameList[ifref.name].role : schema.PortNameList[ifref.name].role}}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="100px" ng-bind="DICT('System_Summary_Interface')"></td>
+                                    <td width="150px" ng-repeat="ifref in availPortList track by $index">
+                                        {{model['system-state'].platform.pid.search('RV345') >=0 ? schema.RV345PortNameList[ifref.name].alias : schema.PortNameList[ifref.name].alias}}
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="100px" ng-bind="DICT('System_Summary_Link_Status')"></td>
+                                    <td width="150px" ng-repeat="ifref in availPortList  track by $index"
+                                        data-x-tmp="{{ ifref['name'].search('USB') >= 0 ? t = showUSB(ifref) : t = showIF(ifref) }}" >
+                                        <span class="icon-up" ng-show="t === 'connected'" title="{{DICT('Up')}}"></span>
+                                        <span class="icon-down" ng-show="t === 'disconnect'" title="{{DICT('Down')}}"></span>
+                                        <span ng-bind="t" ng-show="t !== 'connected' && t !== 'disconnect'"></span>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td width="100px" ng-bind="DICT('System_Summary_Speed')"></td>
+                                    <td width="150px" ng-repeat="ifref in availPortList track by $index" data-x-tmp="{{t = ifref['speed-status']}}">
+                                        {{t==null?PortNoData():showPortSpeed(ifref) }}
+                                    </td>
+                                    <td ></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <br></br>
+                <div ng-show="spec.WifiSupport === true" class="ng-hide">
+                    <label style="display: block" ng-bind="DICT('System_Summary_Radio_Status')"></label>
+                    <fieldset style="display: inline; width: 500px; padding: 5px; border: solid 1px #8499A2; margin-right: 10px; ">
+                        <legend style="font-size: 12px; color: black; width: 110px; margin-left: 10px; margin-bottom: 5px;">
+                            <span ng-bind="DICT('System_Summary_Radio_2g')"></span>
+                        </legend>
+                        <table>
+                            <tr>
+                                <td width="30px"></td><td style="width: 170px; padding: 2px;" ng-bind="DICT('System_Summary_Wireless')"></td>
+                                <td>{{model.radio24g_enable}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 2px;" ng-bind="DICT('System_Summary_Mac_Addr')"></td>
+                                <td>{{model.radio24g_mac}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 2px;" ng-bind="DICT('System_Summary_Mode')"></td>
+                                <td>{{model.radio24g_mode}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 2px;" ng-bind="DICT('System_Summary_Channel')"></td>
+                                <td>{{model.radio24g_channel}}</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td style="padding: 2px;" ng-bind="DICT('System_Summary_Op_Bandwidth')"></td>
+                                <td>{{model.radio24g_bw}}</td>
+                            </tr>
+                        </table>
+                        <br></br>
+                    </fieldset>
+                    <fieldset style="display: inline; width: 500px; padding: 5px; border: solid 1px #8499A2;">
+                        <legend style="font-size: 12px; color: black; width: 110px; margin-left: 10px; margin-bottom: 5px;">
+                            <span ng-bind="DICT('System_Summary_Radio_5g')"></span></legend>
+                        <table style="padding: 2px;">
+                            <tr>
+                                <td width="30px"></td><td style="margin-left: 25px; width: 170px; padding: 2px;" ng-bind="DICT('System_Summary_Wireless')"></td>
+                                <td>{{model.radio5g_enable}}</td>
+                            </tr>
+                            <tr>
+                                <td></td><td style="padding: 2px;" ng-bind="DICT('System_Summary_Mac_Addr')"></td>
+                                <td>{{model.radio5g_mac}}</td>
+                            </tr>
+                            <tr>
+                                <td></td><td style="padding: 2px;" ng-bind="DICT('System_Summary_Mode')"></td>
+                                <td>{{model.radio5g_mode}}</td>
+                            </tr>
+                            <tr>
+                                <td></td><td style="padding: 2px;" ng-bind="DICT('System_Summary_Channel')"></td>
+                                <td>{{model.radio5g_channel}}</td>
+                            </tr>
+                            <tr>
+                                <td></td><td style="padding: 2px;" ng-bind="DICT('System_Summary_Op_Bandwidth')"></td>
+                                <td>{{model.radio5g_bw}}</td>
+                            </tr>
+                        </table>
+                        <br></br>
+                    </fieldset>
+                    <br></br>
+                </div>
+
+            </div>
+            <!-- Port Status - End -->
+
+            <!-- IPv4/IPv6 Status - Begin -->
+            <div>
+                <uib-tabset>
+                    <uib-tab id="tab_ipv4" heading="IPv4" active="" disabled="">
+                        <div id="tab_ipv4"  style="min-height:20px">
+                            <div ng-include="'ipv4_6.htm'" ng-controller="system_summary_ipv4"></div>
+                        </div>
+                    </uib-tab>
+                    <uib-tab id="tab_ipv6" heading="IPv6" active="" disabled="">
+                        <div id="tab_ipv6" style="min-height:20px">
+                            <div ng-include="'ipv4_6.htm'" ng-controller="system_summary_ipv6"></div>
+                        </div>
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+            <!-- IPv4/IPv6 Status - End -->
+
+            <!-- VPN Summary - Begin -->
+            <hr class="page-content-seperator"></hr>
+            <div ng-include="'vpn_summary.htm'"></div>
+            <!-- VPN Summary - End -->
+
+            <!-- Security Summary - Begin -->
+            <hr class="page-content-seperator"></hr>
+            <div ng-include="'security_summary.htm'" ng-if="loadReady"></div>
+            <!-- Security Summary - End -->
+
+            <div>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+
+<script type="text/ng-template" id="ipv4_6.htm">
+<table class="page-block-tb-list ipv4-ipv6-status" data-x-tmp="{{ availWANList = collect_ifstate_list(iptype) }}" ng-if="loadReady">
+    <tr >
+        <td ng-bind="DICT('System_Summary_Interface')">
+
+        </td>
+        <td ng-repeat="ifref in availWANList">
+            {{ifref.name}}
+        </td>
+        <td></td>
+    </tr>
+    <tr >
+        <td ng-bind="DICT('System_Summary_Ip_Address')">
+
+        </td>
+        <td ng-repeat="ifref in availWANList"
+            data-x-tmp="{{addrs = ifref[iptype].address}}"
+            data-x-tmp1="{{t = ifref[iptype].address[0].ip}}"
+        >
+            <div ng-repeat="addr in addrs">
+                {{ (addr.ip!=undefined) ? addr.ip:'--'}}
+            </div>
+            <div ng-if="addrs==undefined || addrs.length <= 0">
+                --
+            </div>
+        </td>
+        <td></td>
+    </tr>
+    <tr >
+        <td ng-bind="DICT('System_Summary_Default_Gateway')">
+
+        </td>
+        <td ng-repeat="ifref in availWANList" data-x-tmp="{{t = ifref[iptype].gateway}}">
+            {{t==null?'--':t}}
+            <!-- {{ifref[iptype]["static"].gateway}} -->
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td ng-bind="DICT('System_Summary_DNS')">
+
+        </td>
+        <td ng-repeat="ifref in availWANList" data-x-tmp="{{t = ifref[iptype]['naming-server'].servers }}">
+            {{t==null?'--':t.join("&nbsp;&nbsp;&nbsp;&nbsp;")  }}
+        </td>
+        <td></td>
+    </tr>
+    <tr ng-if="iptype === 'ipv4'">
+        <td ng-bind="DICT('System_Summary_Dynamic_Dns')">
+
+        </td>
+        <td ng-repeat="ifref in availWANList">
+            <span ng-if="loadReday_DDNS" ng-bind="showDdnsState(ifref, iptype)"></span>
+        </td>
+        <td></td>
+    </tr>
+    <tr ng-if="iptype === 'ipv4'">
+        <td ng-bind="DICT('System_Summary_Multi_WAN_Status')"></td>
+        <td ng-repeat="ifref in availWANList" data-x-tmp="{{state = showMultiWanState(ifref, iptype)}}">
+            <span ng-bind="DICT('System_Summary_Offline')" class="txt-off" ng-show="state === 'offline'"></span>
+            <span ng-bind="DICT('System_Summary_Online')" class="txt-on" ng-show="state === 'online'"></span>
+            <span ng-bind="DICT('System_Summary_Detection_Disabled')" ng-show="state === 'disabled'"></span>
+            <span ng-show="state === 'isNA'">N/A</span>
+        </td>
+        <td></td>
+    </tr>
+
+    <!--
+    <tr >
+        <td ng-bind="DICT(''System_Summary_Dynamic_Dns)"></td>
+        <td ng-repeat="ifref in availWANList">
+            <span ng-if="ifref._ref.ddns.enable">{{ifref._ref.ddns.provider}}</span>
+            <span ng-if="!ifref._ref.ddns.enable" ng-bind="DICT('System_Summary_Disabled')"></span>
+        </td>
+        <td></td>
+    </tr>
+    -->
+    <tr >
+        <td></td>
+        <td style="vertical-align:top;" ng-repeat="ifref in availWANList">
+            <table class="page-block-tb-list align-top interface-func">
+                <tr ng-if="isGotIp(ifref, iptype)">
+                    <td>
+                        <button id="btn_release" 
+                            ng-click="do_dhcp_op(ifref, iptype, 'release-ip')" ng-disabled="userAccessFlag === 'RO'">
+                            <span ng-bind="DICT('System_Summary_Release')"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-if="dhcp_renewed(ifref, iptype)">
+                    <td>
+                        <button id="btn_renew" ng-click="do_dhcp_op(ifref, iptype, 'renew-ip')" ng-disabled="userAccessFlag === 'RO'">
+                            <span ng-bind="DICT('System_Summary_Renew')"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-if="WAN_connected(ifref, iptype, 'connect') == true">
+                    <td>
+                        <button id="btn_connect" ng-click="do_conn_op(ifref, iptype, 'connect')" ng-disabled="userAccessFlag === 'RO'">
+                            <span ng-bind="DICT('System_Summary_Connect')"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-if="WAN_connected(ifref, iptype, 'disconnect') == true">
+                    <td>
+                        <button id="btn_disconnect" ng-click="do_conn_op(ifref, iptype, 'disconnect')" ng-disabled="userAccessFlag === 'RO'">
+                            <span ng-bind="DICT('System_Summary_Disconnect')"></span>
+                        </button>
+                    </td>
+                </tr>
+                <tr ng-if="WAN_connected(ifref, iptype, 'disconnect') == 'noattach'">
+                    <td ng-bind="DICT('System_Summary_No_Attached')"></td>
+                </tr>
+            </table>
+        </td>
+        <td></td>
+    </tr>
+</table>
+</script>
+
+<script type="text/ng-template" id="vpn_summary.htm">
+    <div class="grid-cntr" ng-if="!ruFlag" sytle="min-width: 770px">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('System_Summary_Vpn_Status')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridVPNStatus"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="security_summary.htm">
+<table class="page-block-tb-split2">
+    <tr>
+        <td>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td class="bold" ng-bind="DICT('System_Summary_Firewall_Status')"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_SPI')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['firewall']['spi'], 'txt-off': !model['firewall']['spi']}"
+                            ng-bind="OnOff(model['firewall']['spi'])">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Dos')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['firewall']['dos-attack'], 'txt-off': !model['firewall']['dos-attack']}"
+                            ng-bind="OnOff(model['firewall']['dos-attack'])">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Block')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['firewall']['block-wan-request'], 'txt-off': !model['firewall']['block-wan-request']}"
+                            ng-bind="OnOff(model['firewall']['block-wan-request'])">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Remote_management')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['firewall']['remote-web-management'].enable, 'txt-off': !model['firewall']['remote-web-management'].enable}"
+                            ng-bind="OnOff(model['firewall']['remote-web-management'].enable)">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Access_rule')"></td>
+                    <td>
+                        <span>{{ model['firewall-acl-rules']['ipv4']['firewall-acl-rule'].length + model['firewall-acl-rules']['ipv6']['firewall-acl-rule'].length || 0 }}</span>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td class="bold" ng-bind="DICT('System_Summary_Log_Status')"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Syslog_Server')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['syslog']['remote-logging-action'].enable, 'txt-off': !model['syslog']['remote-logging-action'].enable}"
+                            ng-bind="OnOff(model['syslog']['remote-logging-action'].enable)">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Summary_Email_Log')"></td>
+                    <td>
+                        <span ng-class="{'txt-on': model['syslog']['email-logging-action'].enable, 'txt-off': !model['syslog']['email-logging-action'].enable}"
+                            ng-bind="OnOff(model['syslog']['email-logging-action'].enable)">
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</script>

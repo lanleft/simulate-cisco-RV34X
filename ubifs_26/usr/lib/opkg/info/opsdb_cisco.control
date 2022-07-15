@@ -1,0 +1,8 @@
+Package: opsdb_cisco
+Version: 1.0-4
+Depends: libc, librt, libpthread, confd
+Source: package/cisco/opsdb_cisco
+Section: opsdb_cisco
+Architecture: comcerto2000
+Installed-Size: 6837
+Description:  Opsdb by cisco

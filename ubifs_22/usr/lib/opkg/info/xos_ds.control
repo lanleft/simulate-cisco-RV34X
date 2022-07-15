@@ -1,0 +1,8 @@
+Package: xos_ds
+Version: 2.3.0-3
+Depends: libc, librt, libpthread, xos_ipc_cmt, namesvr, xoslib
+Source: package/cisco/xos_ds
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 42900
+Description:  xos_ds.

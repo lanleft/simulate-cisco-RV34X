@@ -1,0 +1,10 @@
+Package: uwsgi
+Version: 2.0.15-1
+Depends: libc, librt, libpthread, libopenssl, libpthread, libxml2, zlib, libpcre, libuuid
+Source: package/uwsgi
+License: GPLv2
+Section: net
+Maintainer: Ackman Liang <Ackman_Liang@pegatroncorp.com>
+Architecture: comcerto2000
+Installed-Size: 373189
+Description:  Application servers (for various programming languages and protocols), proxies, process managers and monitors are all implemented using a common api and a common configuration style.

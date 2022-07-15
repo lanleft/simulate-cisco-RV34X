@@ -1,0 +1,11 @@
+Package: ip
+Version: 4.0.0-1
+Depends: libc, librt, libpthread, libnl-tiny
+Conflicts: ip-full
+Source: package/network/utils/iproute2
+License: GPL-2.0
+Section: net
+Maintainer: Russell Senior <russell@personaltelco.net>
+Architecture: comcerto2000
+Installed-Size: 127674
+Description:  Routing control utility (Minimal)

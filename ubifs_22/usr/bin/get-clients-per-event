@@ -1,0 +1,90 @@
+#!/bin/sh
+
+# get-clients-per-event hours 0 days 1 weeks 0 months 0 event 8010993 type ips
+
+hrs=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "hours") {print $(I+1)};}'`
+da=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "days") {print $(I+1)};}'`
+wk=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "weeks") {print $(I+1)};}'`
+months=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "months") {print $(I+1)};}'`
+event=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "event") {print $(I+1)};}'`
+ctype=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "type") {print $(I+1)};}'`
+
+#event means signature id
+#days 1 means last 24 hours
+#weeks 1 means last 7 days
+#hours 1 days 1 weeks 1 months 1 means Since activated
+
+db="/tmp/stat.db"
+IPSFILE=/tmp/ipscpafile
+
+if [ "$ctype" = "threat" ]; then
+  if [ "$wk" = "1" -a "$da" = "1" -a "$hrs" = "1" -a "$months" = "1" ]; then
+    # All rows since begining.
+    sql="SELECT av.ts, av.mac, dev.name, dev.type, dev.os, av.ip, av.remote_ip, av.port, av.remote_port, av.sid, av.actions, av.threat FROM av INNER JOIN dev ON dev.mac=av.mac WHERE av.sid='$event';"
+  elif [ "$wk" = "1" ]; then
+    sql="SELECT av.ts, av.mac, dev.name, dev.type, dev.os, av.ip, av.remote_ip, av.port, av.remote_port, av.sid, av.actions, av.threat FROM av INNER JOIN dev ON dev.mac=av.mac WHERE av.sid='$event' AND av.ts >= CAST(strftime('%s', 'now', '-7 days') AS INTEGER) ORDER BY ts DESC;"
+  elif [ "$da" = "1" ]; then
+    sql="SELECT av.ts, av.mac, dev.name, dev.type, dev.os, av.ip, av.remote_ip, av.port, av.remote_port, av.sid, av.actions, av.threat FROM av INNER JOIN dev ON dev.mac=av.mac WHERE av.sid='$event' AND av.ts >= CAST(strftime('%s', 'now', '-24 hours') AS INTEGER) ORDER BY ts DESC;"
+  else
+    # All rows since begining. (Default case)
+    sql="SELECT av.ts, av.mac, dev.name, dev.type, dev.os, av.ip, av.remote_ip, av.port, av.remote_port, av.sid, av.actions, av.threat FROM av INNER JOIN dev ON dev.mac=av.mac WHERE av.sid='$event';"
+  fi
+
+elif [ "$ctype" = "ips" ]; then
+
+  if [ "$wk" = "1" -a "$da" = "1" -a "$hrs" = "1" -a "$months" = "1" ]; then
+    # All rows since begining.
+    sql="SELECT ts, ips.mac, dev.name AS host, dev.type, dev.os, ips.ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid INNER JOIN dev ON dev.mac = ips.mac WHERE ips.sid=$event ORDER BY ts DESC;"
+  elif [ "$wk" = "1" ]; then
+    sql="SELECT ts, ips.mac, dev.name AS host, dev.type, dev.os, ips.ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid INNER JOIN dev ON dev.mac = ips.mac WHERE ips.sid=$event AND ts >= CAST(strftime('%s', 'now', '-7 days') AS INTEGER) ORDER BY ts DESC;"
+  elif [ "$da" = "1" ]; then
+    sql="SELECT ts, ips.mac, dev.name AS host, dev.type, dev.os, ips.ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid INNER JOIN dev ON dev.mac = ips.mac WHERE ips.sid=$event AND ts >= CAST(strftime('%s', 'now', '-24 hours') AS INTEGER) ORDER BY ts DESC;"
+  else
+    # All rows since begining. (Default case)
+    sql="SELECT ts, ips.mac, dev.name AS host, dev.type, dev.os, ips.ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid INNER JOIN dev ON dev.mac = ips.mac WHERE ips.sid=$event ORDER BY ts DESC;"
+  fi
+
+else
+  exit 0
+fi
+
+sqlite3 "$db" "$sql" >$IPSFILE
+
+while read -r line
+do
+  #echo $line
+  ts=`echo $line | awk -F'|' '{print $1}'`
+  mac=`echo $line | awk -F'|' '{print $2}'`
+  host=`echo $line | awk -F'|' '{print $3}'`
+  type=`echo $line | awk -F'|' '{print $4}'`
+  os=`echo $line | awk -F'|' '{print $5}'`
+  ip=`echo $line | awk -F'|' '{print $6}'`
+  remote_ip=`echo $line | awk -F'|' '{print $7}'`
+  port=`echo $line | awk -F'|' '{print $8}'`
+  remote_port=`echo $line | awk -F'|' '{print $9}'`
+  sid=`echo $line | awk -F'|' '{print $10}'`
+
+  ts=`date -d @$ts +'%Y-%m-%dT%H:%M:%S'`;
+
+  if [[ $ip =~ .*:.* ]]
+  then
+    # IPv6
+    ip6=$ip;
+    ip=0.0.0.0;
+  else
+    ip6="0::0"
+  fi
+
+  echo "clients __BEGIN"
+  if [ "$ctype" = "threat" ]; then
+    actions=`echo $line | awk -F'|' '{print $11}'`
+    threat=`echo $line | awk -F'|' '{print $12}'`
+    echo "mac $mac id $sid date $ts name \"$threat\" hostname \"$host\" device-type \"$type\" os-type \"$os\" remote-ip $remote_ip ipv4-address $ip ipv6-address $ip6 port $remote_port"
+  elif [ "$ctype" = "ips" ]; then
+    sname=`echo $line | awk -F'|' '{print $11}'`
+    actions=`echo $line | awk -F'|' '{print $12}'`
+    echo "mac $mac id $sid date $ts name \"$sname\" hostname \"$host\" device-type \"$type\" os-type \"$os\" remote-ip $remote_ip ipv4-address $ip ipv6-address "0::0" port $remote_port"
+  fi
+  echo "clients __END"
+
+done < $IPSFILE

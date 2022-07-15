@@ -1,0 +1,8 @@
+Package: hardwaredmz
+Version: 1.00-1
+Depends: libc, librt, libpthread
+Source: package/freescale/hardwaredmz
+Section: net
+Architecture: comcerto2000
+Installed-Size: 2647
+Description:  Freescale hardwaredmz configuration files.

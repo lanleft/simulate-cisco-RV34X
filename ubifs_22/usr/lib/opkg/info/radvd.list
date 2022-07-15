@@ -1,0 +1,4 @@
+/usr/sbin/radvd
+/etc/hotplug.d/iface/51-radvd
+/etc/init.d/radvd
+/etc/config/radvd

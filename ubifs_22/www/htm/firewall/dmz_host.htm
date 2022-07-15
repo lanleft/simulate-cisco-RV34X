@@ -1,0 +1,39 @@
+<div ng-controller="dmzHostCtrl">
+	<form name="form" ng-modification="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('DMZ_Host')"></div>
+            <div class="page-button-container">
+                <button id="btn_dmzhost_save" class="btn-apply" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO' || form.$invalid">
+                    <span ng-bind="DICT('DMZ_Host_Apply')"></span>
+                </button>
+                <button id="btn_dmzhost_cancel" class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('DMZ_Host_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('DMZ_Host')+':'"></td>
+                    <td>
+                        <input type="checkbox" id="chk_dmzhost_enable" ng-model="model.enable" ng-true-value="true" ng-false-value="false">
+                        <span ng-bind="DICT('DMZ_Host_Enable')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('DMZ_Host_IP_Addr')"></td>
+                    <td>
+                        <input type="text"
+                               id="txt_dmzhost_ipaddress"
+                               ng-model="model.dmz_host_ip_address"
+                               ng-disabled="model.enable === false"
+                               ng-ipv4-ip="model.enable === true"
+                               ng-required="model.enable === true">
+                        <span class="tip-info" ng-bind="DICT('DMZ_Host_Hint')"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </form>
+</div>

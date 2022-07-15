@@ -1,0 +1,115 @@
+module ciscosb-captive-portal-users {
+    namespace "http://cisco.com/ns/ciscosb/captive-portal-users";
+    prefix ciscosb-cp-users;
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-wifi {prefix wifi;}
+    import ciscosb-types { prefix ciscosb-types; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module defines captive portal user related.";
+    revision 2015-11-09 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    container cp-users {
+        list cp-user {
+            key name ;
+            leaf name {
+                type string;
+            }
+            leaf password{
+                type ciscosb-types:aes-cfb-128-encrypted-string;
+                mandatory true;
+            }
+            leaf duration{
+              type uint32;
+              units "seconds";
+            }
+            leaf auto-delete{
+              type boolean;
+            }
+            leaf ssid{
+              type leafref{
+                path "/wifi:wlans/wifi:ssid/wifi:ssid";
+              }
+            }
+            leaf radio{
+                type string;
+            }
+        }
+    }
+    container cp-user-state{
+        config false;
+        list client {
+            key "mac-address";
+            leaf name {
+                type string;
+            }
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                type string;
+            }
+            leaf connected-time {
+                type uint32;
+                units "seconds";
+            }
+            leaf time-left {
+                type uint32;
+                units "seconds";
+                description "remaining time left for this session ";
+            }
+            leaf ip-address {
+                type inet:ip-address;
+            }
+            leaf mac-address {
+                type yang:mac-address;
+            }
+            leaf auth {
+                type boolean;
+            }
+            leaf tx-packets {
+                type uint32;
+            }
+            leaf rx-packets {
+                type uint32;
+            }
+            leaf tx-bytes {
+                type uint32;
+            }
+            leaf rx-bytes {
+                type uint32;
+            }
+        }
+    }
+    rpc terminate-cp-user {
+       input {
+           choice mac-address{
+               case one {
+                   leaf one{
+                       type yang:mac-address;
+                   }
+               }
+               case list {
+                   leaf-list list {
+                       type yang:mac-address;
+                   }
+               }
+               case all {
+                   leaf all{
+                       type empty;
+                   }
+               }
+           }
+       }
+    }
+}

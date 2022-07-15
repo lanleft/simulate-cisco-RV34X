@@ -1,0 +1,196 @@
+module ciscosb-redundant-wan {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/redundant-wan";
+  prefix ciscosb-redundant-wan;
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-21 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-01 {
+    description
+      "First revision WAN Redundancy module, including support for failover and load balancing models";
+  }
+  augment "/if:interfaces/if:interface" {
+    container redundant-wan {
+   leaf enable {
+    type boolean;
+     default "false";
+   }
+      container net-tracker {
+        leaf enable {
+          type boolean;
+          default "true";
+          description
+           "Controls whether or not to dynamically track network reachability from this interface.";
+        }
+        leaf min-hosts-reachable {
+          type uint8 {
+            range "1..max";
+          }
+          default 1;
+          description
+           "Minimum number of hosts that must be reachable for this interface to be considered active.
+            Question: Should we limit the maximum number of trackers supported in the model itself?";
+        }
+        list target {
+          key "host";
+          leaf host {
+            type union {
+              type inet:ip-address;
+              type inet:domain-name;
+              type enumeration {
+                enum "gateway";
+              }
+            }
+            description
+             "The device for which to test reachability.  If the option 'gateway' is specified,
+              then the default gateway for the interface will be used.";
+          }
+          leaf type {
+            type enumeration {
+              enum "icmp-echo";
+              enum "dns-query";
+            }
+            default "icmp-echo";
+            description
+             "The type of reachability test to perform.  If the option selected is icmp-echo, then
+              the host is sent an ICMP echo request (ping) and is determined to be reachable if a
+              reply is received within the timeout. If the option selected is dns-query, then a
+              query is generated for the name specified in the host parameter and sent to the
+              DNS server(s) learned from this interface. The target is reachable if a response is
+              received with a valid record.";
+          }
+          leaf count {
+            type uint8 {
+              range "1..10";
+            }
+            default 3;
+            description
+             "Number of probes to send for each test.";
+          }
+          leaf timeout {
+            type uint16 {
+              range "1..300";
+            }
+            default 5;
+            description
+             "Number of seconds to wait for a probe response before deciding it has failed.";
+          }
+          leaf interval {
+            type uint16 {
+              range "1..999";
+            }
+            default 10;
+            description
+             "Number of seconds between tests.";
+          }
+          leaf up-count {
+            type uint8 {
+              range "1..99";
+            }
+            default 5;
+            description
+             "Number of consecutive successful tests required before declaring the target is active";
+          }
+          leaf down-count {
+            type uint8 {
+              range "1..99";
+            }
+            default 5;
+            description
+             "Number of consecutive unsuccessful tests required before declaring the target is down";
+          }
+          leaf on-fail {
+            type enumeration {
+              enum "log";
+              enum "failover";
+            }
+            description
+             "Action to take in the event this host is unavailable";
+          }
+          leaf status {
+            config false;
+            type enumeration {
+              enum active;
+              enum down;
+            }
+            description
+             "Returns the current status of this target.";
+          }
+          leaf last-change {
+            config false;
+            type yang:date-and-time;
+            description
+             "The date and time of the last change in status.";
+          }
+        }
+      }
+      leaf precedence {
+        type uint8 {
+          range "1..99";
+        }
+        default 1;
+        description
+         "The precedence of this interface.  Lower numbered interfaces will be used in
+          preference to higher numbered interfaces. If the precedence is equal between
+          multiple interfaces, then traffic should be loadshared based on the interface
+          weights.";
+      }
+      choice load-balance {
+         case weight {
+           leaf weight {
+          type uint8 {
+                 range "1..100";
+             }
+             default 100;
+           description
+                "The weight of this interface.  Interfaces with equal precedence should load
+                  share traffic based on the interface weights.";
+               }
+         }
+         case bandwidth {
+         leaf bandwidth {
+                type uint16 {
+                    range "1..1000";
+                }
+                default 100;
+                description
+                  "The link-bandwidth of this interface.  Interfaces with equal precedence should load
+                    share traffic based on the interface bandwidth.";                
+                }
+        }
+      }
+    }
+  }
+  augment "/if:interfaces-state/if:interface" {
+    container redundant-wan {
+      leaf ipv4-status{
+        type enumeration{
+          enum disabled;
+          enum offline;
+          enum online;
+        }
+      }
+      leaf ipv6-status{
+        type enumeration{
+          enum disabled;
+          enum offline;
+          enum online;
+        }
+      }
+    }
+  }
+}

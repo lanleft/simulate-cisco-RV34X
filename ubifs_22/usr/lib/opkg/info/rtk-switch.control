@@ -1,0 +1,8 @@
+Package: rtk-switch
+Version: 1.0-1
+Depends: libc, librt, libpthread, realtek-ssdk
+Source: package/freescale/rtk-switch
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 15604
+Description:  Realtek Switch

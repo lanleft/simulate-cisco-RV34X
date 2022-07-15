@@ -1,0 +1,196 @@
+module ciscosb-routing-rip {
+    namespace "http://cisco.com/ns/ciscosb/routing-rip";
+    prefix "ciscosb-routing-rip";
+    import ietf-routing { prefix "rt"; }
+    import ietf-interfaces { prefix "if"; }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-23 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-20 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity ripv1 {
+        base rt:routing-protocol;
+        description
+                "Identity for the RIP routing protocol.";
+    }
+    identity ripv2 {
+        base rt:routing-protocol;
+        description
+                "Identity for the RIP routing protocol.";
+    }
+    identity ripng {
+        base "rt:routing-protocol";
+        description "RIPng";
+    }
+    grouping route-content {
+        description
+                "This grouping defines RIP-specific route attributes.";
+        leaf tag {
+            type uint16;
+            default "0";
+            description
+                        "This leaf may be used to carry additional info, e.g. AS number.";
+        }
+    }
+    augment "/rt:routing-state/rt:routing-instance/rt:ribs/rt:rib/"
+    + "rt:routes/rt:route" {
+        when "rt:source-protocol = 'ciscosb-routing-rip:ripv1' or rt:source-protocol = 'ciscosb-routing-rip:ripng'
+                or rt:source-protocol = 'ciscosb-routing-rip:ripv2'" {
+            description
+                        "This augment is only valid for a routes whose source protocol
+                        is RIP.";
+        }
+        description
+                "RIP-specific route attributes.";
+        uses route-content;
+    }
+    augment "/rt:fib-route/rt:output/rt:route" {
+        description
+                "RIP-specific route attributes in the output of 'active-route'
+                RPC.";
+        uses route-content;
+    }
+    augment "/rt:routing/rt:routing-instance/rt:routing-protocols/"
+    + "rt:routing-protocol" {
+        when "rt:type = 'ciscosb-routing-rip:ripv1' or rt:type = 'ciscosb-routing-rip:ripv2' or rt:type = 'ciscosb-routing-rip:ripng'" {
+            description
+                        "This augment is only valid for a routing protocol instance of
+                        type 'rip'.";
+        }
+        container rip {
+            leaf v6-enabled {
+                type boolean;
+                default "true";
+            }
+            leaf v4-enabled {
+                type boolean;
+                default "true";
+            }
+            container ripv1 {
+                description
+                                "RIP instance configuration.";
+                container interfaces {
+                    description
+                                        "Per-interface RIP configuration.";
+                    list interface {
+                        key "name";
+                        description
+                                                "RIP is enabled on interfaces that have an entry in this list,
+                                                unless 'enabled' is set to 'false' for that entry.";
+                        leaf name {
+                         type if:interface-ref;
+                        }
+                        leaf enabled {
+                            type boolean;
+                            default "true";
+                        }
+                        leaf passive {
+                            type boolean;
+                            default "true";
+                        }
+                    }
+                }
+            }
+            container ripng {
+                description
+                                "RIP instance configuration.";
+                container interfaces {
+                    description
+                                        "Per-interface RIP configuration.";
+                    list interface {
+                        key "name";
+                        description
+                                                "RIP is enabled on interfaces that have an entry in this list,
+                                                unless 'enabled' is set to 'false' for that entry.";
+                        leaf name {
+                            type if:interface-ref;
+                        }
+                        leaf enabled {
+                            type boolean;
+                            default "true";
+                        }
+                        leaf passive {
+                            type boolean;
+                            default "true";
+                        }
+                        uses AUTHENTICATION;
+                    }
+                }
+            }
+            container ripv2 {
+                description
+                                "RIP instance configuration.";
+                container interfaces {
+                    description
+                                        "Per-interface RIP configuration.";
+                    list interface {
+                        key "name";
+                        description
+                                                "RIP is enabled on interfaces that have an entry in this list,
+                                                unless 'enabled' is set to 'false' for that entry.";
+                        leaf name {
+                         type if:interface-ref;
+                        }
+                        leaf enabled {
+                            type boolean;
+                            default "true";
+                        }
+                        leaf passive {
+                            type boolean;
+                            default "true";
+                        }
+                        uses AUTHENTICATION;
+                    }
+                }
+            }
+        }
+    }
+    grouping AUTHENTICATION {
+        container authentication {
+            description
+                        "Enables authentication and specifies the authentication scheme
+                        for the RIP interface";
+            leaf enable {
+                type boolean;
+            }
+            choice scheme {
+                description
+                                "Specify the authentication scheme. The use of the key-chain reference
+                                here is: 1) Designed to align with other proposed protocol models.
+                                2) Not finalized, pending resolution of alignment with the RFC
+                                published KeyTables information model.";
+                case md5 {
+                 container key-chain {
+                  leaf id {
+                   type uint64 {
+                    range "0 .. 281474976710655";
+                   }
+                   description
+                                "Message Digest 5 (MD5) authentication key id.";
+                  }
+                  leaf key {
+                   type string;
+                   description
+                                "Message Digest 5 (MD5) authentication key string.";
+                  }
+                 }
+                }
+                case simple {
+                    leaf key {
+                        type string;
+                        description
+                                                "Simple authentication key string.";
+                    }
+                }
+            }
+        }
+    }
+}

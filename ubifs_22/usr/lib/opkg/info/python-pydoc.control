@@ -1,0 +1,11 @@
+Package: python-pydoc
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Source: package/python
+License: PSF
+LicenseFiles: LICENSE Modules/_ctypes/libffi_msvc/LICENSE Modules/_ctypes/darwin/LICENSE Modules/_ctypes/libffi/LICENSE Modules/_ctypes/libffi_osx/LICENSE Tools/pybench/LICENSE
+Section: lang
+Maintainer: Alexandru Ardelean <ardeleanalex@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 191870
+Description:  Python 2.7 pydoc module

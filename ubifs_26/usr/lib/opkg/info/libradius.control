@@ -1,0 +1,9 @@
+Package: libradius
+Version: 1.4.0-1
+Depends: libc, librt, libpthread, libpam
+Source: package/libradius
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 14693
+Description:  Linux-PAM is a free implementation of the following DCE-RFC from Sunsoft. 
+ 

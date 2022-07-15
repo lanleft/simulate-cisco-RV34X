@@ -1,0 +1,718 @@
+<style>
+/* padding for input line larger margin for this page */
+#gridVLAN .ngCell  {
+    display: table-cell;
+    height: auto !important;
+    overflow: visible;
+    /* position: static; */
+}
+
+.ipv6-ip-preview {
+    background-color: transparent;
+    width: 220px;
+    /* border: 0px;      */
+    /* margin-top: -1px; */
+}
+
+._greyout {
+    color: #888;
+}
+</style>
+
+<form name="form" ng-controller="LanVlanSettingsCtrl" novalidate ng-modification="loadReady" id="vlan-setting">
+<div ng-if="loadReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('VLAN_membership_Settings')"></div>
+        <div class="page-button-container" ng-show="true">
+            <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="save()">
+                <span ng-bind="DICT('VLAN_membership_Apply')"></span>
+            </button>
+            <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('VLAN_membership_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+    <div class="page-content-container container-fluid ng-hide" ng-show="true">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('VLAN_membership_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_add"
+                            class="grid-btn-add"
+                            ng-click="gridVLAN.add()"
+                            ng-disabled="form.$invalid || userAccessFlag === 'RO'"
+                    ></button>
+                    <button id="btn_edit"
+                            class="grid-btn-edit"
+                            ng-disabled="gridVLAN.Selections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="gridVLAN.edit()"
+                    ></button>
+                    <button id="btn_delete"
+                            class="grid-btn-delete"
+                            ng-disabled="gridVLAN.VLAN1Exsit || gridVLAN.Selections.length === 0 || gridVLAN.check_remove_condition() || userAccessFlag === 'RO'" 
+                            ng-click="gridVLAN.remove()"
+                    ></button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridVLAN.Options" id="gridVLAN"></div>
+            </div>
+        </div>
+        <div class="page-content-seperator"></div>
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('VLAN_membership_Assign_VLANs_Ports')"></div>
+        </div>
+        <div class="grid-cntr" ng-if="loadReady">
+            <div class="grid-tb-title-cntr">
+                <div class="grid-title" ng-bind="DICT('VLAN_membership_VLANs_Port_Table')"></div>
+            </div>
+            <div class="grid-tb-list-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_portedit"
+                            class="grid-btn-edit"
+                            ng-disabled="gridPortSelections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="ctx.flagPortEditable=!ctx.flagPortEditable">
+                    </button>
+                </div>
+                <table style="width:100%" class="grid-tb-list">
+                    <tr class="grid-header-cntr">
+                        <td width="100px" ng-bind="DICT('VLAN_membership_VLAN_ID')"></td>
+                        <td width="150px" ng-repeat="ifref in collect_vlan_port_ref_list()">
+                            {{ifref.name}}
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr ng-repeat="v_ref in collect_svi_ref_list()" data-ng-tmp="{{ (rowidx=$index) }}" >
+                        <td>
+                            <span >{{fop.get_vlan_id(v_ref)}}<span>
+                        </td>
+                        <td ng-repeat="ifref in collect_vlan_port_ref_list()" 
+                            width="150px"
+                        >
+                            <span ng-init="(v_ref['.ctx'].port_vlan_map[$index]=tag_status(v_ref, ifref, rowidx, $index))"
+                                  ng-if="(ifref['lag_ref'] == undefined ) && ( ifref.name != ctx.HWDMZport || (ifref.name == ctx.HWDMZport && !ctx.HWDMZenable) )"
+                            >
+                                <select 
+                                    id="{{'slct_'+ifref.name+'_'+rowidx}}"
+                                    ng-model="v_ref['.ctx'].port_vlan_map[$index]"
+                                    ng-options="item.id as item.displayName for item in schema.portmodes"
+                                    ng-change="update_port_vlan_model(rowidx, $index, v_ref, ifref)"
+                                    ng-show="ctx.flagPortEditable"
+                                    ng-disabled="ifref._greyout == true"
+                                    ng-class="{_greyout : ifref._greyout }"
+                                ></select>
+                                <span ng-show="!ctx.flagPortEditable">
+                                    {{ (schema.portmodes | filter:{id:v_ref['.ctx'].port_vlan_map[$index]})[0].displayName  }}
+                                </span>
+                            </span>
+                            <span ng-if="ctx.HWDMZenable && ifref.name == ctx.HWDMZport" ng-bind="DICT('VLAN_membership_Excluded')">
+                                
+                            </span>
+                            <span ng-if="(ifref.type == 'ethernetCsmacd' && ifref['lag_ref'] != undefined )">
+                                {{ showLagOwnerStatus(ifref, v_ref) }}
+                                <!-- {{ v_ref['.ctx'].port_vlan_map[$last] }} -->
+                            </span>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<script type="text/ng-template" id="T_CellText_VLANID.html">
+    <div class="ui-grid-custom-cntr" data-ng-expansion>
+        <div ng-show="!row.entity[col.colDef.editRow]">
+            {{MODEL_COL_FIELD}}
+            <input type="hidden" name="hidden_vlanid" required ng-model="MODEL_COL_FIELD" />
+        </div>
+        <div ng-show="row.entity[col.colDef.editRow]">
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_address_array.html">
+    <div class="ui-grid-custom-cntr" data-arr="{{ arr = MODEL_COL_FIELD }}">
+        <span ng-repeat="d in arr" ng-if="arr.length > 0">
+            {{ ($index > 0) ? "," : "" }}
+            <span ng-if="d.ip!='' && d.ip!==undefined && d.ip!==null">
+                {{ d.ip + "/" + d['prefix_length'] }}
+            </span>
+            <span ng-if="d.ip=='' || d.ip===undefined || d.ip===null">
+                ""
+            </span>
+        </span>
+        <span ng-if="arr.length === 0">
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_No_Data')"></span>
+        </span>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_address.html">
+    <div class="ui-grid-custom-cntr" ng-if="MODEL_COL_FIELD.ip!='' && MODEL_COL_FIELD.ip!==undefined && MODEL_COL_FIELD.ip!==null">
+        {{MODEL_COL_FIELD.ip}} / {{MODEL_COL_FIELD['prefix_length']}}
+    </div>
+
+    <div class="ui-grid-custom-cntr" ng-if="MODEL_COL_FIELD.ip=='' || MODEL_COL_FIELD === undefined|| MODEL_COL_FIELD === null">
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_No_Data')"></span>
+    </div>
+    <input type="hidden" required name="req_MODEL_COL_FIELD_ip_{{row.rowIndex}}" ng-model="MODEL_COL_FIELD['prefix_length']"></input>
+    <input type="hidden" required name="req_MODEL_COL_FIELD_px_{{row.rowIndex}}" ng-model="MODEL_COL_FIELD['ip']"></input>
+
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv4_address_edit.html">
+    <div class="ui-grid-custom-cntr">
+        <!-- Display Mode -->
+        <div ng-show="!row.entity[col.colDef.editRow]" data-arr="{{ arr = MODEL_COL_FIELD }}">
+           <span ng-repeat="d in arr" ng-if="arr.length > 0">
+                {{ ($index > 0) ? "," : "" }}
+                <span ng-if="d.ip!='' && d.ip!==undefined && d.ip!==null">
+                    {{ d.ip + "/" + d['prefix_length'] }}
+                </span>
+                <span ng-if="d.ip=='' || d.ip===undefined || d.ip===null">
+                    ""
+                </span>
+            </span>
+            <span ng-if="arr.length === 0">
+                <span ng-bind="grid.appScope.DICT('VLAN_membership_No_Data')"></span>
+            </span>
+        </div>
+        <!-- Edit Mode -->
+        <div data-x="{{ FIELD_ADDR = MODEL_COL_FIELD[0] }}" ng-show="row.entity[col.colDef.editRow]">
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_IPv4_Addr')"></span>
+            <input
+                type="text" required ipv4-ip compare-ip-bymask="FIELD_ADDR['prefix_length']"
+                id="{{(col.colDef.id ? 'txt_' + col.colDef.id + 'IP_' : 'txt_IPv4IP_') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+                name="ip4addr_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                ng-model="FIELD_ADDR.ip"
+                ng-change="grid.appScope.update_ip_enable_status(row, 'ipv4'); grid.appScope.gridVLAN.chkIpv4Ip();"  size="10"
+                grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                style="width: 125px;"
+                
+                grid-invalid-field="'isDupIpv4'"
+                grid-invalid-name="'isDupIpv4'"
+            ></input>
+            <br style="padding-top: 4px"></br>
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+            <input 
+                type="number" number min="1" max="32"  required
+                id="{{(col.colDef.id ? 'slct_' + col.colDef.id + 'Prefixlen_' : 'slct_IPv4Prefixlen_') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+                name="ip4prefix_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                ng-model="FIELD_ADDR['prefix_length']" style="width: 5em"
+                ng-change="grid.appScope.update_ip_enable_status(row, 'ipv4'); grid.appScope.gridVLAN.chkIpv4Ip();"
+                grid-invalid-cbk="{{col.colDef.validationCbk}}"
+
+                grid-invalid-field="'isDupIpv4'"
+                grid-invalid-name="'isDupIpv4'"
+            ></input>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit.html">
+    <div class="ui-grid-custom-cntr" style="text-overflow: clip;">
+        <!-- Display Mode -->
+        <div ng-show="!row.entity[col.colDef.editRow]"  data-arr="{{ arr = MODEL_COL_FIELD }}">
+            <span ng-repeat="d in arr" ng-if="arr.length > 0">
+                {{ ($index > 0) ? "," : "" }}
+                <span ng-if="d.ip!='' && d.ip!==undefined && d.ip!==null">
+                    {{ d.ip + "/" + d['prefix_length'] }}
+                </span>
+                <span ng-if="d.ip=='' || d.ip===undefined || d.ip===null">
+                    ""
+                </span>
+            </span>
+            <span ng-if="arr.length === 0">
+                <span ng-bind="grid.appScope.DICT('VLAN_membership_No_Data')"></span>
+            </span>
+        </div>
+        <!-- Edit mode -->
+        <div  ng-show="row.entity[col.colDef.editRow]">
+            <div ng-include="'T_vlan_membership_ipv6_address_edit_addr0.html'" data-tmp="{{FIELD0 = MODEL_COL_FIELD[0]}}"></div>
+            <span ng-if="grid.appScope.func_flag.ipv6_addr1" data-i="{{ addr_i = 1 }}"
+                data-en-addr="{{ en_addr = MODEL_COL_FIELD[addr_i] !== undefined ? true: false }}"
+            >
+                <input type="checkbox"
+                    ng-model="en_addr"
+                    style="width: 115px"
+                    ng-change="grid.appScope.ipv6_addr_create_elem(MODEL_COL_FIELD, addr_i, row.entity, en_addr)"
+                >
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_IPv6_Addr_N', {'%d': addr_i+1 })"></span>
+                </input>
+
+                <div ng-include="'T_vlan_membership_ipv6_address_edit_addr1.html'"
+                    ng-if="MODEL_COL_FIELD[addr_i].enabled"
+                    data-tmp="{{FIELD0 = MODEL_COL_FIELD[addr_i]}}"
+                >
+                </div>
+                
+                <div ng-include="'T_vlan_membership_ipv6_address_edit_addr1_dummy.html'"
+                    ng-if="!MODEL_COL_FIELD[addr_i].enabled"
+                    data-tmp="{{FIELD0 = MODEL_COL_FIELD[addr_i]}}"
+                >
+                </div>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr0.html"><span>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <span>
+        <input type="radio"
+            id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'Prefix_' : 'rdo_IPv6Prefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+            ng-model="FIELD0._type" 
+            ng-change="grid.appScope.init_type_if_ident(FIELD0); grid.appScope.update_v6ip(FIELD0, row.entity);" value="{{grid.appScope.schema.TYPE_STATIC}}"
+        />
+        <input type="text"
+            ng-model="FIELD0._ip_prefix"
+            ipv6-ip
+            chk-ipv6-bylength="FIELD0['prefix_length']"
+            disalbed-ipv6-bylength="grid.appScope.pd_select_state(FIELD0) !== 'static'"
+            style="width: 115px;"
+            id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefix_' : 'txt_IPv6Prefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+            name="ip6ipprefix_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+            ng-change=" grid.appScope.update_v6ip(FIELD0, row.entity)"
+            ng-disabled="grid.appScope.pd_select_state(FIELD0) !== 'static'"
+            ng-required="grid.appScope.pd_select_state(FIELD0) === 'static'"
+            size="10"
+            grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'PrefixType_' : 'rdo_IPv6PrefixType_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               ng-model="FIELD0._type"
+               ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+               value="{{grid.appScope.schema.TYPE_ISP}}"
+        >
+        <select ng-model="FIELD0._ip_pd_obj"
+                id="{{ (col.colDef.id ? 'slct_' + col.colDef.id + 'IspPrefix_' : 'slct_IPv6IspPrefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+                ng-required="grid.appScope.pd_uallow() && grid.appScope.pd_select_state(FIELD0) === 'isp'"
+                ng-options="wanif as grid.appScope.pd_dispStr(wanif) disable when grid.appScope.pd_disableCond(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+                ng-disabled="grid.appScope.pd_select_state(FIELD0) !== 'isp'"
+        >
+            <option value="" ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_From_DHCP_PD')"></option>
+        </select>
+
+        +
+        <span ng-if="grid.appScope.func_flag.ipv6_pd_undetermined_allow">
+            <input type="text" ng-model="FIELD0._ip_pd_subnetid"
+                id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'txt_IspSubnetid_' : 'txt_IspSubnetid_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+                title="use Hex string(up to 'FFFFFFFF')"
+                size="9"
+                maxlength="8"
+                pattern="^[0-9A-Fa-f]*$"
+                style="width: auto"
+                ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+                ng-required="grid.appScope.pd_select_state(FIELD0) === 'isp'"
+                ng-disabled="grid.appScope.pd_select_state(FIELD0) !== 'isp'"
+                grid-invalid-cbk="{{col.colDef.validationCbk}}"
+            />
+        </span>
+        <span ng-if="!grid.appScope.func_flag.ipv6_pd_undetermined_allow">
+            <input type="text" ng-model="FIELD0._ip_pd_prx2" ipv6-ip-suffix
+                 id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'IspSuffix_' : 'txt_IspSuffix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+                 title="use 0:0 instead of :: while adding a suffix"
+                 ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+                 ng-disabled="grid.appScope.pd_select_state(FIELD0) === 'static'"
+                 grid-invalid-cbk="{{col.colDef.validationCbk}}"
+            />
+        </span>
+
+        <br style="padding-top: 4px"></br>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+        <input type="number" number
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefixlen_' : 'txt_IPv6Prefixlen_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               style="width: 85px"
+               name="ip6prefixlen_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+               min="{{grid.appScope.get_min_v6_prefixlen(FIELD0)}}" max="128" style="width: 6em"
+               ng-model="FIELD0['prefix_length']"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity, undefined, {userDefPrefix: true})"
+               ng-disabled="grid.appScope.update_v6_prefix_disabled(FIELD0)"
+               ng-required="grid.appScope.pd_select_state(FIELD0) === 'static'"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        
+        <span style="margin-left:20px;"></span>
+        
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Preview')"></span> [
+            <input type="text" required
+                name="ip6addr_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                class="ipv6-ip-preview"
+                readonly="readonly"
+                style="width: 240px"
+                ng-model="FIELD0.preview_ip"
+                compare-ipv6-bymask=""
+                grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                
+                grid-invalid-field="'isDupIpv6a0'"
+                grid-invalid-name="'isDupIpv6a0'"
+            ></input>
+        ]
+
+        <br style="padding-top: 4px"></br>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Interface_Identifier')"></span>
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'InterfaceEUI64_' : 'rdo_IPv6InterfaceEUI64_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               name="{{'if_iden_src_'+row.rowIndex}}"
+               ng-model="FIELD0._type_if_ident"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="grid.appScope.pd_select_state(FIELD0) !== 'static'"
+               ng-show="grid.appScope.pd_select_state(FIELD0) === 'static'"
+               value="EUI_64"
+        />
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_EUI64')"
+              ng-show="grid.appScope.pd_select_state(FIELD0) === 'static'"
+        ></span>
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'Interface_' : 'rdo_IPv6Interface_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               ng-model="FIELD0._type_if_ident"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="grid.appScope.pd_select_state(FIELD0) !== 'static'"
+               ng-show="grid.appScope.pd_select_state(FIELD0) === 'static'"
+               value="USER_DEFINE"
+        />
+        <input type="text"
+               title="use 0:0 instead of :: while adding a suffix"
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Interface_' : 'txt_IPv6Interface_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               style="width: 300px"
+               ng-model="FIELD0._if_ident" size="32"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="grid.appScope.if_ident_disabled(FIELD0)"
+               ng-required="!grid.appScope.if_ident_disabled(FIELD0)"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+
+        </span>
+    </span>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr1.html"><span>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <span>
+
+        <select ng-model="FIELD0._ip_pd_obj"
+                id="{{ (col.colDef.id ? 'slct_' + col.colDef.id + 'IspPrefix_' : 'slct_IPv6IspPrefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + '_1'}}"
+                style="width: 175px"
+                ng-options="wanif as grid.appScope.pd_dispStr(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+                ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+        >
+            <!--
+            <option value="" ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_From_DHCP_PD')"></option>
+            -->
+        </select>
+        
+        + <input type="text" ng-model="FIELD0._ip_pd_prx2" ipv6-ip-suffix
+                 id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'IspSuffix_' : 'txt_IspSuffix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + '_1'}}"
+                 title="use 0:0 instead of :: while adding a suffix"
+                 ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+
+                 style="width: 100px"
+                 ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+                 grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        <br style="padding-top: 4px"></br>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+        <input type="number" number required
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefixlen_' : 'txt_IPv6Prefixlen_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + '_1'}}"
+               name="ip6prefixlen_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+               min="{{grid.appScope.get_min_v6_prefixlen(FIELD0)}}" max="128" style="width: 6em"
+               ng-model="FIELD0['prefix_length']"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity, undefined, {userDefPrefix: true})"
+               ng-disabled="grid.appScope.update_v6_prefix_disabled(FIELD0)"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        /> <span style="margin-left:20px;"></span>
+        <span ng-if="FIELD0.enabled">
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_Preview')"></span> [
+                <input type="text" required
+                    name="ip6addr_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                    class="ipv6-ip-preview"
+                    readonly="readonly"
+                    ng-model="FIELD0.ip"
+                    compare-ipv6-bymask=""
+                    grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                    
+                    grid-invalid-field="'isDupIpv6a1'"
+                    grid-invalid-name="'isDupIpv6a1'"
+                ></input>
+            ]
+        </span>
+        <br/>
+
+        </span>
+    </span>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr1_dummy.html"><span>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <span>
+            <select ng-model="FIELD0._ip_pd_obj"
+                    ng-options="wanif as grid.appScope.pd_dispStr(wanif) disable when grid.appScope.pd_disableCond(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                    disabled="disabled"
+            >
+                <!--
+                <option value="">Prefix from DHCP-PD</option>
+                -->
+            </select>
+            
+            + <input type="text" ipv6-ip-suffix
+                     title="use 0:0 instead of :: while adding a suffix"
+                     disabled="disabled"
+            />
+            <br style="padding-top: 4px"></br>
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+            <input type="number" number
+                   style="width: 6em"
+                   disabled="disabled"
+            />
+        </span>
+    </span>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_DESIGN_2.html">
+    <div class="ui-grid-custom-cntr" style="text-overflow: clip;">
+        <!-- Display Mode -->
+        <div ng-show="!row.entity[col.colDef.editRow]" data-arr="{{ arr = MODEL_COL_FIELD }}">
+            <span ng-repeat="d in arr" ng-if="arr.length > 0">
+                {{ ($index > 0) ? "," : "" }}
+                <span ng-if="d.ip!='' && d.ip!==undefined && d.ip!==null">
+                    {{ d.ip + "/" + d['prefix_length'] }}
+                </span>
+                <span ng-if="d.ip=='' || d.ip===undefined || d.ip===null">
+                    ""
+                </span>
+            </span>
+            <span ng-if="arr.length === 0">
+                <span ng-bind="grid.appScope.DICT('VLAN_membership_No_Data')"></span>
+            </span>
+        </div>
+        <!-- Edit Mode -->
+        <div ng-show="row.entity[col.colDef.editRow]">
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_IPv6_Addr_1')"></span>
+            <span
+                data-tmp="{{FIELD0 = MODEL_COL_FIELD[0]}}"
+            >
+                <input type="text" ng-model="FIELD0.ip"
+                    ng-required="FIELD0.enabled"
+                    name="ip6addr_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                    class="ipv6-ip-preview"
+                    readonly="readonly"
+                    ng-model="FIELD0.ip"
+                    compare-ipv6-bymask=""
+                    grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                    
+                    grid-invalid-field="'isDupIpv6a0'"
+                    grid-invalid-name="'isDupIpv6a0'"
+                ></input>
+                /
+                <input type="number" number
+                       id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefixlen_' : 'txt_IPv6Prefixlen_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+                       min="{{grid.appScope.get_min_v6_prefixlen(FIELD0)}}" max="128" style="width: 6em"
+                       ng-model="FIELD0['prefix_length']"
+                       ng-change="grid.appScope.update_v6ip(FIELD0, row.entity, undefined, {userDefPrefix: true})"
+                       ng-disabled="grid.appScope.update_v6_prefix_disabled(FIELD0)"
+                       ng-required="FIELD0._type == grid.appScope.schema.TYPE_STATIC"
+                       grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                />
+            </span>
+            <div ng-include="'T_vlan_membership_ipv6_address_edit_addr0_DESIGN_2.html'" data-tmp="{{FIELD0 = MODEL_COL_FIELD[0]}}"></div>
+            <span ng-if="grid.appScope.func_flag.ipv6_addr1"
+                data-i="{{ addr_i = 1 }}"
+                data-en-addr="{{ en_addr = MODEL_COL_FIELD[1] !== undefined ? true: false }}"
+            >
+                <input type="checkbox"
+                    ng-model="en_addr"
+                    ng-change="grid.appScope.ipv6_addr_create_elem(MODEL_COL_FIELD, addr_i, row.entity, en_addr)"
+                >
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_IPv6_Addr_N', {'%d': addr_i+1 })"></span>
+                </input>
+                
+                <!-- for IPv6 Addr2 Full IP begin -->
+                <span ng-mark-if="MODEL_COL_FIELD[addr_i].enabled"
+                    data-tmp="{{FIELD0 = MODEL_COL_FIELD[addr_i]}}"
+                >
+                    <input type="text" ng-model="FIELD0.ip"
+                        ng-required="FIELD0.enabled"
+                        name="ip6addr_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+                        class="ipv6-ip-preview"
+                        readonly="readonly"
+                        compare-ipv6-bymask=""
+                        grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                        
+                        grid-invalid-field="'isDupIpv6a1'"
+                        grid-invalid-name="'isDupIpv6a1'"
+                    ></input>
+                </span>
+                <!-- for IPv6 Addr2 Full IP end -->
+                
+                <div ng-include="'T_vlan_membership_ipv6_address_edit_addr1_DESIGN_2.html'"
+                    ng-if="MODEL_COL_FIELD[1].enabled"
+                    data-tmp="{{FIELD0 = MODEL_COL_FIELD[addr_i]}}"
+                >
+                </div>
+                
+                <div ng-include="'T_vlan_membership_ipv6_address_edit_addr1_dummy_DESIGN_2.html'"
+                    ng-if="!MODEL_COL_FIELD[1].enabled"
+                    data-tmp="{{FIELD0 = MODEL_COL_FIELD[addr_i]}}"
+                >
+                </div>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr0_DESIGN_2.html"><span>
+    
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <input type="radio" 
+            id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'Prefix_' : 'rdo_IPv6Prefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+            name="{{'prefix_src_'+row.rowIndex}}"
+            ng-model="FIELD0._type" 
+            ng-change="grid.appScope.init_type_if_ident(FIELD0); grid.appScope.update_v6ip(FIELD0, row.entity);" value="{{grid.appScope.schema.TYPE_STATIC}}"
+        />
+        
+        <input type="text"
+               ng-model="FIELD0._ip_prefix"
+               ipv6-ip
+               chk-ipv6-bylength="FIELD0['prefix_length']"
+               disabled-ipv6-bylength="FIELD0._type == grid.appScope.schema.TYPE_STATIC"
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefix_' : 'txt_IPv6Prefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               name="ip6ipprefix_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+               ng-change=" grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_STATIC"
+               ng-required="FIELD0._type == grid.appScope.schema.TYPE_STATIC"
+               size="10"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'PrefixType_' : 'rdo_IPv6PrefixType_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               name="{{'prefix_src_'+row.rowIndex}}"
+               ng-model="FIELD0._type"
+               ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+               value="{{grid.appScope.schema.TYPE_ISP}}"
+        >
+        <select ng-model="FIELD0._ip_pd_obj"
+                id="{{ (col.colDef.id ? 'slct_' + col.colDef.id + 'IspPrefix_' : 'slct_IPv6IspPrefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+                ng-options="wanif as grid.appScope.pd_dispStr(wanif) disable when grid.appScope.pd_disableCond(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+                ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+        >
+            <option value="" ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_From_DHCP_PD')"></option>
+        </select>
+
+        +
+        <input type="text" ng-model="FIELD0._ip_pd_subnetid"
+            id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'txt_IspSubnetid_' + : 'txt_IspSubnetid_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+            title="use Hex string(up to 'FFFFFFFF')"
+            ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+            ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+            grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        <!--
+        <input type="text" ng-model="FIELD0._ip_pd_prx2" ipv6-ip-suffix
+             id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'IspSuffix_' : 'txt_IspSuffix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+             title="use 0:0 instead of :: while adding a suffix"
+             ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+             ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+             grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        -->
+
+        <br style="padding-top: 4px"></br>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Interface_Identifier')"></span>
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'InterfaceEUI64_' + : 'rdo_IPv6InterfaceEUI64_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               name="{{'if_iden_src_'+row.rowIndex}}"
+               ng-model="FIELD0._type_if_ident"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_STATIC"
+               value="EUI_64"
+        />
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_EUI64')"></span>
+        <input type="radio" 
+               id="{{ (col.colDef.id ? 'rdo_' + col.colDef.id + 'Interface_' : 'rdo_IPv6Interface_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               name="{{'if_iden_src_'+row.rowIndex}}"
+               ng-model="FIELD0._type_if_ident"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_STATIC"
+               value="USER_DEFINE"
+        />
+        <input type="text"
+               title="use 0:0 instead of :: while adding a suffix"
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Interface_' : 'txt_IPv6Interface_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) }}"
+               ng-model="FIELD0._if_ident" size="32"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity)"
+               ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_STATIC || (FIELD0._type==grid.appScope.schema.TYPE_STATIC &&  FIELD0._type_if_ident == 'EUI_64')"
+               ng-required="FIELD0._type == grid.appScope.schema.TYPE_STATIC && FIELD0._type_if_ident == 'USER_DEFINE'"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        
+</span>
+</script>
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr1_DESIGN_2.html"><span>
+        
+        
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <span>
+
+        <select ng-model="FIELD0._ip_pd_obj"
+                id="{{ (col.colDef.id ? 'slct_' + col.colDef.id + 'IspPrefix_' : 'slct_IPv6IspPrefix_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + '_1'}}"
+                ng-options="wanif as grid.appScope.pd_dispStr(wanif) disable when grid.appScope.pd_disableCond(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                ng-change="grid.appScope.update_v6_pd_obj(FIELD0, row.entity)"
+                ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+        >
+        </select>
+        
+        + <input type="text" ng-model="FIELD0._ip_pd_prx2" ipv6-ip-suffix
+                 id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'IspSuffix_' + row.rowIndex : 'txt_IspSuffix_' + row.rowIndex) + '_1'}}"
+                 title="use 0:0 instead of :: while adding a suffix"
+                 ng-change="grid.appScope.update_v6_local_pd_ip(FIELD0, row.entity, false, true)"
+                 ng-disabled="FIELD0._type!=grid.appScope.schema.TYPE_ISP"
+                 grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        <br style="padding-top: 4px"></br>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+        <input type="number" number required
+               id="{{ (col.colDef.id ? 'txt_' + col.colDef.id + 'Prefixlen_' : 'txt_IPv6Prefixlen_') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + '_1'}}"
+               name="ip6prefixlen_{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+               min="{{get_min_v6_prefixlen(FIELD0)}}" max="128" style="width: 6em"
+               ng-model="FIELD0['prefix_length']"
+               ng-change="grid.appScope.update_v6ip(FIELD0, row.entity, undefined, {userDefPrefix: true})"
+               ng-disabled="grid.appScope.update_v6_prefix_disabled(FIELD0)"
+               grid-invalid-cbk="{{col.colDef.validationCbk}}"
+        />
+        </span>
+</span>
+</script>
+
+
+<script type="text/ng-template" id="T_vlan_membership_ipv6_address_edit_addr1_dummy_DESIGN_2.html"><span>
+        <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></span>
+        <span>
+            <select ng-model="FIELD0._ip_pd_obj"
+                    ng-options="wanif as pd_dispStr(wanif) disable when grid.appScope.pd_disableCond(wanif) for wanif in grid.appScope.collect_wan_dhcp_pd() "
+                    disabled="disabled"
+            >
+            </select>
+            
+            + <input type="text" ipv6-ip-suffix
+                     title="use 0:0 instead of :: while adding a suffix"
+                     disabled="disabled"
+            />
+            <br style="padding-top: 4px"></br>
+            <span ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></span>
+            <input type="number" number
+                   style="width: 6em"
+                   disabled="disabled"
+            />
+        </span>
+<span>
+</script>
+

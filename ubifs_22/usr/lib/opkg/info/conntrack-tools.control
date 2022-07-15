@@ -1,0 +1,12 @@
+Package: conntrack-tools
+Version: 0.9.12-1
+Depends: libc, librt, libpthread, libnetfilter-conntrack
+Source: package/network/utils/conntrack-tools
+Section: net
+Architecture: comcerto2000
+Installed-Size: 82157
+Description:  The conntrack-tools are a set of free software userspace tools for Linux
+ that allow system administrators interact with the Connection Tracking
+ System, which is the module that provides stateful packet inspection for
+ iptables. The conntrack-tools are the userspace daemon conntrackd and the
+ command line interface conntrack.

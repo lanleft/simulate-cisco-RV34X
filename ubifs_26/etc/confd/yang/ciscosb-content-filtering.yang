@@ -1,0 +1,83 @@
+module ciscosb-content-filtering {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/content-filtering";
+    prefix "security-content-filtering";
+    import ietf-inet-types { prefix "inet"; }
+    import ciscosb-security-common { prefix "ciscosb-security-common"; }
+    organization
+        "Freescale Semiconductors Pvt Ltd";
+    contact
+        "Freescale";
+    description
+        "This YANG module defines a component that describes the configuration
+        of security content filtering related modules.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-04-25 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-24 {
+        description "Initial version of yang model for security content-filtering
+                module";
+        reference "RFC 6020";
+    }
+    container content-filtering {
+        leaf enable {
+            type boolean;
+            description "Enable/Disable content filtering";
+        }
+        leaf filtering-type {
+            type enumeration {
+                enum BLOCK_LIST;
+                enum ALLOW_LIST;
+            }
+        }
+        container block_rules {
+              list block_url_rules {
+                description "List of blocked urls.";
+                key domain-name;
+                ordered-by user;
+                leaf domain-name {
+                    type inet:domain-name;
+                    description "Url name to block.";
+                }
+                uses ciscosb-security-common:SCHEDULE;
+            }
+            list block_keyword_rules {
+                description "List of keywords.";
+                key keyword-name;
+                ordered-by user;
+                leaf keyword-name {
+                    type string;
+                    description "Keyword name to block.";
+                }
+                uses ciscosb-security-common:SCHEDULE;
+            }
+        }
+        container allow_rules {
+             list allow_url_rules {
+                description "List of allowed urls.";
+                key domain-name;
+                ordered-by user;
+                leaf domain-name {
+                    type inet:domain-name;
+                    description "Url name to allow.";
+                }
+                uses ciscosb-security-common:SCHEDULE;
+            }
+            list allow_keyword_rules {
+                description "List of keywords.";
+                key keyword-name;
+                ordered-by user;
+                leaf keyword-name {
+                    type string;
+                    description "Keyword name to allow.";
+                }
+                uses ciscosb-security-common:SCHEDULE;
+            }
+        }
+    }
+}

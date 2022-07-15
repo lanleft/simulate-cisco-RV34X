@@ -1,0 +1,11 @@
+Package: 6rd
+Version: 2-1
+Depends: libc, librt, libpthread, kmod-ipv6, kmod-sit
+Source: package/network/ipv6/6rd
+Section: ipv6
+Maintainer: Stéphan Kochen <stephan@kochen.nl>
+Architecture: all
+Installed-Size: 3312
+Description:  Provides support for 6rd tunnels in /etc/config/network.
+ Refer to http://wiki.openwrt.org/doc/uci/network for
+ configuration details.

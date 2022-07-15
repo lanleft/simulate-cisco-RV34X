@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <script language="javascript" type="text/javascript"></script>
+        <script src="jquery-1.11.3.min.js"></script>
+        <link rel="shortcut icon" href="data:image/x-icon;" type="image/x-icon">
+    </head>
+    <style type="text/css">
+        body {
+            margin: 0px;
+        }
+
+        #bg {
+            /*background-image: url("/themes/img/speciel/ciscobg.jpg");*/
+            background-image: url("##background-image-uri##");    /*Please replace custom background-image, default cat be upon url*/
+            background-size: cover;
+            background-repeat: no-repeat;
+            position:   auto;
+            width:      auto;
+            color: ##font-color##;  /*Please replace custom want color, can be color english or RGB Hex number*/
+        }
+        .tb_seg {
+            width:70%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .tb_seg_top {
+            width:70%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 15%;
+        }
+
+        #logo {
+            width: 62px;
+            height: 33px;
+            background-image: url("##logo-uri##");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        #text_info{
+            color: black;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        #text_con{
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
+    <script language="javascript" type="text/javascript">
+		var url = window.location.href;
+        var client_ip = getParameterByName('client_ip',url);
+        var client_mac = getParameterByName('client_mac',url);
+        var connected_time = "0";
+		var landing_url = getParameterByName('landing_url',url);
+		var ap_ip = getParameterByName('ap_ip',url);
+		var ap_port = getParameterByName('ap_port',url);
+		//var ssid = getParameterByName('ssid',url);
+		var win_flag = 1;
+		var win_timeout = 3000;
+
+        /*Reading the URL Paramets*/
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        function init() {
+            document.title = "Guest Network";
+            init_set();
+            new_window();
+        }
+
+        function init_set() {
+            var mac = document.getElementById('mac_addr');
+            var ip = document.getElementById('ip_addr');
+            mac.innerText = client_mac;
+            ip.innerText = client_ip;
+            document.getElementById("client_ip").value = client_ip;
+            if(connected_time)
+                countSecond();
+        }
+
+        function new_window()
+        {
+            if(win_flag === 1)
+            {
+                setTimeout(function(){ window.open(landing_url); }, win_timeout);
+            }
+        }
+
+        function countSecond()
+        {
+            setConnectedTime(connected_time);
+            connected_time = parseInt(connected_time) + 1;
+            setTimeout("countSecond()",1000);
+        }
+
+        function setConnectedTime(seconds)
+        {
+            var time = document.getElementById('connected_time');
+            var days = Math.floor(seconds / 86400);
+            var hours = ('0' + Math.floor((seconds % 86400) / 3600)).substr(-2);
+            var minutes = ('0' + Math.floor(((seconds % 86400) % 3600) / 60)).substr(-2);
+            var seconds = ('0' + ((seconds % 86400) % 3600) % 60).substr(-2);
+            var string = days + (days > 1 ? " days, " : " day, ") + hours + ":" + minutes + ":" + seconds;
+            time.innerText = string;
+        }
+
+        function getinfo() {
+            var post_url="https://"+ap_ip+":"+ap_port+"/getinfo";
+            $.ajax({
+                url: post_url,
+                xhrFields: {
+                    withCredentials: true
+				},
+				crossDomain: true,
+				type:"GET",
+				data: {
+				    client_ip: client_ip,
+				},
+				success:function(msg){
+				    if(msg)
+				    {
+				        var output = msg.output;
+				        connected_time = output["connected-time"] ? output["connected-time"] : connected_time;
+				        win_timeout = output["window_timeout"] ? parseInt(output["window_timeout"]) : win_timeout;
+				        win_flag = output["window_flag"] ? parseInt(output["window_flag"]) : win_flag;
+				    }
+				}
+            });
+        }
+
+        $(function() {
+            //alert("ready event!");
+            getinfo();
+        });
+        $(window).load(function() {
+            //alert("load event!");
+        });
+    </script>
+    <body id="bg" onload="init()">
+        <form name="form" id='infoform' method="post" action="logout">
+            <table class="tb_seg_top"></table>
+            <table class="tb_seg" style="background-image: url(opacity67.png);">
+                <tbody style="font-weight:bold; font-size:16px; color:black;">
+                    <tr>
+                        <td style="width:55px; padding-left: 5px;" rowspan="3">
+                            <img src="Status_information_icon.gif" height="40px" width="40px">
+                        </td>
+                        <td>
+                            Logged in successfully!
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Internet may now be used.</
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Please don't close this page if you want to logout manually.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="tb_seg">
+                <tbody style="font-weight:bold; font-size:16px;">
+                    <tr>
+                        <td colspan="2" style="height:25px"></td>
+                    </tr>
+                    <tr>
+                        <td width="70%">
+                            <span style="font-size: 26px;">Login Information</span>
+                        </td>
+                        <td	width="30%">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="height:25px"></td>
+                    </tr>
+                    <tr>
+                        <td style="height:32px;">
+                            MAC Address:
+                        </td>
+                        <td>
+                           <span id="mac_addr"><span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:32px;">
+                            IP Address:
+                        </td>
+                        <td>
+                            <span id="ip_addr"></span>
+                        </td>
+                    </tr>
+					<tr>
+                        <td style="height:32px;">
+                            Connected Time:
+                        </td>
+                        <td>
+                            <span id="connected_time"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td td colspan="2" style="height:32px;">
+                            <button type="submit" id="bt_logout" style="width:100px; font-weight:bold;">Logout</button>
+                            <input type="hidden" name="client_ip" id='client_ip' value=""/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="height:62px;">
+                            <div>&copy;2017 Cisco Systems, Inc. All rights reserved.</div>
+                        </td>
+                        <td align="right">
+                            <div id="logo" ></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </body>
+</html>

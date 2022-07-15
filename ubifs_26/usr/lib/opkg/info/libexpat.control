@@ -1,0 +1,9 @@
+Package: libexpat
+Version: 2.0.1-1
+Depends: libc, librt, libpthread
+Source: package/openwrt/libs/expat
+License: MIT
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 44440
+Description:  A fast, non-validating, stream-oriented XML parsing library.

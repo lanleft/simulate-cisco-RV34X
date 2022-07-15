@@ -1,0 +1,41 @@
+#!/bin/sh /etc/rc.common
+
+START=23
+STOP=80
+
+start() {
+	board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+	if [ "$board" != "RV340W" -a "$board" != "RV160W" -a "$board" != "RV260W" ] ;then
+		return 0
+	fi
+
+	[ ! -d "/sys/class/gpio/gpio14" ] && {
+		echo 14 >/sys/class/gpio/export;
+		echo in >/sys/class/gpio/gpio14/direction
+	}
+
+    [ ! -d "/sys/class/gpio/gpio44" ] && {
+        echo 44 >/sys/class/gpio/export;
+        echo out >/sys/class/gpio/gpio44/direction
+        echo 1 >/sys/class/gpio/gpio44/value
+    }
+   
+    [ ! -d "/sys/class/gpio/gpio51" ] && {
+        echo 51 >/sys/class/gpio/export;
+        echo out >/sys/class/gpio/gpio51/direction
+        echo 1 >/sys/class/gpio/gpio51/value
+    }
+
+	/usr/bin/wifi_bttn_init.sh
+
+	start-stop-daemon -S -b -m -p /var/run/wifi_daemon.pid -x /usr/bin/wifi_daemon
+}
+
+stop() {
+	board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+	if [ "$board" != "RV340W" -a "$board" != "RV160W" -a "$board" != "RV260W" ] ;then
+		return 0
+	fi
+
+	start-stop-daemon -K -q -s SIGKILL -n wifi_daemon
+}

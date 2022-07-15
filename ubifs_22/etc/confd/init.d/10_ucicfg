@@ -1,0 +1,2 @@
+. /etc/ucicfg.d/init.sh
+. /etc/ucicfg.d/upgrade.sh init

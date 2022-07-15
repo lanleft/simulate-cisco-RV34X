@@ -1,0 +1,8 @@
+
+enabled=`uci get /tmp/etc/config/pnp.general.enabled`
+if [ "$enabled" = "1" ]; then
+        create_pnp_config
+        /etc/init.d/pnpd start &
+else
+        /etc/init.d/pnpd stop || true
+fi

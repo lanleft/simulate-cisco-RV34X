@@ -1,0 +1,9 @@
+Package: net-tools-plipconfig
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Source: package/openwrt/net/net-tools
+Section: net
+Architecture: comcerto2000
+Installed-Size: 2392
+Description:  Program plipconfig from net-tools.  Fine tune the
+ PLIP device parameters, to improve its performance.

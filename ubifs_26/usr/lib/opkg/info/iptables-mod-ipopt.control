@@ -1,0 +1,27 @@
+Package: iptables-mod-ipopt
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-ipopt
+Source: package/network/utils/iptables
+License: GPL-2.0
+Section: net
+Architecture: comcerto2000
+Installed-Size: 15116
+Description:  iptables extensions for matching/changing IP packet options.
+ 
+ Matches:
+ - dscp
+ - ecn
+ - length
+ - qosmark
+ - statistic
+ - tcpmss
+ - unclean
+ - hl
+ 
+ Targets:
+ - DSCP
+ - CLASSIFY
+ - QOSMARK
+ - ECN
+ - HL
+ 

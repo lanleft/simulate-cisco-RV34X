@@ -1,0 +1,8 @@
+Package: cportal
+Version: 1.34-1
+Depends: libc, librt, libpthread, libopenssl, libtree, libpam, libnetfilter-queue
+Source: package/freescale/cportal
+Section: net
+Architecture: comcerto2000
+Installed-Size: 38060
+Description:  Captive Portal

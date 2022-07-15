@@ -1,0 +1,10 @@
+Package: strongswan-mod-eap-identity
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Source: package/openwrt/net/strongswan
+License: GPL-2.0+
+Section: net
+Maintainer: Stijn Tintel <stijn@linux-ipv6.be>
+Architecture: comcerto2000
+Installed-Size: 2568
+Description:  StrongSwan EAP identity helper plugin

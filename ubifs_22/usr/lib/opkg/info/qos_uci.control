@@ -1,0 +1,8 @@
+Package: qos_uci
+Version: 1.0-1
+Depends: libc, librt, libpthread, libuci, libubus, libxtables, iptables, ip6tables
+Source: package/freescale/qos_uci
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 77023
+Description:  This package is for UCI based iptables qos 

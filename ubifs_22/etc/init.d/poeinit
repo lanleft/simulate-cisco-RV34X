@@ -1,0 +1,338 @@
+#!/bin/sh /etc/rc.common
+
+START=48
+STOP=45
+
+. /lib/config/uci.sh
+
+
+start ()
+{
+  board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+  if [ "$board" != "RV345P" ]; then
+      return 0;
+  fi
+  MM="0"
+  HH="*/2"
+  DAYDD="*"
+  MONMM="*"
+  WKDAY="*"
+  MYCMD="sh /usr/bin/poevop_chk.sh"
+  uci del crontabs.poevopchk >/dev/null 2>&1
+  uci set crontabs.poevopchk=crontab
+  uci set crontabs.poevopchk.minutes=$MM
+  uci set crontabs.poevopchk.hours=$HH
+  uci set crontabs.poevopchk.days=$DAYDD
+  uci set crontabs.poevopchk.months=$MONMM
+  uci set crontabs.poevopchk.weekdays=$WKDAY
+  uci set crontabs.poevopchk.command="$MYCMD"
+  uci set crontabs.poevopchk.enabled=1
+  uci commit crontabs
+  /etc/init.d/cron reload
+
+  taskset 2 /usr/bin/poemon &
+
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface eth0+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface eth2+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface br-vlan+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface eth3+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface ppp+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface l2tp+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface ppoe+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface pptp+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface 3g-usb+ --jump DROP
+	iptables -w -A poe_port -p tcp --dport 7007 --in-interface wwan+ --jump DROP
+
+}
+
+stop (){
+
+  board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+  if [ "$board" != "RV345P" ]; then
+      return 0;
+  fi
+
+  /usr/bin/poe_cmd -s allportsenable -1 0 >/dev/null 2>&1
+  /usr/bin/poe_cmd -s dinit
+  killall -9 poemon
+  disable_all_poe_led
+  uci del crontabs.poevopchk >/dev/null 2>&1
+  /etc/init.d/cron reload
+  return 0;
+}
+
+reload() {
+  board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+  if [ "$board" != "RV345P" ]; then
+      return 0;
+  fi
+
+  update_poe_conf
+}
+
+restart() {
+  stop
+  start
+}
+
+update_poe() {
+    cp /tmp/.uci/poeconf /tmp/poecnf
+
+    poegloblset=`cat /tmp/poecnf | grep -E "=peoconf|-poeconf.poeglobal" | sed s/poeconf.// | sed s/=poeconf// | sort -u | sed s/-//`
+
+    #echo "poegloblset=$poegloblset"
+    if [ -n "$poegloblset" ];
+    then
+        entries=`cat /tmp/poecnf | grep -v "\-poeconf" | grep -v "=poeglobal"`
+        pmode=""
+        legcy=""
+        trp=""
+        trpthr=""
+
+        for opt in $entries
+        do
+            tmpstr=`echo $opt | cut -d'.' -f3`
+            optname=`echo $tmpstr | cut -d'=' -f1`
+            optval=`echo $tmpstr | cut -d'=' -f2`
+
+            case $optname in
+            poe_mode)
+                pmode=$optval
+            ;;
+            legacy)
+                legcy=$optval
+            ;;
+            trap)
+               trp=$optval
+            ;;
+            trap_threshold)
+               trpthr=$optval
+            ;;
+            *)
+            ;;
+            esac
+        done
+
+        #echo "pmode=$pmode , legcy=$legcy , trp=$trp , trpthr=$trpthr"
+        update_poeglobal $pmode $legcy $trp $trpthr
+    fi
+
+    poeseatt=`cat /tmp/poecnf | grep -E "=peoconf|-poeconf.poesettings" | sed s/poeconf.// | sed s/=poeconf// | sort -u | sed s/-//`
+
+    #echo "poeseatt=$poeseatt"
+    if [ -n "$poeseatt" ];
+    then
+        entries=`cat /tmp/poecnf | grep -v "\-poeconf" | grep -v "=poesettings"`
+
+        iface_port=""
+        adm_status=""
+        port_prio=""
+        adm_pow_alloc=""
+
+        for opt in $entries
+        do
+            #echo "opt=$opt"
+
+            tmpstr=`echo $opt | cut -d'.' -f3`
+            optname=`echo $tmpstr | cut -d'=' -f1`
+            optval=`echo $tmpstr | cut -d'=' -f2`
+
+            #echo "optname=$optname , optval=$optval"
+
+            case $optname in
+
+            interface_port)
+                iface_port=$optval
+            ;;
+            poe_admin_status)
+                adm_status=$optval
+            ;;
+            power_priority)
+                port_prio=$optval
+            ;;
+            admin_power_alloc)
+                adm_pow_alloc=$optval
+            ;;
+            *)
+            ;;
+            esac
+        done
+        #echo "iface_port=$iface_port , adm_status=$adm_status , port_prio=$port_prio , adm_pow_alloc=$adm_pow_alloc"
+	update_poesettings $iface_port $adm_status $port_prio $adm_pow_alloc
+    fi
+    uci commit poeconf
+    rm /tmp/poecnf
+}
+
+poeglobal ()
+{
+     local cfg=$1
+      config_get poe_mode "$cfg" poe_mode
+      config_get legacy "$cfg" legacy
+      config_get trap "$cfg" trap
+      config_get trap_threshold "$cfg" trap_threshold
+
+      update_poeglobal $poe_mode $legacy $trap $trap_threshold
+
+}
+
+update_poeglobal ()
+{
+      local poe_mode=$1
+      local legacy=$2
+      local trap=$3
+      local trap_threshold=$4
+
+      #echo "poe_mode=$poe_mode"
+      #echo "legacy=$legacy"
+      #echo "trap=$trap"
+      #echo "trap_threshold=$trap_threshold"
+
+      # Following parameters are read through opsdb
+      #config_get nominal_power "$cfg" nominal_power
+      #config_get consumed_power "$cfg" consumed_power
+      #config_get available_power "$cfg" available_power
+
+      if [ -n "$poe_mode" ];
+      then
+          if [ "$poe_mode" = "portlimit" ];
+          then
+              /usr/bin/poe_cmd -s powermode -1 0 >/dev/null 2>&1
+          elif [ "$poe_mode" = "classlimit" ];
+          then
+              /usr/bin/poe_cmd -s powermode -1 1 >/dev/null 2>&1
+          fi
+      fi
+
+      if [ -n "$legacy" ];
+      then
+          if [ "$legacy" = "enable" ];
+          then
+              /usr/bin/poe_cmd -s legacydetect -1 1 >/dev/null 2>&1
+          elif [ "$legacy" = "disable" ];
+          then
+              /usr/bin/poe_cmd -s legacydetect -1 0 >/dev/null 2>&1
+          fi
+      fi
+
+      if [ -n "$trap_threshold" ];
+      then
+          /usr/bin/poe_cmd -s powtrpthreshold -1 $trap_threshold >/dev/null 2>&1
+      fi
+}
+
+poesettings ()
+{
+      local cfg=$1
+	config_get interface_port "$cfg" interface_port
+	config_get poe_admin_status "$cfg" poe_admin_status
+	config_get power_priority "$cfg" power_priority
+	config_get admin_power_alloc "$cfg" admin_power_alloc
+
+      # Following parameters are read through opsdb
+	#config_get max_power_allocation "$cfg" max_power_allocation
+	#config_get power_consumption "$cfg" power_consumption
+	#config_get overload_counter "$cfg" overload_counter
+	#config_get short_counter "$cfg" short_counter
+	#config_get denied_counter "$cfg" denied_counter
+	#config_get absent_counter "$cfg" absent_counter
+	#config_get invalid_signature_counter "$cfg" invalid_signature_counter
+
+	update_poesettings $interface_port $poe_admin_status $power_priority $admin_power_alloc
+}
+
+update_poesettings () {
+      local poemode=`uci get poeconf.poeglobal_0.poe_mode`
+
+      local interface_port=$1
+      local poe_admin_status=$2
+      local power_priority=$3
+      local admin_power_alloc=$4
+
+      #echo "interface_port=$interface_port"
+      #echo "poe_admin_status=$poe_admin_status"
+      #echo "power_priority=$power_priority"
+      #echo "admin_power_alloc=$admin_power_alloc"
+
+      if [ -n "$poe_admin_status" ];
+      then
+          if [ "$poe_admin_status" = "enable" ];
+          then
+              /usr/bin/poe_cmd -s portenable -p $interface_port -1 1 >/dev/null 2>&1
+
+          elif [ "$poe_admin_status" = "disable" ]
+          then
+              /usr/bin/poe_cmd -s portenable -p $interface_port -1 0 >/dev/null 2>&1
+          fi
+      fi
+
+      if [ -n "$power_priority" ];
+      then
+          if [ "$power_priority" = "critical" ];
+          then
+              /usr/bin/poe_cmd -s portpriority -p $interface_port -1 1 >/dev/null 2>&1
+
+          elif [ "$power_priority" = "high" ]
+          then
+              /usr/bin/poe_cmd -s portpriority -p $interface_port -1 2 >/dev/null 2>&1
+          elif [ "$power_priority" = "low" ]
+          then
+              /usr/bin/poe_cmd -s portpriority -p $interface_port -1 3 >/dev/null 2>&1
+          fi
+      fi
+
+      if [ -n "$poemode" ];
+      then
+          if [ "$poemode" = "portlimit" ];
+          then
+              if [ -n "$admin_power_alloc" ];
+              then
+                  /usr/bin/poe_cmd -s portpw -p $interface_port -1 $admin_power_alloc >/dev/null 2>&1
+              fi
+          fi
+      fi
+}
+
+disable_all_poe_led()
+{
+ rtkssdk_diag -l 1 -p 0 -b 0
+ rtkssdk_diag -l 1 -p 1 -b 0
+ rtkssdk_diag -l 1 -p 2 -b 0
+ rtkssdk_diag -l 1 -p 3 -b 0
+ rtkssdk_diag -l 1 -p 4 -b 0
+ rtkssdk_diag -l 1 -p 5 -b 0
+ rtkssdk_diag -l 1 -p 6 -b 0
+ rtkssdk_diag -l 1 -p 7 -b 0
+}
+
+update_poe_conf() {
+    INFILE="/tmp/poecnf"
+    cp /tmp/.uci/poeconf $INFILE
+
+    OUTFILE="/tmp/poemodconf"
+    > $OUTFILE
+
+    while read line ;do
+        tmp1=`echo $line | grep -E "='poesettings|='poeglobal"`
+        if [ -n "$tmp1" ];
+        then
+            echo "" >> $OUTFILE
+            #secname=`echo $tmp1 | sed s/poeconf.// | sed s/=poesettings// | sed s/=poeglobal//`
+	    secname=`echo $tmp1 | cut -d'=' -f1 | cut -d'.' -f2`
+            sechead=` echo $secname |  cut -d'_' -f1`
+            echo "config $sechead '$secname'" >> $OUTFILE
+        fi
+
+        optmp=`echo $line | grep -v "\-poeconf" | grep -v "=\'poesettings" | cut -d'.' -f3`
+        if [ -n "$optmp" ];
+        then
+            optname=`echo $optmp | cut -d'=' -f1`
+            optval=`echo $optmp | cut -d'=' -f2`
+            echo "    option $optname $optval" >> $OUTFILE
+        fi
+    done < $INFILE
+
+    rm $INFILE
+    /usr/bin/poe_cmd -s poeconf  >/dev/null 2>&1
+    uci commit poeconf
+}

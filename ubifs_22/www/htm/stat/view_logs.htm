@@ -1,0 +1,223 @@
+<form name="form" ng-controller="view_logs_main" id="view-logs">
+    <div class="page-title-container" ng-if="dataReady">
+	    <div class="page-title" ng-bind="DICT('View_Logs')"></div>
+    </div>
+	<div class="page-content-container"  ng-if="dataReady">
+        <div  class="warning-container" ng-if="grayout">
+            <span pg-bind-html="warning_msg"></span>
+        </div>
+        <div ng-class="{nopHint: grayout}">
+            <div class="page-block-title-cntr">
+                <div class="page-block-title " ng-bind="DICT('View_Logs_Logs_Filtered_By')"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td class="align-top" ng-bind="DICT('View_Logs_Category')"></td>
+                    <td>
+                        <table class="page-block-tb-list tb-is-checkbox log-align">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="chk_all" ng-model="ctx.all_facility" ng-click="allFacility()"></input>
+                                    <span ng-bind="DICT('View_Logs_All')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_kernel" ng-model="ctx.facility['kern']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Kernel')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_sys" ng-model="ctx.facility['system']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_System')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_firewall" ng-model="ctx.facility['firewall']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Firewall')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_network" ng-model="ctx.facility['network']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Network')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_license" ng-model="ctx.facility['license']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_License')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_webfilter" ng-model="ctx.facility['web-filter']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Web_Filter')"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_users" ng-model="ctx.facility['user']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Users')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_3g4g" ng-model="ctx.facility['mobile']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_3G_4G')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_pnp" ng-model="ctx.facility['pnp']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_PnP')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_anti_virus" ng-model="ctx.facility['anti-virus']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Anti_Virus')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_ips" ng-model="ctx.facility['ips']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_IPS')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_appctrl" ng-model="ctx.facility['application-control']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Application_Control')"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td ng-if="!ruFlag">
+                                    <input type="checkbox" id="chk_vpn" ng-model="ctx.facility['vpn']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_VPN')"></span>
+                                </td>
+                                <td ng-if="!ruFlag">
+                                    <input type="checkbox" id="chk_sslvpn" ng-model="ctx.facility['ssl-vpn']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_SSLVPN')"></span>
+                                </td>
+                                <td ng-show="rv340w_flag">
+                                    <input type="checkbox" id="chk_wireless" ng-model="ctx.facility['wireless']" ng-click="checkFacilityAllStatus()"></input>
+                                    <span ng-bind="DICT('View_Logs_Wireless')"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('View_Logs_Severity')" class="align-top"></td>
+                    <td>
+                        <table class="page-block-tb-list tb-is-checkbox log-align">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" ng-model="ctx.all_severity" ng-click="allSeverity()">
+                                    <span ng-bind="DICT('View_Logs_All')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_alert" ng-model="ctx.severity['alert']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Alert')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_critical" ng-model="ctx.severity['critical']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Critical')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_error" ng-model="ctx.severity['error']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Error')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_emergency" ng-model="ctx.severity['emergency']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Emergency')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_warning" ng-model="ctx.severity['warning']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Warning')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_notice" ng-model="ctx.severity['notice']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Notification')"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_info" ng-model="ctx.severity['info']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Information')"></span>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_severity_debug" ng-model="ctx.severity['debug']" ng-click="checkSeverityAllStatus()"/>
+                                    <span ng-bind="DICT('View_Logs_Debugging')"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('View_Logs_Search_Keyword')"></td>
+                    <td>
+                        <input id="txt_keyword" keyword maxlength="32" ng-model="ctx.keyword" type="text" ></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="btn_showlogs"
+                                ng-disabled="ctx.facility_cnt === 0 || ctx.severity_cnt === 0"
+                                ng-click="save()"
+                                >
+                                <span ng-bind="DICT('View_Logs_Show_Logs')"></span>
+                        </button>
+                    </td>
+                    <td pg-bind-html="note_msg">
+                    </td>
+                </tr>
+            </table>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <span class="grid-title" ng-bind="DICT('View_Logs_Log_Table')"></span>
+                </div>
+                <div class="grid-content-cntr" ng-class="{nopHint: grayout}">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_refresh" class="grid-btn-refresh" ng-click="refresh()"></button>
+                        <button id="btn_clearlogs" ng-disabled="!model.logs.length || userAccessFlag === 'RO'" ng-click="clear()">
+                            <span ng-bind="DICT('View_Logs_Clear_Logs')"></span>
+                        </button>
+                        <button id="btn_export2PC" ng-disabled="!model.logs.length || userAccessFlag === 'RO'" ng-click="to_pc()">
+                            <span ng-bind="DICT('View_Logs_Export_PC')"></span>
+                        </button>
+                        <button id="btn_export2USB" ng-disabled="!model.logs.length || userAccessFlag === 'RO'" ng-click="to_usb()">
+                            <span ng-bind="DICT('View_Logs_Export_USB')"></span>
+                        </button>
+                    </div>
+
+                    <div ui-grid="gridviewOptions" ui-grid-pagination ui-grid-resize-columns ui-grid-auto-resize class="grid-content"></div>
+
+                    <div class="ui-grid-pagination-ctrl-cntr">
+                        <ui-grid-pagination-op page-idx="model.currPage" ui-grid-option="gridviewOptions" paging-options="pagingOptions"></ui-grid-pagination-op>
+                    </div>	
+                </div>
+            </div>
+        </div>
+    </div> 
+</form>
+
+<script type="text/ng-template" id="export_log_to_usb.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('View_Logs_Export_USB')"></div>
+        </div>
+        <div class="modal-content-container">
+            <span ng-hide="usbs_avaiable.USB1 || usbs_avaiable.USB2">
+                <div ng-bind="DICT('View_Logs_No_Available_USB_Device')"></div>
+            </span>
+            <span ng-if="usbs_avaiable.USB1 || usbs_avaiable.USB2">
+                <div ng-bind="DICT('View_Logs_Choose_USB_Drive')"></div>
+                <div class="indent1">
+                    <input type="radio" id="rdo_usb1" ng-model="usb_name" ng-disabled="!usbs_avaiable.USB1" value="USB1">
+                        <span ng-bind="DICT('View_Logs_USB1')"></span>
+                    </input>
+                </div>
+                <div class="indent1">
+                    <input type="radio"id="rdo_usb2"  ng-model="usb_name" ng-disabled="!usbs_avaiable.USB2" value="USB2">
+                        <span ng-bind="DICT('View_Logs_USB2')"></span>
+                    </input>
+                </div>
+            </span>
+        </div>
+        <div class="modal-button-container">
+            <button id="btn_export" type="button" ng-click="save()" ng-disabled="!usb_name" class="btn-primary">
+				<span ng-bind="DICT('View_Logs_Export')"></span>
+            </button>
+            <button id="btn_cancel" type="button" ng-click="cancel()" class="btn-secondary">
+				<span ng-bind="DICT('View_Logs_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>

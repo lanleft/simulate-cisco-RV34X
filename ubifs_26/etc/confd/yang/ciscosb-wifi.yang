@@ -1,0 +1,1160 @@
+module ciscosb-wifi {
+    namespace "http://cisco.com/ns/ciscosb/wifi";
+    prefix ciscosb-wifi;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import iana-if-type { prefix ianaift; }
+    import ciscosb-types { prefix ciscosb-types; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-captive-portal { prefix captive-portal; }
+    import ciscosb-schedule { prefix ciscosb-schedule; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module defines wireless related.";
+    revision 2016-10-20 {
+        description "Merge from BBII
+                    Add Portected Management Frames(PMF) type
+                    Add isPermanent leaf to SSID";
+    }
+    revision 2016-07-01 {
+        description "update range for resolving wifi page configuring issue.";
+        reference "";
+    }
+    revision 2016-05-30 {
+        description
+            "1.Chang the type of rate from int8 to decimal64;
+        2.Update timeout of AP generated WPS PIN";  
+        reference "";
+    }
+    revision 2016-03-28 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity wifi-radio {
+        base if:interface-type;
+        description
+                "2.4g radio or 5g radio ";
+    }
+    typedef interface-ref {
+        type leafref {
+            path "/if:interfaces/if:interface/if:name";
+        }
+        description
+                "This type is used by data models that need to reference configured
+                interfaces.";
+    }
+    typedef data-rate {
+        type string {
+          pattern '([0-9a-fA-F]*)?';
+        }
+        description
+         "A hexadecimal string with octets represented as hex digits
+          separated by colons. The canonical representation uses
+          lowercase characters.";
+    }
+    typedef pmf-type {
+        type enumeration {
+            enum not-required;
+            enum capable;
+            enum required;
+        }
+        description
+            "The Protected Management Frames(PMF) is to increase the security by
+            providing data confidentiality of management frames,
+                      mechanisms that enable data integrity, data origin authenticity,
+                      and replay protection.";
+    }
+    grouping ASSOCIATE_CLIENT_STATE {
+        leaf operating-standard {
+            description
+                    "Indicate what operation model a/b/g/n/ac the associated client is operating";
+            type enumeration {
+                enum "a";
+                enum "b";
+                enum "g";
+                enum "n";
+                enum "ac";
+            }
+        }
+     leaf link-layer-address {
+            type yang:phys-address;
+            description
+              "The link-layer address of the neighbor node.";
+        }
+        leaf hostname {
+            type string;
+        }
+        leaf ip {
+           type inet:ipv4-address-no-zone;
+           description
+             "The IPv4 address of the neighbor node.";
+        }
+        leaf authentication-state {
+            config false;
+            description
+                        "Whether an associated device has authenticated.";
+            type boolean;
+        }
+        leaf last-data-downlink-rate {
+            config false;
+            units "kbps";
+            description
+                        "The data transmit rate in kbps that was most recently used for
+                        transmission from the wifi network to the associated device. unit
+                        is kbps, maxInclusive=600000, minInclusive=1000";
+            type uint32;
+        }
+        leaf last-data-uplink-rate {
+            config false;
+            units "kbps";
+            description
+                        "The data transmit rate in kbps that was most recently used for
+                        transmission from the associated device to the wifi network. unit
+                        is kbps, maxInclusive=600000, minInclusive=1000";
+            type uint32;
+        }
+        leaf signal-strength {
+            config false;
+            units "dBm";
+            description
+                        "An indicator of radio signal strength of the uplink from the
+                        associated device to the wifi network, measured in dBm, as an
+                        average of the last 100 packets received from the device.";
+            type int16;
+        }
+        leaf transmit-rate {
+            config false;
+            description
+                        "The actual transmission rate negotiated with STA";
+            type uint32;
+        }
+        leaf connect-time {
+            config false;
+            units "second";
+            description
+                        "The accumulated connectTime in seconds for this associated device";
+            type uint32;
+        }
+        leaf retransmissions {
+            config false;
+            description
+                        "The number of packets that had to be re-transmitted, from the
+                        last 100 packets sent to the associated device. Multiple re-transmissions
+                        of the same packet count as one.";
+            type uint32;
+        }
+        leaf active {
+            config false;
+            description
+                        "Whether or not this node is currently present in the WiFi AccessPoint
+                        network. The ability to list inactive nodes is OPTIONAL.";
+            type boolean;
+        }
+        leaf noise {
+            config false;
+            units "dBm";
+            description
+                        "Noise level.";
+            type int16;
+        }
+        leaf tx-packets {
+            type uint32;
+        }
+        leaf rx-packets {
+            type uint32;
+        }
+        leaf tx-bytes {
+            type uint32;
+        }
+        leaf rx-bytes {
+            type uint32;
+        }
+    }
+    grouping SSID {
+        leaf enable {
+            description
+                        "Enables or disables this wifi network.";
+            type boolean;
+        }
+        leaf alias {
+            description
+                        "A non-volatile handle used to reference this instance.
+                        provides a mechanism for an controller to label this instance for future
+                        reference.";
+            type string;
+        }
+        leaf ssid-advertisment-enable {
+            description
+                        "Indicates whether or not beacons include the SSID name.";
+            type boolean;
+        }
+        leaf retry-limit {
+            description
+                        "The maximum number of retransmission for a packet. This corresponds
+                        to IEEE 802.11 parameter ''dot11ShortRetryLimit''.";
+            type uint32;
+        }
+        leaf wmm-capability {
+            config false;
+            description
+                        "Indicates whether this wifi network supports WiFi Multimedia
+                        (WMM) Access Categories (AC).";
+            type boolean;
+        }
+        leaf wmm-enable {
+            description
+                        "Whether WMM support is currently enabled. When enabled, this
+                        is indicated in beacon frames.";
+            type boolean;
+            default "false";
+        }
+        leaf captive-portal {
+            type captive-portal:Portal-profile-ref;
+        }
+        leaf captive-portal-enable {
+            type boolean;
+        }
+        leaf isolation-with-ssid {
+            type boolean;
+        }
+        container security {
+            description
+                        "This object contains security related parameters that apply to
+                        a CPE acting as an Access Point";
+            leaf mode-enabled {
+                description
+                                "Indicates which security mode is enabled.";
+                type ciscosb-types:wifi-security-mode-type;
+            }
+            choice mode-chosed {
+                case None {
+                    leaf None {
+                        type empty;
+                    }
+                }
+                case WEP-64 {
+                    container WEP-64 {
+                        leaf wep-key {
+                            type string;
+                        }
+                    }
+                }
+                case WEP-128 {
+                    container WEP-128 {
+                        leaf wep-key {
+                            type string;
+                        }
+                    }
+                }
+                case WPA-Personal {
+                    container WPA-Personal {
+                        uses WPA-KEY;
+                    }
+                }
+                case WPA-WPA2-Personal {
+                    container WPA-WPA2-Personal {
+                        uses WPA-KEY;
+                    }
+                }
+                case WPA2-Personal {
+                    container WPA2-Personal {
+                        uses WPA-KEY;
+                    }
+                }
+                case WPA-Enterprise {
+                    container WPA-Enterprise {
+                        uses WPA-ENTERPRISE;
+                    }
+                }
+                case WPA2-Enterprise {
+                    container WPA2-Enterprise {
+                        uses WPA-ENTERPRISE;
+                    }
+                }
+                case WPA-WPA2-Enterprise {
+                    container WPA-WPA2-Enterprise {
+                        uses WPA-ENTERPRISE;
+                    }
+                }
+            }
+            leaf rekeying-interval {
+                description
+                                "The interval in which the keys are re-generated.
+                                This is applicable to WPA, WPA2 and Mixed (WPA-WPA2) modes in
+                                Personal or Enterprise mode";
+                type uint32;
+            }
+        }
+        choice schedule-type {
+            case always {
+                leaf always-on {
+                    type empty;
+                }
+            }
+            case schedule {
+                leaf schedule {
+                    type ciscosb-schedule:Schedule-ref;
+                }
+            }
+        }
+        leaf pmf {
+            type pmf-type;
+        }
+    }
+    grouping WPA-ENTERPRISE {
+        leaf radius-server-ip-addr {
+            description
+                        "The IP Address of the RADIUS server used for WLAN security.";
+            type inet:ip-address;
+        }
+        leaf radius-server-port {
+            description
+                        "The port number of the RADIUS server used for WLAN security.";
+            type int32;
+            default "1812";
+        }
+        leaf radius-secret {
+            description
+                        "The secret used for handshaking with the RADIUS server.";
+            type string;
+        }
+    }
+    grouping WPA-KEY {
+        choice key-type {
+            case passphrase {
+                leaf key-passphrase {
+                    description
+                         "A passphrase from which the PreSharedKey is to be generated";
+                    type string;
+                }
+            }
+            case preshared {
+                leaf preshared-key {
+                    description
+                         "A literal PreSharedKey (PSK) expressed as a hexadecimal string.";
+                    type string;
+                }
+            }
+        }
+    }
+    grouping RADIO {
+        leaf enable {
+            description
+                        "Enables or disables the radio. This parameter is based on ''ifAdminStatus''
+                        from RFC2863.";
+            type boolean;
+        }
+        leaf detact-rogue-ap {
+            type boolean;
+        }
+        leaf mode {
+            description
+                        "Describing how the radio is configured to operate, there are three options - AP, Analyzer, and AP+Analyzer";
+            type enumeration {
+                enum "AP";
+                enum "Analyzer";
+                enum "AP+Analyzer";
+            }
+        }
+        leaf alias {
+            description
+                        "A non-volatile handle used to reference this instance. param
+                        provides a mechanism for an ACS to label this instance for future
+                        reference. An initial unique value MUST be assigned when the CPE
+                        creates an instance of this object.";
+            type string;
+        }
+        leaf operating-frequency-band {
+            description
+                        "Indicates the frequency band at which the radio is operating.
+                        If the radio supports multiple bands, and param is changed, then
+                        all parameters whose value is not valid for the new frequency
+                        band (e.g. Channel) MUST be set to a valid value (according to
+                        some CPE vendor-specific behavior";
+            type ciscosb-types:wifi-band-type;
+        }
+        leaf-list operating-standards {
+            description
+                        "List items indicate which IEEE 802.11 standard this radio instance
+                        is configured for. Each value indicates support for the indicated
+                        standard. ";
+            type enumeration {
+                enum "a";
+                enum "b";
+                enum "g";
+                enum "n";
+                enum "ac";
+            }
+        }
+        leaf channel {
+            description
+                        "The current radio channel used by the connection. To request
+                        automatic channel selection, set autoChannel-enable to true.";
+            type uint8;
+        }
+        leaf channel2 {
+            description
+                        "the second radio channel used by the connection. ";
+            type uint8;
+        }
+        leaf autoChannel-enable {
+            description
+                        "Enable or disable automatic channel selection.";
+            type boolean;
+        }
+        leaf autoChannel-refresh-period {
+            description
+                        "The time period in seconds between two consecutive automatic
+                        channel selections. A value of 0 means that the automatic channel
+                        selection is done only at boot time. This parameter is significant
+                        only if autoChannel-enable is set to true";
+            type uint32;
+        }
+        leaf operating-channel-bandwidth {
+            description
+                        "The channel bandwidth (applicable to 802.11n specifications only)";
+            type enumeration {
+                enum "20MHz";
+                enum "40MHz";
+                enum "20/40MHz";
+                enum "80MHz";
+                enum "80+80MHz";
+                enum "160MHz";
+                enum "Auto";
+            }
+        }
+        leaf extension-channel {
+            description
+                        "The secondary extension channel position, applicable when operating
+                        in wide channel mode";
+            type enumeration {
+                enum "AboveControlChannel";
+                enum "BelowControlChannel";
+                enum "Auto";
+            }
+        }
+        leaf guard-interval {
+            description
+                        "The guard interval value between OFDM symbols (applicable to
+                        802.11n specifications only";
+            type enumeration {
+                enum "400nsec";
+                enum "800nsec";
+                enum "Auto";
+            }
+        }
+        leaf beacon-interval {
+            description
+                        "The interval between the transmission of beacon frames. The WAP
+                        device transmits these at regular intervals to announce the existence
+                        of the wireless network. The default behavior is to send a beacon
+                        frame once every 100 milliseconds (or 10 per second).";
+            units "milliseconds";
+            default "100";
+            type uint32 {
+                range "40 .. 3500";
+            }
+        }
+        leaf mimo {
+            type boolean;
+        }
+        leaf dfs {
+            type boolean;
+        }
+        leaf beamforming-enable {
+            type boolean;
+            default "false";
+        }
+        leaf dtim-period {
+            description
+                        "he Delivery Traffic Information Map (DTIM) period. Enter an integer
+                        from 1 to 255 beacons. The default is 1 beacons";
+            units "beacons";
+            default "1";
+            type uint32 {
+                range "1 .. 255";
+            }
+        }
+        leaf fragmentation-threshold {
+            description
+                        "The frame size threshold in bytes. The valid integer must be
+                        even and in the range of 256 to 2346. The default is 2346, If
+                        a packet exceeds the fragmentation threshold you set, the fragmentation
+                        function is activated and the packet is sent as multiple 802.11
+                        frames";
+            default "2346";
+            type uint32 {
+                range "256 .. 2346";
+            }
+        }
+        leaf max-associated-clients {
+            type uint32;
+        }
+        leaf transmit-power {
+            description
+                        "Indicates the current transmit power level as a percentage of
+                        full power. The value MUST be one of the values reported by the
+                        TransmitPowerSupported parameter. A value of -1 indicates
+                        auto mode";
+            type int8;
+        }
+        leaf-list enforced-transmit-rate {
+            description
+                    "Set the fastest transmission rate for STA to transmite data";
+            units "Mbps";
+            type int8;
+        }
+        container transmission-rate {
+         leaf mode {
+          type enumeration {
+           enum Auto;
+           enum Manual;
+          }
+         }
+         leaf-list rate-basic {
+                description
+                            "The Basic Rate setting is not actually one rate of transmission but a series of rates at which the AP can transmit. 
+                   The AP will advertise its Basic Rate to the other wireless devices in your network, so they know which rates will be used.
+                   The AP will also advertise that it will automatically select the best rate for transmission.
+                   When the AP can transmit at all standard wireless rates (1-2Mbps, 5.5Mbps, 11Mbps, 18Mbps, and 24Mbps).
+                   Other options are 1-2Mbps, for use with older wireless technology, and All, when the AP can transmit at all wireless rates.
+                   The Basic Rate is not the actual rate of data transmission.
+                   If you want to specify the AP's rate of data transmission, configure the Transmission Rate setting.";
+                units "Mbps";
+                type decimal64 {
+                    fraction-digits 1;
+                }
+            }
+            leaf-list rate {
+                description
+                            "The rate of data transmission should be set depending on the speed of your wireless network. 
+                   You can select from a range of transmission speeds,
+                   or you can select Auto to have the AP automatically use the fastest possible data rate and enable the Auto-Fallback feature.
+                   Auto-Fallback will negotiate the best possible connection speed between the AP and a wireless client.
+                      ";
+                units "Mbps";
+                type decimal64 {
+                    fraction-digits 1;
+                }
+            }
+            leaf ht-mcs {
+                description
+                            "The Modulation Coding Scheme index. Values from 0 to 31 MUST be supported.
+                   For example,
+                   0xffff means MCS SET : [ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 ] .
+                    ";                        
+                type data-rate;
+            }
+            container vht-mcs {
+                description
+                            "The VHT Modulation Coding Scheme index.
+                 ";
+               leaf s1 {
+                description "
+                            Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x1.
+                            the actual applied MCS is 0x1 1x1 2x1 3x1 4x1 5x1 6x1 7x1 8x1.
+                ";
+                type data-rate;
+               }
+         leaf s2 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x2.
+                       the actual applied MCS is 0x2 1x2 2x2 3x2 4x2 5x2 6x2 7x2 8x2.
+                ";
+          type data-rate;
+         }
+         leaf s3 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x3.
+                       the actual applied MCS is 0x3 1x3 2x3 3x3 4x3 5x3 6x3 7x3 8x3.
+                ";
+          type data-rate;
+         }
+         leaf s4 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x4.
+                       the actual applied MCS is 0x4 1x4 2x4 3x4 4x4 5x4 6x4 7x4 8x4
+                ";
+          type data-rate;
+         }
+            }
+        }
+        leaf ieee80211h-enabled {
+            description
+                        "Indicates whether IEEE 802.11h functionality is enabled on this
+                        radio.";
+            type boolean;
+        }
+        leaf regulatory-domain {
+            description
+                        "The 802.11d Regulatory Domain. ";
+            type string;
+        }
+        leaf cts-protection-mode {
+            type enumeration {
+                enum disabled;
+                enum auto;
+            }
+        }
+        leaf frame-burst-enable {
+            type boolean;
+        }
+        leaf rts-threshold {
+            default "2347";
+            type uint32 {
+                range "0 .. 2347";
+            }
+        }
+        leaf uapsd-capability {
+            config false;
+            description
+                        "Indicates whether this wifi network supports WMM Unscheduled
+                        Automatic Power Save Delivery (U-APSD). Note: U-APSD support implies
+                        WMM support.";
+            type boolean;
+        }
+        leaf uapsd-enable {
+            description
+                        "Whether U-APSD support is currently enabled. When enabled, this
+                        is indicated in beacon frames. Note: U-APSD can only be enabled
+                        if WMM is also enabled.";
+            type boolean;
+            default "false";
+        }
+        leaf wmm-no-acknowledgement-enable {
+            type boolean;
+            default "false";
+        }
+    }
+    grouping RADIO-STATE {
+     container transmission-rate {
+         leaf-list rate-basic {
+                description
+                            "The Basic Rate setting is not actually one rate of transmission but a series of rates at which the AP can transmit. 
+                   The AP will advertise its Basic Rate to the other wireless devices in your network, so they know which rates will be used.
+                   The AP will also advertise that it will automatically select the best rate for transmission.
+                   When the AP can transmit at all standard wireless rates (1-2Mbps, 5.5Mbps, 11Mbps, 18Mbps, and 24Mbps).
+                   Other options are 1-2Mbps, for use with older wireless technology, and All, when the AP can transmit at all wireless rates.
+                   The Basic Rate is not the actual rate of data transmission.
+                   If you want to specify the AP's rate of data transmission, configure the Transmission Rate setting.";
+                units "Mbps";
+                type decimal64 {
+                    fraction-digits 1;
+                }
+            }
+            leaf-list rate {
+                description
+                            "The rate of data transmission should be set depending on the speed of your wireless network. 
+                   You can select from a range of transmission speeds,
+                   or you can select Auto to have the AP automatically use the fastest possible data rate and enable the Auto-Fallback feature.
+                   Auto-Fallback will negotiate the best possible connection speed between the AP and a wireless client.
+                      ";
+                units "Mbps";
+                type decimal64 {
+                    fraction-digits 1;
+                }
+            }
+            leaf ht-mcs {
+                description
+                            "The Modulation Coding Scheme index. Values from 0 to 31 MUST be supported.
+                   For example,
+                   0xffff means MCS SET : [ 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 ] .
+                    ";                        
+                type data-rate;
+            }
+            container vht-mcs {
+                description
+                            "The VHT Modulation Coding Scheme index.
+                 ";
+               leaf s1 {
+                description "
+                            Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x1.
+                            the actual applied MCS is 0x1 1x1 2x1 3x1 4x1 5x1 6x1 7x1 8x1.
+                ";
+                type data-rate;
+               }
+         leaf s2 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x2.
+                       the actual applied MCS is 0x2 1x2 2x2 3x2 4x2 5x2 6x2 7x2 8x2.
+                ";
+          type data-rate;
+         }
+         leaf s3 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x3.
+                       the actual applied MCS is 0x3 1x3 2x3 3x3 4x3 5x3 6x3 7x3 8x3.
+                ";
+          type data-rate;
+         }
+         leaf s4 {
+                description "
+                       Value 0x1ff is 111111111b, and means support MCS0-8 for special stream x4.
+                       the actual applied MCS is 0x4 1x4 2x4 3x4 4x4 5x4 6x4 7x4 8x4
+                ";
+          type data-rate;
+         }
+            }
+        }
+        leaf status {
+            config false;
+            description
+                        "The current operational state of the radio enum When Enable is
+                        false then param SHOULD normally be Down or NotPresent or Error
+                        if there is a fault condition on the interface. When Enable is
+                        changed to true then param SHOULD change to Up if and only if
+                        the interface is able to transmit and receive network traffic;
+                        it SHOULD change to Dormant if and only if the interface is operable
+                        but is waiting for external actions before it can transmit and
+                        receive network traffic (and subsequently change to Up if still
+                        operable when the expected actions have completed); it SHOULD
+                        change to LowerLayerDown if and only if the interface is prevented
+                        from entering the Up state because one or more of the interfaces
+                        beneath it is down; it SHOULD remain in the Error state if there
+                        is an error or other fault condition detected on the interface;
+                        it SHOULD remain in the NotPresent state if the interface has
+                        missing (typically hardware) components; it SHOULD change to Unknown
+                        if the state of the interface can not be determined for some reason.
+                        This parameter is based on ''ifOperStatus'' from RFC2863.";
+            type enumeration {
+                enum "Up";
+                enum "Down";
+                enum "Unknown";
+                enum "Dormant";
+                enum "NotPresent";
+                enum "LowerLayerDown";
+                enum "Error";
+            }
+        }
+        leaf last-change {
+            config false;
+            description
+                        "The accumulated time in seconds since the radio entered its current
+                        operational state.";
+            type uint64;
+        }
+        leaf up-steam {
+            config false;
+            description
+                        "Indicates whether the interface points towards the Internet true
+                        or towards End Devices false. For example: * For an Internet Gateway
+                        Device, upStream will be true for all WAN interfaces and false
+                        for all LAN interfaces. * For a standalone WiFi Access Point that
+                        is connected via Ethernet to an Internet Gateway Device, param
+                        will be true for the Ethernet interface and false for the WiFi
+                        Radio interface. * For an End Device, upStream will be true for
+                        all interfaces.";
+            type boolean;
+        }
+        leaf max-bit-rate {
+            config false;
+            description
+                        "The maximum PHY bit rate supported by this interface (expressed
+                        in Mbps";
+            type uint32;
+        }
+        leaf-list supported-frequency-bands {
+            config false;
+            description
+                        "List items indicate the frequency bands at which the radio can
+                        operate";
+            type ciscosb-types:wifi-band-type;
+        }
+        leaf-list transmit-rate-supported {
+            config false ;
+            description
+                        "Supported Rate Sets indicate rates that the WAP device supports";
+            units "Mbps";
+            type int8;
+        }
+        leaf-list supported-standards {
+            config false;
+            description
+                        "List items indicate which IEEE 802.11 standards this radio instance
+                        can support simultaneously, in the frequency band specified by
+                        OperatingFrequencyBand. Each value indicates support for the indicated
+                        standard. If OperatingFrequencyBand is set to 2.4GHz, only values
+                        b, g, n are allowed. If OperatingFrequencyBand is set to 5GHz
+                        only values a, n, ac are allowed";
+            type enumeration {
+                enum "a";
+                enum "b";
+                enum "g";
+                enum "n";
+                enum "ac";
+            }
+        }
+        leaf-list possible-channel {
+            config false;
+            description
+                        "List items represent possible radio channels for the wireless
+                        standard (a, b, g, n) and the regulatory domain. Ranges in the
+                        form 'n-m' are permitted. For example, for 802.11b and North America,
+                        would be '1-11'";
+            type string;
+        }
+        leaf-list channels-in-use {
+            config false;
+            description
+                        "List items represent channels that the radio determines to be
+                        currently in use (including any that it is using itself). Ranges
+                        in the form 'n-m' are permitted";
+            type string;
+        }
+        leaf autoChannel-supported {
+            config false;
+            description
+                        "Indicates whether automatic channel selection is supported by
+                        this radio. If false, then AutoChannelEnable MUST be false";
+            type boolean;
+        }
+        leaf-list transmit-power-supported {
+            config false;
+            description
+                        "List items represent supported transmit power levels as percentage
+                        of full power. For example, '0,25,50,75,100'. A -1 item indicates
+                        auto mode (automatic decision by CPE). Auto mode allows the ''Radio''
+                        to adjust transmit power accordingly. For example, this can be
+                        useful for power-save modes such as EU-CoC, where the ''Radio''
+                        can adjust power according to activity in the CPE";
+            type int8;
+        }
+        leaf ieee80211h-supported {
+            config false;
+            description
+                        "Indicates whether IEEE 802.11h functionality
+                        is supported by this radio.";
+            type boolean;
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "/if:interfaces/if:interface/if:type = 'ciscosb-wifi:wifi-radio'";
+        container radio {
+            uses RADIO;
+        }
+    }
+    container wlans {
+        container security {
+              config false;
+              description
+                  "This object contains security related parameters";
+              leaf-list modes-supported {
+                  description
+                     "Indicates which security modes the AP is capable of supporting.";
+                  type ciscosb-types:wifi-security-mode-type;
+              }
+        }
+        list ssid {
+         ordered-by user;
+            key "ssid radio";
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                description "possible values are: WLAN0, WLAN1, BOTH";
+                type string;
+            }
+            uses SSID;
+            leaf vlan_id {
+                description
+                    "vlan_id";
+                type uint16 {
+                    range "1..4094";
+                }
+            }
+            container mac-filter {
+                leaf enable {
+                    type boolean;
+                }
+                leaf action {
+                    type enumeration {
+                        enum block;
+                        enum allow;
+                    }
+                }
+                list filtered-macs {
+                    key mac-address;
+                    leaf mac-address {
+                        type yang:mac-address;
+                    }
+                    leaf action {
+                        type enumeration {
+                            enum block;
+                            enum allow;
+                        }
+                    }
+                    leaf alias {
+                        type string;
+                    }
+                }
+            }
+            container wps {
+                description
+                    "This object contains parameters related to Wi-Fi Protected Setup
+                    for this wifi network.";
+                leaf enable {
+                    description
+                        "Enables or disables WPS functionality for this wifi network.";
+                    type boolean;
+                }
+                leaf-list config-methods-enabled {
+                    description
+                        "Indicates WPS configuration methods enabled on the device.";
+                    type enumeration {
+                        enum "USBFlashDrive";
+                        enum "Ethernet";
+                        enum "ExternalNFCToken";
+                        enum "IntegratedNFCToken";
+                        enum "NFCInterface";
+                        enum "PushButton";
+                        enum "PIN";
+                    }
+                }
+            }
+        }
+    }
+    container wlans-state {
+      config false;
+      container ssids {
+         list ssid {
+             key "ssid radio-ref";
+             leaf ssid {
+                type string;
+             }
+             leaf radio-ref {
+                 type leafref {
+                     path "/if:interfaces-state/if:interface/if:name";
+                 }
+             }
+             leaf isPermanent {
+                       description
+                     "Indicates whether it is permanent entry,
+                      This entry can not be deleted or disabled if it is true";
+               type boolean;
+            }
+             leaf virtual-interface-ref {
+                 type leafref {
+                     path "/if:interfaces-state/if:interface/if:name";
+                 }
+                 description "This is generated by device automatically.";
+             }
+             leaf status {
+                 config false;
+                 description
+                     "Indicates the status of this wifi network. The {Error_Misconfigured}
+                     value indicates that a necessary configuration value is undefined
+                     or invalid. The {Error} value MAY be used by the CPE to
+                     indicate a locally defined error condition.";
+                 type enumeration {
+                      enum "Disabled";
+                      enum "Enabled";
+                      enum "Error_Misconfigured";
+                      enum "Error";
+                 }
+            }
+        }
+      }
+    container neighboring-aps {
+         list neighboring-ap {
+             description
+                         "WAP device performs an RF scan on all channels to detect all
+                         APs in the vicinity of the network.";
+             key mac;
+             leaf mac {
+                 type ciscosb-types:wifi-id-type;
+             }
+                leaf radio {
+                    description "possible values are: WLAN0, WLAN1, BOTH";
+                    type string;
+                }
+             leaf ssid {
+                 description
+                                 "It is also referred to as the Network Name (SSID)";
+                 type string;
+             }
+             leaf privacy {
+                 description
+                                 "Indicates whether there is any security on this detected ap ";
+                 type boolean;
+             }
+             leaf band-in-used {
+                 description
+                                 "The IEEE 802.11 mode being used on the neighbor AP. 2.4 indicates
+                                 IEEE 802.11b, 802.11g, or 802.11n mode (or a combination of the
+                                 modes). 5 indicates IEEE 802.11a or 802.11n mode (or both modes).";
+                 type ciscosb-types:wifi-band-type;
+             }
+             leaf channel-in-use {
+                 type string;
+                 description
+                                 "List items represent channels that the radio determines to be
+                                 currently in use (including any that it is using itself). Ranges
+                                 in the form 'n-m' are permitted";
+             }
+             leaf signal-strength {
+                 description
+                                 "he strength of the radio signal emitting from neighbor AP.";
+                 type int16;
+             }
+             leaf beacons {
+                 description
+                                 "The total number of beacons received from the neighbor AP since
+                                 it was first discovered";
+                 type uint32;
+             }
+             leaf last-beacon-time {
+                 description
+                                 "The date and time of the last beacon received from";
+                 type yang:date-and-time;
+             }
+             leaf-list rates {
+                 units "Mbps";
+                 description
+                                 "Supported and basic (advertised) rate sets for the neighbor AP.
+                                 Rates are shown in megabits per second (Mbps)";
+                 type decimal64 {
+                        fraction-digits 1;
+                    }
+             }
+             leaf trusted {
+                 description
+                                 "An indicator if it is a trust Ap";
+                 type boolean;
+             }
+         }
+     }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        when "/if:interfaces-state/if:interface/if:type = 'ciscosb-wifi:wifi-radio'";
+        container radio {
+            uses RADIO-STATE;
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        when "/if:interfaces-state/if:interface/if:type = 'ianaift:ieee80211'";
+        container ssid {
+            leaf ssid {
+                type string;
+            }
+            leaf bssid {
+                config false;
+                description
+                        "The Basic Service Set ID. This is the MAC address of the access
+                        point, which can either be local (when this instance models an
+                        access point SSID) or remote (when this instance models an end
+                        point SSID).";
+                type yang:mac-address;
+            }
+            leaf radio-ref {
+                type leafref {
+                    path "/if:interfaces/if:interface/if:name";
+                }
+            }
+            leaf associated-device-count {
+             type uint32;
+            }
+            list associated-device {
+                key link-layer-address;
+                uses ASSOCIATE_CLIENT_STATE;
+            }
+            leaf wps_enabled {
+                type boolean;
+            }
+        }
+    }
+    rpc press-wps {
+        description
+                "Simulate the Wi-Fi Protected Setup button";
+        input {
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                type string;
+            }
+        }
+    }
+    rpc generate-wps-pin {
+        description
+                "reset interfaces conters";
+        input {
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                type string;
+            }
+            leaf pin-timeout {
+                type uint32 {
+                    range "1 .. 86401";
+                }
+                default "1200";
+                units "seconds";
+                description
+                    "PIN  timeout. 1 ~ 86400 means the  timeout value of requested PIN. 
+                    86401 means static PIN which never expires.";
+            }
+        }
+        output {
+            leaf pin {
+                type string ;
+            }
+        }
+    }
+    rpc retrieve-wps-pin {
+        description
+                "Retrieve the corresponding PIN for the ssid-radio";
+        input {
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                type string;
+            }
+        }
+        output {
+            uses ciscosb-common:RPC-RESPONSE;
+            leaf pin {
+                type string ;
+            }
+            leaf pin-timeout {
+                type uint32 {
+                    range "0 .. 86401";
+                }
+                units "seconds";
+                description
+                    "PIN  timeout. 0 means the PIN already expires. 1 ~ 86400 means the remaining  timeout value 
+                    of requested PIN. 86401 means static PIN which never expires.";
+            }
+        }
+    }
+    rpc register-wps-device-pin {
+        description
+                "called when your client device has a Wi-Fi protected Setup PIN
+                number, enter Pin number ";
+        input {
+            leaf ssid {
+                type string;
+            }
+            leaf radio {
+                type string;
+            }
+            leaf pin {
+                type string;
+                description
+                        "Pin number";
+            }
+        }
+        output {
+            uses ciscosb-common:RPC-RESPONSE;
+        }
+    }
+}

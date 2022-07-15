@@ -1,0 +1,44 @@
+#!/bin/sh
+# send signal to operdb_stats to clear the saved counters
+
+WANPORT_STATS_FILE="/tmp/stats/snmp_wanport_stats"
+#When do we need to update counters from a backup file, same file will be updated from SNMP wan port stats
+UPDATE_WAN1_BKP_COUNTERS="/tmp/update_wan1_port_status"
+UPDATE_WAN2_BKP_COUNTERS="/tmp/update_wan2_port_status"
+UPDATED_WAN1_PORT_STATS="/tmp/updated_wan1_stats"
+UPDATED_WAN2_PORT_STATS="/tmp/updated_wan2_stats"
+
+if [ "$1" = "refresh" ];then
+	`/usr/bin/sendOpsdbSignal.sh SIGHUP`
+else
+	`/usr/bin/sendOpsdbSignal.sh SIGUSR2`
+
+	pid=$(uci get systeminfo.sysinfo.pid)
+	case $pid in
+        *345*)
+		rtkssdk_diag -S 1 -r 1
+        ;;
+        *340*)
+		rtkssdk port_stats -r 1
+        ;;
+
+        *160* | *260*)
+		/usr/sbin/bcmssdk -S 1 -r 1
+        ;;
+	esac
+
+	case $pid in
+        *345* | *340*)
+		# clear the ethtool counters
+		phy_interface1=`uci get network.wan1.ifname | sed -e "s/eth3.[0-9]*//g" | sed -e "s/^ *//g"`
+		phy_interface2=`uci get network.wan2.ifname | sed -e "s/eth3.[0-9]*//g" | sed -e "s/^ *//g"`
+		`ethtool -S $phy_interface2 > /dev/null`
+        ;;
+        *160* | *260*)
+		# clear the ethtool counters
+		phy_interface1=`uci get network.wan1.ifname | sed -e "s/eth2.[0-9]*//g" | sed -e "s/^ *//g"`
+        ;;
+	esac
+	`ethtool -S $phy_interface1 > /dev/null`
+	rm -f $WANPORT_STATS_FILE $UPDATE_WAN1_BKP_COUNTERS $UPDATE_WAN2_BKP_COUNTERS $UPDATED_WAN1_PORT_STATS $UPDATED_WAN2_PORT_STATS
+fi

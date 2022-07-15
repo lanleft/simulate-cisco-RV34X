@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Cisco #MODEL# VPN Router</title>
+    <link rel="stylesheet" href="themes/css/ng-grid.css" />
+    <link rel="stylesheet" href="lib/ui-grid/4-0-4/ui-grid-min.css" />
+    <link rel="stylesheet" href="lib/bootstrap/bootstrap-3-3-4-dist/css/bootstrap-3-3-4.css" />
+    <link rel="stylesheet" href="lib/ng-dialog/css/ngDialog.min.css">
+    <link rel="stylesheet" href="lib/ng-dialog/css/ngDialog-theme-default.min.css">
+    <link rel="stylesheet" href="themes/css/main_1_0_1.css" />
+	<link rel="shortcut icon" href="/themes/img/icon/favicon.ico" type="image/x-icon">
+	<link rel="bookmark" type="image/x-icon" href="/themes/img/icon/favicon.ico"/>
+	<link rel="apple-touch-icon-precomposed" href="/themes/img/icon/favicon.ico">
+    <!--[if gte IE 9]><!-->
+    <script src="lib/jquery/1-11-3/jquery-1-11-3-min.js"></script>
+    <script src="lib/angular/1-4-3/angular-min.js"></script>
+    <script src="lib/angular/1-4-3/angular-animate-min.js"></script>
+    <script src="lib/angular/1-4-3/angular-sanitize-min.js"></script>
+    <script src="lib/angular-route/1-4-2/angular-route-min.js"></script>
+    <script src="lib/angular-messages/1-4-2/angular-messages.js"></script>
+    <script src="lib/angular-file-upload/0-9-7/ng-file-upload-shim.js"></script>
+    <script src="lib/angular-file-upload/0-9-7/ng-file-upload.js"></script>
+    <script src="lib/lodash/4-16-4/lodash.js"></script>
+    <script src="lib/ng-dialog/ngDialog.js"></script>
+    <script src="lib/ng-grid/2-0-14/ng-grid.js"></script>
+    <script src="lib/ui-grid/4-0-4/ui-grid-min.js"></script>
+    <script src="lib/ui-bootstrap-tpls/2-5-0/ui-bootstrap-tpls-2-5-0-min.js"></script>
+    <script src="lib/chart/2-7-3/Chart-min.js"></script>
+    <script src="lib/angular-chart/1-1-1/angular-chart-min.js"></script>
+    <script src='lib/ipaddr/1-0-3-non-req/ipaddr.js'></script>
+    <script src='lib/angular-cookies/1-4-3/angular-cookies-min.js'></script>
+    <script src='lib/download/download2.js'></script>
+    <script src="i18n/lang_en.js"></script>
+    <script src="js/app_1_0_1.js"></script>
+    <META HTTP-EQUIV="EXPIRES" CONTENT="0">
+    <!--<![endif]-->
+</head>
+
+<!--[if IE 9]>
+<body ng-app="routerApp" ng-controller="mainCtrl" class="ie9">
+<![endif]-->
+
+<!--[if gte IE 10]><!-->
+<body ng-app="routerApp" ng-controller="mainCtrl">
+<!--<![endif]-->
+<!--[if lte IE 8]>
+    <body>
+<![endif]-->
+    <!--[if gte IE 9]><!-->
+    <input type="hidden" id="pid_version" name="pid_version" value="#MODEL#"></input>
+    <div id="compute_width" value="abcd">abcd</div>
+    <div id="compute_width_style" value="abcd">abcd</div>
+    <div ng-controller="backgroundAppCtrl"></div>
+    <div ng-include="'htm/template/template.html'"></div>
+    <div ng-controller="sessionCtrl"></div>
+    <div ng-controller="appCtrl"></div>
+    <div ng-include="'htm/template/layout.html'"></div>
+
+    <div id="global-loading-container">
+        <div id="global-loading-mask"></div>
+        <div id="global-loading-bar" ng-class="{'is-not-normal': !normal_show}">
+            <table>
+                <tr>
+                    <td>
+                        <div id="global-loading-icon"></div>
+                    </td>
+                    <td ng-if="normal_show">
+                        <div class="global-loading-msg" ng-bind="loading_message"></div>
+                    </td>
+                    <td ng-if="!normal_show">
+                        <div class="global-loading-msg" pg-bind-html="custom_loading_message"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!--<![endif]-->
+    <!--[if lte IE 8]>
+        <p> It is less IE8, please Update to IE11 or up</p>
+    <![endif]-->
+</body>
+</html>

@@ -1,0 +1,126 @@
+<div>
+<form name="form" ng-controller="service_management_main" ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Service_Management')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" ng-click="save()" ng-disabled="form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Service_Management_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('Service_Management_Cancel')"></span>
+                </button>
+                <button class="btn-back" ng-click="back()" ng-disabled="userAccessFlag === 'RO'" ng-show="backbtn">
+                    <span ng-bind="DICT('Service_Management_Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+        <div class="page-content-container container-fluid ng-hide" ng-show="true">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Service_Management_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="gridFunc">
+                        &nbsp; 
+                        <span ng-bind="DICT('Service_Management_Msg')">
+                    </div>
+                    <div class="grid-btn-cntr">
+                        <button id="btn_add" class="grid-btn-add"
+                            ng-click="gridSERVICE.add()"
+                            ng-disabled="form.$invalid || userAccessFlag === 'RO'"
+                        ></button>
+                        <button id="btn_edit" class="grid-btn-edit"
+                            ng-disabled="gridSERVICE.allTrafficExsit || gridSERVICE.Selections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="gridSERVICE.edit()"
+                        ></button>
+                        <button id="btn_delete" class="grid-btn-delete"
+                            ng-disabled="gridSERVICE.allTrafficExsit || gridSERVICE.Selections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="gridSERVICE.remove()"
+                        ></button>
+                    </div>
+                    <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridSERVICE.Options"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</div>
+
+<script type="text/ng-template" id="UG_portRange_start.html">
+    <div class="ui-grid-custom-cntr">
+        <div ng-if="!row.entity[col.colDef.editRow]">
+            <div ng-if="(row.entity.protocol === 'TCP_UDP' || row.entity.protocol === 'TCP' || row.entity.protocol === 'UDP')"
+                ng-bind="MODEL_COL_FIELD.start"
+            ></div>
+            <div ng-if="row.entity.protocol === 'IP'"
+                ng-bind="MODEL_COL_FIELD.ip"
+            ></div>
+            <div ng-if="row.entity.protocol === 'ICMP'"
+                ng-bind="MODEL_COL_FIELD.icmp"
+            ></div>
+            <div ng-if="row.entity.protocol === 'ALL'"
+                ng-bind="col.colDef.default_str"
+            ></div>
+        </div>
+
+        <div ng-if="row.entity[col.colDef.editRow]">
+            <div ng-if="(row.entity.protocol === 'ALL')">
+                <div ng-bind="col.colDef.default_str"></div>
+            </div>
+            <div ng-if="(row.entity.protocol === 'TCP_UDP' || row.entity.protocol === 'TCP' || row.entity.protocol === 'UDP')" >
+                <input type="number" min="1" max="65535" required
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-change="grid.appScope.check_service(row)"
+                    ng-model="MODEL_COL_FIELD.start"
+                ></input>
+            </div>
+            <div ng-if="(row.entity.protocol === 'IP')">
+                <input type="number" min="1" max="255" required
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-model="MODEL_COL_FIELD.ip"
+                ></input>
+            </div>
+            <div ng-if="(row.entity.protocol === 'ICMP')">
+                <input type="number" min="0" max="255" required
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-model="MODEL_COL_FIELD.icmp"
+                ></input>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_portRange_end.html">
+    <div class="ui-grid-custom-cntr">
+        <div ng-if="!row.entity[col.colDef.editRow]">
+            <div ng-if="(row.entity.protocol === 'TCP_UDP' || row.entity.protocol === 'TCP' || row.entity.protocol === 'UDP')"
+                ng-bind="MODEL_COL_FIELD.end"
+            ></div>
+            <div ng-if="row.entity.protocol === 'IP' || row.entity.protocol === 'ICMP' || row.entity.protocol === 'ALL'"
+                ng-bind="col.colDef.default_str"
+            ></div>
+        </div>
+
+        <div ng-if="row.entity[col.colDef.editRow]">
+            <div ng-if="row.entity.protocol === 'ALL'">
+                <div ng-bind="col.colDef.default_str"></div>
+            </div>
+            <div ng-if="(row.entity.protocol === 'TCP_UDP' || row.entity.protocol === 'TCP' || row.entity.protocol === 'UDP')" >
+                <input type="number" min="{{MODEL_COL_FIELD.start}}" max="65535" required
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-change="grid.appScope.check_service(row)"
+                    ng-model="MODEL_COL_FIELD.end"
+                ></input>
+            </div>
+            <div ng-if="row.entity.protocol === 'IP'">
+                <div ng-bind="col.colDef.default_str"></div>
+            </div>
+            <div ng-if="row.entity.protocol === 'ICMP'">
+                <div ng-bind="col.colDef.default_str"></div>
+            </div>
+        </div>
+    </div>
+</script>

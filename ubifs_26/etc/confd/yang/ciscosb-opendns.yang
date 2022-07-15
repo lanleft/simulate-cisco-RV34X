@@ -1,0 +1,477 @@
+module ciscosb-opendns {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/opendns";
+    prefix ciscosb-opendns;
+    import ciscosb-types { prefix ciscosb-types; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Cisco OpenDNS configuration.
+            Copyright (c) 2017 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2017-06-05 {
+        description
+            "First revision";
+    }
+    revision 2018-01-04 {
+        description
+            "Update to new umbrella API";
+    }
+    container opendns {
+        leaf enabled {
+            mandatory true;
+            type boolean;
+        }
+        leaf allow-dns-query-from-lan {
+            type boolean;
+            default false;
+        }
+        leaf-list local-domain-bypass {
+            type string;
+        }
+        container network-policies {
+            leaf enabled {
+                mandatory true;
+                type boolean;
+            }
+            container dns-crypt {
+                leaf enabled {
+                    type boolean;
+                }
+                leaf public-key {
+                    type string;
+                }
+            }
+        }
+        container network-device-policies {
+            leaf enabled {
+                mandatory true;
+                type boolean;
+            }
+            container dns-crypt {
+                leaf enabled {
+                    type boolean;
+                    default true;
+                }
+                leaf public-key {
+                    type string;
+                }
+            }
+            leaf key {
+                type ciscosb-types:aes-cfb-128-encrypted-string;
+            }
+            leaf secret {
+                type ciscosb-types:aes-cfb-128-encrypted-string;
+            }
+            leaf ca-certificate {
+                type string;
+            }
+            list organizations {
+                key id;
+                leaf id {
+                    type string;
+                }
+                leaf name {
+                    type string;
+                }
+                container device {
+                    leaf origin-id {
+                        type uint64;
+                    }
+                    leaf device-id {
+                        type string;
+                    }
+                    leaf name {
+                        type string;
+                    }
+                    leaf tag {
+                        type string;
+                    }
+                    list policies {
+                        key id;
+                        leaf id {
+                            type string;
+                        }
+                        leaf name {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    container opendns-state {
+        config false;
+        leaf status {
+            type enumeration {
+                enum REGISTERED;
+                enum UNREGISTERED;
+            }
+        }
+    }
+    grouping KEY-VALUE-LIST {
+        list kv {
+            key name;
+            leaf name {
+                type string;
+            }
+            leaf value {
+                type string;
+            }
+        }
+    }
+    grouping RETURN {
+        choice return {
+            case successful {
+                list somelist {
+                    key id;
+                    leaf id {
+                        type string;
+                    }
+                    uses KEY-VALUE-LIST;
+                }
+            }
+            case failed {
+                uses KEY-VALUE-LIST;
+            }
+        }
+    }
+    grouping COMMON-REQUEST-HEADER {
+        leaf key {
+            type string;
+        }
+        leaf secret {
+            type string;
+        }
+        leaf ca {
+            type string;
+        }
+    }
+    grouping DEVICE-INFO {
+        leaf origin-id {
+            type uint64;
+        }
+        leaf device-id {
+            type string;
+        }
+        leaf device-key {
+            type string;
+        }
+        leaf name {
+            type string;
+        }
+        leaf serial-number {
+            type string;
+        }
+        leaf created-at {
+            type string;
+        }
+        leaf organization-id {
+            type uint64;
+        }
+    }
+    grouping NOT-OK {
+        container not-ok {
+            leaf error-code {
+                type uint16;
+            }
+            leaf error-message {
+                type string;
+            }
+            leaf tx-id {
+                type string;
+            }
+            leaf extension {
+                type string;
+            }
+        }
+    }
+    rpc opendns-read-organizations {
+        input {
+            uses COMMON-REQUEST-HEADER;
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    list organizations {
+                        key organization-id;
+                        leaf organization-id {
+                            type string;
+                        }
+                        leaf name {
+                            type string;
+                        }
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-read-devices {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type uint64;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    list devices {
+                        key origin-id;
+                        uses DEVICE-INFO;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-create-a-device {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            container device {
+                leaf model {
+                    type string;
+                }
+                leaf mac-address {
+                    type string;
+                }
+                leaf name {
+                    type string;
+                }
+                leaf serial-number {
+                    type string;
+                }
+                leaf tag {
+                    type string;
+                }
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    container device {
+                        uses DEVICE-INFO;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-update-merge-a-device {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type uint64;
+            }
+            container patch {
+                leaf name {
+                    type string;
+                }
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    container device {
+                        uses DEVICE-INFO;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-delete-a-device {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type uint64;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-read-device-policies {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type string;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    list policies {
+                        key policy-id;
+                        leaf policy-id {
+                            type uint64;
+                        }
+                        leaf name {
+                            type string;
+                        }
+                        leaf priority {
+                            type uint64;
+                        }
+                        leaf is-applied-directly {
+                            type boolean;
+                        }
+                        leaf is-default {
+                            type boolean;
+                        }
+                        leaf created-at {
+                            type string;
+                        }
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-read-policies {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                    list policies {
+                        key policy-id;
+                        leaf policy-id {
+                            type uint64;
+                        }
+                        leaf organization-id {
+                            type uint64;
+                        }
+                        leaf name {
+                            type string;
+                        }
+                        leaf priority {
+                            type uint64;
+                        }
+                        leaf is-default {
+                            type boolean;
+                        }
+                        leaf created-at {
+                            type string;
+                        }
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-update-replace-a-policy {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf policy-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type uint64;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+    rpc opendns-delete-policy {
+        input {
+            uses COMMON-REQUEST-HEADER;
+            leaf organization-id {
+                type uint64;
+            }
+            leaf policy-id {
+                type uint64;
+            }
+            leaf origin-id {
+                type uint64;
+            }
+        }
+        output {
+            choice response {
+                case ok {
+                    leaf success-code {
+                        type uint16;
+                    }
+                }
+                case not-ok {
+                    uses NOT-OK;
+                }
+            }
+        }
+    }
+}

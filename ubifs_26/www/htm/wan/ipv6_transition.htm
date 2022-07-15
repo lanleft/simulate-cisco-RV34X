@@ -1,0 +1,204 @@
+<div ng-controller="ipv6TransitionCtrl">
+	<form name="form" novalidate ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('IPv6_Transition')"></div>
+            <div ng-show="model.editIdx >= 0" class="page-button-container">
+                <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="funs.save()">
+                    <span ng-bind="DICT('IPv6_Transition_Apply')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('IPv6_Transition_Tunnel_Interface')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid="gridTunnelOptions" ui-grid-resize-columns/>
+                </div>
+            </div>
+            <div ng-show="model.editIdx >= 0" ng-if="model.editIdx >= 0">
+                <div class="page-content-seperator"></div>
+                <table class="page-block-tb-list control-input-200">
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Tunnel_Interface_Colon')"></td>
+                        <td>{{model.editTun.name}}
+                        <span ng-show="hasErrCfg" class="error_info" ng-bind="DICT('IPv6_Transition_Name_Repeat_1') + (nameIsTheSameIdx+1) + DICT('IPv6_Transition_Name_Repeat_2')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Enable')"></td>
+                        <td>
+                            <input id="chk_ipv6trans_enable" type="checkbox" ng-model="model.editTun.enabled">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Description')+':'"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6trans_desc" maxlength="64" ng-model="model.editTun.description">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Local_Interface')"></td>
+                        <td>
+                            <select id="slct_ipv6trans_localif" ng-model="model.editTun.local_interface" ng-options="m.id as m.displayName for m in model.intfs" ng-change="change_name()" ></select>
+                            <span class="tip-info" ng-bind="DICT('IPv6_Transition_Interface_Should_Have_Public_IP_addr')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Local_IPv4_Addr')"></td>
+                        <td>{{model.editTun.localaddr}}</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="radio" id="rdo_ipv6trans_6in4" ng-model="model.editTun.proto" value="ip6in4" ng-change="change_name()">
+								<span ng-bind="DICT('IPv6_Transition_IPv6_In_IPv4_Tunnel')"></span>
+							</input>
+                            <input type="radio" id="rdo_ipv6trans_6rd"
+                                ng-model="model.editTun.proto"
+                                value="ip6rd"
+                                ng-change="change_name()"
+                            >
+								<span ng-bind="DICT('IPv6_Transition_IPv6_Rapid_Deployment')"></span>
+							</input>
+                        </td>
+                    </tr>
+                    <!-- 6rd -->
+                    <tbody class="page-block-tb-list" ng-show="model.editTun.proto === 'ip6rd'" ng-if="model.editTun.proto === 'ip6rd'">
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Configuration_Mode')"></td>
+                        <td>
+                            <input type="radio" id="rdo_ip6rd_manual" ng-model="model.editTun.config_mode" ng-value="model.schema.configModeList[0].id"></input>
+                            <span >{{model.schema.configModeList[0].displayName}}</span>
+                            <input type="radio"
+                                id="rdo_ip6rd_dhcp" 
+                                ng-disabled="!model.editTun.local_interface_is_dhcp"
+                                ng-model="model.editTun.config_mode"
+                                ng-value="model.schema.configModeList[1].id"
+                            ></input>
+                            <span >{{model.schema.configModeList[1].displayName}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_IPv4_Addr_Relay')"></td>
+                        <td ng-class="{nopHint: model.editTun.config_mode === 'auto'}">
+                            <input type="text" id="txt_ip6rd_ipv4relayaddr"
+                                ng-ipv4-ip-nonzero="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'"
+                                ng-model="model.editTun.replay_addr"
+                                placeholder="10.2.3.4"
+                                ng-required="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_IPv4_Common_Prefix_Length')"></td>
+                        <td ng-class="{nopHint: model.editTun.config_mode === 'auto'}">
+                            <input type="number" 
+									ng-number="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'" 
+									id="txt_ip6rd_ip4prefixlen" class="ipMaskLengthNum" 
+									ng-min="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual' ? 0 : undefined"
+									ng-max="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual' ? 32 : undefined" 
+									ng-model="model.editTun.ip4prefixlen"
+                                    ng-required="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'"
+									name="ip6rd_ip4prefixlen"
+									ng-custom-vld="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'" 
+									custom-vld-cbk="countDiff"
+									custom-vld-relationship="['ip6rd_ip4prefixlen', 'ip6rd_ip6length']"
+									></input>
+                            <span class="tip-info" ng-bind="DICT('IPv6_Transition_V4_Range')"></span>
+							<span ng-show="form.ip6rd_ip4prefixlen.$error.customVld" class="validation-error-text-right" ng-bind="DICT('IPv6_Transition_Msg_Error')">
+							</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_IPv6_Prefix_Length')"></td>
+                        <td ng-class="{nopHint: model.editTun.config_mode === 'auto'}">
+                            <input ng-if="model.editTun.config_mode === 'manual'" type="text" id="txt_ip6rd_ip6prefix" name="ip6rd_ip6prefix"
+                                ng-ipv6-ip="model.editTun.proto === 'ip6rd'"
+                                ng-model="model.editTun.ipv6.prefix"
+                                chk-ipv6-bylength="model.editTun.ipv6.length"
+                                ng-change="funs.chkIPv6Prefix()"
+                                placeholder="2222::"
+                                ng-required="model.editTun.proto === 'ip6rd'"
+                            ></input>
+                            <input ng-if="model.editTun.config_mode === 'auto'" type="text" id="txt_ip6rd_ip6prefix" name="ip6rd_ip6prefix"
+                                ng-model="model.editTun.ipv6.prefix"
+                                placeholder="2222::"
+                            ></input>
+                            <span style="font-size: 18px; top:2px;;">/</span>
+                            <input ng-if="model.editTun.config_mode === 'manual'" type="number" 
+									ng-number="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'" 
+									id="txt_ip6rd_ip6length" name="ip6rd_ip6length" class="ipMaskLengthNum" 
+									ng-min="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual' ? 1 : undefined" 
+									ng-max="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual' ? 64 : undefined" 
+									ng-model="model.editTun.ipv6.length"
+									chk-length-byipv6="model.editTun.ipv6.prefix"
+                                    ng-change="funs.chkIPv6Prefix()" ng-required="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'"
+									ng-custom-vld="model.editTun.proto === 'ip6rd' && model.editTun.config_mode === 'manual'" 
+									custom-vld-cbk="countDiff"
+									custom-vld-relationship="['ip6rd_ip4prefixlen', 'ip6rd_ip6length']"
+									></input>
+							<input ng-if="model.editTun.config_mode === 'auto'" type="number" 
+									id="txt_ip6rd_ip6length" name="ip6rd_ip6length" class="ipMaskLengthNum" 
+									ng-model="model.editTun.ipv6.length"
+									></input>
+                            <span class="tip-info" ng-bind="DICT('IPv6_Transition_V6_Range')"></span>
+							<span ng-show="form.ip6rd_ip6length.$error.customVld" class="validation-error-text-right" ng-bind="DICT('IPv6_Transition_Msg_Error')">
+							</span>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                    <!-- End 6rd -->
+                    <!-- 6in4 -->
+                    <tbody ng-show="model.editTun.proto === 'ip6in4'" ng-if="model.editTun.proto === 'ip6in4'">
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Remote_IPv4_Addr')"></td>
+                        <td>
+                            <input type="text" id="txt_ip6in4_remoteipv4addr"
+                                ng-required="model.editTun.proto === 'ip6in4'"
+                                ng-ipv4-ip-nonzero="model.editTun.proto === 'ip6in4'"
+                                ng-model="model.editTun.peeraddr"
+                                placeholder="10.2.3.4"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Local_IPv6_Addr_Len')"></td>
+                        <td>
+                            <input type="text" id="txt_ip6in4_localipv6addr"
+                                ng-required="model.editTun.proto === 'ip6in4'"
+                                ng-ipv6-ip="model.editTun.proto === 'ip6in4'"
+                                ng-model="model.editTun.localIpv6.ip"
+                                placeholder="2222::1"
+                            ></input>
+                            <span style="font-size:18px; top:2px;">/</span>
+                            <input type="number" number min="1" max="128" ng-required="model.editTun.proto === 'ip6in4'" class="ipMaskLengthNum" ng-model="model.editTun.localIpv6.length"></input>
+                            <span class="tip-info" ng-bind="DICT('IPv6_Transition_Local_V6_Range')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IPv6_Transition_Remote_IPv6_Addr')"></td>
+                        <td>
+                            <input type="text" id="txt_ip6in4_remoteipv6addr"
+                                ng-required="model.editTun.proto === 'ip6in4'"
+                                ng-ipv6-ip="model.editTun.proto === 'ip6in4'"
+                                ng-model="model.editTun.peerIpv6.ip"
+                                placeholder="3333::1"
+                            ></input>
+                            <span style="font-size:18px; top:3px;">/</span>
+                            <input type="number" number min="1" max="128" ng-required="model.editTun.proto === 'ip6in4'" class="ipMaskLengthNum" ng-model="model.editTun.peerIpv6.length"></input>
+                            <span class="tip-info" ng-bind="DICT('IPv6_Transition_Local_V6_Range')"></span>
+                        </td>
+                    </tr>
+                    
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>

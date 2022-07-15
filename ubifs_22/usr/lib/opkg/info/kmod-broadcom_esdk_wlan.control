@@ -1,0 +1,9 @@
+Package: kmod-broadcom_esdk_wlan
+Version: 4.1.8+5.1.4.1-5.00.3-3
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), broadcom_esdk_wlan
+Source: package/freescale/broadcom-esdk-wlan
+Section: kernel
+Maintainer: Freescale Technologies
+Architecture: comcerto2000
+Installed-Size: 3678450
+Description:  This package contains a driver for Broadcom cards.

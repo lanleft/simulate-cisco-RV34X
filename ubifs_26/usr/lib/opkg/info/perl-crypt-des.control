@@ -1,0 +1,8 @@
+Package: perl-crypt-des
+Version: 2.07-1
+Depends: libc, librt, libpthread, perl
+Source: package/perlextmod/crypt
+Section: lang
+Architecture: comcerto2000
+Installed-Size: 6263
+Description:  Perl DES encryption module

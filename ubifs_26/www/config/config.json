@@ -1,0 +1,6 @@
+{
+    "WebHTTPReqestMaxRetryCounter": 3,
+    "WebCompileWaitCounter": 10,
+    "WebCompileWaitDuration": 1000,
+    "maxMultiWanPrecedence": 99
+}

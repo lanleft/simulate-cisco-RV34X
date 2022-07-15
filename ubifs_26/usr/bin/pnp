@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+# EASY-INSTALL-ENTRY-SCRIPT: 'pnp==1.8.0.dev13','console_scripts','pnp'
+__requires__ = 'pnp==1.8.0.dev13'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('pnp==1.8.0.dev13', 'console_scripts', 'pnp')()
+    )

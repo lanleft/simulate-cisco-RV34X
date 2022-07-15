@@ -1,0 +1,8 @@
+Package: poe
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, pd69200, libuci
+Source: package/freescale/poe
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 139365
+Description:  Power Over Ethernet Module.

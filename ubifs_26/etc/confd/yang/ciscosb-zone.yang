@@ -1,0 +1,46 @@
+module ciscosb-zone {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/zone";
+    prefix ciscosb-zone;
+    import ietf-interfaces { prefix if; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Ciscosb zone.
+            Copyright (c) 2017 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2017-08-01 {
+        description
+            "First revision";
+    }
+    container zones {
+        leaf enabled {
+            type boolean;
+        }
+        list zone {
+            key id;
+            leaf id {
+                type string;
+            }
+            leaf description {
+                type string;
+            }
+            leaf security-level {
+                type uint8 {
+                    range "0..100";
+                }
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container zone-member {
+            leaf security {
+                type string;
+            }
+        }
+    }
+}

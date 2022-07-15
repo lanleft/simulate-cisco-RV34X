@@ -1,0 +1,10 @@
+Package: tcpdump
+Version: 4.9.2-1
+Depends: libc, librt, libpthread, libpcap
+Source: package/network/utils/tcpdump
+License: BSD-3-Clause
+Section: net
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: comcerto2000
+Installed-Size: 321521
+Description:  Network monitoring and data acquisition tool

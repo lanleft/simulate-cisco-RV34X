@@ -1,0 +1,58 @@
+module ciscosb-dmz {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/dmz";
+    prefix ciscosb-dmz;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix inet; }
+    import iana-if-type { prefix ianaift; }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-01 {
+        description
+                "First revision DMZ module";
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd'";
+        container dmz {
+            leaf enable {
+                type boolean;
+                default "false";
+                description
+                                "
+        ";
+            }
+            choice subnet {
+                case subnet-setting {
+                    leaf dmz-ip {
+                        type inet:ip-address;
+                        description
+                                                "DMZ IP address .";
+                    }
+                    leaf netmask {
+                        type inet:ip-prefix;
+                        description
+                                                "DMZ IP address .";
+                    }
+                }
+                case range {
+                    container range {
+                        leaf start {
+                            type inet:ip-address;
+                            description "This indicates source  start adress of a range";
+                        }
+                        leaf end {
+                            type inet:ip-address;
+                            description "This indicates source end address of a range";
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

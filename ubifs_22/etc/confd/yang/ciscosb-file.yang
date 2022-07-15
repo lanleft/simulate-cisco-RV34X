@@ -1,0 +1,276 @@
+module ciscosb-file {
+    namespace "http://cisco.com/ns/ciscosb/file";
+    prefix ciscosb-file;
+    import ietf-inet-types { prefix inet; }
+    import ciscosb-types { prefix ciscosb-types; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ietf-netconf-acm { prefix "nacm"; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions for file
+        service regarding firmware/configuraton/certificate/lang-pack/log
+        for Cisco Small Business devices.";
+  revision 2016-10-11 {
+      description "make related changes to certificate";
+  }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-11-29 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-28 {
+        description "Proposed";
+        reference "TODO";
+    }
+    typedef file-type {
+        type enumeration {
+            enum firmware;
+            enum configuration;
+            enum certificate;
+            enum csr;
+            enum signature;
+            enum 3g-4g-driver;
+            enum language-pack;
+            enum log;
+            enum user-template;
+            enum tech-report;
+            enum picture;
+        }
+        description
+                "The file type that can be copied/downloaded/uploaded from or
+                to device.";
+    }
+    typedef cert-file-format {
+        type enumeration {
+            enum pkcs12;
+            enum pem;
+            enum pkcs7;
+            enum der;
+        }
+        description "Certification format";
+    }
+    grouping credentials {
+        container credentials {
+            description
+                        "Type of authentication. it can be password, certificate or ssh-key";
+            leaf credentials-methods {
+                type enumeration {
+                    enum "password";
+                    enum "ssh-key";
+                    enum "none";
+                }
+            }
+            leaf user-name {
+                description
+                                "only if credentials-methods is password ";
+                type nacm:user-name-type;
+            }
+            leaf password {
+                description
+                                "only if credentials-methods is password ";
+                type string;
+            }
+            leaf ssh-key {
+                description
+                                "only if credentials-methods is ssh-key ";
+                type string;
+            }
+        }
+    }
+    grouping file-location {
+        choice location-option {
+            case url {
+                leaf location-url {
+                     description "the URL can be local flash/usb disk, remote HTTP or TFTP server 
+     file:
+     file:
+     file:
+     file:
+";
+                    type inet:uri;
+                }
+            }
+            case firmware-state {
+                leaf firmware-state {
+                    type ciscosb-types:firmware-state;
+                }
+            }
+            case config-type {
+                leaf config-type {
+                    type ciscosb-types:config-type;
+                }
+            }
+            case certificate-name {
+             leaf certificate-name {
+              type string;
+              mandatory true;
+             }
+          leaf format{
+           type cert-file-format;
+          }
+          leaf password{
+           when "../format= 'pkcs12'";
+           type string;
+          }
+          }
+             case csr {
+                container csr {
+                    leaf csr-name {
+                        type string;
+                    }
+                }
+             }
+        }
+    }
+    grouping file-operation-option {
+        choice file-type {
+            case firmware {
+                container firmware-option {
+                    leaf reboot-type {
+                        type ciscosb-types:reboot-option-type;
+                    }
+                }
+            }
+            case certificate {
+             choice import-for-csr {
+              leaf csr-name{
+              type string;
+              }
+             }
+             choice others{
+              container certificate-option {
+              leaf name {
+               type string;
+             }
+             leaf format{
+              type cert-file-format;
+             }
+             leaf password{
+              when "../format= 'pkcs12'";
+              type string;
+              }
+             }
+            }
+         }
+      }
+    }
+    rpc file-download {
+        description
+                "Download a file from device to pc using http or https ";
+        input {
+            leaf fileType {
+                type file-type;
+                mandatory true;
+            }
+            uses file-location;
+        }
+        output {
+         leaf download-url {
+                description "the actual download url";
+                type inet:uri;
+            }
+        }
+    }
+    rpc file-upload {
+        description
+            "upload a file from server or pc to ap using http or https ";
+        input {
+            leaf fileType {
+                type file-type;
+                mandatory true;
+            }
+            container source {
+                choice source {
+                    case file-name {
+                        leaf file-name {
+                            type inet:uri;
+                        }
+                    }
+                    case file-content {
+                        leaf md5Checksum {
+                            type string;
+                            description
+                                "MD5 checksum of file";
+                        }
+                        leaf content {
+                            type string;
+                            description
+                                "file content";
+                        }
+                    }
+                }
+            }
+            container destination {
+                uses file-location;
+            }
+            uses file-operation-option;
+        }
+    }
+    rpc file-copy {
+        description
+                "Trigger the device to copy a file between device and third party
+                file server, such as new version of firmware or a new configuration
+                ";
+        input {
+            leaf fileType {
+                type file-type;
+                mandatory true;
+            }
+            container source {
+                uses file-location;
+                uses credentials;
+            }
+            container destination {
+                uses file-location;
+                uses credentials;
+            }
+            uses file-operation-option;
+        }
+        output {
+            uses ciscosb-common:RPC-RESPONSE;
+        }
+    }
+    rpc file-list {
+        description
+                "List the files under spefic directory (url)";
+        input {
+            leaf fileType {
+                type file-type;
+            }
+            container source {
+                uses file-location;
+                uses credentials;
+            }
+        }
+        output {
+            list file-names {
+                leaf file-name {
+                    type string;
+                }
+                leaf directory {
+                    type boolean;
+                }
+            }
+        }
+    }
+    rpc file-delete {
+        description
+                "Trigger the device to delete a file";
+        input {
+            leaf fileType {
+                type file-type;
+                mandatory true;
+            }
+            container source {
+                uses file-location;
+            }
+        }
+    }
+}

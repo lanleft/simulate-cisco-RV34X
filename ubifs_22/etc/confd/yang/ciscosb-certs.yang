@@ -1,0 +1,250 @@
+module ciscosb-certs {
+    namespace "http://cisco.com/ns/ciscosb/certs";
+    prefix ciscosb-certs;
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-file { prefix file; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains certification model.";
+    revision 2016-10-08 {
+        description "Remove cert-type. Split generate-cert into generate-cert and generate-csr.";
+    }
+    revision 2016-06-06 {
+       description "Show the local identifier value";
+       reference "";
+   }
+   revision 2016-04-06 {
+       description "Add revision ";
+       reference "";
+   }
+    revision 2015-04-30 {
+        description "Proposed";
+        reference "TODO";
+    }
+    grouping CERT-ID {
+        leaf country {
+            type string;
+            description "country name";
+        }
+        leaf state-province {
+            type string;
+            description "state or province name";
+        }
+        leaf locality {
+            type string;
+            description "locality  name";
+        }
+        leaf organization {
+            type string;
+            description "organization name";
+        }
+        leaf organization-unit {
+            type string;
+            description "organization unit name";
+        }
+        leaf common-name {
+            type string;
+            description "common name";
+        }
+        leaf email {
+            type string;
+            description "email-address";
+        }
+    }
+    grouping CERT-INFO {
+        container subject {
+            uses CERT-ID;
+        }
+        container issuer {
+            uses CERT-ID;
+        }
+        leaf key-encryption-length {
+            type enumeration {
+                enum 512;
+                enum 1024;
+                enum 2048;
+                enum 4096;
+            }
+            description "key encryption length";
+        }
+        container duration {
+            leaf start {
+                type yang:date-and-time;
+            }
+            leaf end {
+                type yang:date-and-time;
+            }
+        }
+        leaf subject-alternative-name {
+            type string;
+            description "subject-alternative-name";
+        }
+        leaf subject-alternative-type {
+            type enumeration{
+             enum email-type;
+             enum fqdn-type;
+             enum ip-type;
+            }
+        }
+        leaf is-ca-enabled {
+            type boolean;
+        }
+    }
+    grouping CERT-REQ-INFO {
+        container subject {
+            uses CERT-ID;
+        }
+        leaf is-self-signed {
+            type boolean;
+        }
+        leaf key-encryption-length {
+            type enumeration {
+                enum 512;
+                enum 1024;
+                enum 2048;
+            }
+            description "key encryption length";
+        }
+        leaf subject-alternative-name {
+            type string;
+            description "subject-alternative-name";
+        }
+        leaf subject-alternative-type {
+            type enumeration{
+             enum email-type;
+             enum fqdn-type;
+             enum ip-type;
+            }
+        }
+        leaf is-ca-enabled {
+            type boolean;
+        }
+    }
+    grouping CSR-INFO {
+        container subject {
+            uses CERT-ID;
+        }
+        leaf key-encryption-length {
+            type enumeration {
+                enum 512;
+                enum 1024;
+                enum 2048;
+            }
+            description "key encryption length";
+        }
+        leaf subject-alternative-name {
+            type string;
+            description "subject-alternative-name";
+        }
+        leaf subject-alternative-type {
+            type enumeration{
+             enum email-type;
+             enum fqdn-type;
+             enum ip-type;
+            }
+        }
+    }
+    container certs-state {
+        config false;
+        list cert {
+            key index;
+            leaf index {
+                type yang:counter32;
+            }
+            leaf name {
+                type string;
+            }
+            leaf source {
+                type enumeration {
+                    enum pre-installed;
+                    enum generated;
+                    enum imported;
+                }
+            }
+            leaf allow-export {
+                type boolean;
+            }
+            container info {
+                uses CERT-INFO;
+            }
+            leaf-list used-by {
+                type string;
+                description "used-by list, such as GUI, anyconnect, easy vpn";
+            }
+            leaf has-private-key {
+                type boolean;
+            }
+            leaf format {
+                type file:cert-file-format;
+            }
+        }
+    }
+    rpc generate-cert {
+      description
+          "This operation requests to generate a cert.";
+      input {
+          container request {
+              leaf name {
+                  type string;
+                  mandatory true;
+                  description "certification name ";
+              }
+              leaf format {
+                  type file:cert-file-format;
+                  mandatory true;
+              }
+              must "format = 'pem'" {
+                  error-message "only supports generation of pem format. ";
+              }
+              leaf valid-duration {
+                  type int16 {
+                      range 1..10950;
+                  }
+                  default 360;
+              }
+              choice detail {
+                  case info {
+                      container info {
+                          uses CERT-REQ-INFO;
+                          leaf ca-file {
+                              when "../is-self-signed = 'false'";
+                              type string;
+                          }
+                      }
+                  }
+                  case file {
+                      container file {
+                          uses file:file-location;
+                          leaf ca-file {
+                              type string;
+                          }
+                      }
+                  }
+              }
+          }
+      }
+    }
+    rpc generate-csr {
+      description
+          "This operation requests to generate a certificat signing request.";
+      input {
+          container request {
+              leaf name {
+                  type string;
+                  mandatory true;
+              }
+              leaf format {
+                  type file:cert-file-format;
+                  mandatory true;
+              }
+              container info {
+                  uses CSR-INFO;
+              }
+          }
+      }
+    }
+}

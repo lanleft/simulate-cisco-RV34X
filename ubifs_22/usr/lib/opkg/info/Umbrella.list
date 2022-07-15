@@ -1,0 +1,13 @@
+/usr/bin/opendns-update-merge-a-device
+/usr/bin/opendns-delete-a-device
+/usr/bin/opendns-read-policies
+/usr/bin/opendns-update-replace-a-policy
+/etc/init.d/umbrella
+/usr/bin/opendns-read-devinfo
+/etc/config/umbrella
+/usr/bin/opendns-read-device-register-status
+/usr/bin/opendns-read-device-policies
+/usr/bin/opendns-read-devices
+/usr/bin/opendns-read-organizations
+/usr/bin/opendns-create-a-device
+/usr/bin/opendns-delete-policy

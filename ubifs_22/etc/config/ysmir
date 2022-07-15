@@ -1,0 +1,9 @@
+config 'section' 'ysmir_settings'
+	option 'ysmir_enable' 'on'
+
+config 'section' 'ysmir_module'
+	option 'session_max_entry_num' '40000'
+	option 'packet_max_incoming_num' '120000'
+	option 'memory_threshold' '256'
+	option 'decomp_rar_sess_num' '8'
+

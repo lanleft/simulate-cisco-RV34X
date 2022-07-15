@@ -1,0 +1,4 @@
+/usr/sbin/rtkssdk_diag
+/usr/sbin/rtk_ms_switch
+/etc/init.d/ms-switch
+/usr/bin/cron.d/5minutes/20-switchMonitor.sh

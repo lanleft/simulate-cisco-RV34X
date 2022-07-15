@@ -1,0 +1,3 @@
+/usr/sbin/rdnssd
+/etc/init.d/rdnssd
+/etc/merge-hook

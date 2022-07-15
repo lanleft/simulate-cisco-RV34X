@@ -1,0 +1,4 @@
+/usr/lib/ipsec/libradius.so.0
+/usr/lib/ipsec/plugins/libstrongswan-eap-radius.so
+/usr/lib/ipsec/libradius.so.0.0.0
+/etc/strongswan.d/charon/eap-radius.conf

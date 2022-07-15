@@ -1,0 +1,93 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+#START=99
+#STOP=99
+
+start() {
+	local platform_file="/tmp/data/platform/platform.json"
+	#local platform_file="/data/platform/platform.json"
+	echo "PnP Agent is starting!"
+	sleep 5
+	#touch log file so that PnP can start
+	mkdir -p /var/log/pnp
+	touch /var/log/pnp/pnp.log
+	mkdir -p /etc/pnp/certs
+	mkdir -p /tmp/certs
+        mkdir -p /tmp/pnp_image
+        mkdir -p /tmp/pnp_config
+	rm -f "${platform_file}"
+	mkdir -p "$(dirname "${platform_file}")"
+	sn=`uci get systeminfo.sysinfo.serial_number`
+	pid=`uci get systeminfo.sysinfo.pid`
+	vid=`uci get systeminfo.sysinfo.vid`
+        os_version=`uci get firmware.firminfo.version`
+	maclan=`uci get systeminfo.sysinfo.maclan`
+	hostname=`uci get systemconfig.system.hostname`
+	totalspace=`df / | awk 'FNR==2{print $2}'`
+	freespace=`df / | awk 'FNR==2{print $4}'`
+        #echo "{\"pid\": \"ISR4331/K9\", \"sn\": \"11111121\", \"os-version\": \"openwrt\"}" > /data/platform/platform.json
+	cat <<EOF > "${platform_file}"
+{
+    "pid": "${pid}",
+    "sn": "${sn}",
+    "os-version": "${os_version}",
+    "udi": {
+        "primary-chassis": "PID:${pid},VID:${vid},SN:${sn}"
+    },
+    "imageInfo": {
+        "versionString": "${os_version}",
+        "imageFile": "",
+        "imageHash": "",
+        "returnToRomReason": "power on",
+        "bootVariable": "",
+        "bootLdrVariable": "",
+        "configVariable": "",
+        "configReg": "",
+        "configRegNext": ""
+    },
+    "hardwareInfo": {
+        "hostname": "${hostname}",
+        "vendor": "cisco",
+        "platformName": "Comcerto 2000 RV340",
+        "processorType": "ARMv7",
+        "hwRevision": "0001",
+        "mainMemSize": "512",
+        "ioMemSize": "",
+        "boardId": "",
+        "boardReworkId": "",
+        "processorRev": "1 (v7l)",
+        "midPlaneVersion": "",
+        "location": "",
+        "deviceType": "Router"
+    },
+    "fileSystemList": [
+        {"fileSystem": { 
+        "@type": "flash",
+        "@size": ${totalspace},
+        "@readable": "true",
+        "@writable": "true",
+        "@name": "flash",
+        "@freespace": ${freespace} 
+    }}],
+    "macAddress": "${maclan}",
+    "radioMac": ""
+}
+EOF
+	pnp start
+}
+
+stop() {
+	echo "PnP Agent is stopping!"
+	pnp stop
+}
+
+restart() {
+	stop
+	start
+}
+
+boot() {
+        true
+	#create_pnp_config
+}

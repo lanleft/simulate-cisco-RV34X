@@ -1,0 +1,417 @@
+<!doctype html>
+<html class="ciscosb-html-root">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width">
+        <title>Cisco #MODEL# VPN Router</title>
+        <link rel="shortcut icon" href="/themes/img/icon/favicon.ico" type="image/x-icon">
+        <link rel="bookmark" type="image/x-icon" href="/themes/img/icon/favicon.ico"/>
+        <link rel="apple-touch-icon-precomposed" href="/themes/img/icon/favicon.ico">
+        <link href="lib/bootstrap/bootstrap-3-3-4-dist/css/bootstrap-min.css" rel="stylesheet">
+        <link rel="stylesheet" href="lib/ng-dialog/css/ngDialog.min.css">
+        <link rel="stylesheet" href="lib/ng-dialog/css/ngDialog-theme-default.min.css">
+        <link rel="stylesheet" href="themes/css/vendor/asset.css">
+        <link rel="stylesheet" href="themes/css/main_1_0_1.css" />
+        <script src="lib/jquery/1-11-3/jquery-1-11-3-min.js"></script>
+        <script src="lib/angular/1-4-3/angular-min.js"></script>
+        <script src="i18n/login_en.js"></script>
+        <script src="lib/encrypt/0-0-1/md5.js"></script>
+        <script src="lib/encrypt/0-0-1/base64.js"></script>
+        <script src="lib/ng-dialog/ngDialog.js"></script>
+    </head>
+    <script>
+        angular.module('myApp', ['ngDialog'])
+        .controller('loginController', ['$scope', '$http', 'ngDialog', function($scope, $http, ngDialog) {
+            var scope = $scope,
+                modalInstance = undefined;
+
+            var apply = function() {
+                if ($scope.$root.$$phase != '$apply' && $scope.$root.$$phase != '$digest') {
+                    $scope.$apply();
+                }
+            };
+
+            var setCookie = function(cname, cvalue, exmins) {
+                if (cvalue === undefined)
+                    cvalue = "";
+
+                if (exmins != 0) {
+                    var d = new Date();
+                    d.setTime(d.getTime() + (exmins*60*1000));
+                    var expires = "expires="+d.toUTCString();
+                    document.cookie = cname + "=" + cvalue + "; " + expires;
+                }
+                else {
+                    document.cookie = cname + "=" + cvalue + ";";
+                }
+            };
+
+            var getCookie = function (cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for(var i = 0; i <ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if (c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            };
+
+            var getScript = function(url) {
+                jQuery.ajax({
+                    url: url,
+                    type: 'get',
+                    dataType: 'script',
+                    data: undefined,
+                    success: function() {apply();},
+                    error: function() {apply();}
+                });
+            };
+
+            var SessionTimeMin = 0;
+
+            var openWarningDialog = function(id) {
+                modalInstance = ngDialog.open({
+                    templateUrl: "login_warning.htm",
+                    controller: "loginWarningBoxCtr",
+                    size: "500",
+                    backdrop: 'static',
+                    resolve: {
+                        id: function() {
+                            return id;
+                        },
+                        DICT: function() {
+                            return scope.DICT;
+                        }
+                    },
+                    preCloseCallback: function() {
+
+                    }
+                });
+            };
+
+            $scope.nameflag=false;
+            $scope.password = "";
+            $scope.username = "";
+            $scope.pwdflag=false;
+            $scope.loginIsErr = false;
+            $scope.loginErrStr = "";
+            $scope.langsel = "English";
+            scope.logining = false;
+
+            $scope.langs = [
+            {lang: "English", displayName: "English", URL: "i18n/login_en.js"}
+            //            {lang: "Chinese", displayName: "中文", URL: "i18n/login_tw.js"}
+            ];
+
+            $scope.DICT = function(id) {
+                return Language[id] || "";
+            };
+
+            $scope.genFooter = function() {
+                return $scope.DICT("footer");
+            };
+
+            $scope.changeLang = function() {
+                var url = "";
+
+                angular.forEach($scope.langs, function(l) {
+                    if (l.lang === $scope.langsel) {
+                        url = l.URL;
+                    }
+                });
+
+                if (url) {
+                    getScript(url);
+                }
+            };
+
+            $scope.keydown = function(e) {
+                var keynum;
+
+                if (window.event) {
+                    keynum = e.keyCode;
+                } else if (e.which) {
+                    keynum = e.which;
+                }
+
+                if (keynum == 13) {
+                    $scope.login();
+                }
+            };
+
+            $scope.login=function(){
+                //console.log("username "+$scope.username+" pwd : "+$scope.password );
+                $scope.loginIsErr = false;
+
+                if (!$scope.username) {
+                    $scope.loginErrStr = "Invalid Username or Password. Please try again.";
+                    $scope.loginIsErr = true;
+                    return;
+                }
+
+                scope.logining = true;
+                var url = document.location.protocol + "//" + document.location.host +"/jsonrpc",
+                stmp = "", user_params, obj;
+
+                if ($scope.password) {
+                    stmp = encode64($scope.password);
+                }
+
+                user_params = {
+                    user: $scope.username,
+                    pass: stmp,
+                    lang: $scope.langsel
+                };
+
+                obj = {jsonrpc: "2.0", method: "login", params: user_params};
+
+                var t = $.ajax({
+                    url: url,
+                    type: "post",
+                    data: JSON.stringify(obj),
+                    beforeSend: function(){
+                    }
+                })
+                .success(function(resp, status){
+                    //{"jsonrpc": "2.0", "result":{ "code": 0, "errstr": "YWRtaW4=" }}
+                    scope.logining = false;
+                    $scope.loginIsErr = false;
+
+                    if(resp.result.code == 0){
+                        $scope.loginIsErr = false;
+                        setCookie("selected_language", $scope.langsel, SessionTimeMin);
+                        setCookie("sessionid", resp.result.errstr, SessionTimeMin);
+                        setCookie("user", user_params.user, SessionTimeMin);
+                        setCookie("blinking", resp.result.blinking, SessionTimeMin);
+                        setCookie("config-modified", resp.result['config-modified'], SessionTimeMin);
+                        setCookie("disable-startup", resp.result['disable-startup'], SessionTimeMin);
+                        setCookie("redirect-admin", resp.result['redirect-admin'], SessionTimeMin);
+                        setCookie("group", resp.result.group, SessionTimeMin);
+                        setCookie("attributes", resp.result.attributes, SessionTimeMin);
+                        setCookie("ru", resp.result.ru, SessionTimeMin);
+                        setCookie("bootfail", resp.result.bootfail, SessionTimeMin);
+                        //setCookie("bootfail", resp.result.bootfail, SessionTimeMin);
+                        location.href = "index.html";
+                    }
+                    else if(resp.result.code == 2) {
+                        console.log("get login disabled");
+                        $scope.loginIsErr = true;
+                        $scope.loginErrStr = $scope.DICT('login_err_disabled');
+                        $scope.username = "";
+                        $scope.password = "";
+                    }
+                    else{
+                        console.log("get login data authentication fail");
+                        $scope.loginIsErr = true;
+                        $scope.loginErrStr = $scope.DICT("login_err_auth_fail") + "\n" + $scope.DICT('login_err_try_again');
+                        $scope.username = "";
+                        $scope.password = "";
+                    }
+
+                    apply();
+                })
+                .error(function(resp, status){
+                    $scope.logining = false;
+                    console.log("get login data error");
+                });
+
+            };
+
+            if (getCookie('session_timeout') === 'true') {
+                openWarningDialog('session_timeout');
+                setCookie('session_timeout', 'false');
+            }
+
+        }]).controller("loginWarningBoxCtr", ["$scope", 'id', 'DICT',
+            function($scope, id, DICT) {
+                $scope.note = '';
+                $scope.DICT = DICT;
+
+                if (id === 'session_timeout') {
+                    $scope.note = DICT('login_err_session_timeout');
+                }
+                $scope.ok = function() {
+                    $scope.closeThisDialog();
+                };
+            }
+        ]);
+            </script>
+            <script type="text/javascript">
+        $(document).ready(function(){
+            var check_lang = function() {
+                var scope = angular.element('[ng-controller=loginController]').scope();
+                var name = document.getElementById('multi-lang').value;
+                var lang = "";
+
+                if (scope && scope.langsel !== name) {
+                    angular.forEach(scope.langs, function(l) {
+                        if (l.displayName === name) {
+                            lang = l.lang;
+                        }
+                    });
+
+                    if (lang) {
+                        scope.langsel = lang;
+                        scope.changeLang();
+                    }
+                }
+            };
+
+            //点任意元素下拉框消失，允许冒泡
+            $("*").click(function(e){
+                $(".select ul").fadeOut();
+                e.stopPropagation();
+            });
+            //点下拉箭头弹出下拉框
+            $(".selectdiv input").on("click",function(){
+                if($(".select ul").css("display")=="none"){
+                    $(".select ul").slideDown(100);
+                }else{
+                    $(this).next("ul").fadeOut();
+                }
+            });
+            //点下拉箭头里的元素弹出下拉框
+            $(".selectdiv i").on("click",function(){
+                if($(".select ul").css("display")=="none"){
+                    $(".select ul").slideDown(100);
+                }else{
+                    $(this).next("ul").fadeOut();
+                }
+            });
+            //选取下拉框赋值给input 
+            $(".select ul li").on("click",function(e){
+                var tagName = e.target.nodeName.toLowerCase();
+                if(tagName === "li"){
+                    $(this).parents(".select").find("input").val($(this).find("span:nth-child(1)").text().split(" ")[0]);
+                    setMark($(".select ul li"),$(this).find("span:nth-child(1)").text());
+                    $(this).parent().fadeOut();
+
+                    check_lang();
+                }
+            });
+
+            $(".select ul li span").on("click",function(e){
+                var tagName = e.target.nodeName.toLowerCase();
+                if(tagName === "span"){
+                    $(this).parents(".select").find("input").val($(this).parent().find("span:nth-child(1)").text().split(" ")[0]);
+                    setMark($(".select ul li"),$(this).parent().find("span:nth-child(1)").text().split(" ")[0]);
+                    $(this).parent().parent().fadeOut();
+
+                    check_lang();
+                }
+            });
+
+            setMark($(".select ul li"),"English");
+
+            function setMark(jqDom,str){
+                jqDom.each(function(index,element){
+                    if(str === $(element).find("span:nth-child(1)").text()){
+                        $(element).find("span:nth-child(2)").show();
+                    }else{
+                        $(element).find("span:nth-child(2)").hide();
+                    }
+                });
+            }
+
+        });
+    </script>
+    <body style="background:#e6e9f0;"ng-app="myApp" >
+        <div class="login-cntr">
+            <div class="ciscosb-login-box" ng-controller="loginController">
+                <div>
+                    <div class="ciscosb-logoimg" >
+                        <img src="themes/img/speciel/loginlogo.png"  height="60"></img>
+                    </div>
+                    <p class="ciscosb-logohostname" ng-bind="DICT('router')"></p>
+                    <form name="myform" class="ciscosb-login-form" role="form">
+                        <table class="login-tb-list">
+                            <tr>
+                                <td>
+                                    <input type="text"
+                                           class="ciscosb-noboder"
+                                           placeholder="{{DICT('username')}}"
+                                           ng-keypress="keydown($event)"
+                                           ng-model="username"
+                                           required
+                                           autocomplete="off"
+                                           ng-click="nameflag=true"
+                                           ng-focus="nameflag=true"
+                                           ng-blur="nameflag=false">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="password"
+                                           class="ciscosb-noboder"
+                                           placeholder="{{DICT('password')}}"
+                                           ng-keypress="keydown($event)"
+                                           ng-model="password"
+                                           autocomplete="off"
+                                           required ng-click="pwdflag=true" 
+                                           ng-focus="pwdflag=true"
+                                           ng-blur="pwdflag=false">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="select ciscosb-noboder ciscosb-loginbox-center">
+                                        <div class="selectdiv">
+                                            <input type="text"
+                                                value="English" id='multi-lang'
+                                                readonly="readonly">
+                                                <span class="arr "><i class="icon-caret-down"></i></span>
+                                        </div>
+                                        <ul style="display: none;">
+                                            <li ng-repeat="m in langs"><span>{{m.displayName}}</span>
+                                                <span class="glyphicon glyphicon-ok" aria-hidden="false"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="err-str" ng-show="loginIsErr">
+                                <td ng-bind="loginErrStr"></td>
+                            </tr>
+                            <tr>
+                                <td class="login-btn-cntr">
+                                    <button type="button" class="login-btn" ng-disabled="logining" ng-click="login()">{{DICT('login')}}</button>
+                                    <span class="icon-loading login-loading" ng-show="logining"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <div class="ciscosb-loginbox-center ciscosb-login-foot" ng-bind="DICT('footer')"></div>
+                </div>
+            </div>
+        </div>
+        <script type="text/ng-template" id="login_warning.htm">
+            <div class="modal-container">
+                <div class="modal-header-container">
+                    <div class="modal-title" ng-bind="DICT('Login_Alert')"></div>
+                </div>
+                <div class="modal-content-container">
+                    <table>
+                        <tr>
+                            <td>
+                                <i class="fa modal-icon icon-critical" aria-hidden="true"></i>
+                            </td>
+                            <td ng-bind="note" class="page-indent14"></td>
+                        </tr>
+                        </table>
+                </div>
+                <div class="modal-button-container">
+                    <button type="button" ng-click="ok()" class="btn-primary" autofocus>
+                        <span ng-bind="DICT('Login_Ok')"></span>
+                    </button>
+                </div>
+            </div>
+        </script>
+    </body>
+</html>

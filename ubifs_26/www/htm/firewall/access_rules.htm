@@ -1,0 +1,283 @@
+<style>
+    table tr td:nth-child(2) select {
+        width: 100%;
+    }
+</style>
+<div ng-controller="accessRulesCtrl" id="fw-basic-setting">
+    <form name="aclform" ng-modification="dataReady">
+        <div ng-if="dataReady">
+            <div ng-include="currPage"></div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="access_rules.html">
+<div>
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Access_Rules')"></div>
+        <div class="page-button-container">
+            <button id="btn_accessrules_save" class="btn-apply" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.save('main')">
+                <span ng-bind="DICT('Access_Rules_Apply')"></span></button>
+            <button id="btn_accessrules_restore" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.restoreToDefault('main')">
+                <span ng-bind="DICT('Access_Rules_Restore_Default_Rules')"></span></button>
+        </div>
+    </div>
+	<confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <div class="page-content">
+            <div class="grid-cntr" style="min-width: 1300px">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Access_Rules_IPv4_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_accessrules_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.add('IPv4')"></button>
+                        <button id="btn_accessrules_edit" class="grid-btn-edit" ng-disabled="model.ipv4_selects.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.edit('IPv4')"></button>
+                        <button id="btn_accessrules_delete" class="grid-btn-delete" ng-disabled="model.ipv4_selects.length < 1 || userAccessFlag === 'RO'" ng-click="funs.del('IPv4')"></button>
+                    </div>
+                    <div class="grid-content grid-text-wrap" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIPv4ACLOptions"></div>
+                </div>
+            </div>
+            <div class="grid-seperator"></div>
+            <div class="grid-cntr" style="min-width: 1300px">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Access_Rules_IPv6_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_accessrules_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.add('IPv6')"></button>
+                        <button id="btn_accessrules_edit" class="grid-btn-edit" ng-disabled="model.ipv6_selects.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.edit('IPv6')"></button>
+                        <button id="btn_accessrules_delete" class="grid-btn-delete" ng-disabled="model.ipv6_selects.length < 1 || userAccessFlag === 'RO'" ng-click="funs.del('IPv6')"></button>
+                    </div>
+                    <div class="grid-content grid-text-wrap" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIPv6ACLOptions"></div>
+                </div>
+            </div>
+        </div>
+        <div class="btn-container">
+            <button id="btn_accessrules_service" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.serviceManagement('main')">
+                <span ng-bind="DICT('Access_Rules_Service_Management')"></span>
+            </button>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="edit_access_rule.html">
+<div>
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Access_Rules')"></div>
+        <div class="page-button-container">
+            <button id="btn_accessrules_table_edit_save" class="btn-apply" ng-click="funs.save('addEdit')" ng-disabled="userAccessFlag === 'RO' || aclform.$invalid">
+                <span ng-bind="DICT('Access_Rules_Apply')"></span></button>
+            <button id="btn_accessrules_table_edit_cancel" class="btn-cancel" ng-click="funs.cancel('addEdit')">
+                <span ng-bind="DICT('Access_Rules_Cancel')"></span></button>
+        </div>
+    </div>
+    <div class="page-content-container">
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Rule_Status')"></td>
+                <td>
+                    <input style="margin-left:8px;" type="checkbox" id="chk_accessrules_table_rulestatus_enable" ng-model="model.addEditItem.enable" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Access_Rules_Enable')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Action')+':'"></td>
+                <td>
+                    <select id="slct_accessrules_table_action" ng-model="model.addEditItem.action" ng-options="m.id as m.displayName for m in model.scheme.actionList"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Services')+':'"></td>
+                <td>
+                    <input style="margin-left:8px;" type="radio" id="rdo_accessrules_table_servicev4" ng-model="model.addEditItem.ip_type" ng-value="'IPv4'" ng-disabled="true">
+                    <span ng-bind="DICT('Access_Rules_IPv4')"></span>
+                    <input type="radio" id="rdo_accessrules_table_servicev6" ng-model="model.addEditItem.ip_type" ng-value="'IPv6'" ng-disabled="true">
+                    <span ng-bind="DICT('Access_Rules_IPv6')"></span>
+                </td>
+                <td>
+                    <select id="slct_accessrules_table_service" class="tableInlineSelect" ng-model="model.addEditItem.service" ng-options="m.id as m.displayName for m in model.services"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Log')"></td>
+                <td>
+                    <select id="slct_accessrules_table_log" ng-model="model.addEditItem.log" ng-options="m.id as m.displayName for m in model.scheme.logList"><select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Source_Interface')+':'"></td>
+                <td>
+                    <select id="slct_accessrules_table_sourceinterface" ng-model="model.addEditItem['interface'].source" ng-options="m.id as m.displayName for m in model.ifs"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Source_Addr')"></td>
+                <td>
+                    <select id="slct_accessrules_table_sourceaddr" ng-model="model.addEditItem.source_ip.type" ng-options="m.id as m.displayName for m in model.scheme.addrTypeList"></select>
+                </td>
+                <td>
+                    <span ng-show="model.addEditItem.source_ip.type === 'single'" ng-if="model.addEditItem.source_ip.type === 'single'">
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_sourceip_single" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.source_ip.type === 'single'"
+                            ng-model="model.addEditItem.source_ip.single_ip"
+                        ></input>
+                    </span>
+                    <span ng-show="model.addEditItem.source_ip.type === 'range'" ng-if="model.addEditItem.source_ip.type === 'range'">
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_sourceip_range_start" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.source_ip.type === 'range'"
+                            ng-model="model.addEditItem.source_ip.start"
+                        ></input>
+                        <span style="padding-left: 3px" ng-bind="DICT('Access_Rules_To')"></span>
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_sourceip_range_end" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.source_ip.type === 'range'"
+                            compare-ip-range-bytype="model.addEditItem.ip_type+'#'+model.addEditItem.source_ip.start" 
+                            ng-model="model.addEditItem.source_ip.end"
+                        ></input>
+                    </span>
+                    <span ng-show="model.addEditItem.source_ip.type === 'subnet'" ng-if="model.addEditItem.source_ip.type === 'subnet'">
+                        <input class="tableInlineInputText" type="text"
+                            id="txt_accessrules_table_sourceip_subnet_ip" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.source_ip.type === 'subnet'"
+                            ng-model="model.addEditItem.source_ip.subnet_ip"
+                        ></input>
+                        <span style="padding-left: 3px">/</span>
+                        <input type="number" number style="width: 5em"
+                            id="txt_accessrules_table_sourceip_subnet_prefix"
+                            ng-min="model.addEditItem.ip_type === 'IPv6' ? 0 : 1"
+                            ng-max="model.addEditItem.ip_type === 'IPv6' ? 128 : 32"
+                            ng-required="model.addEditItem.source_ip.type === 'subnet'"
+                            ng-model="model.addEditItem.source_ip.subnet_prefix"
+                            ng-if="model.addEditItem.source_ip.type === 'subnet'"
+                            ng-show="model.addEditItem.source_ip.type === 'subnet'"
+                        ></input>
+                        <span ng-show="model.addEditItem.source_ip.type === 'subnet' && model.addEditItem.ip_type === 'IPv4'" class="tip-info" ng-bind="DICT('Access_Rules_Hint_IPv4')"></span>
+                        <span ng-show="model.addEditItem.source_ip.type === 'subnet' && model.addEditItem.ip_type === 'IPv6'" class="tip-info" ng-bind="DICT('Access_Rules_Hint_IPv6')"></span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Destination_Interface')+':'"></td>
+                <td>
+                    <select id="slct_accessrules_table_destinterface" ng-model="model.addEditItem['interface'].destination" ng-options="m.id as m.displayName for m in model.ifs"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Access_Rules_Destination_Addr')"></td>
+                <td>
+                    <select id="slct_accessrules_table_destaddr" ng-model="model.addEditItem.destination_ip.type" ng-options="m.id as m.displayName for m in model.scheme.addrTypeList"></select>
+                </td>
+                <td>
+                    <span ng-show="model.addEditItem.destination_ip.type === 'single'" ng-if="model.addEditItem.destination_ip.type === 'single'">
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_destinationip_single" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.destination_ip.type === 'single'"
+                            ng-model="model.addEditItem.destination_ip.single_ip"
+                        ></input>
+                    </span>
+                    <span ng-show="model.addEditItem.destination_ip.type === 'range'" ng-if="model.addEditItem.destination_ip.type === 'range'">
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_destinationip_range_start" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.destination_ip.type === 'range'"
+                            ng-model="model.addEditItem.destination_ip.start"
+                        ></input>
+                        <span style="padding-left: 3px" ng-bind="DICT('Access_Rules_To')"></span>
+                        <input class="tableInlineInputText"
+                            type="text" id="txt_accessrules_table_destinationip_range_end" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.destination_ip.type === 'range'"
+                            compare-ip-range-bytype="model.addEditItem.ip_type+'#'+model.addEditItem.destination_ip.start" 
+                            ng-model="model.addEditItem.destination_ip.end"
+                        ></input>
+                    </span>
+                    <span ng-show="model.addEditItem.destination_ip.type === 'subnet'" ng-if="model.addEditItem.destination_ip.type === 'subnet'">
+                        <input class="tableInlineInputText" type="text"
+                            id="txt_accessrules_table_destinationip_subnet_ip" 
+                            ng-ipv4-ip="model.addEditItem.ip_type === 'IPv4'" 
+                            ng-ipv6-ip="model.addEditItem.ip_type === 'IPv6'" 
+                            ng-required="model.addEditItem.destination_ip.type === 'subnet'"
+                            ng-model="model.addEditItem.destination_ip.subnet_ip"
+                        ></input>
+                        <span style="padding-left: 3px">/</span>
+                        <input type="number" number style="width: 5em"
+                            id="txt_accessrules_table_destinationip_subnet_prefix" 
+                            ng-min="model.addEditItem.ip_type === 'IPv6' ? 0 : 1"
+                            ng-max="model.addEditItem.ip_type === 'IPv6' ? 128 : 32"
+                            ng-required="model.addEditItem.destination_ip.type === 'subnet'"
+                            ng-model="model.addEditItem.destination_ip.subnet_prefix"
+                            ng-if="model.addEditItem.destination_ip.type === 'subnet'"
+                            ng-show="model.addEditItem.destination_ip.type === 'subnet'"
+                        ></input>
+                        <span ng-show="model.addEditItem.source_ip.type === 'subnet' && model.addEditItem.ip_type === 'IPv4'" class="tip-info" ng-bind="DICT('Access_Rules_Hint_IPv4')"></span>
+                        <span ng-show="model.addEditItem.source_ip.type === 'subnet' && model.addEditItem.ip_type === 'IPv6'" class="tip-info" ng-bind="DICT('Access_Rules_Hint_IPv6')"></span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <hr class="page-content-seperator"/>
+        <div class="page-block-title" ng-bind="DICT('Access_Rules_Scheduling')"></div>
+        <div>
+			<span>
+				<span style="padding-right:30px" ng-bind="DICT('Access_Rules_Schedule_Name')"></span>
+				<select id="slct_accessrules_table_schedulename" ng-model="model.addEditItem.schedule" ng-options="m.id as m.displayName for m in model.schedules"></select>
+				<span>
+					<span ng-bind="DICT('Access_Rules_Click')"></span>
+					<a href="" ng-click="jumpToSchedule()"style="text-decoration: underline;">
+					<span ng-bind="DICT('Access_Rules_Here')"></span></a>
+					<span ng-bind="DICT('Access_Rules_Configure_Schedules')"></span>
+				
+				</span>
+			</span>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="access_rule_jump.htm">
+    <form name="jumpform">
+        <div class="modal-container">
+            <div class="modal-header-container">
+                <div class="modal-title" ng-bind="DICT('Access_Rules_Jump_To')"></div>
+            </div>
+            <div class="modal-content-container">
+                <div>
+                    <input type="number" min="1" max="max" id="txt_accessrules_table_jump_to" ng-required="true" ng-model="jump">
+                    <span class="tip-info" ng-bind="DICT('Access_Rules_Range', {'%d': max})"></span>
+                </div>
+            </div>
+            <div class="modal-button-container">
+                <button id="btn_accessrules_table_jump_yes" class="btn-apply" ng-click="funs.save('edit')" ng-disabled="jumpform.$invalid || userAccessFlag === 'RO'">
+					<span ng-bind="DICT('Access_Rules_Yes')"></span>
+                </button>
+                <button id="btn_accessrules_table_jump_cancel" class="btn-cancel" ng-click="funs.cancel('edit')">
+					<span ng-bind="DICT('Access_Rules_Cancel')"></span>
+                </button>
+            </div>
+            <button type="button" class="modal-close-btn" ng-click="funs.cancel('close')"></button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="access_priority.html">
+<div class="ui-grid-custom-cntr">
+    <span ng-bind="MODEL_COL_FIELD.priority"></span>
+    <info-icon context="MODEL_COL_FIELD.info" ng-show="MODEL_COL_FIELD.info"></info-icon>
+</div>
+</script>

@@ -1,0 +1,35 @@
+<form name="form" ng-controller="captivePortalStatusCtrl" ng-modification="dataReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Captive_Portal_Status')"></div>
+    </div>
+	<div class="page-content-container" ng-if="dataReady">
+        <table class="page-block-tb-list">
+            <tr>
+                <td style="width: 5em" ng-bind="DICT('Captive_Portal_Status_SSID')+':'"></td>
+                <td>
+                    <select ng-model="model.selected"
+                         ng-init="(availSSIDList = collect_ssid_list())"
+                         ng-options="m as m for m in availSSIDList"
+                         ng-change="update()"
+                    ></select>
+                </td>
+            </tr>
+        </table>
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Captive_Portal_Status_Connected_Status')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_disconnect"
+                            class="grid-btn-disconnect"
+                            ng-disabled="model.selects.length === 0 || model.userList.length == 0"
+                            ng-click="RPC_disconnect()">
+                    </button>
+                    <button id="btn_refresh" class="grid-btn-refresh" ng-click="refresh()"></button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridCaptivePortalState"></div>
+            </div>
+        </div>
+    </div>
+</form>

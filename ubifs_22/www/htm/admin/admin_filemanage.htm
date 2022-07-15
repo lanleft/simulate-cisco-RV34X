@@ -1,0 +1,410 @@
+<div>
+    <form name="form" ng-controller="admin_filemanage_main" id="admin-file-management">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('File_Management')"></div>
+            <div class="page-button-container">
+                <button class="page-m-indent"
+                        ng-click="checkNow()"
+                        title="{{DICT('File_Management_Check_Now_Note')}}"
+                        ng-disabled="model.checking_status === 'checking' || disableUpgradeBn || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('File_Management_Check_Now')"></span>
+                </button>
+                <button class="btn-back" ng-if="back_btn" ng-click="go_back()">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div class="page-content">
+                <div ng-include="'filemanage_Summary.htm'"></div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="filemanage_Summary.htm" >
+    <table class="page-block-tb-split2">
+        <tr>
+            <td>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title " ng-bind="DICT('File_Management_System_Info')"></div>
+                </div>
+                <table class="page-block-tb-list admin-file-info">
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Device_Model')"></td>
+                        <td>
+                            {{model.device_model}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_PID_VID')"></td>
+                        <td>
+                            {{model.pid + ' ' + model.vid}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Current_Firmware_Ver')"></td>
+                        <td>
+                            <span ng-if="loadReady">
+                            {{ model['image-state']['firmware']['active-version'] }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Updated')"></td>
+                        <td>
+                            {{ model['image-state']['firmware']['latest-update-time'] }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Ver_Available_Cisco_Com')"></td>
+                        <td>
+                            {{ model['image-state']['firmware']['available-version'] || 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Checked')"></td>
+                        <td>
+                            {{ model['image-state']['firmware']['last-check-time'] || 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title " ng-bind="DICT('File_Management_USB_Dongle_Driver')"></div>
+                </div>
+                <table class="page-block-tb-list admin-file-info">
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Current_Dongle_Driver_Ver')"></td>
+                        <td>
+                            {{model['dongle-driver-state'].version}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Updated')"></td>
+                        <td>
+                            {{model['dongle-driver-state']['latest-update-time']}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Ver_Available_Cisco_Com')"></td>
+                        <td>
+                            {{model['dongle-driver-state']['available-version'] || 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Checked')"></td>
+                        <td>
+                            {{model['dongle-driver-state']['last-check-time'] || 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <table class="page-block-tb-split2">
+        <tr>
+            <td>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title " ng-bind="DICT('File_Management_Signature')"></div>
+                </div>
+                <table class="page-block-tb-list admin-file-info">
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Current_Signature_Ver')"></td>
+                        <td>
+                            {{model['signature-state'].version}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Updated')"></td>
+                        <td>
+                            {{model['signature-state']['latest-update-time']}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Ver_Available_Cisco_Com')"></td>
+                        <td>
+                            {{model['signature-state']['available-version'] || 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Checked')"></td>
+                        <td>
+                            {{model['signature-state']['last-check-time'] || 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title " ng-bind="DICT('File_Management_Language_Package')"></div>
+                </div>
+                <table class="page-block-tb-list admin-file-info">
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Current_Language_Package_Ver')"></td>
+                        <td>
+                            {{model['language-state']['version']}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Updated')"></td>
+                        <td>
+                            {{model['language-state']['latest-update-time']}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Ver_Available_Cisco_Com')"></td>
+                        <td>
+                            {{model['language-state']['available-version'] || 'N/A' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('File_Management_Latest_Checked')"></td>
+                        <td>
+                            {{model['language-state']['last-check-time'] || 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title " ng-bind="DICT('File_Management_Manual_Upgrade')"></div>
+    </div>
+    <div ng-include="'upgrade_from.htm'"></div>
+
+</script>
+
+<script type="text/ng-template" id="upgrade_from.htm" >
+	<table class="page-block-tb-list">
+		<tr>
+			<td ng-bind="DICT('File_Management_File_Type')"></td>
+			<td>
+				<input type="radio" id="rdo_fwimage" name="filetype" ng-model="ctx.filetype" ng-click="resetFormatCheck(pcFile)" value="firmware" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_Firmware_Image')"></span></input>
+			</td>
+			<td>
+				<span class="indent"></span>
+				<input type="radio" id="rdo_signature" name="filetype" ng-model="ctx.filetype" ng-click="resetFormatCheck(pcFile)" value="signature" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_Signature_File')"></span></input>
+			</td>
+			<td>
+				<span class="indent"></span>
+				<input type="radio" id="rdo_usbdongledriver" name="filetype" ng-model="ctx.filetype" ng-click="resetFormatCheck(pcFile)" value="3g-4g-driver" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_USB_Dongle_Driver')"></span></input>
+			</td>
+			<td>
+				<span class="indent"></span>
+				<input type="radio" name="filetype" ng-model="ctx.filetype" ng-click="resetFormatCheck(pcFile)" value="language-pack" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_Language_File')"></span></input>
+			</td>
+		</tr>
+		<tr>
+			<td ng-bind="DICT('File_Management_Upgrade_From')"></td>
+			<td>
+				<input type="radio" id="rdo_cisco" name="source" ng-model="ctx.source" ng-click="resetFormatCheck(pcFile)" value="cisco" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_Cisco_Com')"></span></input>
+			</td>
+			<td>
+				<span class="indent"></span>
+				<input type="radio" id="rdo_pc" name="source" ng-model="ctx.source" ng-click="resetFormatCheck(pcFile)" value="pc" ng-change="switchRadioBn(pcFile)">
+					<span ng-bind="DICT('File_Management_PC')"></span></input>
+			</td>
+			<td>
+				<span class="indent"></span>
+				<input type="radio" id="rdo_usb" name="source" value="usb" ng-change="switchRadioBn(pcFile)"
+					ng-disabled="ctx.from_usb.usbDevList == undefined || ctx.from_usb.usbDevList.length < 1"
+					ng-model="ctx.source" ng-click="resetFormatCheck(pcFile)"
+				>
+					<span ng-bind="DICT('File_Management_USB')"></span></input>
+
+                    <button ng-click="RPC_check_USB_attached('true')" class="icon-btn-refresh page-m-indent" ng-disabled="userAccessFlag === 'RO'"></button>
+			</td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="4">
+				<div ng-show="ctx.source == 'pc'">
+					<table>
+						<tr ng-show="ctx.filetype == 'firmware'">
+							<td ng-bind="DICT('File_Management_Firmware_Format')">
+							
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<pg-upload id="slct_pcfile" name="pcFile"
+                                    ngchange="pcFileFormatCheck"
+									ng-disabled="userAccessFlag === 'RO' || disableUpgradeBn"
+                                ></pg-upload>
+							</td>
+						</tr>
+						<tr style="color:red;" ng-show="pcFileInvalid">
+							<td ng-bind="DICT('File_Management_Wrong_Format')">
+							
+							</td>
+						</tr>
+					</table>
+					<span class="progress" ng-show="pcFile.progress >= 0">
+						<!--
+						<div style="width:{{pcFile.progress}}%" ng-bind="pcFile.progress + '%'" class="ng-binding"></div>
+						-->
+						<uib-progressbar animate="false" value="pcFile.progress" ng-model="pcFile.progress" type="success" max="100" style="width: 500px;">
+							<b style="color: green;">{{pcFile.progress}}%</b>
+						</uib-progressbar>
+					</span>
+				</div>
+				<div ng-if="ctx.source == 'usb'" ng-include="'USB_list.htm'"
+					data-x-tmp="{{usb_sel_file_ctx = ctx.from_usb}}"
+				></div>
+			</td>
+		</tr>
+		<tr ng-if="ctx.filetype == 'firmware'">
+			<td></td>
+			<td  colspan="4">
+				<input type="checkbox" id="chk_resetall" ng-model="ctx.reset_default"/>
+				<span ng-bind="DICT('File_Management_Reset_all_Msg')"></span>
+				<!--
+				<br />
+				<input type="checkbox" ng-model="ctx.reset_default_cert" ng-disabled="ctx.reset_default != true" />Reset all configuration/setting to factory defaults (includes certificates)
+				-->
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td  colspan="4">
+				<button id="btn_upgrade" ng-click="triggerUpgrade(pcFile)" 
+						ng-disabled="pcFileInvalid || !isReadyToUpgrade(ctx) || userAccessFlag === 'RO' || disableUpgradeBn" >
+					<span ng-bind="DICT('File_Management_Upgrade')"></span>
+				</button>
+                <span ng-show="ctx.filetype === 'firmware'" ng-bind="DICT('File_Management_Upgrade_Note')" class="page-indent"></span>
+				<!--
+				<span ng-if="ctx.filetype == 'firmware'">
+				&nbsp;The device will be automatically rebooted after the upgrade is complete.
+				</span>
+				-->
+			</td>
+		</tr>
+		<tr ng-if="pcFile.progress >= 0 && ctx.filetype == 'firmware'">
+			<td></td>
+			<td colspan="5">
+				<span ng-bind="DICT('File_Management_Msg1')">
+					
+				</span>
+			</td>
+		</tr>
+		<tr ng-if="pcFile.progress >= 0 && ctx.filetype == 'firmware'">
+			<td></td>
+			<td colspan="5">
+				<span style="padding: 7px" ng-bind="DICT('File_Management_Msg2')">
+					
+				</span>
+			</td>
+		</tr>
+		<tr ng-if="pcFile.progress >= 0 && ctx.filetype == 'firmware'">
+			<td></td>
+			<td colspan="5">
+				<span ng-bind="DICT('File_Management_Msg3')">
+					
+				</span>
+			</td>
+		</tr>
+
+		<tr ng-if="ctx.source == 'cisco' && showBarMsg">
+			<td></td>
+			<td colspan="4" ng-bind="DICT('File_Management_Downloading_From_Server')"></td>
+		</tr>
+		<tr ng-if="ctx.source == 'cisco' && showBarMsg && checkProgressResult">
+			<td></td>
+			<td colspan="4">
+				<uib-progressbar animate="false" value="dynamic" ng-model="dynamic" type="success" max="100" style="width: 500px;">
+					<b style="color: green;">{{dynamic}}%</b>
+				</uib-progressbar>
+			</td>
+		</tr>
+		<tr ng-if="ctx.source == 'cisco' && showBarMsg && !checkProgressResult">
+			<td></td>
+			<td colspan="4">
+				<uib-progressbar animate="false" value="dynamic" ng-model="dynamic" type="danger" max="100" style="width: 500px;">
+					<b style="color: white">{{dynamic}}%</b>
+				</uib-progressbar>
+			</td>
+<!--            <td style="vertical-align: top;">-->
+<!--                <span style="padding: 10px 5px; color: red;" ng-bind="DICT('File_Management_Download_Failed')"></span>-->
+<!--            </td>-->
+		</tr>
+
+		<tr>
+			<td></td>
+			<td style="padding-left: 0px;"  colspan="4">
+				<div ng-if="ctx.source == 'cisco'">
+					<hr />
+					<button id="btn_downloadtousb" ng-click="triggerDownload()" 
+						ng-disabled="ctx.dest_usb_name == undefined || ctx.from_usb.usbDevList.length === 0 || userAccessFlag === 'RO' || disableUpgradeBn">
+						<span ng-bind="DICT('File_Management_Download_To_USB')"></span>
+					</button>
+					<span class="indent"></span>
+					<select id="slct_usb" ng-model="ctx.dest_usb_name" ng-options="item as item for item in ctx.from_usb.usbDevList"
+						ng-disabled="ctx.from_usb.usbDevList.length === 0">
+					</select>
+					<br/>
+				</div>
+			</td>
+		</tr>
+	</table>
+</script>
+
+<script type="text/ng-template" id="filemanage_modal.htm">
+	<div class="modal-container" id="modalBox">
+		<div ng-include="'modal_upgrade.htm'"></div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="modal_upgrade.htm">
+<div class="modal-container">
+    <div class="modal-header-container">
+	    <div class="modal-title" ng-bind="DICT('Reboot_Rebooting')"></div>
+    </div>
+	<div class="modal-content-container no-button-container">
+        <table class="align-top">
+            <tr>
+                <td class="modal-icon">
+                    <i class="icon-warning"></i>
+                </td>
+                <td>
+                    <div class="modal-context">
+                        <div ng-bind="DICT('File_Management_Msg4')"></div>
+                        <div>
+                            <span ng-bind="DICT('File_Management_Msg5')"></span>
+                            <span class="indent" ng-bind="ctx.reboot.newHost"></span>
+                        </div>
+                        <div ng-bind="DICT('File_Management_Msg6')"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+	</div>
+</div>
+</script>
+
+<script type="text/ng-template" id="admin_file_flash.htm">
+<div>
+    <table>
+        <tr>
+            <td ng-bind="DICT('File_Management_Flash_Note1')"></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('File_Management_Flash_Note2')"></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('File_Management_Flash_Note3')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+

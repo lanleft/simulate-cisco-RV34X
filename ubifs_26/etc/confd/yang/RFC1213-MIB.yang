@@ -1,0 +1,1293 @@
+module RFC1213-MIB {
+  namespace "http://tail-f.com/ns/mibs/RFC1213-MIB/1.0";
+  prefix RFC1213_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "RFC1213-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  container RFC1213-MIB {
+    container system {
+      tailf:snmp-oid "1.3.6.1.2.1.1";
+      leaf sysDescr {
+        type sysDescrType;
+        tailf:snmp-oid "1.3.6.1.2.1.1.1";
+        config false;
+      }
+      leaf sysObjectID {
+        type yang:object-identifier;
+        tailf:snmp-oid "1.3.6.1.2.1.1.2";
+        config false;
+      }
+      leaf sysUpTime {
+        type yang:timeticks;
+        tailf:snmp-oid "1.3.6.1.2.1.1.3";
+        config false;
+      }
+      leaf sysContact {
+        type sysContactType;
+        tailf:snmp-oid "1.3.6.1.2.1.1.4";
+      }
+      leaf sysName {
+        type sysNameType;
+        tailf:snmp-oid "1.3.6.1.2.1.1.5";
+      }
+      leaf sysLocation {
+        type sysLocationType;
+        tailf:snmp-oid "1.3.6.1.2.1.1.6";
+      }
+      leaf sysServices {
+        type sysServicesType;
+        tailf:snmp-oid "1.3.6.1.2.1.1.7";
+        config false;
+      }
+    }
+    container interfaces {
+      tailf:snmp-oid "1.3.6.1.2.1.2";
+      leaf ifNumber {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.2.1";
+        config false;
+      }
+    }
+    container ip {
+      tailf:snmp-oid "1.3.6.1.2.1.4";
+      leaf ipForwarding {
+        type ipForwardingType;
+        tailf:snmp-oid "1.3.6.1.2.1.4.1";
+      }
+      leaf ipDefaultTTL {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.2";
+      }
+      leaf ipInReceives {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.3";
+        config false;
+      }
+      leaf ipInHdrErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.4";
+        config false;
+      }
+      leaf ipInAddrErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.5";
+        config false;
+      }
+      leaf ipForwDatagrams {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.6";
+        config false;
+      }
+      leaf ipInUnknownProtos {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.7";
+        config false;
+      }
+      leaf ipInDiscards {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.8";
+        config false;
+      }
+      leaf ipInDelivers {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.9";
+        config false;
+      }
+      leaf ipOutRequests {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.10";
+        config false;
+      }
+      leaf ipOutDiscards {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.11";
+        config false;
+      }
+      leaf ipOutNoRoutes {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.12";
+        config false;
+      }
+      leaf ipReasmTimeout {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.13";
+        config false;
+      }
+      leaf ipReasmReqds {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.14";
+        config false;
+      }
+      leaf ipReasmOKs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.15";
+        config false;
+      }
+      leaf ipReasmFails {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.16";
+        config false;
+      }
+      leaf ipFragOKs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.17";
+        config false;
+      }
+      leaf ipFragFails {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.18";
+        config false;
+      }
+      leaf ipFragCreates {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.19";
+        config false;
+      }
+      leaf ipRoutingDiscards {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.4.23";
+        config false;
+      }
+    }
+    container icmp {
+      tailf:snmp-oid "1.3.6.1.2.1.5";
+      config false;
+      leaf icmpInMsgs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.1";
+        config false;
+      }
+      leaf icmpInErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.2";
+        config false;
+      }
+      leaf icmpInDestUnreachs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.3";
+        config false;
+      }
+      leaf icmpInTimeExcds {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.4";
+        config false;
+      }
+      leaf icmpInParmProbs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.5";
+        config false;
+      }
+      leaf icmpInSrcQuenchs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.6";
+        config false;
+      }
+      leaf icmpInRedirects {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.7";
+        config false;
+      }
+      leaf icmpInEchos {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.8";
+        config false;
+      }
+      leaf icmpInEchoReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.9";
+        config false;
+      }
+      leaf icmpInTimestamps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.10";
+        config false;
+      }
+      leaf icmpInTimestampReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.11";
+        config false;
+      }
+      leaf icmpInAddrMasks {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.12";
+        config false;
+      }
+      leaf icmpInAddrMaskReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.13";
+        config false;
+      }
+      leaf icmpOutMsgs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.14";
+        config false;
+      }
+      leaf icmpOutErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.15";
+        config false;
+      }
+      leaf icmpOutDestUnreachs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.16";
+        config false;
+      }
+      leaf icmpOutTimeExcds {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.17";
+        config false;
+      }
+      leaf icmpOutParmProbs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.18";
+        config false;
+      }
+      leaf icmpOutSrcQuenchs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.19";
+        config false;
+      }
+      leaf icmpOutRedirects {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.20";
+        config false;
+      }
+      leaf icmpOutEchos {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.21";
+        config false;
+      }
+      leaf icmpOutEchoReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.22";
+        config false;
+      }
+      leaf icmpOutTimestamps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.23";
+        config false;
+      }
+      leaf icmpOutTimestampReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.24";
+        config false;
+      }
+      leaf icmpOutAddrMasks {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.25";
+        config false;
+      }
+      leaf icmpOutAddrMaskReps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.5.26";
+        config false;
+      }
+    }
+    container tcp {
+      tailf:snmp-oid "1.3.6.1.2.1.6";
+      leaf tcpRtoAlgorithm {
+        type tcpRtoAlgorithmType;
+        tailf:snmp-oid "1.3.6.1.2.1.6.1";
+        config false;
+      }
+      leaf tcpRtoMin {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.2";
+        config false;
+      }
+      leaf tcpRtoMax {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.3";
+        config false;
+      }
+      leaf tcpMaxConn {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.4";
+        config false;
+      }
+      leaf tcpActiveOpens {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.5";
+        config false;
+      }
+      leaf tcpPassiveOpens {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.6";
+        config false;
+      }
+      leaf tcpAttemptFails {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.7";
+        config false;
+      }
+      leaf tcpEstabResets {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.8";
+        config false;
+      }
+      leaf tcpCurrEstab {
+        type yang:gauge32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.9";
+        config false;
+      }
+      leaf tcpInSegs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.10";
+        config false;
+      }
+      leaf tcpOutSegs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.11";
+        config false;
+      }
+      leaf tcpRetransSegs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.12";
+        config false;
+      }
+      leaf tcpInErrs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.14";
+        config false;
+      }
+      leaf tcpOutRsts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.6.15";
+        config false;
+      }
+    }
+    container udp {
+      tailf:snmp-oid "1.3.6.1.2.1.7";
+      config false;
+      leaf udpInDatagrams {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.7.1";
+        config false;
+      }
+      leaf udpNoPorts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.7.2";
+        config false;
+      }
+      leaf udpInErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.7.3";
+        config false;
+      }
+      leaf udpOutDatagrams {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.7.4";
+        config false;
+      }
+    }
+    container egp {
+      tailf:snmp-oid "1.3.6.1.2.1.8";
+      leaf egpInMsgs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.8.1";
+        config false;
+      }
+      leaf egpInErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.8.2";
+        config false;
+      }
+      leaf egpOutMsgs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.8.3";
+        config false;
+      }
+      leaf egpOutErrors {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.8.4";
+        config false;
+      }
+      leaf egpAs {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.8.6";
+        config false;
+      }
+    }
+    container snmp {
+      tailf:snmp-oid "1.3.6.1.2.1.11";
+      leaf snmpInPkts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.1";
+        config false;
+      }
+      leaf snmpOutPkts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.2";
+        config false;
+      }
+      leaf snmpInBadVersions {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.3";
+        config false;
+      }
+      leaf snmpInBadCommunityNames {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.4";
+        config false;
+      }
+      leaf snmpInBadCommunityUses {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.5";
+        config false;
+      }
+      leaf snmpInASNParseErrs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.6";
+        config false;
+      }
+      leaf snmpInTooBigs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.8";
+        config false;
+      }
+      leaf snmpInNoSuchNames {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.9";
+        config false;
+      }
+      leaf snmpInBadValues {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.10";
+        config false;
+      }
+      leaf snmpInReadOnlys {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.11";
+        config false;
+      }
+      leaf snmpInGenErrs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.12";
+        config false;
+      }
+      leaf snmpInTotalReqVars {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.13";
+        config false;
+      }
+      leaf snmpInTotalSetVars {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.14";
+        config false;
+      }
+      leaf snmpInGetRequests {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.15";
+        config false;
+      }
+      leaf snmpInGetNexts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.16";
+        config false;
+      }
+      leaf snmpInSetRequests {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.17";
+        config false;
+      }
+      leaf snmpInGetResponses {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.18";
+        config false;
+      }
+      leaf snmpInTraps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.19";
+        config false;
+      }
+      leaf snmpOutTooBigs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.20";
+        config false;
+      }
+      leaf snmpOutNoSuchNames {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.21";
+        config false;
+      }
+      leaf snmpOutBadValues {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.22";
+        config false;
+      }
+      leaf snmpOutGenErrs {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.24";
+        config false;
+      }
+      leaf snmpOutGetRequests {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.25";
+        config false;
+      }
+      leaf snmpOutGetNexts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.26";
+        config false;
+      }
+      leaf snmpOutSetRequests {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.27";
+        config false;
+      }
+      leaf snmpOutGetResponses {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.28";
+        config false;
+      }
+      leaf snmpOutTraps {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.11.29";
+        config false;
+      }
+      leaf snmpEnableAuthenTraps {
+        type snmpEnableAuthenTrapsType;
+        tailf:snmp-oid "1.3.6.1.2.1.11.30";
+      }
+    }
+    container ifTable {
+      list ifEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.2.2";
+        leaf ifIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf ifDescr {
+          type ifDescrType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.2";
+          config false;
+        }
+        leaf ifType {
+          type ifTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.3";
+          config false;
+        }
+        leaf ifMtu {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.4";
+          config false;
+        }
+        leaf ifSpeed {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.5";
+          config false;
+        }
+        leaf ifPhysAddress {
+          type PhysAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.6";
+          config false;
+        }
+        leaf ifAdminStatus {
+          type ifAdminStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.7";
+        }
+        leaf ifOperStatus {
+          type ifOperStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.8";
+          config false;
+        }
+        leaf ifLastChange {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.9";
+          config false;
+        }
+        leaf ifInOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.10";
+          config false;
+        }
+        leaf ifInUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.11";
+          config false;
+        }
+        leaf ifInNUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.12";
+          config false;
+        }
+        leaf ifInDiscards {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.13";
+          config false;
+        }
+        leaf ifInErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.14";
+          config false;
+        }
+        leaf ifInUnknownProtos {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.15";
+          config false;
+        }
+        leaf ifOutOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.16";
+          config false;
+        }
+        leaf ifOutUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.17";
+          config false;
+        }
+        leaf ifOutNUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.18";
+          config false;
+        }
+        leaf ifOutDiscards {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.19";
+          config false;
+        }
+        leaf ifOutErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.20";
+          config false;
+        }
+        leaf ifOutQLen {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.21";
+          config false;
+        }
+        leaf ifSpecific {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.22";
+          config false;
+        }
+      }
+    }
+    container ipAddrTable {
+      config false;
+      list ipAddrEntry {
+        key "ipAdEntAddr";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.4.20";
+        leaf ipAdEntAddr {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.20.1.1";
+        }
+        leaf ipAdEntIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.20.1.2";
+          config false;
+        }
+        leaf ipAdEntNetMask {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.20.1.3";
+          config false;
+        }
+        leaf ipAdEntBcastAddr {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.20.1.4";
+          config false;
+        }
+        leaf ipAdEntReasmMaxSize {
+          type ipAdEntReasmMaxSizeType;
+          tailf:snmp-oid "1.3.6.1.2.1.4.20.1.5";
+          config false;
+        }
+      }
+    }
+    container ipRouteTable {
+      list ipRouteEntry {
+        key "ipRouteDest";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.4.21";
+        leaf ipRouteDest {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.1";
+        }
+        leaf ipRouteIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.2";
+        }
+        leaf ipRouteMetric1 {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.3";
+        }
+        leaf ipRouteMetric2 {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.4";
+        }
+        leaf ipRouteMetric3 {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.5";
+        }
+        leaf ipRouteMetric4 {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.6";
+        }
+        leaf ipRouteNextHop {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.7";
+        }
+        leaf ipRouteType {
+          type ipRouteTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.8";
+        }
+        leaf ipRouteProto {
+          type ipRouteProtoType;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.9";
+          config false;
+        }
+        leaf ipRouteAge {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.10";
+        }
+        leaf ipRouteMask {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.11";
+        }
+        leaf ipRouteMetric5 {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.12";
+        }
+        leaf ipRouteInfo {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.4.21.1.13";
+          config false;
+        }
+      }
+    }
+    container ipNetToMediaTable {
+      list ipNetToMediaEntry {
+        key "ipNetToMediaIfIndex ipNetToMediaNetAddress";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.4.22";
+        leaf ipNetToMediaIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.4.22.1.1";
+        }
+        leaf ipNetToMediaNetAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.4.22.1.3";
+        }
+        leaf ipNetToMediaPhysAddress {
+          type PhysAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.4.22.1.2";
+        }
+        leaf ipNetToMediaType {
+          type ipNetToMediaTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.4.22.1.4";
+        }
+      }
+    }
+    container tcpConnTable {
+      list tcpConnEntry {
+        key "tcpConnLocalAddress tcpConnLocalPort tcpConnRemAddress tcpConnRemPort";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.6.13";
+        leaf tcpConnLocalAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.6.13.1.2";
+        }
+        leaf tcpConnLocalPort {
+          type tcpConnLocalPortType;
+          tailf:snmp-oid "1.3.6.1.2.1.6.13.1.3";
+        }
+        leaf tcpConnRemAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.6.13.1.4";
+        }
+        leaf tcpConnRemPort {
+          type tcpConnRemPortType;
+          tailf:snmp-oid "1.3.6.1.2.1.6.13.1.5";
+        }
+        leaf tcpConnState {
+          type tcpConnStateType;
+          tailf:snmp-oid "1.3.6.1.2.1.6.13.1.1";
+        }
+      }
+    }
+    container udpTable {
+      config false;
+      list udpEntry {
+        key "udpLocalAddress udpLocalPort";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.7.5";
+        leaf udpLocalAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.7.5.1.1";
+        }
+        leaf udpLocalPort {
+          type udpLocalPortType;
+          tailf:snmp-oid "1.3.6.1.2.1.7.5.1.2";
+        }
+      }
+    }
+    container egpNeighTable {
+      list egpNeighEntry {
+        key "egpNeighAddr";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.8.5";
+        leaf egpNeighAddr {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.2";
+        }
+        leaf egpNeighState {
+          type egpNeighStateType;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.1";
+          config false;
+        }
+        leaf egpNeighAs {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.3";
+          config false;
+        }
+        leaf egpNeighInMsgs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.4";
+          config false;
+        }
+        leaf egpNeighInErrs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.5";
+          config false;
+        }
+        leaf egpNeighOutMsgs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.6";
+          config false;
+        }
+        leaf egpNeighOutErrs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.7";
+          config false;
+        }
+        leaf egpNeighInErrMsgs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.8";
+          config false;
+        }
+        leaf egpNeighOutErrMsgs {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.9";
+          config false;
+        }
+        leaf egpNeighStateUps {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.10";
+          config false;
+        }
+        leaf egpNeighStateDowns {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.11";
+          config false;
+        }
+        leaf egpNeighIntervalHello {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.12";
+          config false;
+        }
+        leaf egpNeighIntervalPoll {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.13";
+          config false;
+        }
+        leaf egpNeighMode {
+          type egpNeighModeType;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.14";
+          config false;
+        }
+        leaf egpNeighEventTrigger {
+          type egpNeighEventTriggerType;
+          tailf:snmp-oid "1.3.6.1.2.1.8.5.1.15";
+        }
+      }
+    }
+  }
+  typedef DisplayString {
+    type tailf:hex-list;
+  }
+  typedef PhysAddress {
+    type tailf:hex-list;
+  }
+  typedef sysDescrType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef sysContactType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef sysNameType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef sysLocationType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef sysServicesType {
+    type int32 {
+      range "0 .. 127";
+    }
+  }
+  typedef ipForwardingType {
+    type enumeration {
+      enum "forwarding" {
+        value 1;
+      }
+      enum "not-forwarding" {
+        value 2;
+      }
+    }
+  }
+  typedef tcpRtoAlgorithmType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "constant" {
+        value 2;
+      }
+      enum "rsre" {
+        value 3;
+      }
+      enum "vanj" {
+        value 4;
+      }
+    }
+  }
+  typedef snmpEnableAuthenTrapsType {
+    type enumeration {
+      enum "enabled" {
+        value 1;
+      }
+      enum "disabled" {
+        value 2;
+      }
+    }
+  }
+  typedef ifDescrType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef ifTypeType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "regular1822" {
+        value 2;
+      }
+      enum "hdh1822" {
+        value 3;
+      }
+      enum "ddn-x25" {
+        value 4;
+      }
+      enum "rfc877-x25" {
+        value 5;
+      }
+      enum "ethernet-csmacd" {
+        value 6;
+      }
+      enum "iso88023-csmacd" {
+        value 7;
+      }
+      enum "iso88024-tokenBus" {
+        value 8;
+      }
+      enum "iso88025-tokenRing" {
+        value 9;
+      }
+      enum "iso88026-man" {
+        value 10;
+      }
+      enum "starLan" {
+        value 11;
+      }
+      enum "proteon-10Mbit" {
+        value 12;
+      }
+      enum "proteon-80Mbit" {
+        value 13;
+      }
+      enum "hyperchannel" {
+        value 14;
+      }
+      enum "fddi" {
+        value 15;
+      }
+      enum "lapb" {
+        value 16;
+      }
+      enum "sdlc" {
+        value 17;
+      }
+      enum "ds1" {
+        value 18;
+      }
+      enum "e1" {
+        value 19;
+      }
+      enum "basicISDN" {
+        value 20;
+      }
+      enum "primaryISDN" {
+        value 21;
+      }
+      enum "propPointToPointSerial" {
+        value 22;
+      }
+      enum "ppp" {
+        value 23;
+      }
+      enum "softwareLoopback" {
+        value 24;
+      }
+      enum "eon" {
+        value 25;
+      }
+      enum "ethernet-3Mbit" {
+        value 26;
+      }
+      enum "nsip" {
+        value 27;
+      }
+      enum "slip" {
+        value 28;
+      }
+      enum "ultra" {
+        value 29;
+      }
+      enum "ds3" {
+        value 30;
+      }
+      enum "sip" {
+        value 31;
+      }
+      enum "frame-relay" {
+        value 32;
+      }
+    }
+  }
+  typedef ifAdminStatusType {
+    type enumeration {
+      enum "up" {
+        value 1;
+      }
+      enum "down" {
+        value 2;
+      }
+      enum "testing" {
+        value 3;
+      }
+    }
+  }
+  typedef ifOperStatusType {
+    type enumeration {
+      enum "up" {
+        value 1;
+      }
+      enum "down" {
+        value 2;
+      }
+      enum "testing" {
+        value 3;
+      }
+    }
+  }
+  typedef ipAdEntReasmMaxSizeType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef ipRouteTypeType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "invalid" {
+        value 2;
+      }
+      enum "direct" {
+        value 3;
+      }
+      enum "indirect" {
+        value 4;
+      }
+    }
+  }
+  typedef ipRouteProtoType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "local" {
+        value 2;
+      }
+      enum "netmgmt" {
+        value 3;
+      }
+      enum "icmp" {
+        value 4;
+      }
+      enum "egp" {
+        value 5;
+      }
+      enum "ggp" {
+        value 6;
+      }
+      enum "hello" {
+        value 7;
+      }
+      enum "rip" {
+        value 8;
+      }
+      enum "is-is" {
+        value 9;
+      }
+      enum "es-is" {
+        value 10;
+      }
+      enum "ciscoIgrp" {
+        value 11;
+      }
+      enum "bbnSpfIgp" {
+        value 12;
+      }
+      enum "ospf" {
+        value 13;
+      }
+      enum "bgp" {
+        value 14;
+      }
+    }
+  }
+  typedef ipNetToMediaTypeType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "invalid" {
+        value 2;
+      }
+      enum "dynamic" {
+        value 3;
+      }
+      enum "static" {
+        value 4;
+      }
+    }
+  }
+  typedef tcpConnLocalPortType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef tcpConnRemPortType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef tcpConnStateType {
+    type enumeration {
+      enum "closed" {
+        value 1;
+      }
+      enum "listen" {
+        value 2;
+      }
+      enum "synSent" {
+        value 3;
+      }
+      enum "synReceived" {
+        value 4;
+      }
+      enum "established" {
+        value 5;
+      }
+      enum "finWait1" {
+        value 6;
+      }
+      enum "finWait2" {
+        value 7;
+      }
+      enum "closeWait" {
+        value 8;
+      }
+      enum "lastAck" {
+        value 9;
+      }
+      enum "closing" {
+        value 10;
+      }
+      enum "timeWait" {
+        value 11;
+      }
+      enum "deleteTCB" {
+        value 12;
+      }
+    }
+  }
+  typedef udpLocalPortType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef egpNeighStateType {
+    type enumeration {
+      enum "idle" {
+        value 1;
+      }
+      enum "acquisition" {
+        value 2;
+      }
+      enum "down" {
+        value 3;
+      }
+      enum "up" {
+        value 4;
+      }
+      enum "cease" {
+        value 5;
+      }
+    }
+  }
+  typedef egpNeighModeType {
+    type enumeration {
+      enum "active" {
+        value 1;
+      }
+      enum "passive" {
+        value 2;
+      }
+    }
+  }
+  typedef egpNeighEventTriggerType {
+    type enumeration {
+      enum "start" {
+        value 1;
+      }
+      enum "stop" {
+        value 2;
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+module ciscosb-neighbor {
+    namespace "http://cisco.com/ns/ciscosb/neighbor";
+    prefix ciscosb-neighbor;
+    import ietf-interfaces { prefix if; }
+    import ietf-ip { prefix ip; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module augments ietf-ip to add name filed for neighboring container.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-21 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    augment "/if:interfaces-state/if:interface/ip:ipv4/ip:neighbor" {
+        leaf hostname {
+            type string;
+            description "neighboring hostname ";
+        }
+    }
+    augment "/if:interfaces-state/if:interface/ip:ipv6/ip:neighbor" {
+        leaf hostname {
+            type string;
+            description "neighboring hostname ";
+        }
+    }
+}

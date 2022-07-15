@@ -1,0 +1,10 @@
+Package: hotplug2
+Version: 1.0-beta-4
+Depends: libc, librt, libpthread, libbsd
+Source: package/hotplug2
+Section: base
+Architecture: comcerto2000
+Installed-Size: 14381
+Description:  Hotplug2 is a trivial replacement of some of the UDev functionality
+ in a tiny pack, intended for Linux early userspace: Init RAM FS and InitRD.
+ This is an implementation of Hotplug2-1.0-beta

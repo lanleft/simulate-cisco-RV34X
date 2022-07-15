@@ -1,0 +1,154 @@
+module ciscosb-switch-qos {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/switch-qos";
+    prefix ciscosb-switch-qos;
+    import ietf-yang-types {
+        prefix yang;
+    }
+    import ietf-inet-types {
+        prefix inet;
+    }
+    import ietf-interfaces {
+        prefix if;
+    }
+    revision 2016-06-01 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-11-18 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-05-01 {
+        description
+            "First revision Switch QoS module";
+    }
+    grouping counters {
+        leaf packets {
+            type yang:counter64;
+            description
+                "The number of packets forwarded by this queue";
+        }
+        leaf discards {
+            type yang:counter64;
+            description
+                "The number of packets discarded by this queue";
+        }
+    }
+    container switch-qos-policy {
+        leaf model {
+            type enumeration {
+                enum "port";
+                enum "dscp";
+                enum "cos";
+            }
+        }
+        list dscp-mapping {
+            key "dscp";
+            leaf dscp {
+                type inet:dscp;
+                description
+                    "Match this DSCP value.";
+            }
+            leaf dscp-name {
+                type string;
+                description
+                    "Returns a well known DSCP label for this value.  Known labels include:
+                    0 - Best Effort 16 - CS2 26 - AF31 36 - AF42 56 - CS7
+                    8 - CS1 18 - AF21 28 - AF32 38 - AF43
+                    10 - AF11 20 - AF22 30 - AF33 40 - CS5
+                    12 - AF12 22 - AF23 32 - CS4 46 - EF
+                    14 - AF13 24 - CS3 34 - AF41 48 - CS6
+                    For all other values, returns an empty string.";
+            }
+            leaf queue {
+                type uint8 {
+                    range "1..4";
+                }
+                description
+                    "The queue number for this packet on the outgoing port.";
+            }
+        }
+        list cos-mapping {
+            key "cos";
+            leaf cos {
+                type uint8 {
+                    range "0..7";
+                }
+                description
+                    "Match this CoS value.";
+            }
+            leaf cos-name {
+                type string;
+                description
+                    "Returns a well known CoS label for this value.  Labels are:
+                    0 - Best Effort
+                    1 - Priority
+                    2 - Immediate
+                    3 - Flash
+                    4 - Flash Override
+                    5 - Critical
+                    6 - Internet
+                    7 - Network";
+            }
+            leaf queue {
+                type uint8 {
+                    range "1..4";
+                }
+                description
+                    "The queue number for this packet on the outgoing port.";
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container ciscosb-switch-qos {
+            leaf send-to-queue {
+                type uint8 {
+                    range "1..4";
+                }
+                description
+                    "The queue number on the outgoing port for packets received on this port.";
+            }
+            container queue-weight {
+                list queue {
+                    key id;
+                    leaf id {
+                        type uint8 {
+                            range "1..4";
+                        }
+                        description
+                            "The queue number for this queue.";
+                    }
+                    leaf weight {
+                        type uint8;
+                        description
+                            "The weight for this queue. A value of 0 makes the queue strict priority.";
+                    }
+                }
+            }
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        container ciscosb-switch-qos {
+            uses counters;
+            container queues {
+                leaf last-reset-time {
+                    type yang:date-and-time;
+                }
+                list queue {
+                    key id;
+                    leaf id {
+                        type uint8 {
+                            range "1..4";
+                        }
+                        description
+                            "The queue number for this queue.";
+                    }
+                    uses counters;
+                }
+            }
+        }
+    }
+    rpc reset-switch-qos-statistics {
+    }
+}

@@ -1,0 +1,5 @@
+config ips 'ips'
+	option level 'Security'
+	option action 'log-block'
+	option log_level '6'
+	option enable 'false'

@@ -1,0 +1,2 @@
+/usr/lib/ipsec/plugins/libstrongswan-md4.so
+/etc/strongswan.d/charon/md4.conf

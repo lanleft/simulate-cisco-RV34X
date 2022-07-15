@@ -1,0 +1,37 @@
+module ciscosb-aaa {
+    namespace "http://cisco.com/ns/ciscosb/aaa";
+    prefix ciscosb-aaa;
+    import ietf-inet-types { prefix inet; }
+    import ietf-netconf-acm { prefix nacm; }
+    import tailf-aaa { prefix tailf-aaa; }
+    import tailf-common { prefix tailf; }
+    tailf:export maapi;
+    organization "Cisco Systems, Inc.";
+    description
+        "This module augment netconf-acm to support feature
+        rules.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    revision 2017-08-15 {
+        description "Move standard parts to ciscosb-usergroup ";
+        reference "";
+    }
+    revision 2016-06-06 {
+        description "Update range of minimum password length to 0-127";
+        reference "";
+    }
+    revision 2016-04-11 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    augment /tailf-aaa:aaa/tailf-aaa:authentication/tailf-aaa:users/tailf-aaa:user {
+        leaf password-changed-time {
+            type uint32;
+        }
+    }
+}

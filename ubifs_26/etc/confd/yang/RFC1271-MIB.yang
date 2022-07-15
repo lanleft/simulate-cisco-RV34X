@@ -1,0 +1,1239 @@
+module RFC1271-MIB {
+  namespace "http://tail-f.com/ns/mibs/RFC1271-MIB/1.0";
+  prefix RFC1271_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "RFC1271-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  container RFC1271-MIB {
+    container etherStatsTable {
+      list etherStatsEntry {
+        key "etherStatsIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.1";
+        leaf etherStatsIndex {
+          type etherStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.1";
+        }
+        leaf etherStatsDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.2";
+        }
+        leaf etherStatsDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.3";
+          config false;
+        }
+        leaf etherStatsOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.4";
+          config false;
+        }
+        leaf etherStatsPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.5";
+          config false;
+        }
+        leaf etherStatsBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.6";
+          config false;
+        }
+        leaf etherStatsMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.7";
+          config false;
+        }
+        leaf etherStatsCRCAlignErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.8";
+          config false;
+        }
+        leaf etherStatsUndersizePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.9";
+          config false;
+        }
+        leaf etherStatsOversizePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.10";
+          config false;
+        }
+        leaf etherStatsFragments {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.11";
+          config false;
+        }
+        leaf etherStatsJabbers {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.12";
+          config false;
+        }
+        leaf etherStatsCollisions {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.13";
+          config false;
+        }
+        leaf etherStatsPkts64Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.14";
+          config false;
+        }
+        leaf etherStatsPkts65to127Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.15";
+          config false;
+        }
+        leaf etherStatsPkts128to255Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.16";
+          config false;
+        }
+        leaf etherStatsPkts256to511Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.17";
+          config false;
+        }
+        leaf etherStatsPkts512to1023Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.18";
+          config false;
+        }
+        leaf etherStatsPkts1024to1518Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.19";
+          config false;
+        }
+        leaf etherStatsOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.20";
+        }
+        leaf etherStatsStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.21";
+        }
+      }
+    }
+    container historyControlTable {
+      list historyControlEntry {
+        key "historyControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.2.1";
+        leaf historyControlIndex {
+          type historyControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.1";
+        }
+        leaf historyControlDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.2";
+        }
+        leaf historyControlBucketsRequested {
+          type historyControlBucketsRequestedType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.3";
+          default "50";
+        }
+        leaf historyControlBucketsGranted {
+          type historyControlBucketsGrantedType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.4";
+          config false;
+        }
+        leaf historyControlInterval {
+          type historyControlIntervalType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.5";
+          default "1800";
+        }
+        leaf historyControlOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.6";
+        }
+        leaf historyControlStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.7";
+        }
+      }
+    }
+    container etherHistoryTable {
+      config false;
+      list etherHistoryEntry {
+        key "etherHistoryIndex etherHistorySampleIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.2.2";
+        leaf etherHistoryIndex {
+          type etherHistoryIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.1";
+        }
+        leaf etherHistorySampleIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.2";
+        }
+        leaf etherHistoryIntervalStart {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.3";
+          config false;
+        }
+        leaf etherHistoryDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.4";
+          config false;
+        }
+        leaf etherHistoryOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.5";
+          config false;
+        }
+        leaf etherHistoryPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.6";
+          config false;
+        }
+        leaf etherHistoryBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.7";
+          config false;
+        }
+        leaf etherHistoryMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.8";
+          config false;
+        }
+        leaf etherHistoryCRCAlignErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.9";
+          config false;
+        }
+        leaf etherHistoryUndersizePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.10";
+          config false;
+        }
+        leaf etherHistoryOversizePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.11";
+          config false;
+        }
+        leaf etherHistoryFragments {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.12";
+          config false;
+        }
+        leaf etherHistoryJabbers {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.13";
+          config false;
+        }
+        leaf etherHistoryCollisions {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.14";
+          config false;
+        }
+        leaf etherHistoryUtilization {
+          type etherHistoryUtilizationType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.2.1.15";
+          config false;
+        }
+      }
+    }
+    container alarmTable {
+      list alarmEntry {
+        key "alarmIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.3.1";
+        leaf alarmIndex {
+          type alarmIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.1";
+        }
+        leaf alarmInterval {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.2";
+        }
+        leaf alarmVariable {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.3";
+        }
+        leaf alarmSampleType {
+          type alarmSampleTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.4";
+        }
+        leaf alarmValue {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.5";
+          config false;
+        }
+        leaf alarmStartupAlarm {
+          type alarmStartupAlarmType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.6";
+        }
+        leaf alarmRisingThreshold {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.7";
+        }
+        leaf alarmFallingThreshold {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.8";
+        }
+        leaf alarmRisingEventIndex {
+          type alarmRisingEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.9";
+        }
+        leaf alarmFallingEventIndex {
+          type alarmFallingEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.10";
+        }
+        leaf alarmOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.11";
+        }
+        leaf alarmStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.3.1.1.12";
+        }
+      }
+    }
+    container hostControlTable {
+      list hostControlEntry {
+        key "hostControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.4.1";
+        leaf hostControlIndex {
+          type hostControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.1";
+        }
+        leaf hostControlDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.2";
+        }
+        leaf hostControlTableSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.3";
+          config false;
+        }
+        leaf hostControlLastDeleteTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.4";
+          config false;
+        }
+        leaf hostControlOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.5";
+        }
+        leaf hostControlStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.6";
+        }
+      }
+    }
+    container hostTable {
+      config false;
+      list hostEntry {
+        key "hostIndex hostAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.4.2";
+        leaf hostIndex {
+          type hostIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.3";
+        }
+        leaf hostAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.1";
+        }
+        leaf hostCreationOrder {
+          type hostCreationOrderType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.2";
+          config false;
+        }
+        leaf hostInPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.4";
+          config false;
+        }
+        leaf hostOutPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.5";
+          config false;
+        }
+        leaf hostInOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.6";
+          config false;
+        }
+        leaf hostOutOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.7";
+          config false;
+        }
+        leaf hostOutErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.8";
+          config false;
+        }
+        leaf hostOutBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.9";
+          config false;
+        }
+        leaf hostOutMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.2.1.10";
+          config false;
+        }
+      }
+    }
+    container hostTimeTable {
+      config false;
+      list hostTimeEntry {
+        key "hostTimeIndex hostTimeCreationOrder";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.4.3";
+        leaf hostTimeIndex {
+          type hostTimeIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.3";
+        }
+        leaf hostTimeCreationOrder {
+          type hostTimeCreationOrderType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.2";
+        }
+        leaf hostTimeAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.1";
+          config false;
+        }
+        leaf hostTimeInPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.4";
+          config false;
+        }
+        leaf hostTimeOutPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.5";
+          config false;
+        }
+        leaf hostTimeInOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.6";
+          config false;
+        }
+        leaf hostTimeOutOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.7";
+          config false;
+        }
+        leaf hostTimeOutErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.8";
+          config false;
+        }
+        leaf hostTimeOutBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.9";
+          config false;
+        }
+        leaf hostTimeOutMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.3.1.10";
+          config false;
+        }
+      }
+    }
+    container hostTopNControlTable {
+      list hostTopNControlEntry {
+        key "hostTopNControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.5.1";
+        leaf hostTopNControlIndex {
+          type hostTopNControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.1";
+        }
+        leaf hostTopNHostIndex {
+          type hostTopNHostIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.2";
+        }
+        leaf hostTopNRateBase {
+          type hostTopNRateBaseType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.3";
+        }
+        leaf hostTopNTimeRemaining {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.4";
+          default "0";
+        }
+        leaf hostTopNDuration {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.5";
+          config false;
+        }
+        leaf hostTopNRequestedSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.6";
+          default "10";
+        }
+        leaf hostTopNGrantedSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.7";
+          config false;
+        }
+        leaf hostTopNStartTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.8";
+          config false;
+        }
+        leaf hostTopNOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.9";
+        }
+        leaf hostTopNStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.1.1.10";
+        }
+      }
+    }
+    container hostTopNTable {
+      config false;
+      list hostTopNEntry {
+        key "hostTopNReport hostTopNIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.5.2";
+        leaf hostTopNReport {
+          type hostTopNReportType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.2.1.1";
+        }
+        leaf hostTopNIndex {
+          type hostTopNIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.2.1.2";
+        }
+        leaf hostTopNAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.2.1.3";
+          config false;
+        }
+        leaf hostTopNRate {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.5.2.1.4";
+          config false;
+        }
+      }
+    }
+    container matrixControlTable {
+      list matrixControlEntry {
+        key "matrixControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.6.1";
+        leaf matrixControlIndex {
+          type matrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.1";
+        }
+        leaf matrixControlDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.2";
+        }
+        leaf matrixControlTableSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.3";
+          config false;
+        }
+        leaf matrixControlLastDeleteTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.4";
+          config false;
+        }
+        leaf matrixControlOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.5";
+        }
+        leaf matrixControlStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.6";
+        }
+      }
+    }
+    container matrixSDTable {
+      config false;
+      list matrixSDEntry {
+        key "matrixSDIndex matrixSDSourceAddress matrixSDDestAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.6.2";
+        leaf matrixSDIndex {
+          type matrixSDIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.3";
+        }
+        leaf matrixSDSourceAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.1";
+        }
+        leaf matrixSDDestAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.2";
+        }
+        leaf matrixSDPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.4";
+          config false;
+        }
+        leaf matrixSDOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.5";
+          config false;
+        }
+        leaf matrixSDErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.2.1.6";
+          config false;
+        }
+      }
+    }
+    container matrixDSTable {
+      config false;
+      list matrixDSEntry {
+        key "matrixDSIndex matrixDSDestAddress matrixDSSourceAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.6.3";
+        leaf matrixDSIndex {
+          type matrixDSIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.3";
+        }
+        leaf matrixDSDestAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.2";
+        }
+        leaf matrixDSSourceAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.1";
+        }
+        leaf matrixDSPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.4";
+          config false;
+        }
+        leaf matrixDSOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.5";
+          config false;
+        }
+        leaf matrixDSErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.3.1.6";
+          config false;
+        }
+      }
+    }
+    container filterTable {
+      list filterEntry {
+        key "filterIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.7.1";
+        leaf filterIndex {
+          type filterIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.1";
+        }
+        leaf filterChannelIndex {
+          type filterChannelIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.2";
+        }
+        leaf filterPktDataOffset {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.3";
+          default "0";
+        }
+        leaf filterPktData {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.4";
+        }
+        leaf filterPktDataMask {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.5";
+        }
+        leaf filterPktDataNotMask {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.6";
+        }
+        leaf filterPktStatus {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.7";
+        }
+        leaf filterPktStatusMask {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.8";
+        }
+        leaf filterPktStatusNotMask {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.9";
+        }
+        leaf filterOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.10";
+        }
+        leaf filterStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.11";
+        }
+      }
+    }
+    container channelTable {
+      list channelEntry {
+        key "channelIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.7.2";
+        leaf channelIndex {
+          type channelIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.1";
+        }
+        leaf channelIfIndex {
+          type channelIfIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.2";
+        }
+        leaf channelAcceptType {
+          type channelAcceptTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.3";
+        }
+        leaf channelDataControl {
+          type channelDataControlType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.4";
+          default "off";
+        }
+        leaf channelTurnOnEventIndex {
+          type channelTurnOnEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.5";
+        }
+        leaf channelTurnOffEventIndex {
+          type channelTurnOffEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.6";
+        }
+        leaf channelEventIndex {
+          type channelEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.7";
+        }
+        leaf channelEventStatus {
+          type channelEventStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.8";
+          default "eventReady";
+        }
+        leaf channelMatches {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.9";
+          config false;
+        }
+        leaf channelDescription {
+          type channelDescriptionType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.10";
+        }
+        leaf channelOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.11";
+        }
+        leaf channelStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.12";
+        }
+      }
+    }
+    container bufferControlTable {
+      list bufferControlEntry {
+        key "bufferControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.8.1";
+        leaf bufferControlIndex {
+          type bufferControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.1";
+        }
+        leaf bufferControlChannelIndex {
+          type bufferControlChannelIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.2";
+        }
+        leaf bufferControlFullStatus {
+          type bufferControlFullStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.3";
+          config false;
+        }
+        leaf bufferControlFullAction {
+          type bufferControlFullActionType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.4";
+        }
+        leaf bufferControlCaptureSliceSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.5";
+          default "100";
+        }
+        leaf bufferControlDownloadSliceSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.6";
+          default "100";
+        }
+        leaf bufferControlDownloadOffset {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.7";
+          default "0";
+        }
+        leaf bufferControlMaxOctetsRequested {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.8";
+          default "-1";
+        }
+        leaf bufferControlMaxOctetsGranted {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.9";
+          config false;
+        }
+        leaf bufferControlCapturedPackets {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.10";
+          config false;
+        }
+        leaf bufferControlTurnOnTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.11";
+          config false;
+        }
+        leaf bufferControlOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.12";
+        }
+        leaf bufferControlStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.1.1.13";
+        }
+      }
+    }
+    container captureBufferTable {
+      config false;
+      list captureBufferEntry {
+        key "captureBufferControlIndex captureBufferIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.8.2";
+        leaf captureBufferControlIndex {
+          type captureBufferControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.1";
+        }
+        leaf captureBufferIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.2";
+        }
+        leaf captureBufferPacketID {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.3";
+          config false;
+        }
+        leaf captureBufferPacketData {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.4";
+          config false;
+        }
+        leaf captureBufferPacketLength {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.5";
+          config false;
+        }
+        leaf captureBufferPacketTime {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.6";
+          config false;
+        }
+        leaf captureBufferPacketStatus {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.8.2.1.7";
+          config false;
+        }
+      }
+    }
+    container eventTable {
+      list eventEntry {
+        key "eventIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.9.1";
+        leaf eventIndex {
+          type eventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.1";
+        }
+        leaf eventDescription {
+          type eventDescriptionType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.2";
+        }
+        leaf eventType {
+          type eventTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.3";
+        }
+        leaf eventCommunity {
+          type eventCommunityType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.4";
+        }
+        leaf eventLastTimeSent {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.5";
+          config false;
+        }
+        leaf eventOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.6";
+        }
+        leaf eventStatus {
+          type EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.1.1.7";
+        }
+      }
+    }
+    container logTable {
+      config false;
+      list logEntry {
+        key "logEventIndex logIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.9.2";
+        leaf logEventIndex {
+          type logEventIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.2.1.1";
+        }
+        leaf logIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.2.1.2";
+        }
+        leaf logTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.2.1.3";
+          config false;
+        }
+        leaf logDescription {
+          type logDescriptionType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.9.2.1.4";
+          config false;
+        }
+      }
+    }
+  }
+  typedef OwnerString {
+    type string {
+      length "0 .. 255";
+    }
+  }
+  typedef EntryStatus {
+    type enumeration {
+      enum "valid" {
+        value 1;
+      }
+      enum "createRequest" {
+        value 2;
+      }
+      enum "underCreation" {
+        value 3;
+      }
+      enum "invalid" {
+        value 4;
+      }
+    }
+  }
+  typedef etherStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef historyControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef historyControlBucketsRequestedType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef historyControlBucketsGrantedType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef historyControlIntervalType {
+    type int32 {
+      range "1 .. 3600";
+    }
+  }
+  typedef etherHistoryIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef etherHistoryUtilizationType {
+    type int32 {
+      range "0 .. 10000";
+    }
+  }
+  typedef alarmIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef alarmSampleTypeType {
+    type enumeration {
+      enum "absoluteValue" {
+        value 1;
+      }
+      enum "deltaValue" {
+        value 2;
+      }
+    }
+  }
+  typedef alarmStartupAlarmType {
+    type enumeration {
+      enum "risingAlarm" {
+        value 1;
+      }
+      enum "fallingAlarm" {
+        value 2;
+      }
+      enum "risingOrFallingAlarm" {
+        value 3;
+      }
+    }
+  }
+  typedef alarmRisingEventIndexType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef alarmFallingEventIndexType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef hostControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostCreationOrderType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTimeIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTimeCreationOrderType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTopNControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTopNHostIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTopNRateBaseType {
+    type enumeration {
+      enum "hostTopNInPkts" {
+        value 1;
+      }
+      enum "hostTopNOutPkts" {
+        value 2;
+      }
+      enum "hostTopNInOctets" {
+        value 3;
+      }
+      enum "hostTopNOutOctets" {
+        value 4;
+      }
+      enum "hostTopNOutErrors" {
+        value 5;
+      }
+      enum "hostTopNOutBroadcastPkts" {
+        value 6;
+      }
+      enum "hostTopNOutMulticastPkts" {
+        value 7;
+      }
+    }
+  }
+  typedef hostTopNReportType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostTopNIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef matrixControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef matrixSDIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef matrixDSIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef filterIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef filterChannelIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef channelIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef channelIfIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef channelAcceptTypeType {
+    type enumeration {
+      enum "acceptMatched" {
+        value 1;
+      }
+      enum "acceptFailed" {
+        value 2;
+      }
+    }
+  }
+  typedef channelDataControlType {
+    type enumeration {
+      enum "on" {
+        value 1;
+      }
+      enum "off" {
+        value 2;
+      }
+    }
+  }
+  typedef channelTurnOnEventIndexType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef channelTurnOffEventIndexType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef channelEventIndexType {
+    type int32 {
+      range "0 .. 65535";
+    }
+  }
+  typedef channelEventStatusType {
+    type enumeration {
+      enum "eventReady" {
+        value 1;
+      }
+      enum "eventFired" {
+        value 2;
+      }
+      enum "eventAlwaysReady" {
+        value 3;
+      }
+    }
+  }
+  typedef channelDescriptionType {
+    type string {
+      length "min .. 127";
+    }
+  }
+  typedef bufferControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef bufferControlChannelIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef bufferControlFullStatusType {
+    type enumeration {
+      enum "spaceAvailable" {
+        value 1;
+      }
+      enum "full" {
+        value 2;
+      }
+    }
+  }
+  typedef bufferControlFullActionType {
+    type enumeration {
+      enum "lockWhenFull" {
+        value 1;
+      }
+      enum "wrapWhenFull" {
+        value 2;
+      }
+    }
+  }
+  typedef captureBufferControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef eventIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef eventDescriptionType {
+    type string {
+      length "min .. 127";
+    }
+  }
+  typedef eventTypeType {
+    type enumeration {
+      enum "none" {
+        value 1;
+      }
+      enum "log" {
+        value 2;
+      }
+      enum "snmp-trap" {
+        value 3;
+      }
+      enum "log-and-trap" {
+        value 4;
+      }
+    }
+  }
+  typedef eventCommunityType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 127";
+    }
+  }
+  typedef logEventIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef logDescriptionType {
+    type string {
+      length "min .. 255";
+    }
+  }
+}

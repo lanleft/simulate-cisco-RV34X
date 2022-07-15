@@ -1,0 +1,2122 @@
+module RMON2-MIB {
+  namespace "http://tail-f.com/ns/mibs/RMON2-MIB/200605020000Z";
+  prefix RMON2_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "RMON2-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import RMON-MIB {
+    prefix RMON-MIB;
+  }
+  import IF-MIB {
+    prefix IF-MIB;
+  }
+  revision 2006-05-02 {
+    description
+      "";
+  }
+  container RMON2-MIB {
+    container protocolDir {
+      tailf:snmp-oid "1.3.6.1.2.1.16.11";
+      leaf protocolDirLastChange {
+        type yang:timestamp;
+        tailf:snmp-oid "1.3.6.1.2.1.16.11.1";
+        config false;
+      }
+    }
+    container addressMap {
+      tailf:snmp-oid "1.3.6.1.2.1.16.13";
+      leaf addressMapInserts {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.16.13.1";
+        config false;
+      }
+      leaf addressMapDeletes {
+        type yang:counter32;
+        tailf:snmp-oid "1.3.6.1.2.1.16.13.2";
+        config false;
+      }
+      leaf addressMapMaxDesiredEntries {
+        type addressMapMaxDesiredEntriesType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.13.3";
+      }
+    }
+    container probeConfig {
+      tailf:snmp-oid "1.3.6.1.2.1.16.19";
+      leaf probeCapabilities {
+        type probeCapabilitiesType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.1";
+        config false;
+      }
+      leaf probeSoftwareRev {
+        type probeSoftwareRevType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.2";
+        config false;
+      }
+      leaf probeHardwareRev {
+        type probeHardwareRevType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.3";
+        config false;
+      }
+      leaf probeDateTime {
+        type probeDateTimeType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.4";
+      }
+      leaf probeResetControl {
+        type probeResetControlType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.5";
+      }
+      leaf probeDownloadFile {
+        type probeDownloadFileType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.6";
+      }
+      leaf probeDownloadTFTPServer {
+        type inet:ipv4-address;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.7";
+      }
+      leaf probeDownloadAction {
+        type probeDownloadActionType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.8";
+      }
+      leaf probeDownloadStatus {
+        type probeDownloadStatusType;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.9";
+        config false;
+      }
+      leaf netDefaultGateway {
+        type inet:ipv4-address;
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.12";
+      }
+    }
+    container etherStats2Table {
+      config false;
+      list etherStats2Entry {
+        key "etherStatsIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.4";
+        leaf etherStatsIndex {
+          type etherStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.1.1.1";
+        }
+        leaf etherStatsDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.4.1.1";
+          config false;
+        }
+        leaf etherStatsCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.4.1.2";
+          config false;
+        }
+      }
+    }
+    container tokenRingMLStats2Table {
+      config false;
+      list tokenRingMLStats2Entry {
+        key "tokenRingMLStatsIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.5";
+        leaf tokenRingMLStatsIndex {
+          type tokenRingMLStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.1";
+        }
+        leaf tokenRingMLStatsDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.5.1.1";
+          config false;
+        }
+        leaf tokenRingMLStatsCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.5.1.2";
+          config false;
+        }
+      }
+    }
+    container tokenRingPStats2Table {
+      config false;
+      list tokenRingPStats2Entry {
+        key "tokenRingPStatsIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.6";
+        leaf tokenRingPStatsIndex {
+          type tokenRingPStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.1";
+        }
+        leaf tokenRingPStatsDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.6.1.1";
+          config false;
+        }
+        leaf tokenRingPStatsCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.6.1.2";
+          config false;
+        }
+      }
+    }
+    container historyControl2Table {
+      config false;
+      list historyControl2Entry {
+        key "historyControlIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.2.5";
+        leaf historyControlIndex {
+          type historyControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.1.1.1";
+        }
+        leaf historyControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.5.1.1";
+          config false;
+        }
+      }
+    }
+    container hostControl2Table {
+      config false;
+      list hostControl2Entry {
+        key "hostControlIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.4.4";
+        leaf hostControlIndex {
+          type hostControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.1.1.1";
+        }
+        leaf hostControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.4.1.1";
+          config false;
+        }
+        leaf hostControlCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.4.4.1.2";
+          config false;
+        }
+      }
+    }
+    container matrixControl2Table {
+      config false;
+      list matrixControl2Entry {
+        key "matrixControlIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.6.4";
+        leaf matrixControlIndex {
+          type matrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.1.1.1";
+        }
+        leaf matrixControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.4.1.1";
+          config false;
+        }
+        leaf matrixControlCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.6.4.1.2";
+          config false;
+        }
+      }
+    }
+    container channel2Table {
+      config false;
+      list channel2Entry {
+        key "channelIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.7.3";
+        leaf channelIndex {
+          type channelIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.2.1.1";
+        }
+        leaf channelDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.3.1.1";
+          config false;
+        }
+        leaf channelCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.3.1.2";
+          config false;
+        }
+      }
+    }
+    container filter2Table {
+      list filter2Entry {
+        key "filterIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.7.4";
+        leaf filterIndex {
+          type filterIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.1.1.1";
+        }
+        leaf filterProtocolDirDataLocalIndex {
+          type filterProtocolDirDataLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.4.1.1";
+          default "0";
+        }
+        leaf filterProtocolDirLocalIndex {
+          type filterProtocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.7.4.1.2";
+          default "0";
+        }
+      }
+    }
+    container ringStationControl2Table {
+      config false;
+      list ringStationControl2Entry {
+        key "ringStationControlIfIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.7";
+        leaf ringStationControlIfIndex {
+          type ringStationControlIfIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.1";
+        }
+        leaf ringStationControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.7.1.1";
+          config false;
+        }
+        leaf ringStationControlCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.7.1.2";
+          config false;
+        }
+      }
+    }
+    container sourceRoutingStats2Table {
+      config false;
+      list sourceRoutingStats2Entry {
+        key "sourceRoutingStatsIfIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.8";
+        leaf sourceRoutingStatsIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.1";
+        }
+        leaf sourceRoutingStatsDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.8.1.1";
+          config false;
+        }
+        leaf sourceRoutingStatsCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.8.1.2";
+          config false;
+        }
+      }
+    }
+    container protocolDirTable {
+      list protocolDirEntry {
+        key "protocolDirID protocolDirParameters";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.11.2";
+        leaf protocolDirID {
+          type protocolDirIDType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.1";
+        }
+        leaf protocolDirParameters {
+          type protocolDirParametersType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.2";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+          config false;
+        }
+        leaf protocolDirDescr {
+          type protocolDirDescrType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.4";
+        }
+        leaf protocolDirType {
+          type protocolDirTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.5";
+          config false;
+        }
+        leaf protocolDirAddressMapConfig {
+          type protocolDirAddressMapConfigType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.6";
+        }
+        leaf protocolDirHostConfig {
+          type protocolDirHostConfigType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.7";
+        }
+        leaf protocolDirMatrixConfig {
+          type protocolDirMatrixConfigType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.8";
+        }
+        leaf protocolDirOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.9";
+        }
+      }
+    }
+    container protocolDistControlTable {
+      list protocolDistControlEntry {
+        key "protocolDistControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.12.1";
+        leaf protocolDistControlIndex {
+          type protocolDistControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.1";
+        }
+        leaf protocolDistControlDataSource {
+          type DataSource;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.2";
+        }
+        leaf protocolDistControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.3";
+          config false;
+        }
+        leaf protocolDistControlCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.4";
+          config false;
+        }
+        leaf protocolDistControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.5";
+        }
+      }
+    }
+    container protocolDistStatsTable {
+      config false;
+      list protocolDistStatsEntry {
+        key "protocolDistControlIndex protocolDirLocalIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.12.2";
+        leaf protocolDistControlIndex {
+          type protocolDistControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.1.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf protocolDistStatsPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.2.1.1";
+          config false;
+        }
+        leaf protocolDistStatsOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.12.2.1.2";
+          config false;
+        }
+      }
+    }
+    container addressMapControlTable {
+      list addressMapControlEntry {
+        key "addressMapControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.13.4";
+        leaf addressMapControlIndex {
+          type addressMapControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.4.1.1";
+        }
+        leaf addressMapControlDataSource {
+          type DataSource;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.4.1.2";
+        }
+        leaf addressMapControlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.4.1.3";
+          config false;
+        }
+        leaf addressMapControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.4.1.4";
+        }
+      }
+    }
+    container addressMapTable {
+      config false;
+      list addressMapEntry {
+        key "addressMapTimeMark protocolDirLocalIndex addressMapNetworkAddress addressMapSource";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.13.5";
+        leaf addressMapTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.5.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf addressMapNetworkAddress {
+          type addressMapNetworkAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.5.1.2";
+        }
+        leaf addressMapSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.5.1.3";
+        }
+        leaf addressMapPhysicalAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.5.1.4";
+          config false;
+        }
+        leaf addressMapLastChange {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.16.13.5.1.5";
+          config false;
+        }
+      }
+    }
+    container hlHostControlTable {
+      list hlHostControlEntry {
+        key "hlHostControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.14.1";
+        leaf hlHostControlIndex {
+          type hlHostControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.1";
+        }
+        leaf hlHostControlDataSource {
+          type DataSource;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.2";
+        }
+        leaf hlHostControlNlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.3";
+          config false;
+        }
+        leaf hlHostControlNlInserts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.4";
+          config false;
+        }
+        leaf hlHostControlNlDeletes {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.5";
+          config false;
+        }
+        leaf hlHostControlNlMaxDesiredEntries {
+          type hlHostControlNlMaxDesiredEntriesType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.6";
+        }
+        leaf hlHostControlAlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.7";
+          config false;
+        }
+        leaf hlHostControlAlInserts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.8";
+          config false;
+        }
+        leaf hlHostControlAlDeletes {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.9";
+          config false;
+        }
+        leaf hlHostControlAlMaxDesiredEntries {
+          type hlHostControlAlMaxDesiredEntriesType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.10";
+        }
+        leaf hlHostControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.11";
+        }
+      }
+    }
+    container nlHostTable {
+      config false;
+      list nlHostEntry {
+        key "hlHostControlIndex nlHostTimeMark protocolDirLocalIndex nlHostAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.14.2";
+        leaf hlHostControlIndex {
+          type hlHostControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.1";
+        }
+        leaf nlHostTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlHostAddress {
+          type nlHostAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.2";
+        }
+        leaf nlHostInPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.3";
+          config false;
+        }
+        leaf nlHostOutPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.4";
+          config false;
+        }
+        leaf nlHostInOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.5";
+          config false;
+        }
+        leaf nlHostOutOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.6";
+          config false;
+        }
+        leaf nlHostOutMacNonUnicastPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.7";
+          config false;
+        }
+        leaf nlHostCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.8";
+          config false;
+        }
+      }
+    }
+    container hlMatrixControlTable {
+      list hlMatrixControlEntry {
+        key "hlMatrixControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.15.1";
+        leaf hlMatrixControlIndex {
+          type hlMatrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.1";
+        }
+        leaf hlMatrixControlDataSource {
+          type DataSource;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.2";
+        }
+        leaf hlMatrixControlNlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.3";
+          config false;
+        }
+        leaf hlMatrixControlNlInserts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.4";
+          config false;
+        }
+        leaf hlMatrixControlNlDeletes {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.5";
+          config false;
+        }
+        leaf hlMatrixControlNlMaxDesiredEntries {
+          type hlMatrixControlNlMaxDesiredEntriesType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.6";
+        }
+        leaf hlMatrixControlAlDroppedFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.7";
+          config false;
+        }
+        leaf hlMatrixControlAlInserts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.8";
+          config false;
+        }
+        leaf hlMatrixControlAlDeletes {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.9";
+          config false;
+        }
+        leaf hlMatrixControlAlMaxDesiredEntries {
+          type hlMatrixControlAlMaxDesiredEntriesType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.10";
+        }
+        leaf hlMatrixControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.11";
+        }
+      }
+    }
+    container nlMatrixSDTable {
+      config false;
+      list nlMatrixSDEntry {
+        key "hlMatrixControlIndex nlMatrixSDTimeMark protocolDirLocalIndex nlMatrixSDSourceAddress nlMatrixSDDestAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.15.2";
+        leaf hlMatrixControlIndex {
+          type hlMatrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.1";
+        }
+        leaf nlMatrixSDTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlMatrixSDSourceAddress {
+          type nlMatrixSDSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.2";
+        }
+        leaf nlMatrixSDDestAddress {
+          type nlMatrixSDDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.3";
+        }
+        leaf nlMatrixSDPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.4";
+          config false;
+        }
+        leaf nlMatrixSDOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.5";
+          config false;
+        }
+        leaf nlMatrixSDCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.6";
+          config false;
+        }
+      }
+    }
+    container nlMatrixDSTable {
+      config false;
+      list nlMatrixDSEntry {
+        key "hlMatrixControlIndex nlMatrixDSTimeMark protocolDirLocalIndex nlMatrixDSDestAddress nlMatrixDSSourceAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.15.3";
+        leaf hlMatrixControlIndex {
+          type hlMatrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.1";
+        }
+        leaf nlMatrixDSTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlMatrixDSDestAddress {
+          type nlMatrixDSDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.3";
+        }
+        leaf nlMatrixDSSourceAddress {
+          type nlMatrixDSSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.2";
+        }
+        leaf nlMatrixDSPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.4";
+          config false;
+        }
+        leaf nlMatrixDSOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.5";
+          config false;
+        }
+        leaf nlMatrixDSCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.6";
+          config false;
+        }
+      }
+    }
+    container nlMatrixTopNControlTable {
+      list nlMatrixTopNControlEntry {
+        key "nlMatrixTopNControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.15.4";
+        leaf nlMatrixTopNControlIndex {
+          type nlMatrixTopNControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.1";
+        }
+        leaf nlMatrixTopNControlMatrixIndex {
+          type nlMatrixTopNControlMatrixIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.2";
+        }
+        leaf nlMatrixTopNControlRateBase {
+          type nlMatrixTopNControlRateBaseType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.3";
+        }
+        leaf nlMatrixTopNControlTimeRemaining {
+          type nlMatrixTopNControlTimeRemainingType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.4";
+          default "1800";
+        }
+        leaf nlMatrixTopNControlGeneratedReports {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.5";
+          config false;
+        }
+        leaf nlMatrixTopNControlDuration {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.6";
+          config false;
+        }
+        leaf nlMatrixTopNControlRequestedSize {
+          type nlMatrixTopNControlRequestedSizeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.7";
+          default "150";
+        }
+        leaf nlMatrixTopNControlGrantedSize {
+          type nlMatrixTopNControlGrantedSizeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.8";
+          config false;
+        }
+        leaf nlMatrixTopNControlStartTime {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.9";
+          config false;
+        }
+        leaf nlMatrixTopNControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.10";
+        }
+      }
+    }
+    container nlMatrixTopNTable {
+      config false;
+      list nlMatrixTopNEntry {
+        key "nlMatrixTopNControlIndex nlMatrixTopNIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.15.5";
+        leaf nlMatrixTopNControlIndex {
+          type nlMatrixTopNControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.4.1.1";
+        }
+        leaf nlMatrixTopNIndex {
+          type nlMatrixTopNIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.1";
+        }
+        leaf nlMatrixTopNProtocolDirLocalIndex {
+          type nlMatrixTopNProtocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.2";
+          config false;
+        }
+        leaf nlMatrixTopNSourceAddress {
+          type nlMatrixTopNSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.3";
+          config false;
+        }
+        leaf nlMatrixTopNDestAddress {
+          type nlMatrixTopNDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.4";
+          config false;
+        }
+        leaf nlMatrixTopNPktRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.5";
+          config false;
+        }
+        leaf nlMatrixTopNReversePktRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.6";
+          config false;
+        }
+        leaf nlMatrixTopNOctetRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.7";
+          config false;
+        }
+        leaf nlMatrixTopNReverseOctetRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.5.1.8";
+          config false;
+        }
+      }
+    }
+    container alHostTable {
+      config false;
+      list alHostEntry {
+        key "hlHostControlIndex alHostTimeMark protocolDirLocalIndex nlHostAddress protocolDirLocalIndex_2";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.16.1";
+        leaf hlHostControlIndex {
+          type hlHostControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.1.1.1";
+        }
+        leaf alHostTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlHostAddress {
+          type nlHostAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.14.2.1.2";
+        }
+        leaf protocolDirLocalIndex_2 {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf alHostInPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.2";
+          config false;
+        }
+        leaf alHostOutPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.3";
+          config false;
+        }
+        leaf alHostInOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.4";
+          config false;
+        }
+        leaf alHostOutOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.5";
+          config false;
+        }
+        leaf alHostCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.16.1.1.6";
+          config false;
+        }
+      }
+    }
+    container alMatrixSDTable {
+      config false;
+      list alMatrixSDEntry {
+        key "hlMatrixControlIndex alMatrixSDTimeMark protocolDirLocalIndex nlMatrixSDSourceAddress nlMatrixSDDestAddress protocolDirLocalIndex_2";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.17.1";
+        leaf hlMatrixControlIndex {
+          type hlMatrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.1";
+        }
+        leaf alMatrixSDTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.1.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlMatrixSDSourceAddress {
+          type nlMatrixSDSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.2";
+        }
+        leaf nlMatrixSDDestAddress {
+          type nlMatrixSDDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.2.1.3";
+        }
+        leaf protocolDirLocalIndex_2 {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf alMatrixSDPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.1.1.2";
+          config false;
+        }
+        leaf alMatrixSDOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.1.1.3";
+          config false;
+        }
+        leaf alMatrixSDCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.1.1.4";
+          config false;
+        }
+      }
+    }
+    container alMatrixDSTable {
+      config false;
+      list alMatrixDSEntry {
+        key "hlMatrixControlIndex alMatrixDSTimeMark protocolDirLocalIndex nlMatrixDSDestAddress nlMatrixDSSourceAddress protocolDirLocalIndex_2";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.17.2";
+        leaf hlMatrixControlIndex {
+          type hlMatrixControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.1.1.1";
+        }
+        leaf alMatrixDSTimeMark {
+          type TimeFilter;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.2.1.1";
+        }
+        leaf protocolDirLocalIndex {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf nlMatrixDSDestAddress {
+          type nlMatrixDSDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.3";
+        }
+        leaf nlMatrixDSSourceAddress {
+          type nlMatrixDSSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.15.3.1.2";
+        }
+        leaf protocolDirLocalIndex_2 {
+          type protocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.11.2.1.3";
+        }
+        leaf alMatrixDSPkts {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.2.1.2";
+          config false;
+        }
+        leaf alMatrixDSOctets {
+          type ZeroBasedCounter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.2.1.3";
+          config false;
+        }
+        leaf alMatrixDSCreateTime {
+          type LastCreateTime;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.2.1.4";
+          config false;
+        }
+      }
+    }
+    container alMatrixTopNControlTable {
+      list alMatrixTopNControlEntry {
+        key "alMatrixTopNControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.17.3";
+        leaf alMatrixTopNControlIndex {
+          type alMatrixTopNControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.1";
+        }
+        leaf alMatrixTopNControlMatrixIndex {
+          type alMatrixTopNControlMatrixIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.2";
+        }
+        leaf alMatrixTopNControlRateBase {
+          type alMatrixTopNControlRateBaseType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.3";
+        }
+        leaf alMatrixTopNControlTimeRemaining {
+          type alMatrixTopNControlTimeRemainingType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.4";
+          default "1800";
+        }
+        leaf alMatrixTopNControlGeneratedReports {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.5";
+          config false;
+        }
+        leaf alMatrixTopNControlDuration {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.6";
+          config false;
+        }
+        leaf alMatrixTopNControlRequestedSize {
+          type alMatrixTopNControlRequestedSizeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.7";
+          default "150";
+        }
+        leaf alMatrixTopNControlGrantedSize {
+          type alMatrixTopNControlGrantedSizeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.8";
+          config false;
+        }
+        leaf alMatrixTopNControlStartTime {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.9";
+          config false;
+        }
+        leaf alMatrixTopNControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.10";
+        }
+      }
+    }
+    container alMatrixTopNTable {
+      config false;
+      list alMatrixTopNEntry {
+        key "alMatrixTopNControlIndex alMatrixTopNIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.17.4";
+        leaf alMatrixTopNControlIndex {
+          type alMatrixTopNControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.3.1.1";
+        }
+        leaf alMatrixTopNIndex {
+          type alMatrixTopNIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.1";
+        }
+        leaf alMatrixTopNProtocolDirLocalIndex {
+          type alMatrixTopNProtocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.2";
+          config false;
+        }
+        leaf alMatrixTopNSourceAddress {
+          type alMatrixTopNSourceAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.3";
+          config false;
+        }
+        leaf alMatrixTopNDestAddress {
+          type alMatrixTopNDestAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.4";
+          config false;
+        }
+        leaf alMatrixTopNAppProtocolDirLocalIndex {
+          type alMatrixTopNAppProtocolDirLocalIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.5";
+          config false;
+        }
+        leaf alMatrixTopNPktRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.6";
+          config false;
+        }
+        leaf alMatrixTopNReversePktRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.7";
+          config false;
+        }
+        leaf alMatrixTopNOctetRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.8";
+          config false;
+        }
+        leaf alMatrixTopNReverseOctetRate {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.17.4.1.9";
+          config false;
+        }
+      }
+    }
+    container usrHistoryControlTable {
+      list usrHistoryControlEntry {
+        key "usrHistoryControlIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.18.1";
+        leaf usrHistoryControlIndex {
+          type usrHistoryControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.1";
+        }
+        leaf usrHistoryControlObjects {
+          type usrHistoryControlObjectsType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.2";
+        }
+        leaf usrHistoryControlBucketsRequested {
+          type usrHistoryControlBucketsRequestedType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.3";
+          default "50";
+        }
+        leaf usrHistoryControlBucketsGranted {
+          type usrHistoryControlBucketsGrantedType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.4";
+          config false;
+        }
+        leaf usrHistoryControlInterval {
+          type usrHistoryControlIntervalType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.5";
+          default "1800";
+        }
+        leaf usrHistoryControlOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.6";
+        }
+      }
+    }
+    container usrHistoryObjectTable {
+      list usrHistoryObjectEntry {
+        key "usrHistoryControlIndex usrHistoryObjectIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.18.2";
+        leaf usrHistoryControlIndex {
+          type usrHistoryControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.1";
+        }
+        leaf usrHistoryObjectIndex {
+          type usrHistoryObjectIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.2.1.1";
+        }
+        leaf usrHistoryObjectVariable {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.2.1.2";
+        }
+        leaf usrHistoryObjectSampleType {
+          type usrHistoryObjectSampleTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.2.1.3";
+        }
+      }
+    }
+    container usrHistoryTable {
+      config false;
+      list usrHistoryEntry {
+        key "usrHistoryControlIndex usrHistorySampleIndex usrHistoryObjectIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.18.3";
+        leaf usrHistoryControlIndex {
+          type usrHistoryControlIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.1.1.1";
+        }
+        leaf usrHistorySampleIndex {
+          type usrHistorySampleIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.3.1.1";
+        }
+        leaf usrHistoryObjectIndex {
+          type usrHistoryObjectIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.2.1.1";
+        }
+        leaf usrHistoryIntervalStart {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.3.1.2";
+          config false;
+        }
+        leaf usrHistoryIntervalEnd {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.3.1.3";
+          config false;
+        }
+        leaf usrHistoryAbsValue {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.3.1.4";
+          config false;
+        }
+        leaf usrHistoryValStatus {
+          type usrHistoryValStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.18.3.1.5";
+          config false;
+        }
+      }
+    }
+    container serialConfigTable {
+      list serialConfigEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.10";
+        leaf ifIndex {
+          type IF-MIB:InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf serialMode {
+          type serialModeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.1";
+          default "direct";
+        }
+        leaf serialProtocol {
+          type serialProtocolType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.2";
+          default "slip";
+        }
+        leaf serialTimeout {
+          type serialTimeoutType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.3";
+          default "300";
+        }
+        leaf serialModemInitString {
+          type serialModemInitStringType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.4";
+        }
+        leaf serialModemHangUpString {
+          type serialModemHangUpStringType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.5";
+        }
+        leaf serialModemConnectResp {
+          type serialModemConnectRespType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.6";
+        }
+        leaf serialModemNoConnectResp {
+          type serialModemNoConnectRespType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.7";
+        }
+        leaf serialDialoutTimeout {
+          type serialDialoutTimeoutType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.10.1.8";
+          default "20";
+        }
+      }
+    }
+    container netConfigTable {
+      list netConfigEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.11";
+        leaf ifIndex {
+          type IF-MIB:InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf netConfigIPAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.11.1.1";
+        }
+        leaf netConfigSubnetMask {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.11.1.2";
+        }
+      }
+    }
+    container trapDestTable {
+      list trapDestEntry {
+        key "trapDestIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.13";
+        leaf trapDestIndex {
+          type trapDestIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.13.1.1";
+        }
+        leaf trapDestCommunity {
+          type trapDestCommunityType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.13.1.2";
+        }
+        leaf trapDestProtocol {
+          type trapDestProtocolType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.13.1.3";
+        }
+        leaf trapDestAddress {
+          type tailf:hex-list;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.13.1.4";
+        }
+        leaf trapDestOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.13.1.5";
+        }
+      }
+    }
+    container serialConnectionTable {
+      list serialConnectionEntry {
+        key "serialConnectIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.19.14";
+        leaf serialConnectIndex {
+          type serialConnectIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.1";
+        }
+        leaf serialConnectDestIpAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.2";
+        }
+        leaf serialConnectType {
+          type serialConnectTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.3";
+          default "direct";
+        }
+        leaf serialConnectDialString {
+          type serialConnectDialStringType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.4";
+        }
+        leaf serialConnectSwitchConnectSeq {
+          type serialConnectSwitchConnectSeqType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.5";
+        }
+        leaf serialConnectSwitchDisconnectSeq {
+          type serialConnectSwitchDisconnectSeqType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.6";
+        }
+        leaf serialConnectSwitchResetSeq {
+          type serialConnectSwitchResetSeqType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.7";
+        }
+        leaf serialConnectOwner {
+          type RMON-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.19.14.1.8";
+        }
+      }
+    }
+  }
+  typedef protocolDirType {
+    type bits {
+      bit extensible {
+        position 0;
+      }
+      bit addressRecognitionCapable {
+        position 1;
+      }
+    }
+  }
+  typedef probeCapabilities {
+    type bits {
+      bit etherStats {
+        position 0;
+      }
+      bit historyControl {
+        position 1;
+      }
+      bit etherHistory {
+        position 2;
+      }
+      bit alarm {
+        position 3;
+      }
+      bit hosts {
+        position 4;
+      }
+      bit hostTopN {
+        position 5;
+      }
+      bit matrix {
+        position 6;
+      }
+      bit filter {
+        position 7;
+      }
+      bit capture {
+        position 8;
+      }
+      bit event {
+        position 9;
+      }
+      bit tokenRingMLStats {
+        position 10;
+      }
+      bit tokenRingPStats {
+        position 11;
+      }
+      bit tokenRingMLHistory {
+        position 12;
+      }
+      bit tokenRingPHistory {
+        position 13;
+      }
+      bit ringStation {
+        position 14;
+      }
+      bit ringStationOrder {
+        position 15;
+      }
+      bit ringStationConfig {
+        position 16;
+      }
+      bit sourceRouting {
+        position 17;
+      }
+      bit protocolDirectory {
+        position 18;
+      }
+      bit protocolDistribution {
+        position 19;
+      }
+      bit addressMapping {
+        position 20;
+      }
+      bit nlHost {
+        position 21;
+      }
+      bit nlMatrix {
+        position 22;
+      }
+      bit alHost {
+        position 23;
+      }
+      bit alMatrix {
+        position 24;
+      }
+      bit usrHistory {
+        position 25;
+      }
+      bit probeConfig {
+        position 26;
+      }
+    }
+  }
+  typedef ZeroBasedCounter32 {
+    type uint32 {
+      range "0 .. 4294967295";
+    }
+  }
+  typedef LastCreateTime {
+    type uint32 {
+      range "0 .. 4294967295";
+    }
+  }
+  typedef TimeFilter {
+    type uint32 {
+      range "0 .. 4294967295";
+    }
+  }
+  typedef DataSource {
+    type yang:object-identifier;
+  }
+  typedef ControlString {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef addressMapMaxDesiredEntriesType {
+    type int32 {
+      range "-1 .. 2147483647";
+    }
+  }
+  typedef probeCapabilitiesType {
+    type bits {
+      bit etherStats {
+        position 0;
+      }
+      bit historyControl {
+        position 1;
+      }
+      bit etherHistory {
+        position 2;
+      }
+      bit alarm {
+        position 3;
+      }
+      bit hosts {
+        position 4;
+      }
+      bit hostTopN {
+        position 5;
+      }
+      bit matrix {
+        position 6;
+      }
+      bit filter {
+        position 7;
+      }
+      bit capture {
+        position 8;
+      }
+      bit event {
+        position 9;
+      }
+      bit tokenRingMLStats {
+        position 10;
+      }
+      bit tokenRingPStats {
+        position 11;
+      }
+      bit tokenRingMLHistory {
+        position 12;
+      }
+      bit tokenRingPHistory {
+        position 13;
+      }
+      bit ringStation {
+        position 14;
+      }
+      bit ringStationOrder {
+        position 15;
+      }
+      bit ringStationConfig {
+        position 16;
+      }
+      bit sourceRouting {
+        position 17;
+      }
+      bit protocolDirectory {
+        position 18;
+      }
+      bit protocolDistribution {
+        position 19;
+      }
+      bit addressMapping {
+        position 20;
+      }
+      bit nlHost {
+        position 21;
+      }
+      bit nlMatrix {
+        position 22;
+      }
+      bit alHost {
+        position 23;
+      }
+      bit alMatrix {
+        position 24;
+      }
+      bit usrHistory {
+        position 25;
+      }
+      bit probeConfig {
+        position 26;
+      }
+    }
+  }
+  typedef probeSoftwareRevType {
+    type string {
+      length "min .. 15";
+    }
+  }
+  typedef probeHardwareRevType {
+    type string {
+      length "min .. 31";
+    }
+  }
+  typedef probeDateTimeType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 11";
+    }
+  }
+  typedef probeResetControlType {
+    type enumeration {
+      enum "running" {
+        value 1;
+      }
+      enum "warmBoot" {
+        value 2;
+      }
+      enum "coldBoot" {
+        value 3;
+      }
+    }
+  }
+  typedef probeDownloadFileType {
+    type string {
+      length "min .. 127";
+    }
+  }
+  typedef probeDownloadActionType {
+    type enumeration {
+      enum "notDownloading" {
+        value 1;
+      }
+      enum "downloadToPROM" {
+        value 2;
+      }
+      enum "downloadToRAM" {
+        value 3;
+      }
+    }
+  }
+  typedef probeDownloadStatusType {
+    type enumeration {
+      enum "downloadSuccess" {
+        value 1;
+      }
+      enum "downloadStatusUnknown" {
+        value 2;
+      }
+      enum "downloadGeneralError" {
+        value 3;
+      }
+      enum "downloadNoResponseFromServer" {
+        value 4;
+      }
+      enum "downloadChecksumError" {
+        value 5;
+      }
+      enum "downloadIncompatibleImage" {
+        value 6;
+      }
+      enum "downloadTftpFileNotFound" {
+        value 7;
+      }
+      enum "downloadTftpAccessViolation" {
+        value 8;
+      }
+    }
+  }
+  typedef etherStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef tokenRingMLStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef tokenRingPStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef historyControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hostControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef matrixControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef channelIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef filterIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef filterProtocolDirDataLocalIndexType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef filterProtocolDirLocalIndexType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef ringStationControlIfIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef protocolDirIDType {
+    type tailf:hex-list {
+      tailf:value-length "4 .. 128";
+    }
+  }
+  typedef protocolDirParametersType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 32";
+    }
+  }
+  typedef protocolDirLocalIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef protocolDirDescrType {
+    type string {
+      length "1 .. 64";
+    }
+  }
+  typedef protocolDirTypeType {
+    type bits {
+      bit extensible {
+        position 0;
+      }
+      bit addressRecognitionCapable {
+        position 1;
+      }
+    }
+  }
+  typedef protocolDirAddressMapConfigType {
+    type enumeration {
+      enum "notSupported" {
+        value 1;
+      }
+      enum "supportedOff" {
+        value 2;
+      }
+      enum "supportedOn" {
+        value 3;
+      }
+    }
+  }
+  typedef protocolDirHostConfigType {
+    type enumeration {
+      enum "notSupported" {
+        value 1;
+      }
+      enum "supportedOff" {
+        value 2;
+      }
+      enum "supportedOn" {
+        value 3;
+      }
+    }
+  }
+  typedef protocolDirMatrixConfigType {
+    type enumeration {
+      enum "notSupported" {
+        value 1;
+      }
+      enum "supportedOff" {
+        value 2;
+      }
+      enum "supportedOn" {
+        value 3;
+      }
+    }
+  }
+  typedef protocolDistControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef addressMapControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef addressMapNetworkAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef hlHostControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hlHostControlNlMaxDesiredEntriesType {
+    type int32 {
+      range "-1 .. 2147483647";
+    }
+  }
+  typedef hlHostControlAlMaxDesiredEntriesType {
+    type int32 {
+      range "-1 .. 2147483647";
+    }
+  }
+  typedef nlHostAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef hlMatrixControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef hlMatrixControlNlMaxDesiredEntriesType {
+    type int32 {
+      range "-1 .. 2147483647";
+    }
+  }
+  typedef hlMatrixControlAlMaxDesiredEntriesType {
+    type int32 {
+      range "-1 .. 2147483647";
+    }
+  }
+  typedef nlMatrixSDSourceAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef nlMatrixSDDestAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef nlMatrixDSDestAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef nlMatrixDSSourceAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef nlMatrixTopNControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef nlMatrixTopNControlMatrixIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef nlMatrixTopNControlRateBaseType {
+    type enumeration {
+      enum "nlMatrixTopNPkts" {
+        value 1;
+      }
+      enum "nlMatrixTopNOctets" {
+        value 2;
+      }
+      enum "nlMatrixTopNHighCapacityPkts" {
+        value 3;
+      }
+      enum "nlMatrixTopNHighCapacityOctets" {
+        value 4;
+      }
+    }
+  }
+  typedef nlMatrixTopNControlTimeRemainingType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef nlMatrixTopNControlRequestedSizeType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef nlMatrixTopNControlGrantedSizeType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef nlMatrixTopNIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef nlMatrixTopNProtocolDirLocalIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef nlMatrixTopNSourceAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef nlMatrixTopNDestAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef alMatrixTopNControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef alMatrixTopNControlMatrixIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef alMatrixTopNControlRateBaseType {
+    type enumeration {
+      enum "alMatrixTopNTerminalsPkts" {
+        value 1;
+      }
+      enum "alMatrixTopNTerminalsOctets" {
+        value 2;
+      }
+      enum "alMatrixTopNAllPkts" {
+        value 3;
+      }
+      enum "alMatrixTopNAllOctets" {
+        value 4;
+      }
+      enum "alMatrixTopNTerminalsHighCapacityPkts" {
+        value 5;
+      }
+      enum "alMatrixTopNTerminalsHighCapacityOctets" {
+        value 6;
+      }
+      enum "alMatrixTopNAllHighCapacityPkts" {
+        value 7;
+      }
+      enum "alMatrixTopNAllHighCapacityOctets" {
+        value 8;
+      }
+    }
+  }
+  typedef alMatrixTopNControlTimeRemainingType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef alMatrixTopNControlRequestedSizeType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef alMatrixTopNControlGrantedSizeType {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef alMatrixTopNIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef alMatrixTopNProtocolDirLocalIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef alMatrixTopNSourceAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef alMatrixTopNDestAddressType {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef alMatrixTopNAppProtocolDirLocalIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef usrHistoryControlIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef usrHistoryControlObjectsType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef usrHistoryControlBucketsRequestedType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef usrHistoryControlBucketsGrantedType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef usrHistoryControlIntervalType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef usrHistoryObjectIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef usrHistoryObjectSampleTypeType {
+    type enumeration {
+      enum "absoluteValue" {
+        value 1;
+      }
+      enum "deltaValue" {
+        value 2;
+      }
+    }
+  }
+  typedef usrHistorySampleIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef usrHistoryValStatusType {
+    type enumeration {
+      enum "valueNotAvailable" {
+        value 1;
+      }
+      enum "valuePositive" {
+        value 2;
+      }
+      enum "valueNegative" {
+        value 3;
+      }
+    }
+  }
+  typedef serialModeType {
+    type enumeration {
+      enum "direct" {
+        value 1;
+      }
+      enum "modem" {
+        value 2;
+      }
+    }
+  }
+  typedef serialProtocolType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "slip" {
+        value 2;
+      }
+      enum "ppp" {
+        value 3;
+      }
+    }
+  }
+  typedef serialTimeoutType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef serialModemInitStringType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef serialModemHangUpStringType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef serialModemConnectRespType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef serialModemNoConnectRespType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef serialDialoutTimeoutType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef trapDestIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef trapDestCommunityType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 127";
+    }
+  }
+  typedef trapDestProtocolType {
+    type enumeration {
+      enum "ip" {
+        value 1;
+      }
+      enum "ipx" {
+        value 2;
+      }
+    }
+  }
+  typedef serialConnectIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef serialConnectTypeType {
+    type enumeration {
+      enum "direct" {
+        value 1;
+      }
+      enum "modem" {
+        value 2;
+      }
+      enum "switch" {
+        value 3;
+      }
+      enum "modemSwitch" {
+        value 4;
+      }
+    }
+  }
+  typedef serialConnectDialStringType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef serialConnectSwitchConnectSeqType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef serialConnectSwitchDisconnectSeqType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+  typedef serialConnectSwitchResetSeqType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 255";
+    }
+  }
+}

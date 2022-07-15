@@ -1,0 +1,513 @@
+<form name="filterForm" ng-controller="webFilteringCtrl" ng-modification="dataReady" id="web-filtering">
+<div ng-if="dataReady">
+    <!-- main table page-->
+    <div ng-show="currPage === 'main'" ng-if="currPage === 'main'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Web_Filtering')"></div>
+            <div class="page-button-container" ng-class="{nopHint: model.status === 0}">
+                <button type="button" class="btn-apply" id="btn_save" ng-click="funs.main.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Web_Filtering_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_cancel" ng-click="funs.main.cancel()">
+                    <span ng-bind="DICT('Web_Filtering_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <message-box class="page-note-cntr" ng-if="model.status === 0">
+                <table>
+                    <tr>
+                        <td><img src="themes/img/icon/Status_warning_icon.gif" class="message-icon"></img></td>
+                        <td>
+                            <span ng-bind-html="combineNote"></span>
+                        </td>
+                    </tr>
+                </table>
+            </message-box>
+            <div ng-class="{nopHint: model.status === 0}">
+                <div>
+                    <table class="page-block-tb-list">
+                        <tr>
+                            <td  ng-bind="DICT('Web_Filtering') + ':'"></td>
+                            <td>
+                                <input type="radio" id="rdo_on" ng-model="model.enable" ng-value="true" ng-change="changeEnable()">
+                                    <span ng-bind="DICT('Web_Filtering_On')"></span>
+                                </input>
+                                <input type="radio" id="rdo_off" ng-model="model.enable" ng-value="false" ng-change="changeEnable()">
+                                    <span ng-bind="DICT('Web_Filtering_Off')"></span>
+                                </input>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <hr class="page-content-seperator"/>
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('Web_Filtering_URL')+':'"></td>
+                        <td colspan="2">
+                            <input type="text" id="txt_urllookup" ignore-dirty legal-char maxlength="128" ng-model="model.urllookup.url"></input>
+                            <button type="button" id="btn_urllookup" ng-disabled="userAccessFlag === 'RO' || model.urllookup.url ===''" ng-click="funs.urllookup()">
+                                <span ng-bind="DICT('Web_Filtering_Lookup')"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <table class="page-block-tb-list">
+                                <tr>
+                                    <td>
+                                        <span ng-bind="DICT('Web_Filtering_URL_Category')"></span>
+                                    </td>
+                                    <td>
+                                        <span ng-bind="model.urllookup.category"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span ng-bind="DICT('Web_Filtering_Reputation')"></span>
+                                    </td>
+                                    <td>
+                                        <span ng-bind="model.urllookup.reputation"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <span ng-bind="DICT('Web_Filtering_Status')"></span>
+                                    </td>
+                                    <td>
+                                        <span ng-bind="model.urllookup.status"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Web_Filtering_URL_Review')"></td>
+                        <td>
+                            <span ng-bind-html="combineMsg1"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Web_Filtering_Blocked_Page_Message')"></td>
+                        <td>
+                            <input type="text"
+                                   ng-model="model.block_msg"
+                                   maxlength="256"
+                                   size="256"
+                                   style="width: 350px"
+                                   placeholder="{{DICT('Web_Filtering_Blocked_Page_Default_Message')}}"
+                            ></input>
+                            <span class="tip-info" ng-bind="DICT('Web_Filtering_Blocked_Page_Note')"></span>
+                        </td>
+                    </tr>
+                </table>
+                <hr class="page-content-seperator"/>
+                <div class="grid-cntr" style="min-width: 1000px">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Web_Filtering_Web_Filtering_Policies')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button"
+                                    id="btn_add"
+                                    class="grid-btn-add"
+                                    ng-disabled="userAccessFlag === 'RO'"
+                                    ng-click="funs.main.add()"></button>
+                            <button type="button"
+                                    id="btn_edit"
+                                    class="grid-btn-edit"
+                                    ng-disabled="sel_policy_cnts !== 1 || userAccessFlag === 'RO'"
+                                    ng-click="funs.main.edit()"></button>
+                            <button type="button"
+                                    id="btn_delete"
+                                    class="grid-btn-delete"
+                                    ng-disabled="sel_policy_cnts <= 0 || userAccessFlag === 'RO'"
+                                    ng-click="funs.main.del()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridMainOptions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Main Table Page -->
+    <!-- Policy Edit Page -->
+    <div ng-show="currPage === 'policy_edit'" ng-if="currPage === 'policy_edit'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Web_Filtering_Web_Filtering_Add_Edit_Policy')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" id="btn_policy_save" ng-disabled="filterForm.$invalid || userAccessFlag === 'RO'" ng-click="funs.policy.save()">
+                    <span ng-bind="DICT('Web_Filtering_OK')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_policy_cancel" ng-click="funs.policy.cancel()">
+                    <span ng-bind="DICT('Web_Filtering_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Policy_Name')"></td>
+                    <td>
+                        <input type="text"
+                            id="txt_policyname"
+                            name="policyname"
+                            legal-char
+                            maxlength="63"
+                            ng-disabled="edit.type === 'edit'"
+                            ng-no-space="edit.type !== 'edit'"
+                            ng-custom-vld="currPage === 'policy_edit'"
+                            custom-vld-cbk="checkPolicyName"
+                            custom-vld-name="repeat"
+                            ng-model="edit.name"
+                            required
+                        ></input>
+                    </td>
+                    <td>
+						<span class="validation-error-text-right" ng-show="filterForm.policyname.$error.repeat" ng-bind="DICT('Web_Filtering_Policy_Name_Existed')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Descriptio')"></td>
+                    <td>
+                        <input type="text" id="txt_description" legal-char maxlength="64" ng-model="edit.description"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Enable')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_enable" ng-model="edit.enable"></input>
+                    </td>
+                </tr>
+            </table>
+            <hr class="page-content-seperator"></hr>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Category')"></td>
+                    <td>
+                        <button style="margin-left:0px;" type="button" id="btn_category_edit" ng-click="funs.policy.goToCategoryPage()">
+							<span ng-bind="DICT('Web_Filtering_Edit')"></span></button>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <div class="indent1" style="margin-bottom: 10px">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Web_Filtering_Application_List_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridCategoryOptions"></div>
+                    </div>
+                </div>
+            </div>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Web_Reputation')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_webreputation" ng-model="edit.web_reputation"></input>
+                    </td>
+                </tr>
+                <tr class="nowrap">
+                    <td>
+                        <span ng-bind="DICT('Web_Filtering_Applied_IP_Group')"></span>
+                        <help-icon context="DICT('Web_Filtering_IP_Address_Note')" ng-show="edit.ipgroup !== '@none'" isopen="model.ipgroupnote"><help-icon>
+                    </td>
+                    <td>
+                        <select id="slct_ipgroup" ng-model="edit.ipgroup" ng-options="m.id as m.displayName for m in model.ipgroups" ng-change="check_ip_group_detail()"></select>
+                    </td>
+                </tr>
+            </table>
+            <div ng-if="model.show_ipgroup">
+                <td colspan="2">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Web_Filtering_IP_Address_List_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-content" ui-grid="gridIPGroupsOptions" ui-grid-auto-resize ui-grid-resize-columns></div>
+                        </div>
+                    </div>
+            </div>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Exception_List')"></td>
+                    <td>
+                        <button id="btn_exlist_edit" type="button" ng-click="funs.policy.goToException()">
+							<span ng-bind="DICT('Web_Filtering_Edit')"></span></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Web_Filtering_Schedule')"></td>
+                    <td>
+                        <select id="slct_schedule" ng-model="edit.schedule" ng-options="m.id as m.displayName for m in model.schedules"></select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- End Policy Edit Page -->
+    <!-- Web Filter Edit Page -->
+    <div ng-show="currPage === 'category_edit'" ng-if="currPage === 'category_edit'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Web_Filtering_Web_Filtering_Add_Edit_Category')"></div>
+            <div class="page-button-container" style="clear:both">
+                <button type="button" class="btn-apply" id="btn_filter_save" ng-click="funs.filter.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Web_Filtering_Apply')"></span>
+                </button>
+                <button type="button" class="btn-back" id="btn_filter_back" ng-click="funs.filter.back()">
+                    <span ng-bind="DICT('Web_Filtering_Back')"></span>
+                </button>
+                <button type="button" id="btn_filter_restore" ng-click="funs.filter.restore()">
+                    <span ng-bind="DICT('Web_Filtering_Restore_Default_Categories')"></span>
+                </button>
+                <button type="button" id="btn_filter_expand" ng-click="expandAll('true')" ng-show="!expandFlag">
+                    <span ng-bind="DICT('Web_Filtering_Expand')"></span>
+                </button>
+                <button type="button" id="btn_filter_collapse" ng-click="expandAll('false')" ng-show="expandFlag">
+                    <span ng-bind="DICT('Web_Filtering_Collapse')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container" style="overflow-y: auto">
+            <div style="float: left; width: 15%;">
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Web_Filtering_Filtering_Level')"></div>
+                </div>
+                <table class="filtering-level page-block-tb-list">
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_high" ng-model="edit.filtering_level" ng-change="changeLevel()" value="high"></input>
+                            <span ng-bind="DICT('Web_Filtering_High')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_moderate" ng-model="edit.filtering_level" ng-change="changeLevel()" value="med"></input>
+                            <span ng-bind="DICT('Web_Filtering_Moderate')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_low" ng-model="edit.filtering_level" ng-change="changeLevel()" value="low"></input>
+                            <span ng-bind="DICT('Web_Filtering_Low')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_custom" ng-model="edit.filtering_level" ng-change="changeLevel()" value="custom"></input>
+                            <span ng-bind="DICT('Web_Filtering_Custom')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div style="float: right; width: 85%">
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Web_Filtering_Web_Content')"></div>
+                </div>
+                <div class="page-content-seperator"></div>
+                <div class="nest" ng-repeat="g in edit.meta">
+                    <div>
+                        <input type="checkbox" id="chk_meta_{{g.id}}" 
+                            ng-model="g.checked" 
+                            indeterminate-checkbox 
+                            child-list="g.categories" 
+                            property="checked">
+                        </input>
+                        <span class="group-name-style" ng-bind="g.name"></span>
+                        <span ng-show="g.expanded" class="expand-style icon-btn-hide-children" ng-click="g.expanded = !g.expanded"></span>
+                        <span ng-show="!g.expanded" class="expand-style icon-btn-show-children" ng-click="g.expanded = !g.expanded"></span>
+                    </div>
+                    <div ng-show="g.expanded" ng-if="g.expanded">
+                        <table class="meta-data-tb-list">
+                            <tr ng-repeat="c in g.categories" valign="top">
+                                <td>
+                                    <input type="checkbox" id="chk_category_{{c.name}}" ng-model="c.checked"></input>
+                                </td>
+                                <td>
+                                    <span class="category-style" ng-bind="c.name"></span>
+                                </td>
+                                <td ng-bind="c.description"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Web Filter Edit Page -->
+    <!-- Customer Rules Edit Page -->
+    <div ng-show="currPage === 'customer_rules'" ng-if="currPage === 'customer_rules'">
+        <ng-form name="filterform">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Web_Filtering_Web_Filtering_Add_Edit_Exception_List')"></div>
+                <div class="page-button-container">
+                    <button type="button" class="btn-apply" id="btn_exlist_save" ng-disabled="filterForm.filterform.$invalid || userAccessFlag === 'RO'" ng-click="funs.customer.save()">
+                        <span ng-bind="DICT('Web_Filtering_Apply')"></span>
+                    </button>
+                    <button type="button" class="btn-back" id="btn_exlist_back" ng-click="funs.customer.back()">
+                        <span ng-bind="DICT('Web_Filtering_Back')"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="page-content-container">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Web_Filtering_White_List')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" id="btn_white_add" class="grid-btn-add" ng-disabled="" ng-click="funs.customer.add('white')"></button>
+                            <button type="button" id="btn_white_edit" class="grid-btn-edit" ng-disabled="sel_cnts.white <= 0" ng-click="funs.customer.edit('white')"></button>
+                            <button type="button" id="btn_white_delete" class="grid-btn-delete" ng-disabled="sel_cnts.white <= 0" ng-click="funs.customer.del('white')"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridWhiteOptions"></div>
+                    </div>
+                </div>
+                <div class="grid-seperator"></div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Web_Filtering_Black_List')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" id="btn_block_add" class="grid-btn-add" ng-disabled="" ng-click="funs.customer.add('block')"></button>
+                            <button type="button" id="btn_block_edit" class="grid-btn-edit" ng-disabled="sel_cnts.block <= 0" ng-click="funs.customer.edit('block')"></button>
+                            <button type="button" id="btn_block_delete" class="grid-btn-delete" ng-disabled="sel_cnts.block <= 0" ng-click="funs.customer.del('block')"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridBlockOptions"></div>
+                    </div>
+                </div>
+                <div class="grid-seperator"></div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Web_Filtering_Exclusion_List')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" id="btn_exlist_add" class="grid-btn-add" ng-disabled="" ng-click="funs.customer.add('user_exclusion_ip')"></button>
+                            <button type="button" id="btn_exlist_edit" class="grid-btn-edit" ng-disabled="sel_cnts.user_exclusion_ip <= 0"
+                                ng-click="funs.customer.edit('user_exclusion_ip')">
+                            </button>
+                            <button type="button" id="btn_exlist_delete" class="grid-btn-delete" ng-disabled="sel_cnts.user_exclusion_ip <= 0"
+                                ng-click="funs.customer.del('user_exclusion_ip')">
+                            </button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridExclusionOptions"></div>
+                    </div>
+                </div>
+            </div>
+        </ng-form>
+    </div>
+    <!-- End Customer Rules Edit Page -->
+</div>
+</form>
+
+<script type="text/ng-template" id="webfilter_exclusion_value.html">
+<div class="ui-grid-custom-cntr">
+    <span ng-show="MODEL_COL_FIELD.select === 'ipv4-ip' || MODEL_COL_FIELD.select === 'ipv6-ip'">
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_ip"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-ip'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-ip'"
+            ng-required="MODEL_COL_FIELD.select === 'ipv4-ip'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_IP')}}"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_ip_' + row.rowIndex : 'txt_ip_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_ip"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-ip'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-ip'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_IP')}}"
+            ng-required="MODEL_COL_FIELD.select === 'ipv6-ip'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_ip_' + row.rowIndex : 'txt_ip_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+    </span>
+    <span ng-show="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+        ng-if="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+    >
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_rangeS"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-range'"
+            ng-required="MODEL_COL_FIELD.select === 'ipv4-range'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_Start_IP')}}"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_rangeS"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-range'"
+            ng-required="MODEL_COL_FIELD.select === 'ipv6-range'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_Start_IP')}}"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        -
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_rangeE"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-range'"
+            ng-required="MODEL_COL_FIELD.select === 'ipv4-range'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_End_IP')}}"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            compare-ip-range="MODEL_COL_FIELD.v4_rangeS"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_rangeE"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-range'"
+            placeholder="{{grid.appScope.DICT('Web_Filtering_End_IP')}}"
+            ng-required="MODEL_COL_FIELD.select === 'ipv6-range'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+    </span>
+</div>
+</script>
+
+<script type="text/ng-template" id="T_table_web_filter.html">
+<div class="ui-grid-custom-cntr">
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="MODEL_COL_FIELD+'' || col.colDef.emptyStr || ''"/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow] && row.entity[col.colDef.validation].select === 'domain'">
+        <input type="text" 
+            class="grid-sub-value"
+            ng-required="col.colDef.required"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            placeholder="{{col.colDef.placeholder}}"
+            ng-model="MODEL_COL_FIELD"
+            ng-domain-name="row.entity[col.colDef.validation].select === 'domain'"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            ng-maxlength="253"
+            data-ng-expansion>
+        </input>
+    </div>
+     <div ng-show="row.entity[col.colDef.editRow] && row.entity[col.colDef.validation].select === 'keyword'">
+        <input type="text" 
+            class="grid-sub-value"
+            ng-required="col.colDef.required"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            placeholder="{{col.colDef.placeholder}}"
+            ng-model="MODEL_COL_FIELD"
+            ng-maxlength="253"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            data-ng-expansion>
+        </input>
+    </div>
+</div>
+</script>
+

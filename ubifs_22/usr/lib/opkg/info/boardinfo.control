@@ -1,0 +1,8 @@
+Package: boardinfo
+Version: 1.0
+Depends: libc, librt, libpthread, firmware
+Source: package/freescale/boardinfo
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 2067
+Description:  RV340 boardinfo

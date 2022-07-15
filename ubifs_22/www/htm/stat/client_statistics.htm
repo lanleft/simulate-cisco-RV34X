@@ -1,0 +1,96 @@
+<form ng-controller="clientStatisticsCtrl"  ng-modification="ui_data.data_ready" name="clientStatName">
+    <div ng-if="ui_data.page === 'main' && ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Client_Statistics')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" ng-click="funs.save()" ng-disabled="clientStatName.$invalid || model.no_license">
+                    <span ng-bind="DICT('Client_Statistics_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" ng-click="funs.cancel()" ng-disabled="model.no_license">
+                    <span ng-bind="DICT('Client_Statistics_Cancel')"></span>
+                </button>
+                <button type="button" class="btn-back" ng-click="funs.goback()" ng-show="backbtn">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <message-box ng-if="model.no_license">
+                <table>
+                    <tr>
+                        <td class="align-top">
+                            <i class="icon-warning message-icon"></i>
+                        </td>
+                        <td>
+                            <span pg-bind-html="ui_data.combineNote"></span>
+                        </td>
+                    </tr>
+                </table>
+            </message-box>
+            <div ng-class="{'nopHint': model.no_license}">
+                <div>
+                    <span pg-bind-html="ui_data.ip_group_note"></span>
+                </div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Client_Statistics_Client_Groups')"></div>
+                    </div>
+                    <ng-form name="ip_group_form">
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button" class="grid-btn-add" ng-click="funs.addIpGroup()" ng-disabled="ip_group_form.$invalid"></button>
+                            </div>
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIpGroupsOptions"></div>
+                        </div>
+                    </ng-form>
+                </div>
+                <div class="grid-seperator"></div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Client_Statistics_Clients')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" class="grid-btn-edit" ng-disabled="!ui_data.checked_clients.length" ng-click="funs.editClient()"></button>
+                            <button type="button" class="grid-btn-refresh" ng-click="funs.refresh_client()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridClientOptions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-if="ui_data.page === 'sub' && ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="ui_data.client_title"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-cancel" ng-click="funs.sub_cancel()"><span ng-bind="DICT('Client_Statistics_Cancel')"></span></button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Client_Statistics_Client_colon')"></td>
+                    <td ng-bind="ui_data.client_name"></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Client_Statistics_Status_colon')"></td>
+                    <td ng-bind="ui_data.client_status"></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Client_Statistics_Device_Type_colon')"></td>
+                    <td ng-bind="ui_data.client_device_type"></td>
+                </tr>
+            </table>
+            <br/>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Client_Statistics_Applications')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridApplicationOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

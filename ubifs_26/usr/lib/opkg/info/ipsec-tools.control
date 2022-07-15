@@ -1,0 +1,8 @@
+Package: ipsec-tools
+Version: 0.8.1-1
+Depends: libc, librt, libpthread, libopenssl, kmod-ipsec
+Source: package/openwrt/net/ipsec-tools
+Section: net
+Architecture: comcerto2000
+Installed-Size: 279892
+Description:  IPsec management tools

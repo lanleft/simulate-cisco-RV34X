@@ -1,0 +1,8 @@
+Package: xos_pl
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Source: package/cisco/xos_pl
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 22743
+Description:  xos_pl.

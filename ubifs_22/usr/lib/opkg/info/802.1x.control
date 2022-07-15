@@ -1,0 +1,8 @@
+Package: 802.1x
+Version: 1-1
+Depends: libc, librt, libpthread
+Source: package/802.1x
+Section: 802.1x
+Architecture: comcerto2000
+Installed-Size: 37132
+Description:  802.1x authentication module.

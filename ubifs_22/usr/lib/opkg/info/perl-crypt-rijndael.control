@@ -1,0 +1,8 @@
+Package: perl-crypt-rijndael
+Version: 1.13-1
+Depends: libc, librt, libpthread, perl
+Source: package/perlextmod/crypt-rijndael
+Section: lang
+Architecture: comcerto2000
+Installed-Size: 9552
+Description:  CBC compliant Rijndael encryption module

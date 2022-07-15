@@ -1,0 +1,4 @@
+mkdir -p /tmp/webcache
+chown www-data:www-data /tmp/webcache
+start-stop-daemon -S -c www-data:www-data -x webcache -b
+jsoncmd -I &

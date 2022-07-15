@@ -1,0 +1,10 @@
+Package: syslog-ng3
+Version: 3.0.8-5
+Depends: libc, librt, libpthread, libpcre, glib2, libeventlog, libopenssl, libwrap, libpthread, librt, zlib, libdbi
+Source: package/syslog-ng3
+Section: admin
+Architecture: comcerto2000
+Installed-Size: 105006
+Description:  syslog-ng reads and logs messages to the system console, log
+ files, other machines and/or users as specified by its
+ configuration file.

@@ -1,0 +1,76 @@
+module ciscosb-tcp-ip-services {
+    namespace "http://cisco.com/ns/ciscosb/tcp-ip-services";
+    prefix ciscosb-tcp-ip-services;
+    import ietf-inet-types { prefix inet; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define tcp ip services.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-23 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-25 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    typedef Protocol-type {
+        type enumeration {
+            enum tcpv4;
+            enum tcpv6;
+            enum udpv4;
+            enum udpv6;
+        }
+        description "tcp udp protocol.";
+    }
+    container tcp-ip-services-state {
+  config false;
+        list service {
+            leaf protocol {
+                type Protocol-type;
+            }
+            leaf listen-ip-address {
+                type inet:ip-address;
+            }
+            leaf listen-port {
+                type inet:port-number;
+            }
+            leaf listen-port-alias {
+                type string;
+            }
+        }
+        list connection {
+            leaf protocol {
+                type Protocol-type;
+            }
+            leaf local-ip-address {
+                type inet:ip-address;
+            }
+            leaf local-port {
+                type inet:port-number;
+            }
+            leaf foreign-address {
+                type inet:host;
+            }
+            leaf foreign-port {
+                type inet:port-number;
+            }
+            leaf status {
+    type string;
+    description "Connection Status";
+            }
+            leaf local-port-alias {
+                type string;
+            }
+            leaf foreign-port-alias {
+                type string;
+            }
+        }
+    }
+}

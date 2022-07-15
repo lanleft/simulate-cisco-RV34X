@@ -1,0 +1,11 @@
+{
+  "utility_ping_start": "action_utility_ping start",
+  "utility_ping_stop": "action_utility_ping stop",
+  "utility_ping_status": "action_utility_ping status",
+  "utility_traceroute_start": "action_utility_traceroute start",
+  "utility_traceroute_stop": "action_utility_traceroute stop",
+  "utility_traceroute_status": "action_utility_traceroute status",
+  "utility_dnslookup_start": "action_utility_dnslookup start",
+  "utility_dnslookup_stop": "action_utility_dnslookup stop",
+  "utility_dnslookup_status": "action_utility_dnslookup status"
+}

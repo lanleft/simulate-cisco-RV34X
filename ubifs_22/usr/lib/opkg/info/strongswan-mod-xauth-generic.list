@@ -1,0 +1,2 @@
+/usr/lib/ipsec/plugins/libstrongswan-xauth-generic.so
+/etc/strongswan.d/charon/xauth-generic.conf

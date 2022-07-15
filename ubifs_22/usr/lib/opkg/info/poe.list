@@ -1,0 +1,9 @@
+/usr/bin/poe_postupgrade.sh
+/usr/bin/poeupgrade
+/etc/init.d/poeinit
+/usr/bin/poevop_chk.sh
+/usr/bin/poe_cmd
+/usr/bin/poefwupgrade.sh
+/usr/bin/chkpoeconf.sh
+/usr/bin/poemon
+/usr/bin/postupgrade/22021119_0816_003.s19

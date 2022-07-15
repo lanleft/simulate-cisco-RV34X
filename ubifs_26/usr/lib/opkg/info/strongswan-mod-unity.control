@@ -1,0 +1,10 @@
+Package: strongswan-mod-unity
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Source: package/openwrt/net/strongswan
+License: GPL-2.0+
+Section: net
+Maintainer: Stijn Tintel <stijn@linux-ipv6.be>
+Architecture: comcerto2000
+Installed-Size: 5570
+Description:  StrongSwan Cisco Unity extension plugin

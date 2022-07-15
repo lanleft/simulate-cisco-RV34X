@@ -1,0 +1,44 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <switch-qos-policy xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+  <cos-mapping>
+    <cos>0</cos>
+    <cos-name>Best Effort</cos-name>
+    <queue>1</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>1</cos>
+    <cos-name>Priority</cos-name>
+    <queue>1</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>2</cos>
+    <cos-name>Immediate</cos-name>
+    <queue>2</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>3</cos>
+    <cos-name>Flash</cos-name>
+    <queue>3</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>4</cos>
+    <cos-name>Flash Override</cos-name>
+    <queue>3</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>5</cos>
+    <cos-name>Critical</cos-name>
+    <queue>4</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>6</cos>
+    <cos-name>Internet</cos-name>
+    <queue>4</queue>
+  </cos-mapping>
+  <cos-mapping>
+    <cos>7</cos>
+    <cos-name>Network</cos-name>
+    <queue>4</queue>
+  </cos-mapping>
+  </switch-qos-policy>
+</config>

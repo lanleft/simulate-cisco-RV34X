@@ -1,0 +1,51 @@
+<form name="wizardform" ng-controller="WizardCtrl" ng-modification="ui_data.data_ready">
+    <div ng-if="ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Wizard_Configuration_Wizards')"></div>
+        </div>
+        <div class="page-content-container">
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('Wizard_Initial_Setup_Wizard')"></div>
+            </div>
+            <div class="page-block-cntr">
+                <button type="button" ng-click="funs.setup_wizard()">
+                    <span ng-bind="DICT('Wizard_Launch_Wizard')"></span>
+                </button>
+                <span ng-bind="DICT('Wizard_Setup_Wizard_Introducation')"></span>
+            </div>
+            <div class="page-content-seperator"></div>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('Wizard_Application_Control_Wizard')"></div>
+            </div>
+            <div class="page-block-cntr">
+                <button type="button" ng-click="funs.application_wizard()">
+                    <span ng-bind="DICT('Wizard_Launch_Wizard')"></span>
+                </button>
+                <span ng-bind="DICT('Wizard_Application_Control_Wizard_Introducation')"></span>
+            </div>
+            <div ng-if="!ui_data.ru_flag">
+                <div class="page-content-seperator"></div>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Wizard_VPN_Setup_Wizard')"></div>
+                </div>
+                <div class="page-block-cntr">
+                    <button type="button" ng-click="funs.vpn_wizard()">
+                        <span ng-bind="DICT('Wizard_Launch_Wizard')"></span>
+                    </button>
+                    <span ng-bind="DICT('Wizard_VPN_Wizard_Introducation')"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div ng-if="ui_data.open_vpn_wizard">
+            <div ng-include="'htm/vpn/vpn_setup_wizard.htm'"></div>
+        </div>
+        <div ng-if="ui_data.open_application_wizard">
+            <div ng-include="'htm/security/app_control_wizard.htm'"></div>
+        </div>
+        <div ng-if="ui_data.open_setup_wizard">
+            <div ng-include="'htm/system/setup_wizard.htm'"></div>
+        </div>
+    </div>
+</form>

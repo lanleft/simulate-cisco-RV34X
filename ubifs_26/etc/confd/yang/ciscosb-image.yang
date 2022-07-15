@@ -1,0 +1,154 @@
+module ciscosb-image {
+    namespace "http://cisco.com/ns/ciscosb/image";
+    prefix ciscosb-image;
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-types { prefix ciscosb-types; }
+    import ciscosb-common { prefix ciscosb-common; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. Customer Service Postal: 170 West Tasman
+        Drive San Jose, CA 95134 Tel: +1 800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions for managing
+        the image on Cisco Small devices. Copyright (c) 2015 by Cisco
+        Systems, Inc. All rights reserved.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-04-27 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-29 {
+        description "Proposed";
+    }
+    grouping IMAGE-INFO {
+        description "Common information for all images used on systems";
+        leaf name {
+            description "Could be IMAGE1, IMAGE2 for firmware or BOOTLOADER1, BOOTLOADER2 for bootloader";
+            type string;
+        }
+        leaf version {
+            description "Version number for the image";
+            type string;
+            mandatory true;
+        }
+        leaf compile-time {
+            description "Time the image was compiled";
+            type yang:date-and-time;
+            mandatory true;
+        }
+        leaf file-md5 {
+            type string;
+            mandatory true;
+            description
+                        "MD5 checksum of image file";
+        }
+    }
+    container image {
+     container firmware {
+            container auto-update {
+                uses ciscosb-common:AUTO-UPDATE;
+            }
+        }
+     container auto-update-global {
+            uses ciscosb-common:AUTO-UPDATE-GLOBAL;
+        }
+    }
+    container image-state {
+     config false;
+     container firmware {
+            description "Return the version of the firmware image installed in the device";
+            leaf latest-version {
+                description "The latest firmware image version applied on device last time";
+                type string;
+            }
+            leaf latest-update-time {
+                description "The time when we performed firmware update last time";
+                type yang:date-and-time;
+            }
+            leaf available-version {
+                description "This is latest version available on cisco.com";
+                type string;
+            }
+            leaf last-check-time {
+                type yang:date-and-time;
+                description "The last time for ASD client to check against cisco.com";
+            }
+            container images {
+                list image {
+                    description "System version information";
+                    key name;
+                    uses IMAGE-INFO;
+                    leaf active {
+                        description "Indicate if this is active firmware image or not to boot up";
+                        type ciscosb-types:firmware-state;
+                    }
+                    container install-status {
+                        description "Firmware image install status on device";
+                        leaf install-time {
+                            type yang:date-and-time;
+                        }
+                        leaf status {
+                            description "Return the status for the last install";
+                            type string;
+                        }
+                        leaf failure-reason {
+                            description "Return reason for install failure";
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+        container bootloader {
+            description "Return the version of the bootloader installed in the device";
+            leaf latest-version {
+                description "The latest bootloader version applied on device last time";
+                type string;
+            }
+            leaf latest-update-time {
+                description "The time when we performed bootloader update last time";
+                type yang:date-and-time;
+            }
+            leaf available-version {
+                description "This is latest boot loader version available on cisco.com";
+                type string;
+            }
+            leaf last-check-time {
+                type yang:date-and-time;
+                description "The last time for ASD client to check against cisco.com";
+            }
+            container images {
+                list image {
+                    description "Boot loader version information";
+                    key name;
+                    uses IMAGE-INFO;
+                    leaf active {
+                        description "Indicate if this is active boot loader image or not to boot up";
+                        type ciscosb-types:bootloader-state;
+                    }
+                    container install-status {
+                        description "Boot loader image install status on device";
+                        leaf install-time {
+                            type yang:date-and-time;
+                        }
+                        leaf status {
+                            description "Return the status for the last install";
+                            type string;
+                        }
+                        leaf failure-reason {
+                            description "Return reason for install failure";
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    rpc check-latest-version {
+     description
+      "Check the available firmware for system, USB Modem and Security Signatures";
+    }
+}

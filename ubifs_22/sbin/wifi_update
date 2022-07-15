@@ -1,0 +1,128 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+scan_wifi() {
+	local cfgfile="$1"
+	DEVICES=
+	wl0_VIFS=
+	wl1_VIFS=
+
+	config_cb() {
+		local type="$1"
+		local section="$2"
+
+		# section start
+		case "$type" in
+			wifi-device)
+				append DEVICES "$section"
+				#config_set "$section" vifs ""
+				config_set "$section" ht_capab ""
+			;;
+		esac
+
+		# section end
+		config_get TYPE "$CONFIG_SECTION" TYPE
+		case "$TYPE" in
+			wifi-iface)
+				config_get device "$CONFIG_SECTION" device
+				eval append ${device}_VIFS "$CONFIG_SECTION"
+				eval vifs="\${${device}_VIFS}"
+				config_set "$device" vifs "$vifs"
+			;;
+		esac
+	}
+	config_load "${cfgfile:-wireless}"
+}
+
+DEVICES=
+include /lib/wifi
+scan_wifi
+
+update_interface_settings() {
+	update_cmd=
+	nas="$(which nas)"
+	eapd="$(which eapd)"
+
+	for device in ${DEVICES}; do
+		config_get disabled "$device" disabled
+		[ "1" = "$disabled" ] && {
+			continue
+		}
+
+		local vif vifs
+
+		config_get vifs "$device" vifs
+		for vif in $vifs; do
+			config_get disabled "$vif" disabled
+			[ "1" = "$disabled" ] && {
+				continue
+			}
+
+			config_get ifname "$vif" ifname
+			config_get vlanid "$vif" vlanid 1
+
+			wan_bridge=""
+			network_ifaces="$(ubus list network.interface.* | cut -d'.' -f 3)"
+			for network_iface in $network_ifaces; do
+				case "$network_iface" in
+					wan*)
+						if [ -n "$(uci get network.${network_iface}.ifname | grep -w eth3.${vlanid})" ];then
+							wan_bridge="${network_iface}"
+						fi
+					;;
+				esac
+			done
+
+			if [ -z "$wan_bridge" ];then
+				bridge_vlan="vlan${vlanid}"
+			else
+				bridge_vlan="$wan_bridge"
+			fi
+
+			[ -z "$(ubus list network.interface.${bridge_vlan} 2>/dev/null)" ]  && {
+				uci set network.${bridge_vlan}=interface
+			}
+	
+			uci set network.${bridge_vlan}.type="bridge"
+
+			bridge="br-${bridge_vlan}"
+
+			nvram set ${ifname}_bridge="$bridge"
+
+			update_cmd="brctl addif $bridge $ifname 2>/dev/null; $update_cmd"
+		done
+	done
+			
+	ubus call network reload
+
+	eval "$update_cmd"
+
+	if [ -e /var/wps_monitor.pid ];then
+		start-stop-daemon -K -q -s SIGUSR2 -n wps_daemon
+	else
+		local nas_pid_file=/var/run/nas.pid
+		[ -e $nas_pid_file ] && {
+			start-stop-daemon -K -q -s SIGKILL -n nas && rm $nas_pid_file
+			start-stop-daemon -S -b -m -p $nas_pid_file -x $nas
+		}
+
+		local eapd_pid_file=/var/run/eapd.pid
+		[ -e $eapd_pid_file ] && {
+			start-stop-daemon -K -q -s SIGKILL -n eapd && rm $eapd_pid_file
+			start-stop-daemon -S -b -m -p $eapd_pid_file -x $eapd
+		}
+	fi
+
+        
+	local capt_pid_file
+	capt_pid_file=/var/run/captive.pid
+	[ -e ${capt_pid_file} ] && {
+		start-stop-daemon -K -q -s SIGUSR1 -n cportald
+	}
+
+	true
+
+}
+
+update_interface_settings

@@ -1,0 +1,8 @@
+Package: call_home_lib
+Version: 2.3.0-7
+Depends: libc, librt, libpthread
+Source: package/cisco/call_home_lib
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 48381
+Description:  call_home_lib.

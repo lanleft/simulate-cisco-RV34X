@@ -1,0 +1,1958 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <nacm xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-acm">
+    <write-default>permit</write-default>
+    <groups>
+      <group>
+        <name>admin</name>
+        <user-name>cisco</user-name>
+        <gid xmlns="http://tail-f.com/yang/acm">0</gid>
+		<feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>anyconnect-vpn</service>
+        <option>SSLVPNDefaultPolicy</option>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>ssid</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>dot1x</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>ezvpn</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>l2tp</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>pptp</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>s2s-vpn</service>
+        <action>permit</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>web-login-administration</service>
+        <action>permit</action>
+      </feature-rule>
+      </group>
+      <group>
+        <name>guest</name>
+        <user-name>guest</user-name>
+        <gid xmlns="http://tail-f.com/yang/acm">1000</gid>
+		<feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>anyconnect-vpn</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>ssid</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>dot1x</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>ezvpn</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>l2tp</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>pptp</service>
+        <action>deny</action>
+      </feature-rule>
+      <feature-rule xmlns="http://cisco.com/ns/ciscosb/usergroup">
+        <service>s2s-vpn</service>
+        <action>deny</action>
+      </feature-rule>
+      </group>
+    </groups>
+    <rule-list>
+      <name>(web)Administration</name>
+      <group>admin</group>
+      <rule>
+        <name>any-access</name>
+        <module-name>*</module-name>
+        <access-operations>*</access-operations>
+        <action>permit</action>
+        <context xmlns="http://tail-f.com/yang/acm">*</context>
+      </rule>
+    </rule-list>
+    <rule-list>
+      <name>(web)ReadOnly</name>
+      <rule>
+        <name>read-all</name>
+        <module-name>*</module-name>
+        <access-operations>read</access-operations>
+        <action>permit</action>
+        <context xmlns="http://tail-f.com/yang/acm">*</context>
+      </rule>
+    <rule>
+        <name>rpc-utilities</name>
+        <module-name>ciscosb-utilities</module-name>
+        <access-operations>exec</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>rpc-syslog</name>
+        <module-name>ciscosb-syslog</module-name>
+        <access-operations>exec</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>rpc-image</name>
+        <module-name>ciscosb-image</module-name>
+        <access-operations>exec</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>rpc-usb</name>
+        <module-name>ciscosb-usb</module-name>
+        <access-operations>exec</access-operations>
+        <action>permit</action>
+      </rule>
+      <rule>
+        <name>deny-all-rpc</name>
+        <module-name>*</module-name>
+        <access-operations>*</access-operations>
+        <action>deny</action>
+      </rule>
+    </rule-list>
+    <rule-list>
+      <name>(web)Disabled</name>
+      <group>guest</group>
+      <rule>
+        <name>Disabled-access</name>
+        <module-name>*</module-name>
+        <access-operations>*</access-operations>
+        <action>deny</action>
+        <context xmlns="http://tail-f.com/yang/acm">*</context>
+      </rule>
+    </rule-list>
+    <rule-list>
+      <name>admin</name>
+      <group>admin</group>
+      <rule>
+        <name>any-access</name>
+        <module-name>*</module-name>
+        <access-operations>*</access-operations>
+        <action>permit</action>
+        <context xmlns="http://tail-f.com/yang/acm">*</context>
+      </rule> 
+    </rule-list>
+    <rule-list>
+      <name>guest</name>
+      <group>guest</group>
+    </rule-list>
+  </nacm>
+  <aaa xmlns="http://tail-f.com/ns/aaa/1.1">
+    <authentication>
+      <users>
+        <user>
+          <name>cisco</name>
+          <uid>2</uid>
+          <gid>0</gid>
+          <password>$1$UxUxowL4$DEDAVDke5lVeqzk0Rj2oW1</password>
+          <ssh_keydir>/var/confd/homes/cisco/.ssh</ssh_keydir>
+          <homedir>/var/confd/homes/cisco</homedir>
+        </user>
+        <user>
+          <name>guest</name>
+          <uid>1000</uid>
+          <gid>1000</gid>
+          <password>$1$5Q5b/7cc$xyslIcrVzIq0Jc75RfDRw1</password>
+          <ssh_keydir>/dev/null</ssh_keydir>
+          <homedir>/dev/null</homedir>
+        </user>
+      </users>
+    </authentication>
+    <ios>
+      <level>
+        <nr>0</nr>
+        <prompt>\h> </prompt>
+      </level>
+      <level>
+        <nr>15</nr>
+        <prompt>\h# </prompt>
+      </level>
+      <privilege>
+        <mode>exec</mode>
+        <level>
+          <nr>0</nr>
+          <command>
+            <name>action</name>
+          </command>
+          <command>
+            <name>autowizard</name>
+          </command>
+          <command>
+            <name>enable</name>
+          </command>
+          <command>
+            <name>exit</name>
+          </command>
+          <command>
+            <name>help</name>
+          </command>
+          <command>
+            <name>startup</name>
+          </command>
+        </level>
+        <level>
+          <nr>15</nr>
+          <command>
+            <name>configure</name>
+          </command>
+        </level>
+      </privilege>
+    </ios>
+  </aaa>
+  <password-complexity xmlns="http://cisco.com/ns/ciscosb/usergroup">
+    <enabled>true</enabled>
+  </password-complexity>
+  <remote-authentication-services xmlns="http://cisco.com/ns/ciscosb/usergroup">
+    <remote-authentication-service>
+      <name>AD</name>
+      <enable>false</enable>
+      <authenticate-mode>ad</authenticate-mode>
+    </remote-authentication-service>
+    <remote-authentication-service>
+      <name>LDAP</name>
+      <enable>false</enable>
+      <authenticate-mode>ldap</authenticate-mode>
+    </remote-authentication-service>
+    <remote-authentication-service>
+      <name>RADIUS</name>
+      <enable>false</enable>
+      <authenticate-mode>radius</authenticate-mode>
+    </remote-authentication-service>
+    <authentication-order>
+      <default-order>radius</default-order>
+      <default-order>ldap</default-order>
+      <default-order>ad</default-order>
+      <default-order>local-db</default-order>
+      <services>
+        <service>web-login-administration</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>dot1x</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>anyconnect-vpn</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>web-login-readonly</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>ssid</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>pptp</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>l2tp</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>s2s-vpn</service>
+        <use-default-order>true</use-default-order>
+      </services>
+      <services>
+        <service>ezvpn</service>
+        <use-default-order>true</use-default-order>
+      </services>
+    </authentication-order>
+  </remote-authentication-services>
+  <syslog xmlns="urn:ietf:params:xml:ns:yang:ietf-syslog">
+    <global-logging-action>
+      <none/>
+    </global-logging-action>
+    <file-logging-action>
+      <logging-facilities>
+        <facility xmlns:syslogtypes="urn:ietf:params:xml:ns:yang:ietf-syslog-types">syslogtypes:user</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:syslogtypes="urn:ietf:params:xml:ns:yang:ietf-syslog-types">syslogtypes:kern</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:mobile</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:ssl-vpn</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:network</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:firewall</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:web-filter</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:application-control</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:vpn</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:wireless</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:system</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:license</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:pnp</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:anti-virus</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <logging-facilities>
+        <facility xmlns:cisco-syslog="http://cisco.com/ns/ciscosb/syslog">cisco-syslog:ips</facility>
+        <severity>notice</severity>
+      </logging-facilities>
+      <file-size xmlns="http://cisco.com/ns/ciscosb/syslog">1024</file-size>
+    </file-logging-action>
+    <remote-logging-action>
+      <enable xmlns="http://cisco.com/ns/ciscosb/syslog">false</enable>
+    </remote-logging-action>
+    <email-logging-action xmlns="http://cisco.com/ns/ciscosb/syslog">
+      <enable>false</enable>
+      <email-subject>Log Message</email-subject>
+      <severity>notice</severity>
+      <queue-length>50</queue-length>
+      <time-threshold>hourly</time-threshold>
+    </email-logging-action>
+  </syslog>
+  <alert xmlns="http://cisco.com/ns/ciscosb/alert">
+    <email-alerting-action>
+      <alert-facilities>
+        <facility>system-startup</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>usb-link-up</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>s2s-vpn-up</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>poe-start-end-power-supply</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>unauthorized-loging-attempt</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>failover-recovery</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>usb-link-down</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>wan-up</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>wan-down</facility>
+        <enable>false</enable>
+      </alert-facilities>
+      <alert-facilities>
+        <facility>s2s-vpn-down</facility>
+        <enable>false</enable>
+      </alert-facilities>
+    </email-alerting-action>
+  </alert>
+  <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
+    <clock>
+      <timezone-name>Greenwich</timezone-name>
+      <timezone-summer-time xmlns="http://cisco.com/ns/ciscosb/system">
+        <enabled>false</enabled>
+      </timezone-summer-time>
+    </clock>
+    <ntp>
+      <enabled>true</enabled>
+    </ntp>
+  </system>
+  <schedules xmlns="http://cisco.com/ns/ciscosb/schedule">
+    <schedule>
+      <name>BUSINESS</name>
+      <description>BUSINESS</description>
+      <duration>
+        <start-time>09:00:00</start-time>
+        <end-time>17:30:00</end-time>
+        <recur-on>
+          <recur-on>mon</recur-on>
+          <recur-on>tue</recur-on>
+          <recur-on>wed</recur-on>
+          <recur-on>thu</recur-on>
+          <recur-on>fri</recur-on>
+        </recur-on>
+      </duration>
+    </schedule>
+    <schedule>
+      <name>EVENINGHOURS</name>
+      <description>EVENINGHOURS</description>
+      <duration>
+        <start-time>18:01:00</start-time>
+        <end-time>23:59:59</end-time>
+        <recur-on>
+          <recur-on>sun</recur-on>
+          <recur-on>mon</recur-on>
+          <recur-on>tue</recur-on>
+          <recur-on>wed</recur-on>
+          <recur-on>thu</recur-on>
+          <recur-on>fri</recur-on>
+          <recur-on>sat</recur-on>
+        </recur-on>
+      </duration>
+    </schedule>
+    <schedule>
+      <name>ANYTIME</name>
+      <description>ANYTIME</description>
+      <duration>
+        <start-time>00:00:00</start-time>
+        <end-time>23:59:59</end-time>
+        <recur-on>
+          <recur-on>sun</recur-on>
+          <recur-on>mon</recur-on>
+          <recur-on>tue</recur-on>
+          <recur-on>wed</recur-on>
+          <recur-on>thu</recur-on>
+          <recur-on>fri</recur-on>
+          <recur-on>sat</recur-on>
+        </recur-on>
+      </duration>
+    </schedule>
+    <schedule>
+      <name>WORKHOURS</name>
+      <description>WORKHOURS</description>
+      <duration>
+        <start-time>08:00:00</start-time>
+        <end-time>18:00:00</end-time>
+        <recur-on>
+          <recur-on>mon</recur-on>
+          <recur-on>tue</recur-on>
+          <recur-on>wed</recur-on>
+          <recur-on>thu</recur-on>
+          <recur-on>fri</recur-on>
+        </recur-on>
+      </duration>
+    </schedule>
+  </schedules>
+  <services xmlns="http://cisco.com/ns/ciscosb/service">
+    <service>
+      <name>All Traffic</name>
+      <protocol>ALL</protocol>
+    </service>
+    <service>
+      <name>BGP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>179</start>
+        <end>179</end>
+      </port-range>
+    </service>
+    <service>
+      <name>DNS-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>53</start>
+        <end>53</end>
+      </port-range>
+    </service>
+    <service>
+      <name>DNS-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>53</start>
+        <end>53</end>
+      </port-range>
+    </service>
+    <service>
+      <name>ESP</name>
+      <protocol>IP</protocol>
+      <ip-type>50</ip-type>
+    </service>
+    <service>
+      <name>FTP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>21</start>
+        <end>21</end>
+      </port-range>
+    </service>
+    <service>
+      <name>HTTP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>80</start>
+        <end>80</end>
+      </port-range>
+    </service>
+    <service>
+      <name>HTTPS</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>443</start>
+        <end>443</end>
+      </port-range>
+    </service>
+    <service>
+      <name>ICMP Destination Unreachable</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>3</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Ping Reply</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>0</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Ping Request</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>8</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Redirect Message</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>5</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Router Advertisement</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>9</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Router Solicitation</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>10</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Source Quench</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>10</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Time Exceeded</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>11</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Timestamp</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>13</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Type-6</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>6</icmp-type>
+    </service>
+    <service>
+      <name>ICMP Type-7</name>
+      <protocol>ICMP</protocol>
+      <icmp-type>7</icmp-type>
+    </service>
+    <service>
+      <name>IMAP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>143</start>
+        <end>143</end>
+      </port-range>
+    </service>
+    <service>
+      <name>IMAP2</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>143</start>
+        <end>143</end>
+      </port-range>
+    </service>
+    <service>
+      <name>IMAP3</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>220</start>
+        <end>220</end>
+      </port-range>
+    </service>
+    <service>
+      <name>IPSEC-UDP-ENCAP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>4500</start>
+        <end>4500</end>
+      </port-range>
+    </service>
+    <service>
+      <name>ISAKMP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>500</start>
+        <end>500</end>
+      </port-range>
+    </service>
+    <service>
+      <name>L2TP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>1701</start>
+        <end>1701</end>
+      </port-range>
+    </service>
+    <service>
+      <name>NFS</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>2049</start>
+        <end>2049</end>
+      </port-range>
+    </service>
+    <service>
+      <name>POP3</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>110</start>
+        <end>110</end>
+      </port-range>
+    </service>
+    <service>
+      <name>PPTP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>1723</start>
+        <end>1723</end>
+      </port-range>
+    </service>
+    <service>
+      <name>REAL-AUDIO</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>7070</start>
+        <end>7070</end>
+      </port-range>
+    </service>
+    <service>
+      <name>RIP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>520</start>
+        <end>520</end>
+      </port-range>
+    </service>
+    <service>
+      <name>RLOGIN</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>513</start>
+        <end>513</end>
+      </port-range>
+    </service>
+    <service>
+      <name>RTELNET</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>107</start>
+        <end>107</end>
+      </port-range>
+    </service>
+    <service>
+      <name>RTSP-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>554</start>
+        <end>554</end>
+      </port-range>
+    </service>
+    <service>
+      <name>RTSP-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>554</start>
+        <end>554</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SFTP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>115</start>
+        <end>115</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SIP-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>5060</start>
+        <end>5060</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SIP-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>5060</start>
+        <end>5060</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SMTP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>25</start>
+        <end>25</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SNMP-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>161</start>
+        <end>161</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SNMP-TRAPS-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>162</start>
+        <end>162</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SNMP-TRAPS-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>162</start>
+        <end>162</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SNMP-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>161</start>
+        <end>161</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SSH-TCP</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>22</start>
+        <end>22</end>
+      </port-range>
+    </service>
+    <service>
+      <name>SSH-UDP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>22</start>
+        <end>22</end>
+      </port-range>
+    </service>
+    <service>
+      <name>TACACS</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>49</start>
+        <end>49</end>
+      </port-range>
+    </service>
+    <service>
+      <name>TELNET</name>
+      <protocol>TCP</protocol>
+      <port-range>
+        <start>23</start>
+        <end>23</end>
+      </port-range>
+    </service>
+    <service>
+      <name>TFTP</name>
+      <protocol>UDP</protocol>
+      <port-range>
+        <start>69</start>
+        <end>69</end>
+      </port-range>
+    </service>
+  </services>
+  <email-server xmlns="http://cisco.com/ns/ciscosb/email">
+    <smtp-port>25</smtp-port>
+    <encryption>NONE</encryption>
+    <authentication>NONE</authentication>
+  </email-server>
+  <pnp xmlns="http://cisco.com/ns/ciscosb/pnp">
+    <enabled>true</enabled>
+    <transport>
+      <mode>auto</mode>
+    </transport>
+  </pnp>
+  <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+    <enable>true</enable>
+  </lldp>
+  <bonjour-global xmlns="http://cisco.com/ns/ciscosb/bonjour">
+    <enable>true</enable>
+  </bonjour-global>
+  <dongle-driver xmlns="http://cisco.com/ns/ciscosb/usb">
+    <auto-update>
+      <notify>true</notify>
+      <update-option>never</update-option>
+    </auto-update>
+  </dongle-driver>
+  <image xmlns="http://cisco.com/ns/ciscosb/image">
+    <firmware>
+      <auto-update>
+        <notify>true</notify>
+        <update-option>never</update-option>
+      </auto-update>
+    </firmware>
+    <auto-update-global>
+      <enable>false</enable>
+      <check-frequency>monthly</check-frequency>
+      <notification>        <gui>true</gui>
+      </notification>
+    </auto-update-global>
+  </image>
+  <gui xmlns="http://cisco.com/ns/ciscosb/gui">
+    <disable-startup-page>false</disable-startup-page>
+    <hide-initial-setup>false</hide-initial-setup>
+    <save-icon-blinking>true</save-icon-blinking>
+  </gui>
+  <ciscosb-netconf xmlns="http://cisco.com/ns/ciscosb/netconf">
+    <enabled>true</enabled>
+    <netconf-zone>lan-vpn</netconf-zone>
+    <transport>
+      <ssh>
+        <enabled>true</enabled>
+        <ip>0.0.0.0</ip>
+        <port>830</port>
+      </ssh>
+    </transport>
+  </ciscosb-netconf>
+  <ciscosb-restconf xmlns="http://cisco.com/ns/ciscosb/restconf">
+    <enabled>true</enabled>
+    <restconf-zone>lan-vpn</restconf-zone>
+    <transport>
+      <https>
+        <enabled>true</enabled>
+        <port>443</port>
+      </https>
+    </transport>
+  </ciscosb-restconf>
+  <providers xmlns="http://cisco.com/ns/ciscosb/ddns">
+    <provider>dnsomatic.com</provider>
+    <provider>DynDNS.com</provider>
+    <provider>No-ip.com</provider>
+    <provider>ChangeIP.com</provider>
+  </providers>
+  <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+    <interface>
+      <name>DMZ</name>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:l2vlan</type>
+      <enabled>false</enabled>
+    </interface>
+    <interface>
+      <name>LAG1</name>
+      <description>LAG1</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ieee8023adLag</type>
+      <enabled>false</enabled>
+      <ciscosb-switch-qos xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+        <send-to-queue>1</send-to-queue>
+        <queue-weight>
+          <queue>
+            <id>1</id>
+            <weight>1</weight>
+          </queue>
+          <queue>
+            <id>2</id>
+            <weight>2</weight>
+          </queue>
+          <queue>
+            <id>3</id>
+            <weight>4</weight>
+          </queue>
+          <queue>
+            <id>4</id>
+            <weight>8</weight>
+          </queue>
+        </queue-weight>
+      </ciscosb-switch-qos>
+      <vlan-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <untagged-vlan-id>1</untagged-vlan-id>
+      </vlan-settings>
+    </interface>
+    <interface>
+      <name>LAN1</name>
+      <description>LAN1</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+        <authorized-mode>force</authorized-mode>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>true</enable>
+        <transmit>true</transmit>
+        <receive>true</receive>
+      </lldp>
+      <ciscosb-switch-qos xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+        <send-to-queue>1</send-to-queue>
+        <queue-weight>
+          <queue>
+            <id>1</id>
+            <weight>1</weight>
+          </queue>
+          <queue>
+            <id>2</id>
+            <weight>2</weight>
+          </queue>
+          <queue>
+            <id>3</id>
+            <weight>4</weight>
+          </queue>
+          <queue>
+            <id>4</id>
+            <weight>8</weight>
+          </queue>
+        </queue-weight>
+      </ciscosb-switch-qos>
+      <vlan-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <untagged-vlan-id>1</untagged-vlan-id>
+      </vlan-settings>
+    </interface>
+    <interface>
+      <name>LAN2</name>
+      <description>LAN2</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+        <authorized-mode>force</authorized-mode>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>true</enable>
+        <transmit>true</transmit>
+        <receive>true</receive>
+      </lldp>
+      <ciscosb-switch-qos xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+        <send-to-queue>1</send-to-queue>
+        <queue-weight>
+          <queue>
+            <id>1</id>
+            <weight>1</weight>
+          </queue>
+          <queue>
+            <id>2</id>
+            <weight>2</weight>
+          </queue>
+          <queue>
+            <id>3</id>
+            <weight>4</weight>
+          </queue>
+          <queue>
+            <id>4</id>
+            <weight>8</weight>
+          </queue>
+        </queue-weight>
+      </ciscosb-switch-qos>
+      <vlan-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <untagged-vlan-id>1</untagged-vlan-id>
+      </vlan-settings>
+    </interface>
+    <interface>
+      <name>LAN3</name>
+      <description>LAN3</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+        <authorized-mode>force</authorized-mode>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>true</enable>
+        <transmit>true</transmit>
+        <receive>true</receive>
+      </lldp>
+      <ciscosb-switch-qos xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+        <send-to-queue>1</send-to-queue>
+        <queue-weight>
+          <queue>
+            <id>1</id>
+            <weight>1</weight>
+          </queue>
+          <queue>
+            <id>2</id>
+            <weight>2</weight>
+          </queue>
+          <queue>
+            <id>3</id>
+            <weight>4</weight>
+          </queue>
+          <queue>
+            <id>4</id>
+            <weight>8</weight>
+          </queue>
+        </queue-weight>
+      </ciscosb-switch-qos>
+      <vlan-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <untagged-vlan-id>1</untagged-vlan-id>
+      </vlan-settings>
+    </interface>
+    <interface>
+      <name>LAN4</name>
+      <description>LAN4</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <dmz xmlns="http://cisco.com/ns/ciscosb/dmz">
+        <enable>false</enable>
+      </dmz>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+        <authorized-mode>force</authorized-mode>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>true</enable>
+        <transmit>true</transmit>
+        <receive>true</receive>
+      </lldp>
+      <ciscosb-switch-qos xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+        <send-to-queue>1</send-to-queue>
+        <queue-weight>
+          <queue>
+            <id>1</id>
+            <weight>1</weight>
+          </queue>
+          <queue>
+            <id>2</id>
+            <weight>2</weight>
+          </queue>
+          <queue>
+            <id>3</id>
+            <weight>4</weight>
+          </queue>
+          <queue>
+            <id>4</id>
+            <weight>8</weight>
+          </queue>
+        </queue-weight>
+      </ciscosb-switch-qos>
+      <vlan-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <untagged-vlan-id>1</untagged-vlan-id>
+      </vlan-settings>
+    </interface>
+    <interface>
+      <name>USB1</name>
+      <description>USB1</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:wwanPP</type>
+      <enabled>true</enabled>
+      <mobile xmlns="http://cisco.com/ns/ciscosb/wan-mobile">
+        <network-mode-preferred>3G</network-mode-preferred>
+        <network-setup>
+          <configure-mode>auto</configure-mode>
+          <authentication xmlns:ciscosb-wan-ip="http://cisco.com/ns/ciscosb/wan-ip">ciscosb-wan-ip:auto</authentication>
+          <maxwait>20</maxwait>
+          <keepalive>1</keepalive>
+        </network-setup>
+        <bandwidth-cap>
+          <enable>false</enable>
+          <monthly-renew-date>1</monthly-renew-date>
+        </bandwidth-cap>
+      </mobile>
+      <ddns xmlns="http://cisco.com/ns/ciscosb/ddns">
+        <enable>false</enable>
+      </ddns>
+      <nat xmlns="http://cisco.com/ns/ciscosb/fw-nat">
+        <enable>true</enable>
+      </nat>
+      <ciscosb-qos xmlns="http://cisco.com/ns/ciscosb/qos-policy">
+        <qos-policy>
+          <outbound>
+            <priority>Priority_Default</priority>
+            <rate-control>Rate_Control_Default</rate-control>
+            <low-latency>Low_Latency_Default</low-latency>
+          </outbound>
+          <inbound>
+            <rate-control>Default</rate-control>
+          </inbound>
+        </qos-policy>
+        <bandwidth>
+          <upstream>512000</upstream>
+          <downstream>512000</downstream>
+        </bandwidth>
+      </ciscosb-qos>
+      <redundant-wan xmlns="http://cisco.com/ns/ciscosb/redundant-wan">
+        <enable>true</enable>
+        <net-tracker>
+          <enable>false</enable>
+          <target>
+            <host>gateway</host>
+          </target>
+        </net-tracker>
+        <precedence>3</precedence>
+        <weight>100</weight>
+      </redundant-wan>
+      <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+      </ipv4>
+      <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+      </ipv6>
+    </interface>
+    <interface>
+      <name>USB2</name>
+      <description>USB2</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:wwanPP</type>
+      <enabled>true</enabled>
+      <mobile xmlns="http://cisco.com/ns/ciscosb/wan-mobile">
+        <network-mode-preferred>3G</network-mode-preferred>
+        <network-setup>
+          <configure-mode>auto</configure-mode>
+          <authentication xmlns:ciscosb-wan-ip="http://cisco.com/ns/ciscosb/wan-ip">ciscosb-wan-ip:auto</authentication>
+          <maxwait>20</maxwait>
+          <keepalive>1</keepalive>
+        </network-setup>
+        <bandwidth-cap>
+          <enable>false</enable>
+          <monthly-renew-date>1</monthly-renew-date>
+        </bandwidth-cap>
+      </mobile>
+      <ddns xmlns="http://cisco.com/ns/ciscosb/ddns">
+        <enable>false</enable>
+      </ddns>
+      <nat xmlns="http://cisco.com/ns/ciscosb/fw-nat">
+        <enable>true</enable>
+      </nat>
+      <ciscosb-qos xmlns="http://cisco.com/ns/ciscosb/qos-policy">
+        <qos-policy>
+          <outbound>
+            <priority>Priority_Default</priority>
+            <rate-control>Rate_Control_Default</rate-control>
+            <low-latency>Low_Latency_Default</low-latency>
+          </outbound>
+          <inbound>
+            <rate-control>Default</rate-control>
+          </inbound>
+        </qos-policy>
+        <bandwidth>
+          <upstream>512000</upstream>
+          <downstream>512000</downstream>
+        </bandwidth>
+      </ciscosb-qos>
+      <redundant-wan xmlns="http://cisco.com/ns/ciscosb/redundant-wan">
+        <enable>true</enable>
+        <net-tracker>
+          <enable>false</enable>
+          <target>
+            <host>gateway</host>
+          </target>
+        </net-tracker>
+        <precedence>4</precedence>
+        <weight>100</weight>
+      </redundant-wan>
+      <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+      </ipv4>
+      <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+      </ipv6>
+    </interface>
+    <interface>
+      <name>VLAN1</name>
+      <description>VLAN1</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:l2vlan</type>
+      <enabled>true</enabled>
+      <bonjour xmlns="http://cisco.com/ns/ciscosb/bonjour">
+        <enable>true</enable>
+      </bonjour>
+      <vlan-interface-settings xmlns="http://cisco.com/ns/ciscosb/vlan">
+        <vlan-id>1</vlan-id>
+        <inter-vlan-routing>true</inter-vlan-routing>
+        <enable-management>true</enable-management>
+      </vlan-interface-settings>
+      <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+        <address>
+          <ip>192.168.1.1</ip>
+          <prefix-length>24</prefix-length>
+        </address>
+      </ipv4>
+      <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>true</enabled>
+        <address>
+          <ip>fec0:1::1</ip>
+          <prefix-length>64</prefix-length>
+          <static xmlns="http://cisco.com/ns/ciscosb/vlan"/>
+          <user-define xmlns="http://cisco.com/ns/ciscosb/vlan">1</user-define>
+        </address>
+        <ipv6-router-advertisements xmlns="urn:ietf:params:xml:ns:yang:ietf-ipv6-unicast-routing">
+          <send-advertisements>false</send-advertisements>
+          <max-rtr-adv-interval>30</max-rtr-adv-interval>
+          <managed-flag>false</managed-flag>
+          <other-config-flag>false</other-config-flag>
+          <link-mtu>1500</link-mtu>
+          <default-lifetime>3600</default-lifetime>
+          <prefix-list>
+            <prefix>
+              <prefix-spec>fec0:1::/64</prefix-spec>
+              <preferred-lifetime>3600</preferred-lifetime>
+              <valid-lifetime>7200</valid-lifetime>
+              <static xmlns="http://cisco.com/ns/ciscosb/routing"/>
+            </prefix>
+          </prefix-list>
+          <router-preference xmlns="http://cisco.com/ns/ciscosb/routing">high</router-preference>
+          <mode xmlns="http://cisco.com/ns/ciscosb/routing">unsolicited-multicast</mode>
+        </ipv6-router-advertisements>
+      </ipv6>
+    </interface>
+    <interface>
+      <name>WAN1</name>
+      <description>WAN1</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <ddns xmlns="http://cisco.com/ns/ciscosb/ddns">
+        <enable>false</enable>
+      </ddns>
+      <dmz xmlns="http://cisco.com/ns/ciscosb/dmz">
+        <enable>false</enable>
+      </dmz>
+      <nat xmlns="http://cisco.com/ns/ciscosb/fw-nat">
+        <enable>true</enable>
+      </nat>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>false</enable>
+        <transmit>false</transmit>
+        <receive>false</receive>
+      </lldp>
+      <ciscosb-qos xmlns="http://cisco.com/ns/ciscosb/qos-policy">
+        <qos-policy>
+          <outbound>
+            <priority>Priority_Default</priority>
+            <rate-control>Rate_Control_Default</rate-control>
+            <low-latency>Low_Latency_Default</low-latency>
+          </outbound>
+          <inbound>
+            <rate-control>Default</rate-control>
+          </inbound>
+        </qos-policy>
+        <bandwidth>
+          <upstream>1000000</upstream>
+          <downstream>1000000</downstream>
+        </bandwidth>
+      </ciscosb-qos>
+      <redundant-wan xmlns="http://cisco.com/ns/ciscosb/redundant-wan">
+		<enable>true</enable>
+	<net-tracker>
+          <enable>true</enable>
+          <min-hosts-reachable>1</min-hosts-reachable>
+          <target>
+            <host>gateway</host>
+          </target>
+        </net-tracker>
+        <precedence>1</precedence>
+        <weight>100</weight>
+      </redundant-wan>
+      <upnp xmlns="http://cisco.com/ns/ciscosb/upnp">
+        <enable>false</enable>
+      </upnp>
+      <mac-address-clone xmlns="http://cisco.com/ns/ciscosb/wan-ip">false</mac-address-clone>
+      <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <setting xmlns="http://cisco.com/ns/ciscosb/wan-ip">
+          <dynamic>
+            <ifname>eth2</ifname>
+          </dynamic>
+        </setting>
+      </ipv4>
+      <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>false</enabled>
+      </ipv6>
+    </interface>
+    <interface>
+      <name>WAN2</name>
+      <description>WAN2</description>
+      <type xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">ianaift:ethernetCsmacd</type>
+      <enabled>true</enabled>
+      <eee xmlns="http://cisco.com/ns/ciscosb/eee">true</eee>
+      <port-mode xmlns="http://cisco.com/ns/ciscosb/interfaces">mode-auto</port-mode>
+      <flow-control xmlns="http://cisco.com/ns/ciscosb/interfaces">true</flow-control>
+      <ddns xmlns="http://cisco.com/ns/ciscosb/ddns">
+        <enable>false</enable>
+      </ddns>
+      <dmz xmlns="http://cisco.com/ns/ciscosb/dmz">
+        <enable>false</enable>
+      </dmz>
+      <nat xmlns="http://cisco.com/ns/ciscosb/fw-nat">
+        <enable>true</enable>
+      </nat>
+      <dot1x xmlns="http://cisco.com/ns/ciscosb/lan-dot1x">
+        <enable>false</enable>
+      </dot1x>
+      <lldp xmlns="http://cisco.com/ns/ciscosb/lldp">
+        <enable>false</enable>
+        <transmit>false</transmit>
+        <receive>false</receive>
+      </lldp>
+      <ciscosb-qos xmlns="http://cisco.com/ns/ciscosb/qos-policy">
+        <qos-policy>
+          <outbound>
+            <priority>Priority_Default</priority>
+            <rate-control>Rate_Control_Default</rate-control>
+            <low-latency>Low_Latency_Default</low-latency>
+          </outbound>
+          <inbound>
+            <rate-control>Default</rate-control>
+          </inbound>
+        </qos-policy>
+        <bandwidth>
+          <upstream>1000000</upstream>
+          <downstream>1000000</downstream>
+        </bandwidth>
+      </ciscosb-qos>
+      <redundant-wan xmlns="http://cisco.com/ns/ciscosb/redundant-wan">
+        <enable>true</enable>
+        <net-tracker>
+          <enable>true</enable>
+          <min-hosts-reachable>1</min-hosts-reachable>
+          <target>
+            <host>gateway</host>
+          </target>
+        </net-tracker>
+        <precedence>2</precedence>
+        <weight>100</weight>
+      </redundant-wan>
+      <upnp xmlns="http://cisco.com/ns/ciscosb/upnp">
+        <enable>false</enable>
+      </upnp>
+      <mac-address-clone xmlns="http://cisco.com/ns/ciscosb/wan-ip">false</mac-address-clone>
+      <ipv4 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <setting xmlns="http://cisco.com/ns/ciscosb/wan-ip">
+          <dynamic>
+            <ifname>eth0</ifname>
+          </dynamic>
+        </setting>
+      </ipv4>
+      <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+        <enabled>false</enabled>
+      </ipv6>
+    </interface>
+  </interfaces>
+  <port-mirror xmlns="http://cisco.com/ns/ciscosb/ports-mirror">
+    <enable>false</enable>
+    <tx-dst-port>LAN4</tx-dst-port>
+    <tx-monitors-ports>
+      <tx-monitors-port>LAN1</tx-monitors-port>
+    </tx-monitors-ports>
+    <tx-monitors-ports>
+      <tx-monitors-port>LAN2</tx-monitors-port>
+    </tx-monitors-ports>
+    <tx-monitors-ports>
+      <tx-monitors-port>LAN3</tx-monitors-port>
+    </tx-monitors-ports>
+    <rx-dst-port>LAN4</rx-dst-port>
+    <rx-monitors-ports>
+      <rx-monitors-port>LAN1</rx-monitors-port>
+    </rx-monitors-ports>
+    <rx-monitors-ports>
+      <rx-monitors-port>LAN2</rx-monitors-port>
+    </rx-monitors-ports>
+    <rx-monitors-ports>
+      <rx-monitors-port>LAN3</rx-monitors-port>
+    </rx-monitors-ports>
+  </port-mirror>
+  <dhcp-pools xmlns="http://cisco.com/ns/ciscosb/lan-dhcp">
+    <pool>
+      <pool-id>1</pool-id>
+      <ipv4>
+        <dns-server-type>dns-server-proxy</dns-server-type>
+        <dhcp-mode>server</dhcp-mode>
+        <range-start>192.168.1.100</range-start>
+        <range-end>192.168.1.149</range-end>
+      </ipv4>
+    </pool>
+  </dhcp-pools>
+  <dhcp-pool xmlns="http://cisco.com/ns/ciscosb/lan-dhcp">
+    <dhcp-interfaces>
+      <interface>VLAN1</interface>
+      <server-mode>
+        <dhcp-pool>1</dhcp-pool>
+      </server-mode>
+    </dhcp-interfaces>
+  </dhcp-pool>
+  <dns xmlns="http://cisco.com/ns/ciscosb/dns">
+    <enable>true</enable>
+  </dns>
+  <ciscosb-qos xmlns="http://cisco.com/ns/ciscosb/qos-policy">
+    <queue-model>priority</queue-model>
+    <policer-enable>false</policer-enable>
+    <queue-policies>
+      <queue-policy>
+        <name>Low_Latency_Default</name>
+        <queues>
+          <low-latency>
+            <priority>
+              <max-rate>50</max-rate>
+            </priority>
+            <queue1>
+              <min-rate>50</min-rate>
+            </queue1>
+            <queue2>
+              <min-rate>30</min-rate>
+            </queue2>
+            <queue3>
+              <match>Default</match>
+              <min-rate>20</min-rate>
+            </queue3>
+          </low-latency>
+        </queues>
+      </queue-policy>
+      <queue-policy>
+        <name>Priority_Default</name>
+        <queues>
+          <priority>
+            <low>Default</low>
+          </priority>
+        </queues>
+      </queue-policy>
+      <queue-policy>
+        <name>Rate_Control_Default</name>
+        <queues>
+          <rate-control>
+            <queue>
+              <id>1</id>
+              <min-rate>20</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>2</id>
+              <min-rate>20</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>3</id>
+              <min-rate>20</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>4</id>
+              <min-rate>10</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>5</id>
+              <min-rate>10</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>6</id>
+              <min-rate>10</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>7</id>
+              <min-rate>9</min-rate>
+              <max-rate>50</max-rate>
+            </queue>
+            <queue>
+              <id>8</id>
+              <match>Default</match>
+              <min-rate>1</min-rate>
+              <max-rate>100</max-rate>
+            </queue>
+          </rate-control>
+        </queues>
+      </queue-policy>
+    </queue-policies>
+    <policer-policies>
+      <policer-policy>
+        <name>Default</name>
+        <policer>
+          <class>
+            <id>1</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>2</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>3</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>4</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>5</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>6</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>7</id>
+            <max-rate>50</max-rate>
+          </class>
+          <class>
+            <id>8</id>
+            <match>Default</match>
+            <max-rate>100</max-rate>
+          </class>
+        </policer>
+      </policer-policy>
+    </policer-policies>
+  </ciscosb-qos>
+  <switch-qos-policy xmlns="http://cisco.com/ns/ciscosb/switch-qos">
+    <model>port</model>
+  </switch-qos-policy>
+  <classifiers xmlns="http://cisco.com/ns/ciscosb/classifier">
+    <classifier>
+      <name>Default</name>
+      <description>Default</description>
+    </classifier>
+  </classifiers>
+  <igmp-proxy xmlns="http://cisco.com/ns/ciscosb/igmp">
+    <enable>false</enable>
+    <upstream-interface>auto</upstream-interface>
+  </igmp-proxy>
+  <policy-routing xmlns="http://cisco.com/ns/ciscosb/policy-routing">
+    <enable>true</enable>
+  </policy-routing>
+  <routing xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+    <routing-instance>
+      <name>local</name>
+      <interfaces>
+        <interface>VLAN1</interface>
+        <interface>WAN1</interface>
+        <interface>WAN2</interface>
+      <interface>USB1</interface>
+        <interface>USB2</interface>
+      </interfaces>
+      <routing-protocols>
+        <routing-protocol>
+          <type xmlns:ciscosb-routing-rip="http://cisco.com/ns/ciscosb/routing-rip">ciscosb-routing-rip:ripv1</type>
+          <name>rip</name>
+          <enabled>true</enabled>
+          <rip xmlns="http://cisco.com/ns/ciscosb/routing-rip">
+            <v6-enabled>false</v6-enabled>
+            <v4-enabled>false</v4-enabled>
+            <ripv1>
+              <interfaces>
+                <interface>
+                  <name>VLAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN2</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+              </interfaces>
+            </ripv1>
+          </rip>
+        </routing-protocol>
+        <routing-protocol>
+          <type xmlns:ciscosb-routing-rip="http://cisco.com/ns/ciscosb/routing-rip">ciscosb-routing-rip:ripv2</type>
+          <name>rip</name>
+          <enabled>true</enabled>
+          <rip xmlns="http://cisco.com/ns/ciscosb/routing-rip">
+            <v6-enabled>false</v6-enabled>
+            <v4-enabled>false</v4-enabled>
+            <ripv2>
+              <interfaces>
+                <interface>
+                  <name>VLAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN2</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+              </interfaces>
+            </ripv2>
+          </rip>
+        </routing-protocol>
+        <routing-protocol>
+          <type xmlns:ciscosb-routing-rip="http://cisco.com/ns/ciscosb/routing-rip">ciscosb-routing-rip:ripng</type>
+          <name>rip</name>
+          <enabled>true</enabled>
+          <rip xmlns="http://cisco.com/ns/ciscosb/routing-rip">
+            <v6-enabled>false</v6-enabled>
+            <v4-enabled>false</v4-enabled>
+            <ripng>
+              <interfaces>
+                <interface>
+                  <name>VLAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN1</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+                <interface>
+                  <name>WAN2</name>
+                  <enabled>true</enabled>
+                  <passive>true</passive>
+                </interface>
+              </interfaces>
+            </ripng>
+          </rip>
+        </routing-protocol>
+        <routing-protocol>
+          <type>static</type>
+          <name>local</name>
+          <description>local</description>
+          <enabled>true</enabled>
+        </routing-protocol>
+      </routing-protocols>
+    </routing-instance>
+  </routing>
+  <firewall xmlns="http://cisco.com/ns/ciscosb/fw-basic-settings">
+    <enable>true</enable>
+    <spi>true</spi>
+    <dos-attack>true</dos-attack>
+    <block-wan-request>true</block-wan-request>
+    <lan-vpn-web-management>
+      <http>false</http>
+      <https>true</https>
+    </lan-vpn-web-management>
+    <remote-web-management>
+      <enable>false</enable>
+      <http>false</http>
+      <https>false</https>
+    </remote-web-management>
+    <allowed-remote-ip-addresses>
+      <any/>
+    </allowed-remote-ip-addresses>
+    <multicast-passthrough>true</multicast-passthrough>
+    <sip-alg>false</sip-alg>
+    <ftp-alg-port>21</ftp-alg-port>
+    <upnp>false</upnp>
+    <block>
+      <java>false</java>
+      <cookies>false</cookies>
+      <activex>false</activex>
+      <access-http-proxy-servers>false</access-http-proxy-servers>
+    </block>
+    <exception>false</exception>
+  </firewall>
+  <dmz-host-entry xmlns="http://cisco.com/ns/ciscosb/fw-dmz-host">
+    <enable>false</enable>
+  </dmz-host-entry>
+  <session-timeout-entry xmlns="http://cisco.com/ns/ciscosb/fw-session-timeout">
+    <tcp-session-timeout>1800</tcp-session-timeout>
+    <udp-session-timeout>30</udp-session-timeout>
+    <icmp-session-timeout>30</icmp-session-timeout>
+    <max-concurrent-connections>40000</max-concurrent-connections>
+  </session-timeout-entry>
+  <firewall-acl-rules xmlns="http://cisco.com/ns/ciscosb/fw-acl-rules">
+    <ipv4>
+      <firewall-acl-rule>
+        <rule-id>201</rule-id>
+        <priority>65534</priority>
+        <enable>true</enable>
+        <action>
+          <allow/>
+        </action>
+        <service>All Traffic</service>
+        <log>false</log>
+        <interface>
+          <source-name>VLAN</source-name>
+          <destination-name>WAN</destination-name>
+        </interface>
+        <source-ip>
+          <source-any/>
+        </source-ip>
+        <destination-ip>
+          <destination-any/>
+        </destination-ip>
+        <schedule>ANYTIME</schedule>
+        <default>true</default>
+      </firewall-acl-rule>
+      <firewall-acl-rule>
+        <rule-id>202</rule-id>
+        <priority>65535</priority>
+        <enable>true</enable>
+        <action>
+          <deny/>
+        </action>
+        <service>All Traffic</service>
+        <log>false</log>
+        <interface>
+          <source-name>WAN</source-name>
+          <destination-name>VLAN</destination-name>
+        </interface>
+        <source-ip>
+          <source-any/>
+        </source-ip>
+        <destination-ip>
+          <destination-any/>
+        </destination-ip>
+        <schedule>ANYTIME</schedule>
+        <default>true</default>
+      </firewall-acl-rule>
+    </ipv4>
+    <ipv6>
+      <firewall-acl-rule>
+        <rule-id>201</rule-id>
+        <priority>65534</priority>
+        <enable>true</enable>
+        <action>
+          <allow/>
+        </action>
+        <service>All Traffic</service>
+        <log>false</log>
+        <interface>
+          <source-name>VLAN</source-name>
+          <destination-name>WAN</destination-name>
+        </interface>
+        <source-ip>
+          <source-any/>
+        </source-ip>
+        <destination-ip>
+          <destination-any/>
+        </destination-ip>
+        <schedule>ANYTIME</schedule>
+        <default>true</default>
+      </firewall-acl-rule>
+      <firewall-acl-rule>
+        <rule-id>202</rule-id>
+        <priority>65535</priority>
+        <enable>true</enable>
+        <action>
+          <deny/>
+        </action>
+        <service>All Traffic</service>
+        <log>false</log>
+        <interface>
+          <source-name>WAN</source-name>
+          <destination-name>VLAN</destination-name>
+        </interface>
+        <source-ip>
+          <source-any/>
+        </source-ip>
+        <destination-ip>
+          <destination-any/>
+        </destination-ip>
+        <schedule>ANYTIME</schedule>
+        <default>true</default>
+      </firewall-acl-rule>
+    </ipv6>
+  </firewall-acl-rules>
+  <ipsec-profiles xmlns="http://cisco.com/ns/ciscosb/vpn-ipsec">
+    <ipsec-profile>
+      <profile-name>Default</profile-name>
+      <keying-mode>
+        <ike-version>
+          <v1/>
+        </ike-version>
+        <phase1-options>
+          <dh-group>dh-group-5</dh-group>
+          <encryption>esp-aes-128</encryption>
+          <authentication>sha1</authentication>
+          <sa-lifetime>28800</sa-lifetime>
+          </phase1-options>
+        <phase2-options>
+          <dh-group>dh-group-5</dh-group>
+          <encryption>esp-aes-128</encryption>
+          <authentication>sha1</authentication>
+          <sa-lifetime>3600</sa-lifetime>
+        </phase2-options>
+      </keying-mode>
+    </ipsec-profile>
+  <ipsec-profile>
+      <profile-name>Amazon_Web_Services</profile-name>
+      <keying-mode>
+        <ike-version>
+          <v1/>
+        </ike-version>
+        <phase1-options>
+          <dh-group>dh-group-2</dh-group>
+          <encryption>esp-aes-128</encryption>
+          <authentication>sha1</authentication>
+          <sa-lifetime>28800</sa-lifetime>
+        </phase1-options>
+        <phase2-options>
+          <encryption>esp-aes-128</encryption>
+          <dh-group>dh-group-2</dh-group>
+          <authentication>sha1</authentication>
+          <sa-lifetime>3600</sa-lifetime>
+          <perfect-forward-secrecy>true</perfect-forward-secrecy>
+        </phase2-options>
+      </keying-mode>
+    </ipsec-profile>
+    <ipsec-profile>
+      <profile-name>Microsoft_Azure</profile-name>
+      <keying-mode>
+        <ike-version>
+          <v1/>
+        </ike-version>
+        <phase1-options>
+          <dh-group>dh-group-2</dh-group>
+          <encryption>esp-aes-256</encryption>
+          <authentication>sha1</authentication>
+          <sa-lifetime>28800</sa-lifetime>
+        </phase1-options>
+        <phase2-options>
+          <encryption>esp-aes-256</encryption>
+          <dh-group>dh-group-2</dh-group>
+          <authentication>sha1</authentication>
+          <sa-lifetime>3600</sa-lifetime>
+          <perfect-forward-secrecy>false</perfect-forward-secrecy>
+        </phase2-options>
+      </keying-mode>
+    </ipsec-profile>
+  </ipsec-profiles>
+  <site-to-sites xmlns="http://cisco.com/ns/ciscosb/vpn-ipsec">
+    <max-tunnel>50</max-tunnel>
+  </site-to-sites>
+  <client-to-sites xmlns="http://cisco.com/ns/ciscosb/vpn-ipsec">
+    <max-group>50</max-group>
+  </client-to-sites>
+  <ipsec-passthrough xmlns="http://cisco.com/ns/ciscosb/vpn-ipsec">
+    <enable>true</enable>
+  </ipsec-passthrough>
+  <l2tp xmlns="http://cisco.com/ns/ciscosb/vpn-l2tp">
+    <enable>false</enable>
+    <max-session>25</max-session>
+  </l2tp>
+  <l2tp-passthrough xmlns="http://cisco.com/ns/ciscosb/vpn-l2tp">
+    <enable>true</enable>
+  </l2tp-passthrough>
+  <pptp xmlns="http://cisco.com/ns/ciscosb/vpn-pptp">
+    <enable>false</enable>
+    <mppe-encryption>mppe-none</mppe-encryption>
+    <max-session>25</max-session>
+  </pptp>
+  <pptp-passthrough xmlns="http://cisco.com/ns/ciscosb/vpn-pptp">
+    <enable>true</enable>
+  </pptp-passthrough>
+   <sslvpn xmlns="http://cisco.com/ns/ciscosb/vpn-ssl">
+    <enable>false</enable>
+    <gateway-port>8443</gateway-port>
+    <max-session>50</max-session>
+    <certificate>Default</certificate>
+    <domain-name>yourdomain.com</domain-name>
+    <login-banner>Hello, welcome!</login-banner>
+    <group-policies>
+      <group-policy>
+        <policy-name>SSLVPNDefaultPolicy</policy-name>
+        <enable>false</enable>
+	<primary-dns-server>192.168.1.1</primary-dns-server>
+        <disabled/>
+        <split-tunnelling>
+          <enable>false</enable>
+          <include-traffic/>
+        </split-tunnelling>
+      </group-policy>
+    </group-policies>
+  </sslvpn> 
+  <block-unknown-binding xmlns="http://cisco.com/ns/ciscosb/ip-source-guard">
+    <block-unknown-mac-address>false</block-unknown-mac-address>
+    <block-unknown-binding>false</block-unknown-binding>
+  </block-unknown-binding>
+  <opendns xmlns="http://cisco.com/ns/ciscosb/opendns">
+    <enabled>false</enabled>
+    <network-policies>
+      <enabled>false</enabled>
+    </network-policies>
+    <network-device-policies>
+      <enabled>true</enabled>
+    </network-device-policies>
+  </opendns>
+  <webfilter xmlns="http://cisco.com/ns/ciscosb/webfilter">
+    <enable>false</enable>
+  </webfilter>
+  <avc xmlns="http://cisco.com/ns/ciscosb/avc">
+    <enable>false</enable>
+  </avc>
+  <signature xmlns="http://cisco.com/ns/ciscosb/security">
+    <auto-update>
+      <notify>true</notify>
+      <update-option>never</update-option>
+    </auto-update>
+  </signature>
+  <license xmlns="http://cisco.com/ns/ciscosb/license">
+    <features>
+      <name>Security-License</name>
+      <description>Anti Threat Services: IPS, AppID, Dynamic Web Filter, Gateway Anti Virus</description>
+      <count>1</count>
+      <enable>true</enable>
+      <count-based>false</count-based>
+    </features>
+    </license>
+  <call-home xmlns="http://cisco.com/ns/ciscosb/license">
+    <server-url>https://tools.cisco.com/its/service/oddce/services/DDCEService</server-url>
+    <user-email>sch-smart-licensing@cisco.com</user-email>
+  </call-home>
+</config>

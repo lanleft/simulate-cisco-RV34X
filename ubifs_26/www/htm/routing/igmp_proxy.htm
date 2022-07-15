@@ -1,0 +1,96 @@
+<style>
+    .listhead {
+        margin-bottom: 8px;
+        width: 150px;
+    }
+    .tablestyle {
+        top: 2px;
+    }
+
+    .tablestyle tr td {
+        width: 100px;
+    }
+
+    .tablestyle tr td:first-child {
+    }
+</style>
+<div ng-controller="routingIGMPProxyCtrl">
+	<form name="form" ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('IGMP_Proxy')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" id="btn_igmpproxy_save" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('IGMP_Proxy_Apply')"></span>
+                </button>
+                <button class="btn-cancel" id="btn_igmpproxy_cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('IGMP_Proxy_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list page-block-tb-listAlignTop" style="vertical-align: top">
+                <tr style="width:150px">
+                    <td>
+                        <input type="checkbox" id="chk_igmpproxy_enable" ng-model="model.enable">
+                        <span style="top:-2px; left:2px" ng-bind="DICT('IGMP_Proxy_Enable_IGMP_Proxy')"></span>
+                    </td>
+                </tr>
+                <tbody ng-class="{nopHint: !model.enable}">
+                    <tr>
+                        <td>
+                            <span style="display: inline-block;" class="listhead" ng-bind="DICT('IGMP_Proxy_Upstream_Interface')"></span>
+                        </td>
+                        <td>
+                            <input type="radio" ng-model="model.upstream_intf" id="rdo_auto_upstream_intf" value="auto" ng-change="check()">
+                                <span ng-bind="DICT('IGMP_Proxy_WAN_Auto')"></span>
+                            </input>
+                            <input type="radio" ng-model="model.upstream_intf" id="rdo_fix_upstream_intf" value="fix" ng-change="check()">
+                                <span ng-bind="DICT('IGMP_Proxy_Fixed_Interface')"></span>
+                            </input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <table class="page-block-tb-list tablestyle no-warp" ng-class="{nopHint: model.upstream_intf === 'auto'}">
+                                <tr ng-repeat="row in model.upstream_list">
+                                    <td ng-repeat="col in row">
+                                        <input type="radio"
+                                            id="rdo_upstream_{{col.name}}"
+                                            ng-model="model.upstream_sel"
+                                            value="{{col.id}}"
+                                        ></input>
+                                        <span ng-bind="col.name"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('IGMP_Proxy_Downstream_Interface')">
+                            
+                        </td>
+                        <td>
+                            <table class="page-block-tb-list tablestyle no-warp">
+                                <tr ng-repeat="row in model.downstream_list">
+                                    <td ng-repeat="col in row">
+                                        <input type="checkbox"
+                                            id="chk_downstream_{{col.name}}"
+                                            ng-model="col.isdown"
+                                            ng-disabled="col.disable || (col.id === model.upstream_sel && model.upstream_intf !== 'auto')"
+                                        ></input>
+                                        <span ng-bind="col.name"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div ng-show="need_one_downstream" class="warning-msg" ng-bind="DICT('IGMP_Proxy_Msg')"></div>
+        </div>
+    </div>
+	</form>
+</div>

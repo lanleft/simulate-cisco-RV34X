@@ -1,0 +1,14 @@
+cdc-acm
+cdc-wdm
+usbserial
+usb_wwan
+qcserial
+sierra
+option
+usbnet
+qmi_wwan
+sierra_net
+cdc_ether
+rndis_host
+cdc_ncm
+huawei_cdc_ncm

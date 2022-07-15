@@ -1,0 +1,2 @@
+/usr/lib/ipsec/plugins/libstrongswan-fips-prf.so
+/etc/strongswan.d/charon/fips-prf.conf

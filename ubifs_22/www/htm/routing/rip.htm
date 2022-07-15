@@ -1,0 +1,235 @@
+<form name="ripform" ng-controller="ripCtrl" ng-modification="dataReady" id="rip">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('RIP')"></div>
+            <div class="page-button-container">
+                <button id="btn_rip_save" class="btn-apply" type="button" ng-click="funs.save()" ng-disabled="ripform.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('RIP_Apply')"></span>
+                </button>
+                <button id="btn_rip_cancel" class="btn-cancel" type="button" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('RIP_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div>
+                <span ng-bind="DICT('RIP_Enable_RIP')"></span>
+                <input type="checkbox" id="chk_rip_foripv4" ng-model="model.v4_enabled" ng-change="checkRelation()"></input>
+                <span ng-bind="DICT('RIP_For_IPv4')"></span>
+                <input type="checkbox" id="chk_rip_foripv6" ng-model="model.v6_enabled" ng-change="checkRelation()"></input>
+                <span style="" ng-bind="DICT('RIP_For_IPv6')"></span>
+            </div>
+            <br>
+            <div ng-bind="DICT('RIP_Note')"></div>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('RIP')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridRipOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="rip_interface_header.html">
+    <div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td ng-bind="grid.appScope.DICT('RIP_Interface')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr><td></td></tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="rip_enable_header.html">
+    <div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td ng-bind="grid.appScope.DICT('RIP_Enable')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr><td></td></tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="rip_ripv1_header.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td colspan="2" ng-bind="grid.appScope.DICT('RIP_Version1')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px;" ng-bind="grid.appScope.DICT('RIP_Enable')"></td>
+            <td ng-bind="grid.appScope.DICT('RIP_Passive')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+<script type="text/ng-template" id="rip_ripv2_header.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td colspan="2" ng-bind="grid.appScope.DICT('RIP_Version2')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px;" ng-bind="grid.appScope.DICT('RIP_Enable')"></td>
+            <td ng-bind="grid.appScope.DICT('RIP_Passive')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+<script type="text/ng-template" id="rip_ripv1_2_content.html">
+<div class="ui-grid-custom-cntr">
+    <table class="rip-content-rip-tb">
+        <tr>
+            <td>
+                <input type="checkbox" ng-model="MODEL_COL_FIELD.enabled"
+                    ng-change="grid.appScope.chkRowRelation(row.entity)"
+                    ng-disabled="!grid.appScope.model.v4_enabled"></input>
+            </td>
+            <td>
+                <input type="checkbox" ng-model="MODEL_COL_FIELD.passive"
+                    ng-change="grid.appScope.chkRowRelation(row.entity)"
+                    ng-disabled="row.entity.NATEnable || !grid.appScope.model.v4_enabled"></input>
+            </td>
+        </tr>
+    </table>
+</div>
+</script>
+<script type="text/ng-template" id="rip_ripng_header.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td colspan="2" ng-bind="grid.appScope.DICT('RIP_RIPng')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px" ng-bind="grid.appScope.DICT('RIP_Enable')"></td>
+            <td ng-bind="grid.appScope.DICT('RIP_Passive')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="rip_ripng_content.html">
+<div class="ui-grid-custom-cntr">
+    <table class="rip-content-rip-tb">
+        <tr>
+            <td>
+                <input type="checkbox" ng-model="MODEL_COL_FIELD.enabled"
+                    ng-change="grid.appScope.chkRowRelation(row.entity)"
+                    ng-disabled="!grid.appScope.model.v6_enabled"></input>
+            </td>
+            <td>
+                <input type="checkbox" ng-model="MODEL_COL_FIELD.passive"
+                    ng-change="grid.appScope.chkRowRelation(row.entity)"
+                    ng-disabled="!grid.appScope.model.v6_enabled"></input>
+            </td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="rip_auth_header.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td colspan="2" ng-bind="grid.appScope.DICT('RIP_Authentication')"></td>
+        </tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px;" ng-bind="grid.appScope.DICT('RIP_Enable')"></td>
+            <td ng-bind="grid.appScope.DICT('RIP_Password')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="rip_empty_header.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td></td>
+        <tr>
+        <tr class="seperator">
+            <td colspan="2"></td>
+        </tr>
+        <tr>
+            <td></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="rip_auth_content.html">
+<div class="ui-grid-custom-cntr">
+    <table class="rip-content-auth-tb">
+        <tr>
+            <td>
+                <input type="checkbox" ng-model="MODEL_COL_FIELD.enable" ng-disabled="!row.entity.ripv2.enabled"></input>
+            </td>
+            <td>
+                <select class="tmpNgInlineSelect"
+                    ng-model="MODEL_COL_FIELD.type"
+                    ng-options="m.id as m.displayName for m in grid.appScope.model.schema.authTypeList"
+                    ng-disabled="!MODEL_COL_FIELD.enable || !row.entity.ripv2.enabled">
+                </select>
+            </td>
+
+            <td>
+                <input type="password" 
+                    class="password_txt"
+                    ng-show="MODEL_COL_FIELD.type === 'key'"
+                    ng-if="MODEL_COL_FIELD.type === 'key'"
+                    ng-required="MODEL_COL_FIELD.enable"
+                    password
+                    placeholder="Simple Key String"
+                    ng-model="MODEL_COL_FIELD.password"
+                    ng-disabled="!MODEL_COL_FIELD.enable || !row.entity.ripv2.enabled"
+                ></input>
+                <input type="number" number
+                    class="password_txt"
+                    min="{{MODEL_COL_FIELD.enable ? '0' : ''}}"
+                    max="{{MODEL_COL_FIELD.enable ? '281474976710655' : ''}}"
+                    ng-required="MODEL_COL_FIELD.enable"
+                    ng-show="MODEL_COL_FIELD.type === 'key-chain'"
+                    ng-if="MODEL_COL_FIELD.type === 'key-chain'"
+                    placeholder="MD5 Key Id"
+                    ng-model="MODEL_COL_FIELD.key_chain.id"
+                    ng-disabled="!MODEL_COL_FIELD.enable || !row.entity.ripv2.enabled"
+                ></input>
+            </td>
+            <td>
+                <input type="password"
+                    class="password_txt"
+                    ng-show="MODEL_COL_FIELD.type === 'key-chain'"
+                    ng-required="MODEL_COL_FIELD.enable"
+                    ng-if="MODEL_COL_FIELD.type === 'key-chain'"
+                    password
+                    placeholder="MD5 Key String"
+                    ng-model="MODEL_COL_FIELD.key_chain.key"
+                    ng-disabled="!MODEL_COL_FIELD.enable || !row.entity.ripv2.enabled"
+                ></input>
+            </td>
+        </tr>
+    </table>
+</div>
+</script>

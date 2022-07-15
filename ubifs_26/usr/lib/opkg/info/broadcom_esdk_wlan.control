@@ -1,0 +1,9 @@
+Package: broadcom_esdk_wlan
+Version: 5.1.4.1-5.00.3-3
+Depends: libc, librt, libpthread, libuci
+Source: package/freescale/broadcom-esdk-wlan
+Section: opt
+Maintainer: Freescale Technologies
+Architecture: comcerto2000
+Installed-Size: 754302
+Description:  ESDK WLAN 802.11ac/n Wifi cards libraries

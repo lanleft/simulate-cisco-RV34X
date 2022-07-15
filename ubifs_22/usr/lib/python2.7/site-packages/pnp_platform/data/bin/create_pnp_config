@@ -1,0 +1,57 @@
+#!/bin/sh
+
+config="/tmp/etc/pnp/pnp_config.cfg"
+config_path=$(dirname ${config})
+openssl_ca_path="/etc/ssl/certs/"
+
+mkdir -p "${config_path}"
+
+if [ `uci get pnp.general.enabled` -eq 0 ] ; then
+  echo "pnp is not enabled"
+  exit 1;
+fi
+
+if [ `uci get pnp.pnp.mode` = "auto" ] ; then
+  cat <<EOF > "${config}"
+[Profile 1]
+transport =
+address =
+port =
+cafile =
+created_by = user
+preferred_protocol = IPv4
+EOF
+else
+  server_url=`uci get pnp.pnp.server_url`
+  #https://1.2.3.4:8080 -> https 1.2.3.4 8080
+  transport=`echo "${server_url}" | awk 'BEGIN{FS=":"}{sub(/\/\//,"",$2)}{print $1}'`
+  address=`echo "${server_url}" | awk 'BEGIN{FS=":"}{sub(/\/\//,"",$2)}{print $2}'`
+  port=`echo "${server_url}" | awk 'BEGIN{FS=":"}{sub(/\/\//,"",$2)}{print $3}'`
+  if [ "X${port}" = "X" ] ; then
+    if [ "${transport}" = "http" ] ; then
+      port="80"
+    fi
+    if [ "${transport}" = "https" ] ; then
+      port="443"
+    fi
+  fi
+  cafile=`uci get pnp.pnp.ca_file 2>/dev/null`
+  if [ "X${cafile}" = "X" ] ; then
+    cafile='default'
+  elif [ -e "${openssl_ca_path}`uci get pnp.pnp.ca_file`.crt" ]; then
+    cafile="${openssl_ca_path}`uci get pnp.pnp.ca_file`.crt"
+  elif [ -e "${openssl_ca_path}`uci get pnp.pnp.ca_file`.pem" ]; then
+    cafile="${openssl_ca_path}`uci get pnp.pnp.ca_file`.pem"
+  else
+    cafile=''
+  fi
+  cat <<EOF > "${config}"
+[Profile 1]
+transport = ${transport}
+address = ${address}
+port = ${port}
+cafile = ${cafile}
+created_by = user
+preferred_protocol = IPv4
+EOF
+fi

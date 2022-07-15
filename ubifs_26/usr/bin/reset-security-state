@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Lionic command to reset the statistics
+statsreset_result1='lcstat reset av'
+statsreset_result2='lcstat reset ips'
+`$statsreset_result1`
+
+if [ "$?" -ne 0 ];then
+   errcode=1
+   errstring="Failed"
+else
+   errcode=0
+   errstring="Success"
+fi
+
+`$statsreset_result2`
+if [ "$?" -ne 0 ];then
+   errcode2=1
+   errstring="Failed"
+else
+   errcode2=0
+   errstring="Success"
+fi
+
+# Store the time & display in GUI
+reset_uptime=`cat /proc/uptime | cut -d " " -f 1 | cut -d . -f 1`
+echo "$reset_uptime" > /tmp/stats/security_last_reset_time
+                                
+# input: ""
+# output: "code <int32> errstr <string>"
+if [ "$errcode" -ne 0 ] || [ "$errcode2" -ne 0 ];then
+	echo "error-message $errstring($errcode,$errcode2)"
+	exit 1
+else
+	exit 0
+fi

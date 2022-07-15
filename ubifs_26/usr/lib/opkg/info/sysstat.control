@@ -1,0 +1,9 @@
+Package: sysstat
+Version: 10.1.2-1
+Depends: libc, librt, libpthread
+Source: package/openwrt/utils/sysstat
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 171088
+Description:  The sysstat utilities are a collection of performance monitoring tools for
+ Linux. These include sar, sadf, mpstat, iostat, pidstat and sa tools.

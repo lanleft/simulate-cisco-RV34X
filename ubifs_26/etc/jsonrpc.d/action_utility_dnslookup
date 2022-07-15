@@ -1,0 +1,77 @@
+#!/bin/sh
+
+UTILITY_NAME="/tmp/utility-dnslookup"
+TYPE=$1
+
+#Parse params
+target=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "target") {print $(I+1)};}'`
+
+start_dnslookup() {
+	# Get the proper nameserver
+	nameserver=`cat /tmp/resolv.conf.auto | grep "nameserver" | grep -v "127.0.0.1" | head -n1`
+	if [ -n "$nameserver" ];then
+		nameserver=`echo $nameserver | cut -d " " -f 2`
+	else
+		nameserver="127.0.0.1"
+	fi
+
+	# Prepare Output
+	`nslookup $target $nameserver > $UTILITY_NAME 2>&1 &`
+	errcode=$?
+
+	if [ "$errcode" -ne 0 ];then
+		errcode=1
+		errstring="Traceroute Failed"
+	else
+		errstring="Success"
+	fi
+
+	echo "code $errcode errstr $errstring"
+}
+
+stop_dnslookup() {
+	exist_dnslookup=`pgrep nslookup`
+	
+	if [ -z "$exist_dnslookup" ];then
+		errcode=1
+		errstring="Dnslookup is not executing"
+	else
+		`killall -9 nslookup >/dev/null 2>&1`
+
+		errcode=0
+		errstring="Success"
+	fi
+
+	echo "code $errcode errstr $errstring"
+}
+
+get_dnslookup_status() {
+	text=`cat $UTILITY_NAME 2>/dev/null`
+	errcode=$?
+	if [ "$errcode" -ne 0 ];then
+		errstring="Dnslookup failed"
+	else
+		errstring="Success"
+	fi
+	
+	exist_dnslookup=`pgrep nslookup`
+	if [ -z "$exist_dnslookup" ];then
+		is_final=true
+	else
+		is_final=false
+	fi
+
+	echo "code $errcode errstr $errstring text $text is_final $is_final"
+}
+
+case "$TYPE" in
+	start)
+		start_dnslookup
+	;;
+	stop)
+		stop_dnslookup
+	;;
+	status)
+		get_dnslookup_status
+	;;
+esac

@@ -1,0 +1,1075 @@
+<form name="s2sform" ng-controller="siteToSiteCtrl" ng-modification="dataReady" id="s2s">
+        <div ng-if="dataReady" ng-include="currPage"></div>
+</form>
+
+<script type="text/ng-template" id="ipsec_s2s_main.html">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Site_to_Site')"></div>
+        <div class="page-button-container">
+            <button type="button" class="btn-apply" id="btn_mainsave" ng-disabled="model.s2s_table.length >= 51 || userAccessFlag === 'RO'" ng-click="funs.save('main')">
+                <span ng-bind="DICT('Site_to_Site_Apply')"></span>
+            </button>
+            <button type="button" class="btn-cancel" id="btn_maincancel" ng-click="funs.cancel('main')">
+                <span ng-bind="DICT('Site_to_Site_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <message-box class="page-note-cntr" ng-if="!model.ipsec_enable">
+            <table>
+                <tr>
+                    <td class="align-top">
+                        <i class="icon-warning message-icon"></i>
+                    </td>
+                    <td>
+                        <span pg-bind-html="ipsecprofile_note"></span>
+                    </td>
+                </tr>
+            </table>
+        </message-box>
+        <div style="margin-bottom: 10px">
+            <span ng-bind="DICT('Site_to_Site_Number_Connections', {'%d0': model.connectedTunnel, '%d1': model.configTunnel, '%d2': model.maxTunnel})"></span>
+        </div>
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Site_to_Site_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button type="button" class="grid-btn-add" id="btn_creates2svpn" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.createS2S()"></button>
+                    <button type="button" class="grid-btn-edit" id="btn_edits2svpn" ng-disabled="userAccessFlag === 'RO' || model.selects.length !== 1" ng-click="funs.edit()"></button>
+                    <button type="button" class="grid-btn-delete" id="btn_delete" ng-click="funs.del()" ng-disabled="model.selects.length === 0 || userAccessFlag === 'RO'"></button>
+                </div>
+                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridSite2SiteOptions"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="ipsec_s2s_edit.html">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Site_to_Site_S2S_Add_Edit_New_Connection')"></div>
+        <div class="page-button-container">
+            <button type="button" class="btn-apply" id="btn_editsave" ng-disabled="s2sform.$invalid || errForGroups || isErr || waitForCert " ng-click="funs.save('edit')">
+                <span ng-bind="DICT('Site_to_Site_Apply')"></span>
+            </button>
+            <button type="button" class="btn-cancel" id="btn_editcancel" ng-click="funs.cancel('edit')">
+                <span ng-bind="DICT('Site_to_Site_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <div class="page-content-container">
+        <uib-tabset active="model.tabUrl">
+            <uib-tab ng-repeat="tab in tabs" heading="{{tab.heading}}" active="tab.active" disabled="tab.active" ng-click="funs.clickTab(tab)" index="tab.templateUrl">
+                    <div ng-include="tab.templateUrl"></div>
+            </uib-tab>
+        </uib-tabset>
+        <div ng-if="isErr" class="mainWarningBox">
+            <li><span ng-bind="DICT('Site_to_Site_WAN_Interface_Repeat', {'%s': repeat_conn})"></span></li>
+            <li><span ng-bind="DICT('Site_to_Site_Msg_Unique')"></span></li>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="ipsec_s2s_edit_basic_setting.html">
+    <table class="page-block-tb-list s2s-basic-list">
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Enable')+':'"></td>
+            <td>
+                <input type="checkbox" id="chk_basicenable" ng-model="edit.enable" ng-true-value="true" ng-false-value="false"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Connection_Name')"></td>
+            <td>
+                <input type="text"
+                    id="txt_basicconnectname"
+                    name="cname"
+                    ng-disabled="edit.editType === 'edit'"
+                    ng-model="edit.connection_name"
+                    required
+                    ng-trim="false"
+                    ng-change="checkConnName()"
+                >
+                </input>
+            </td>
+            <td>
+                <span class="validation-error-text-right" ng-show="s2sform.cname.$error.required" ng-bind="DICT('Site_to_Site_Please_Input_Connection_Name')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="s2sform.cname.$error.overlength" ng-bind="DICT('Site_to_Site_Connection_Name_Max_Length')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="s2sform.cname.$error.special" ng-bind="DICT('Site_to_Site_Connection_Support')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="s2sform.cname.$error.repeat_name" ng-bind="DICT('Site_to_Site_Connection_Name_Repeated')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_IPsec_Profile')"></td>
+            <td>
+                <select id="slct_basicipsecprofile"
+                    ng-model="edit.ipsec_profile"
+                    ng-options="m.name as m.name for m in model.profiles"
+                    ng-change="change_ipsec_profile()"
+                ></select>
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="model.profileInfo"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Interface')"></td>
+            <td>
+                <select id="slct_basicinterface" ng-model="edit.interface"
+                    ng-change="checkEditLocalIntfState(); checkCombineUnique();"
+                    ng-options="m.name as m.name for m in model.ifs">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Remote_Endpoint')"></td>
+            <td>
+                <select id="slct_basicremotendpoint"
+                        ng-model="edit.remote_endpoint.type"
+                        ng-disabled="edit.local_group.group.type === 'gre'"
+                        ng-options="m.id as m.displayName for m in model.schema.remote_endpoint"
+                        ng-change="checkCombineUnique()"
+                ></select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td ng-class="{nopHint: edit.remote_endpoint.type === 'dynamic-ip'}">
+                <input type="text"
+                       id="txt_basicremotendpointip"
+                       ng-show="edit.remote_endpoint.type === 'static-ip'"
+                       ng-required="edit.remote_endpoint.type === 'static-ip'"
+                       ng-ipv4-ip-nonzero="edit.remote_endpoint.type === 'static-ip'"
+                       ng-model="edit.remote_endpoint.ip"
+                       ng-change="checkCombineUnique()"
+                       ng-disabled="edit.local_group.group.type === 'gre'"
+                       ng-class="{'ng-invalid': (isErr && edit.remote_endpoint.type === 'static-ip')}"
+                 ></input>
+                <input type="text"
+                       id="txt_basicremotendpointfqdn"
+                       ng-show="edit.remote_endpoint.type === 'fqdn'"
+                       ng-required="edit.remote_endpoint.type === 'fqdn'"
+                       ng-fqdn="edit.remote_endpoint.type === 'fqdn'"
+                       ng-model="edit.remote_endpoint.fqdn"
+                       ng-change="checkCombineUnique()"
+                       ng-class="{'ng-invalid': (isErr && edit.remote_endpoint.type === 'fqdn')}"
+                 ></input>
+            </td>
+        </tr>
+    </table>
+    <!-- IKE Authentication -->
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Site_to_Site_IKE_Authentication_Method')" ng-if="edit.ike_mode === 'v1' || edit.ike_mode === 'manual'"></div>
+    </div>
+    <table class="page-block-tb-list s2s-basic-list" ng-if="edit.ike_mode === 'v1' || edit.ike_mode === 'manual'">
+        <tbody ng-class="{nopHint: edit.ike_mode !== 'v1'}">
+            <tr>
+                <td>
+                    <input type="radio" id="rdo_symm_basicpresharedkey" ng-model="edit.symm_authentication.method" value="ike" ng-change="change_identifier_list()"></input>
+                    <span ng-bind="DICT('Site_to_Site_Preshared_Key')"></span>
+                </td>
+                <td>
+                    <pg-pwd
+                        id="txt_symm_basicpresharedkey"
+                        ng-model="edit.symm_authentication.password"
+                        ng-required="edit.symm_authentication.method === 'ike' && edit.ike_mode === 'v1'"
+                        ng-need-complexity="edit.symm_authentication.method === 'ike' && edit.ike_mode === 'v1' && edit.symm_authentication.minimum_complexity === true"
+                        ng-is-plain="edit.symm_authentication.show_key_in_plain"
+                        ng-change="change_pwd('symm')"
+                        ng-disabled="edit.symm_authentication.method !== 'ike' || edit.ike_mode !== 'v1'"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-show="edit.symm_authentication.minimum_complexity">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-class="{nopHint: edit.symm_authentication.method !== 'ike'}" ng-model="edit.symm_authentication.password"></password-strength-meter>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Minumum_Preshared_Key_Complexity')"></td>
+                <td>
+                    <input type="checkbox" id="chk_symm_basicmpkcenable"
+                        ng-disabled="edit.symm_authentication.method !== 'ike'"
+                        ng-model="edit.symm_authentication.minimum_complexity"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    ></input>
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_symm_basicplainkeyenable"
+                        ng-disabled="edit.symm_authentication.method !== 'ike' || !edit.symm_authentication.enable_show_key_in_plain"
+                        ng-model="edit.symm_authentication.show_key_in_plain"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    >
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span></input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio"
+                           id="rdo_symm_basiccertificate"
+                           ng-model="edit.symm_authentication.method"
+                           value="cert"
+                           ng-change="change_identifier_list()"></input>
+                    <span ng-bind="DICT('Site_to_Site_Certificate')"></span>
+                </td>
+                <td></td>
+            </tr>
+            <tr ng-if="edit.symm_authentication.method === 'cert'">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Local_Certificate')"></td>
+                <td>
+                    <select id="slct_symm_basiccertificate"
+                            ng-model="edit.symm_authentication.certificate"
+                            ng-change="checkASN1DNCert()"
+                            ng-required="certReady && edit.ike_mode === 'v1'"
+                            ng-options="m.name as m.name for m in model.certs"
+                    ></select>
+                </td>
+                <td>
+                    <span class="icon-loading" ng-show="!certReady"></span>
+                </td>
+            </tr>
+            <tr ng-if="edit.symm_authentication.method === 'cert'">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Remote_CA_Certificate')"></td>
+                <td>
+                    <select id="slct_symm_remotecacertificate"
+                            ng-model="edit.symm_authentication.remote_certificate"
+                            ng-required="certReady && edit.ike_mode === 'v1'"
+                            ng-options="m.name as m.name for m in model.ca_certs"
+                    ></select>
+                </td>
+                <td>
+                    <span class="icon-loading" ng-show="!certReady"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Local IKE Authentication -->
+    <div class="page-block-title-cntr" ng-if="edit.ike_mode === 'v2'">
+        <div class="page-block-title" ng-bind="DICT('Site_to_Site_Local_IKE_Authentication_Method')"></div>
+    </div>
+    <table class="page-block-tb-list s2s-basic-list" ng-if="edit.ike_mode === 'v2'">
+        <tbody>
+            <tr>
+                <td>
+                    <input type="radio" id="rdo_local_basicpresharedkey" ng-model="edit.local_authentication.method" value="ike" ng-change="change_identifier_list()"></input>
+                    <span ng-bind="DICT('Site_to_Site_Preshared_Key')"></span>
+                </td>
+                <td>
+                    <pg-pwd
+                        id="txt_local_basicpresharedkey"
+                        ng-model="edit.local_authentication.password"
+                        ng-required="edit.local_authentication.method === 'ike'"
+                        ng-need-complexity="edit.local_authentication.method === 'ike' && edit.local_authentication.minimum_complexity === true"
+                        ng-is-plain="edit.local_authentication.show_key_in_plain"
+                        ng-change="change_pwd('local')"
+                        ng-disabled="edit.local_authentication.method !== 'ike'"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-show="edit.local_authentication.minimum_complexity">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-class="{nopHint: edit.local_authentication.method !== 'ike'}" ng-model="edit.local_authentication.password"></password-strength-meter>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Minumum_Preshared_Key_Complexity')"></td>
+                <td>
+                    <input type="checkbox" id="chk_local_basicmpkcenable"
+                        ng-disabled="edit.local_authentication.method !== 'ike'"
+                        ng-model="edit.local_authentication.minimum_complexity"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    ></input>
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_local_basicplainkeyenable"
+                        ng-disabled="edit.local_authentication.method !== 'ike' || !edit.local_authentication.enable_show_key_in_plain"
+                        ng-model="edit.local_authentication.show_key_in_plain"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    >
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span></input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio"
+                           id="rdo_local_basiccertificate"
+                           ng-model="edit.local_authentication.method"
+                           value="cert"
+                           ng-change="change_identifier_list()"></input>
+                    <span ng-bind="DICT('Site_to_Site_Certificate')"></span>
+                </td>
+                <td>
+                    <select id="slct_local_basiccertificate"
+                            ng-model="edit.local_authentication.certificate"
+                            ng-change="checkASN1DNCert()"
+                            ng-options="m.name as m.name for m in model.certs"
+                            ng-disabled="edit.local_authentication.method !== 'cert'">
+                    </select>
+                </td>
+                <td>
+                    <span class="icon-loading" ng-show="!certReady"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Remote IKE Authentication -->
+    <hr class="page-content-seperator" ng-if="edit.ike_mode === 'v2'"></hr>
+    <div class="page-block-title-cntr" ng-if="edit.ike_mode === 'v2'" >
+        <div class="page-block-title" ng-bind="DICT('Site_to_Site_Remote_IKE_Authentication_Method')"></div>
+    </div>
+    <table class="page-block-tb-list s2s-basic-list" ng-if="edit.ike_mode === 'v2'">
+        <tbody>
+            <tr>
+                <td>
+                    <input type="radio" id="rdo_remote_basicpresharedkey" ng-model="edit.remote_authentication.method" value="ike" ng-change="change_identifier_list()"></input>
+                    <span ng-bind="DICT('Site_to_Site_Preshared_Key')"></span>
+                </td>
+                <td>
+                    <pg-pwd
+                        id="txt_remote_basicpresharedkey"
+                        ng-model="edit.remote_authentication.password"
+                        ng-required="edit.remote_authentication.method === 'ike'"
+                        ng-need-complexity="edit.remote_authentication.method === 'ike' && edit.remote_authentication.minimum_complexity === true"
+                        ng-is-plain="edit.remote_authentication.show_key_in_plain"
+                        ng-change="change_pwd('remote')"
+                        ng-disabled="edit.remote_authentication.method !== 'ike'"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-show="edit.remote_authentication.minimum_complexity">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-class="{nopHint: edit.remote_authentication.method !== 'ike'}" ng-model="edit.remote_authentication.password"></password-strength-meter>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Minumum_Preshared_Key_Complexity')"></td>
+                <td>
+                    <input type="checkbox" id="chk_remote_basicmpkcenable"
+                        ng-disabled="edit.remote_authentication.method !== 'ike'"
+                        ng-model="edit.remote_authentication.minimum_complexity"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    ></input>
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_remote_basicplainkeyenable"
+                        ng-disabled="edit.remote_authentication.method !== 'ike' || !edit.remote_authentication.enable_show_key_in_plain"
+                        ng-model="edit.remote_authentication.show_key_in_plain"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                    >
+                    <span ng-bind="DICT('Site_to_Site_Enable')"></span></input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio"
+                           id="rdo_remote_basiccertificate"
+                           ng-model="edit.remote_authentication.method"
+                           value="cert"
+                           ng-change="change_identifier_list()"
+                    ></input>
+                    <span ng-bind="DICT('Site_to_Site_Certificate')"></span>
+                </td>
+                <td></td>
+            </tr>
+            <tr ng-if="edit.remote_authentication.method === 'cert'">
+                <td class="page-indent27" ng-bind="DICT('Site_to_Site_CA_Certificate')"></td>
+                <td>
+                    <select id="slct_remote_basiccertificate" ng-model="edit.remote_authentication.certificate"
+                        ng-change="checkASN1DNCert()"
+                        ng-options="m.name as m.name for m in model.ca_certs"
+                        ng-required="edit.remote_authentication.method === 'cert' && certReady"
+                        ng-disabled="edit.remote_authentication.method !== 'cert'">
+                    </select>
+                </td>
+                <td>
+                    <span class="icon-loading" ng-show="!certReady"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Site_to_Site_Local_Group_Setup')"></div>
+    </div>
+    <!-- Local Group -->
+    <table class="page-block-tb-list s2s-basic-list">
+        <tr ng-class="{nopHint: edit.ike_mode === 'manual'}">
+            <td ng-bind="DICT('Site_to_Site_Local_Identifier_Type')"></td>
+            <td>
+                <select id="slct_basiclocalidentype" ng-model="edit.local_group.identifier.type"
+                    ng-change="change_identifier_list(); checkCombineUnique();"
+                    ng-options="m.id as m.displayName for m in model.schema.local_identifier">
+                </select>
+            </td>
+        </tr>
+        <tr ng-class="{nopHint: edit.ike_mode === 'manual'}">
+            <td ng-bind="DICT('Site_to_Site_Local_Identifier')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalidentip" ng-disabled="true"
+                    ng-show="edit.local_group.identifier.type === 'interface'"
+                    ng-model="edit.local_group.identifier.interface">
+                </input>
+                <input type="text" id="txt_basiclocalidentotherip" name="txt_basiclocalidentotherip"
+                    ng-show="edit.local_group.identifier.type === 'ip'"
+                    ng-required="edit.local_group.identifier.type === 'ip' && edit.ike_mode !== 'manual'"
+                    ng-ipv4-ip-nonzero="edit.local_group.identifier.type === 'ip' && edit.ike_mode !== 'manual'"
+                    ng-model="edit.local_group.identifier.ip"
+                    
+                    ng-change="checkCombineUnique()"
+                    ng-class="{'ng-invalid': (isErr && edit.local_group.identifier.type === 'ip' && edit.ike_mode !== 'manual')}"
+                    >
+                </input>
+                <input type="text" id="txt_basiclocalidentfqdn" 
+                    ng-show="edit.local_group.identifier.type === 'fqdn'"
+                    ng-required="edit.local_group.identifier.type === 'fqdn' && edit.ike_mode !== 'manual'"
+                    ng-model="edit.local_group.identifier.fqdn"
+                    
+                    ng-change="checkCombineUnique()"
+                    ng-class="{'ng-invalid': (isErr && edit.local_group.identifier.type === 'fqdn' && edit.ike_mode !== 'manual')}"
+                    >
+                </input>
+                <input type="text" id="txt_basiclocalidentuserfqdn" 
+                    ng-show="edit.local_group.identifier.type === 'user-fqdn'"
+                    ng-required="edit.local_group.identifier.type === 'user-fqdn' && edit.ike_mode !== 'manual'"
+                    ng-model="edit.local_group.identifier.user_fqdn"
+                    
+                    ng-change="checkCombineUnique()"
+                    ng-class="{'ng-invalid': (isErr && edit.local_group.identifier.type === 'user-fqdn' && edit.ike_mode !== 'manual')}"
+                    >
+                </input>
+                <input type="text" id="txt_basiclocalidentasn1dn" 
+                    ng-show="edit.local_group.identifier.type === 'der-asn1-dn'"
+                    ng-disabled="true"
+                    title="{{edit.local_group.identifier.asn1dn}}"
+                    ng-model="edit.local_group.identifier.asn1dn">
+                </input>
+            </td>
+            <td class="tip-info"
+                ng-show="edit.local_group.identifier.type === 'der-asn1-dn'"
+                ng-bind="DICT('Site_to_Site_Chosen_From_Certificate')"
+            >
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Local_IP_Type')"></td>
+            <td>
+                <select id="slct_basiclocaliptype"
+                    ng-change="change_ip_type()"
+                    ng-model="edit.local_group.group.type"
+                    ng-options="m.id as m.displayName disable when m.disable for m in model.schema.local_ip_type"
+                ></select>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.group.type === 'subnet'">
+            <td ng-bind="DICT('Site_to_Site_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalsubnetip"
+                    ng-required="edit.local_group.group.type === 'subnet'"
+                    ng-ipv4-ip="edit.local_group.group.type === 'subnet'"
+                    ng-model="edit.local_group.group.subnet_ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.group.type === 'subnet'">
+            <td ng-bind="DICT('Site_to_Site_Subnet_Mask')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalsubnetmask"
+                    ng-required="edit.local_group.group.type === 'subnet'"
+                    ng-ipv4-netmask="edit.local_group.group.type === 'subnet'" 
+                    ng-model="edit.local_group.group.subnet_netmask"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.group.type === 'ip'">
+            <td ng-bind="DICT('Site_to_Site_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalip"
+                    ng-required="edit.local_group.group.type === 'ip'"
+                    ng-ipv4-ip="edit.local_group.group.type === 'ip'"
+                    ng-model="edit.local_group.group.ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.group.type === 'ip-range'">
+            <td ng-bind="DICT('Site_to_Site_Begin_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalbeginip"
+                    ng-required="edit.local_group.group.type === 'ip-range'"
+                    ng-ipv4-ip="edit.local_group.group.type === 'ip-range'"
+                    ng-model="edit.local_group.group.begin_ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.group.type === 'ip-range'">
+            <td ng-bind="DICT('Site_to_Site_End_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basiclocalendip"
+                    ng-required="edit.local_group.group.type === 'ip-range'"
+                    ng-ipv4-ip="edit.local_group.group.type === 'ip-range'"
+                    compare-ip-range="edit.local_group.group.begin_ip"
+                    ng-model="edit.local_group.group.end_ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-if="edit.local_group.group.type === 'ip-group'">
+            <td>
+                <span ng-bind="DICT('Site_to_Site_IP_Group_colon')"></span>
+                <help-icon context="DICT('Site_to_Site_IP_Address_Note')" isopen="model.show_local_ipgroup_note" ng-show="edit.local_group.group.type === 'ip-group'"></help-icon>
+            </td>
+            <td>
+                <select ng-model="edit.local_group.group.ip_group" ng-options="m.id as m.displayName for m in model.ipGroups"></select>
+            </td>
+        </tr>
+        <tr ng-if="edit.local_group.group.type === 'gre'">
+            <td ng-bind="DICT('Site_to_Site_Gre_Interface')"></td>
+            <td>
+                <select ng-model="edit.local_group.group.gre_interface"
+                    ng-options="m.id as m.displayName for m in model.greInterfaces"
+                    ng-change="change_gre_interface()"
+                ></select>
+            </td>
+        </tr>
+        <tr ng-if="edit.local_group.group.type === 'gre'">
+            <td ng-bind="DICT('Site_to_Site_GRE_Address')"></td>
+            <td>
+                <input type="text" ng-model="edit.local_group.group.gre_ip" disabled></input>
+            </td>
+        </tr>
+    </table>
+    <!-- Remote Group -->
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Site_to_Site_Remote_Group_Setup')"></div>
+    </div>
+    <table class="page-block-tb-list s2s-basic-list">
+        <tbody ng-class="{nopHint: edit.ike_mode === 'manual'}">
+            <tr>
+                <td ng-bind="DICT('Site_to_Site_Remote_Identifier_Type')"></td>
+                <td>
+                    <select id="slct_basicremoteidentype" ng-model="edit.remote_group.identifier.type"
+                        ng-options="m.id as m.displayName for m in model.schema.remote_identifier"
+                        ng-disabled="edit.ike_mode === 'manual'"
+                        ng-change="checkCombineUnique()">
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Site_to_Site_Remote_Identifier')"></td>
+                <td>
+                    <input type="text" id="txt_basicremoteidentip"
+                        ng-show="edit.remote_group.identifier.type === 'ip'"
+                        ng-required="edit.remote_group.identifier.type === 'ip' && edit.ike_mode !== 'manual'"
+                        ng-ipv4-ip-nonzero="edit.remote_group.identifier.type === 'ip' && edit.ike_mode !== 'manual'"
+                        ng-model="edit.remote_group.identifier.ip"
+
+                        ng-change="checkCombineUnique()"
+                        ng-class="{'ng-invalid': (isErr && edit.remote_group.identifier.type === 'ip' && edit.ike_mode !== 'manual')}"
+                        >
+                    </input>
+                    <input type="text" id="txt_basicremoteidentfqdn"
+                        ng-show="edit.remote_group.identifier.type === 'fqdn'"
+                        ng-required="edit.remote_group.identifier.type === 'fqdn' && edit.ike_mode !== 'manual'"
+                        ng-model="edit.remote_group.identifier.fqdn"
+
+                        ng-change="checkCombineUnique()"
+                        ng-class="{'ng-invalid': (isErr && edit.remote_group.identifier.type === 'fqdn' && edit.ike_mode !== 'manual')}"
+                        >
+                    </input>
+                    <input type="text" id="txt_basicremoteidentuserfqdn"
+                        ng-show="edit.remote_group.identifier.type === 'user-fqdn'"
+                        ng-required="edit.remote_group.identifier.type === 'user-fqdn' && edit.ike_mode !== 'manual'"
+                        ng-model="edit.remote_group.identifier.user_fqdn"
+
+                        ng-change="checkCombineUnique()"
+                        ng-class="{'ng-invalid': (isErr && edit.remote_group.identifier.type === 'user-fqdn' && edit.ike_mode !== 'manual')}"
+                        >
+                    </input>
+                    <input type="text" id="txt_basicremoteidentuserasn1fqdn"
+                        ng-show="edit.remote_group.identifier.type === 'der-asn1-dn'"
+                        ng-model="edit.remote_group.identifier.asn1dn"
+                        ng-change="checkCombineUnique()"
+                        ng-class="{'ng-invalid': (isErr && edit.remote_group.identifier.type === 'der-asn1-dn' && edit.ike_mode !== 'manual')}">
+                    </input>
+                </td>
+            </tr>
+        </tbody>
+        <tr>
+            <td ng-bind="DICT('Site_to_Site_Remote_IP_Type')"></td>
+            <td>
+                <select id="slct_basicremoteiptype"
+                    ng-change="change_ip_type()"
+                    ng-model="edit.remote_group.group.type"
+                    ng-options="m.id as m.displayName disable when m.disable for m in model.schema.remote_ip_type"
+                ></select>
+            </td>
+        </tr>
+        <tr ng-show="edit.remote_group.group.type === 'subnet'">
+            <td ng-bind="DICT('Site_to_Site_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basicremotesubnetip"
+                    ng-required="edit.remote_group.group.type === 'subnet'"
+                    ng-ipv4-ip="edit.remote_group.group.type === 'subnet'"
+                    ng-model="edit.remote_group.group.subnet_ip"
+                    name="basicremotesubnetip"
+                    ng-custom-vld="edit.remote_group.group.type === 'subnet'" 
+                    custom-vld-cbk="handleSubnetA"
+                    custom-vld-relationship="['basicremotesubnetip', 'basicremotesubnetmask']"
+                ></input>
+            </td>
+            <td>
+                <span ng-show="s2sform.basicremotesubnetip.$error.customVld" class="validation-error-text-right" ng-bind="DICT('Site_to_Site_Remote_Subnet_Cannot_Same_As_Local')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr ng-show="edit.remote_group.group.type === 'subnet'">
+            <td ng-bind="DICT('Site_to_Site_Subnet_Mask')"></td>
+            <td>
+                <input type="text" id="txt_basicremotesubnetmask"
+                    ng-required="edit.remote_group.group.type === 'subnet'"
+                    ng-ipv4-netmask="edit.remote_group.group.type === 'subnet'"
+                    ng-model="edit.remote_group.group.subnet_netmask"
+                    name="basicremotesubnetmask"
+                    ng-custom-vld="edit.remote_group.group.type === 'subnet'" 
+                    custom-vld-cbk="handleSubnetA"
+                    custom-vld-relationship="['basicremotesubnetip', 'basicremotesubnetmask']"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.remote_group.group.type === 'ip'">
+            <td ng-bind="DICT('Site_to_Site_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basicremoteip"
+                    ng-required="edit.remote_group.group.type === 'ip'"
+                    ng-ipv4-ip="edit.remote_group.group.type === 'ip'"
+                    ng-model="edit.remote_group.group.ip"
+                    name="txt_basicremoteip"
+                    ng-custom-vld="edit.remote_group.group.type === 'ip'" 
+                    custom-vld-cbk="handleSubnetB"
+                ></input>
+            </td>
+            <td>
+                <span ng-show="s2sform.txt_basicremoteip.$error.customVld" class="validation-error-text-right" ng-bind="DICT('Site_to_Site_Remote_Subnet_Cannot_Same_As_Local')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr ng-show="edit.remote_group.group.type === 'ip-range'">
+            <td ng-bind="DICT('Site_to_Site_Begin_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basicremotebeginip"
+                    ng-required="edit.remote_group.group.type === 'ip-range'"
+                    ng-ipv4-ip="edit.remote_group.group.type === 'ip-range'"
+                    ng-model="edit.remote_group.group.begin_ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.remote_group.group.type === 'ip-range'">
+            <td ng-bind="DICT('Site_to_Site_End_IP_Addr')"></td>
+            <td>
+                <input type="text" id="txt_basicremoteendip"
+                    ng-required="edit.remote_group.group.type === 'ip-range'"
+                    ng-ipv4-ip="edit.remote_group.group.type === 'ip-range'"
+                    compare-ip-range="edit.remote_group.group.begin_ip"
+                    ng-model="edit.remote_group.group.end_ip"
+                ></input>
+            </td>
+        </tr>
+        <tr ng-if="edit.remote_group.group.type === 'ip-group'">
+            <td>
+                <span ng-bind="DICT('Site_to_Site_IP_Group_colon')"></span>
+                <help-icon context="DICT('Site_to_Site_IP_Address_Note')" isopen="model.show_remote_ipgroup_note" ng-show="edit.remote_group.group.type === 'ip-group'"></help-icon>
+            </td>
+            <td>
+                <select ng-model="edit.remote_group.group.ip_group" ng-options="m.id as m.displayName for m in model.ipGroups"></select>
+            </td>
+        </tr>
+        <tr ng-if="edit.remote_group.group.type === 'gre'">
+            <td ng-bind="DICT('Site_to_Site_Gre_Interface')"></td>
+            <td>
+                <select ng-model="edit.remote_group.group.gre_interface" disabled ng-options="m.id as m.displayName for m in model.greInterfaces"></select>
+            </td>
+        </tr>
+        <tr ng-if="edit.remote_group.group.type === 'gre'">
+            <td ng-bind="DICT('Site_to_Site_GRE_Address')"></td>
+            <td>
+                <input type="text" ng-model="edit.remote_group.group.gre_ip" disabled></input>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="ipsec_s2s_edit_advanced_setting.html">
+    <table class="page-block-tb-list" ng-class="{nopHint: edit.ike_mode === 'manual'}" style="width: 100%">
+        <tr ng-show="edit.ike_mode === 'v2'">
+            <td>
+                <input type="checkbox" id="chk_advanced_non_rfc_compliant" ng-model="edit.non_rfc_compliant"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Non_RFC_Compliant')"></td>
+        </tr>
+        <tr ng-show="edit.ike_mode === 'v1'">
+            <td>
+                <input type="checkbox" id="chk_advancedaggressivemode" ng-model="edit.aggressive_mode"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Aggressive_Mode')"></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="chk_advancedcompress" ng-model="edit.compress"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Commpress')"></td>
+        </tr>
+        <tr ng-if="edit.local_group.group.type !== 'gre'">
+            <td>
+                <input type="checkbox" id="chk_advancednetbiosbroadcast" ng-model="edit.netbios_broadcast"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_NetBIOS_Broadcast')"></td>
+        </tr>
+        <tr ng-class="{nopHint: edit.remote_endpoint.type === 'dynamic-ip'}">
+            <td>
+                <input type="checkbox" id="chk_advancedkeepalive" ng-model="edit.keepalive.enable"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('Site_to_Site_Keep_Alive')"></span>
+            </td>
+        </tr>
+        <tr ng-class="{nopHint: !edit.keepalive.enable || edit.remote_endpoint.type === 'dynamic-ip'}">
+            <td></td>
+            <td>
+                <span ng-bind="DICT('Site_to_Site_Keep_Alive_Monitoring_Interval')"></span>
+                <input type="number" number
+                    id="slct_advancedkeepaliveinterval"
+                    style="width:60px"
+                    ng-required="edit.keepalive.enable && edit.ike_mode !== 'manual'"
+                    ng-disabled="edit.ike_mode === 'manual'"
+                    ng-model="edit.keepalive.monitoring_interval"
+                    min="{{edit.keepalive.enable && edit.ike_mode !== 'manual' ? 10 : ''}}"
+                    max="{{edit.keepalive.enable && edit.ike_mode !== 'manual' ? 999 : ''}}"
+                ></input>
+                <span class="tip-info" ng-bind="DICT('Site_to_Site_Sec_Range1')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="chk_advanceddpdenable" ng-model="edit.dpd.enabled"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_DPD_Enable')"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table class="s2s-dpd-list" ng-class="{nopHint: !edit.dpd.enabled}">
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Delay_Time')"></td>
+                        <td>
+                            <input type="number"
+                                ng-required="edit.dpd.enabled && edit.ike_mode !== 'manual'"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                number
+                                id="slct_advanceddelaytime"
+                                ng-model="edit.dpd.delay_time"
+                                min="{{edit.dpd.enabled && edit.ike_mode !== 'manual' ? 10 : ''}}"
+                                max="{{edit.dpd.enabled && edit.ike_mode !== 'manual' ? 300 : ''}}"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Sec_Range2')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Detection_Timeout')"></td>
+                        <td>
+                            <input type="number"
+                                ng-required="edit.dpd.enabled && edit.ike_mode !== 'manual'"
+                                ng-disabled="edit.ike_mode === 'auto'"
+                                number
+                                id="slct_advanceddetectiontimeout"
+                                ng-model="edit.dpd.detection_timeout"
+                                min="{{edit.dpd.enabled && edit.ike_mode !== 'manual' ? 30 : ''}}"
+                                max="{{edit.dpd.enabled && edit.ike_mode !== 'manual' ? 1800 : ''}}"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Sec_Range3')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Delay_Action')"></td>
+                        <td>
+                            <select id="slct_advanceddelayaction" ng-model="edit.dpd.action" ng-options="m.id as m.displayName for m in model.schema.dpdAction"></select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" ng-change="check_groups()" id="chk_advancedextendedauth" ng-model="edit.extended_authentication.enable"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Extended_Authentication')"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table class="s2s-extend-auth" ng-class="{nopHint: !edit.extended_authentication.enable}">
+                    <tr>
+                        <td>
+                            <input type="radio" ng-change="check_groups()" id="rdo_advanceduser" ng-model="edit.extended_authentication.type" value="user"></input>
+                        </td>
+                        <td ng-bind="DICT('Site_to_Site_User')"></td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.extended_authentication.type !== 'user'}">
+                        <td></td>
+                        <td ng-bind="DICT('Site_to_Site_User_Name')"></td>
+                        <td>
+                            <input type="text" id="txt_advancedusername"
+                                ng-disabled="!edit.extended_authentication.enable || edit.extended_authentication.type !== 'user' || edit.ike_mode === 'manual'"
+                                ng-required="edit.extended_authentication.enable && edit.extended_authentication.type === 'user' && edit.ike_mode !== 'manual'"
+                                ng-str-name="edit.extended_authentication.enable && edit.extended_authentication.type === 'user' && edit.ike_mode !== 'manual'"
+                                maxlength="32"
+                                ng-model="edit.extended_authentication.user_name"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.extended_authentication.type !== 'user'}">
+                        <td></td>
+                        <td ng-bind="DICT('Site_to_Site_Password')"></td>
+                        <td>
+                            <input type="password" id="txt_advancedpassword"
+                                ng-required="edit.extended_authentication.enable && edit.extended_authentication.type === 'user' && edit.ike_mode !== 'manual'"
+                                ng-disabled="!edit.extended_authentication.enable || edit.extended_authentication.type !== 'user' || edit.ike_mode === 'manual'"
+                                ng-maxlength="{{edit.extended_authentication.enable && edit.extended_authentication.type === 'user' && edit.ike_mode !== 'manual' ? 64 : ''}}"
+                                password
+                                ng-model="edit.extended_authentication.password"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" ng-change="check_groups()" id="rdo_advancedgroup" ng-model="edit.extended_authentication.type" value="group"></input>
+                        </td>
+                        <td ng-bind="DICT('Site_to_Site_Group')"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2" ng-class="{nopHint: edit.extended_authentication.type !== 'group' || !edit.extended_authentication.enable}">
+                <div class="grid-cntr">
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" id="btn_s2svpn_add_group" class="grid-btn-add" ng-disabled="disable_add_user_group" ng-click="funs.addS2SGroup()"></button>
+                            <button type="button" id="btn_s2svpn_edit_group" class="grid-btn-edit" ng-disabled="!edit.grid_group_checked.length" ng-click="funs.editS2SGroup()"></button>
+                            <button type="button" id="btn_s2svpn_del_group" class="grid-btn-delete" ng-disabled="disable_del_user_group" ng-click="funs.delS2SGroup()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridS2SGroup"></div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="chk_advancedsplitdns" ng-model="edit.split_dns.enable"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Split_DNS')"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <table class="s2s-split-dns" ng-class="{nopHint: !edit.split_dns.enable}">
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_DNS_Server1')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_advancedprimarydns" 
+                                name="txt_s2s_dns1"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                ng-required="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-ipv4-ip="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.primary_dns"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_DNS_Server2')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_advancedsecondarydns" 
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                name="txt_s2s_dns2"
+                                ng-ipv4-ip="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.secondary_dns"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name1')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_advanceddomainname1"
+                                ng-required="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[0].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name2')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                id="txt_advanceddomainname2"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[1].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name3')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                id="txt_advanceddomainname3"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[2].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name4')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                id="txt_advanceddomainname4"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[3].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name5')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                id="txt_advanceddomainname5"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[4].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Site_to_Site_Domain_Name6')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="edit.ike_mode === 'manual'"
+                                id="txt_advanceddomainname6"
+                                ng-domain-name="edit.split_dns.enable && edit.ike_mode !== 'manual'"
+                                ng-model="edit.split_dns.fqdn[5].domain_name"
+                                maxlength="253"
+                            ></input>
+                        </td>
+                        <td class="tip-info" ng-bind="DICT('Site_to_Site_Option')"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="ipsec_s2s_edit_failover.html" style="white-space: pre-line">
+    <style>
+        .mainWarningBox {
+            background-color: #FFE694;
+            padding:5px;border:1px red solid;
+            margin:5px 0px;
+            border-radius: 5px;
+        }
+    </style>
+    <message-box ng-show="tip.failover_waring.length">
+        <table>
+            <tr>
+                <td><img src="themes/img/icon/Status_warning_icon.gif" class="message-icon"></impg></td>
+                <td pg-bind-html="tip.failover_waring"></td>
+            </tr>
+        </table>
+    </message-box>
+    <table class="page-block-tb-list s2s-failover" ng-class="{nopHint: tip.failover_waring.length || edit.remote_endpoint.type === 'dynamic-ip'}"> <!--Use waring information to disable or enable blew block -->
+        <tr>
+            <td>
+                <input type="checkbox" id="chk_failovertunnelbackup" ng-model="edit.failover.enable" ng-disabled="model.disable_failover"></input>
+            </td>
+            <td ng-bind="DICT('Site_to_Site_Tunnel_Backup')"></td>
+        </tr>
+        <tr ng-class="{nopHint: !edit.failover.enable}">
+            <td></td>
+            <td ng-bind="DICT('Site_to_Site_Remote_Backup_IP_Addr')"></td>
+            <td>
+                <input type="text"
+                    id="txt_failoverremotebackupip" 
+                    ng-disabled="model.disable_failover || !edit.failover.enable"
+                    ng-fqdn-ipv4="!tip.failover_waring.length && edit.remote_endpoint.type !== 'dynamic-ip' && edit.failover.enable"
+                    ng-model="edit.failover.remote_backup_ip"
+                ></input>
+            </td>
+            <td class="tip-info" ng-bind="DICT('Site_to_Site_Name_Or_IPv4_Addr')"></td>
+        </tr>
+        <tr ng-class="{nopHint: !edit.failover.enable}">
+            <td></td>
+            <td ng-bind="DICT('Site_to_Site_Local_Interface')"></td>
+            <td>
+                <select id="slct_failoverlocalinterface"
+                        ng-model="edit.failover.interface"
+                        ng-disabled="model.disable_failover || !edit.failover.enable"
+                        ng-options="m.name as m.name for m in model.ifs"
+                ></select>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="s2s_group.html">
+<div class="ui-grid-custom-cntr">
+    <span ng-bind="MODEL_COL_FIELD.group"></span>
+    <info-icon context="MODEL_COL_FIELD.tip" ng-show="MODEL_COL_FIELD.tip"></info-icon>
+</div>
+</script>

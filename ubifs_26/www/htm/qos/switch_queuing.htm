@@ -1,0 +1,65 @@
+<form name="queingform" ng-controller="switchQueuingCtrl" ng-modification="dataReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Switch_Queuing')"></div>
+        <div class="page-button-container">
+            <button ng-disabled="LANChkInvalid || LAGChkInvalid || queingform.$invalid || userAccessFlag === 'RO'" class="btn-apply" ng-click="funs.save()">
+                <span ng-bind="DICT('Switch_Queuing_Apply')"></span>
+            </button>
+            <button ng-click="funs.cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Switch_Queuing_Cancel')"></span>
+            </button>
+            <button ng-disabled="userAccessFlag === 'RO'" ng-click="funs.restore()">
+                <span ng-bind="DICT('Switch_Queuing_Restore_Defaults')"></span>
+            </button>
+        </div>
+    </div>
+	<confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Switch_Queuing_LAN_Port_Queue_Weight')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridLanOptions"></div>
+            </div>
+            <div class="grid-err-info-cntr">
+                <div class="grid-err-info" ng-bind="DICT('Switch_Queuing_Msg')"></div>
+                <div class="grid-err-info" ng-show="LANChkInvalid" ng-if="LANChkInvalid">
+                    {{lanErrorMsg}}
+                </div>
+            </div>
+        </div>
+        <div class="grid-seperator"></div>
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Switch_Queuing_LAG_Port_Queue_Weight')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridLagOptions"></div>
+            </div>
+            <div class="grid-err-info-cntr">
+                <div class="grid-err-info" ng-show="LAGChkInvalid" ng-if="LAGChkInvalid">
+                    {{lagErrorMsg}}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="switch_queuing_inline_number_edit.html">
+<div class="ui-grid-custom-cntr">
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="MODEL_COL_FIELD+'' || col.colDef.emptyStr || ''"/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <input type="number" number
+			id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            min="{{col.colDef.min+'' || ''}}"
+            max="{{col.colDef.max+'' || ''}}"
+            ng-required="{{col.colDef.required === true}}"
+            ng-change="grid.appScope.funs.checkWeight() && col.colDef.change && col.colDef.change(row)"
+            ng-model="MODEL_COL_FIELD">
+        </input>
+    </div>
+</div>
+</script>

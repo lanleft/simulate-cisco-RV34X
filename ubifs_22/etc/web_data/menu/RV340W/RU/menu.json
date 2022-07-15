@@ -1,0 +1,104 @@
+[ 
+    {"name": "Getting_Started", "visible": "yes", "link": "#/GettingStarted", "templateUrl": "htm/system/getting_started.htm", "scripts": ["js/system/getting_started.js"], "children": []},
+    {"name": "Status_Statistics", "visible": "yes", "link": "#/Status_System_Stats", "templateUrl": "htm/stat/system_summary.htm", "scripts": ["js/lib/wan_lib.js", "js/stat/system_summary.js"], "children": [
+        {"name": "System Summary", "visible": "yes", "link": "#/Status_System_Stats", "templateUrl": "htm/stat/system_summary.htm", "scripts": ["js/lib/wan_lib.js", "js/stat/system_summary.js"], "children": []},
+        {"name": "TCP-IP_Services", "visible": "yes", "link": "#/Status_TCP_IP", "templateUrl": "htm/stat/tcp_ip_services.htm", "scripts": ["js/stat/tcp_ip_services.js"], "children": []},
+        {"name": "Port_Traffic", "visible": "yes", "link": "#/Status_Port_Traffic", "templateUrl": "htm/stat/port_traffic.htm", "scripts": ["js/stat/port_traffic.js"], "children": []},
+        {"name": "WAN_QoS_Statistics", "visible": "yes", "link": "#/Status_WAN_QoS", "templateUrl": "htm/stat/qos_statistics.htm", "scripts": ["js/stat/qos_statistics.js"], "children": []},
+        {"name": "Connected_Devices_ARP_Table", "visible": "yes", "link": "#/Status_ARP_Table", "templateUrl": "htm/stat/conn_devices.htm", "scripts": ["js/stat/conn_devices.js"], "children": []},
+        {"name": "Routing_Table", "visible": "yes", "link": "#/Status_Routing_status", "templateUrl": "htm/stat/routing_status.htm", "scripts": ["js/stat/routing_status.js"], "children": []},
+        {"name": "DHCP_Bindings", "visible": "yes", "link": "#/Status_DHCP_binding", "templateUrl": "htm/stat/dhcp_bindings.htm", "scripts": ["js/stat/dhcp_bindings.js"], "children": []},
+        {"name": "Mobile_Network", "visible": "yes", "link": "#/Status_Mobile_Network", "templateUrl": "htm/stat/mobile_network.htm", "scripts": ["js/stat/mobile_network.js"], "children": []},
+        {"name": "View_Logs", "visible": "yes", "link": "#/Status_View_Logs", "templateUrl": "htm/stat/view_logs.htm", "scripts": ["js/stat/view_logs.js"], "children": []},
+        {"name": "Captive_Portal_Status", "visible": "yes", "link": "#/captive_portal_status", "templateUrl": "htm/stat/captive_portal_state.htm", "scripts": ["js/stat/captive_portal_state.js"], "children": []}
+    ]},
+    {"name": "Administration", "visible": "yes", "link": "#/Admin_File_Management", "templateUrl": "htm/admin/admin_filemanage.htm", "scripts": [], "children": [
+        {"name": "File_Management", "visible": "yes", "link": "#/Admin_File_Management", "templateUrl": "htm/admin/admin_filemanage.htm", "scripts": [], "children": []},
+        {"name": "Reboot", "visible": "yes", "link": "#/Admin_Reboot", "templateUrl": "htm/admin/reboot.htm", "scripts": ["js/admin/reboot.js"], "children": []},
+        {"name": "Diagnostic", "visible": "yes", "link": "#/Admin_Diagnostic", "templateUrl": "htm/admin/diagnostic.htm", "scripts": ["js/admin/diagnostic.js"], "children": []},
+        {"name": "Certificate", "visible": "yes", "link": "#/Admin_Certificate", "templateUrl": "htm/admin/cert.htm", "scripts": ["js/admin/cert.js"], "children": []},
+        {"name": "Config_Management", "visible": "yes", "link": "#/Admin_Config_Management", "templateUrl": "htm/admin/config_management.htm", "scripts": ["js/admin/config_management.js"], "children": []}
+    ]},
+    {"name": "System_Configuration", "visible": "yes", "link": "#/System_Config_System", "templateUrl": "htm/system/system.htm", "scripts": ["js/system/system.js", "js/system/system.js"], "children": [
+        {"name": "System", "visible": "yes", "link": "#/System_Config_System", "templateUrl": "htm/system/system.htm", "scripts": ["js/system/system.js", "js/system/system.js"], "children": []},
+        {"name": "Time", "visible": "yes", "link": "#/System_Config_Time", "templateUrl": "htm/system/time.htm", "scripts": ["js/system/time.js", "js/system/Timezone.js"], "children": []},
+        {"name": "Log", "visible": "yes", "link": "#/System_Config_Log", "templateUrl": "htm/system/log.htm", "scripts": ["js/system/time.js", "js/system/log.js"], "children": []},
+        {"name": "Email", "visible": "yes", "link": "#/System_Config_Email", "templateUrl": "htm/system/email.htm", "scripts": ["js/system/email.js"], "children": []},
+        {"name": "User_Accounts", "visible": "yes", "link": "#/System_Config_User_Accounts", "templateUrl": "htm/system/user_account.htm", "scripts": ["js/system/user_account.js"], "children": []},
+        {"name": "User_Groups", "visible": "yes", "link": "#/System_Config_User_Groups", "templateUrl": "htm/system/user_group.htm", "scripts": ["js/system/user_group.js"], "children": []},
+        {"name": "IP_Address_Groups", "visible": "yes", "link": "#/System_Config_IP_Address", "templateUrl": "htm/system/ip_group.htm", "scripts": ["js/system/ip_group.js"], "children": []},
+        {"name": "SNMP", "visible": "yes", "link": "#/System_Config_SNMP", "templateUrl": "htm/system/snmp.htm", "scripts": ["js/system/snmp.js"], "children": []},
+        {"name": "Discovery_Bonjour", "visible": "yes", "link": "#/System_Config_Discovery_Bonjour", "templateUrl": "htm/system/discovery_bonjour.htm", "scripts": ["js/system/discovery_bonjour.js"], "children": []},
+        {"name": "LLDP", "visible": "yes", "link": "#/System_Config_LLDP", "templateUrl": "htm/system/lldp.htm", "scripts": ["js/system/lldp.js"], "children": []},
+        {"name": "Automatic_Updates", "visible": "yes", "link": "#/System_Config_Automatic_Updates", "templateUrl": "htm/system/automatic_updates.htm", "scripts": ["js/system/automatic_updates.js"], "children": []},
+        {"name": "Schedules", "visible": "yes", "link": "#/System_Config_Schedules", "templateUrl": "htm/system/schedule.htm", "scripts": ["js/system/schedule.js"], "children": []},
+        {"name": "Service_Management", "visible": "yes", "link": "#/System_Config_Service_Management", "templateUrl": "htm/system/service_management.htm", "scripts": ["js/system/service_management.js"], "children": []},
+        {"name": "PnP", "visible": "yes", "link": "#/System_Config_PnP", "templateUrl": "htm/system/pnp.htm", "scripts": ["js/system/pnp.js"], "children": []}
+    ]},
+    {"name": "WAN", "visible": "yes", "link": "#/WAN_Settings", "templateUrl": "htm/wan/wan_settings.htm", "scripts": ["js/lib/wan_lib.js", "js/wan/wan_settings.js"], "children": [
+        {"name": "WAN_Settings", "visible": "yes", "link": "#/WAN_Settings", "templateUrl": "htm/wan/wan_settings.htm", "scripts": ["js/lib/wan_lib.js", "js/wan/wan_settings.js"], "children": []},
+        {"name": "Multi_WAN", "visible": "yes", "link": "#/WAN_Multi_WAN", "templateUrl": "htm/wan/dual_wan.htm", "scripts": ["js/lib/wan_lib.js", "js/wan/dual_wan.js"], "children": []},
+        {"name": "Mobile_Network", "visible": "yes", "link": "#/WAN_Mobile_Network", "templateUrl": "htm/wan/wan_mobile.htm", "scripts": ["js/wan/wan_mobile.js"], "children": []},
+        {"name": "Dynamic_DNS", "visible": "yes", "link": "#/WAN_Dynamic_DNS", "templateUrl": "htm/wan/dynamic_dns.htm", "scripts": ["js/lib/wan_lib.js", "js/wan/dynamic_dns.js"], "children": []},
+        {"name": "Hardware_DMZ", "visible": "yes", "link": "#/WAN_Hardware_DMZ", "templateUrl": "htm/wan/hardware_dmz.htm", "scripts": ["js/wan/hardware_dmz.js"], "children": []},
+        {"name": "IPv6_Transition", "visible": "yes", "link": "#/WAN_IPv6_Transition", "templateUrl": "htm/wan/ipv6_transition.htm", "scripts": ["js/lib/wan_lib.js", "js/wan/ipv6_transition.js"], "children": []}
+    ]},
+    {"name": "LAN", "visible": "yes", "link": "#/LAN_Port_Settings", "templateUrl": "htm/lan/port_settings.htm", "scripts": ["js/lan/port_settings.js"],"children": [
+        {"name": "Port_Settings", "visible": "yes", "link": "#/LAN_Port_Settings", "templateUrl": "htm/lan/port_settings.htm", "scripts": ["js/lan/port_settings.js"], "children": []},
+        {"name": "VLAN_membership_Settings", "visible": "yes", "link": "#/LAN_VLAN", "templateUrl": "htm/lan/lan_vlan_membership.htm", "scripts": ["js/lan/lan_vlan_membership.js"], "children": []},
+        {"name": "VLAN_Settings", "visible": "yes", "link": "#/LAN_VLAN_Settings", "templateUrl": "htm/lan/vlan_settings.htm", "scripts": [], "children": []},
+        {"name": "LAN_DHCP_Settings", "visible": "yes", "link": "#/LAN_DHCP_Settings", "templateUrl": "htm/lan/lan_dhcp_settings.htm", "scripts": ["js/lan/lan_dhcp_settings.js"], "children": []},
+        {"name": "Static_DHCP", "visible": "yes", "link": "#/LAN_Static_DHCP", "templateUrl": "htm/lan/lan_dhcp_static.htm", "scripts": ["js/lan/lan_dhcp_static.js"], "children": []},
+        {"name": "802.1X_Configuration", "visible": "yes", "link": "#/LAN_802.1X", "templateUrl": "htm/lan/lan_8021x.htm", "scripts": ["js/lan/lan_8021x.js"], "children": []},
+        {"name": "DNS_Local_Database", "visible": "yes", "link": "#/LAN_DNS", "templateUrl": "htm/lan/lan_dns_db.htm", "scripts": ["js/lan/lan_dns_db.js"], "children": []},
+        {"name": "Router_Advertisement", "visible": "yes", "link": "#/LAN_Router_Ad", "templateUrl": "htm/lan/lan_ra.htm", "scripts": ["js/lan/lan_ra.js"], "children": []}
+    ]},
+    {"name": "Wireless", "visible": "yes", "link": "#/wlan_settings", "templateUrl": "htm/wlan/wlan_settings.htm", "scripts": ["js/wlan/wlan_settings.js", "js/wlan/wlan_wps.js"],"children": [
+        {"name": "Basic_Settings", "visible": "yes", "link": "#/wlan_settings", "templateUrl": "htm/wlan/wlan_settings.htm", "scripts": ["js/wlan/wlan_settings.js", "js/wlan/wlan_wps.js"], "children": []},
+        {"name": "Teleworker_VPN_Client_Advanced_Settings", "visible": "yes", "link": "#/wlan_adv", "templateUrl": "htm/wlan/wlan_adv.htm", "scripts": ["js/wlan/wlan_adv.js"], "children": []},
+        {"name": "Captive_Portal", "visible": "yes", "link": "#/captive_portal", "templateUrl": "htm/wlan/captive_portal.htm", "scripts": ["js/wlan/captive_portal.js"], "children": []},
+        {"name": "WPS", "visible": "yes", "link": "#/wlan_wps", "templateUrl": "htm/wlan/wlan_wps.htm", "scripts": ["js/wlan/wlan_wps.js"], "children": []}
+    ]},
+    {"name": "Routing", "visible": "yes", "link": "#/Routing_IGMP_Proxy", "templateUrl": "htm/routing/igmp_proxy.htm", "scripts": ["js/routing/igmp_proxy.js"],"children": [
+        {"name": "IGMP_Proxy", "visible": "yes", "link": "#/Routing_IGMP_Proxy", "templateUrl": "htm/routing/igmp_proxy.htm", "scripts": ["js/routing/igmp_proxy.js"], "children": []},
+        {"name": "RIP", "visible": "yes", "link": "#/Routing_RIP", "templateUrl": "htm/routing/rip.htm", "scripts": ["js/routing/rip.js"], "children": []},
+        {"name": "Static_Routing", "visible": "yes", "link": "#/Routing_Static_Routing", "templateUrl": "htm/routing/static_routing.htm", "scripts": ["js/routing/static_routing.js"], "children": []}
+    ]},
+    {"name": "Firewall", "visible": "yes", "link": "#/Firewall_Basic_Settings", "templateUrl": "htm/firewall/basic_settings.htm", "scripts": ["js/firewall/basic_settings.js"],"children": [
+        {"name": "Basic_Settings", "visible": "yes", "link": "#/Firewall_Basic_Settings", "templateUrl": "htm/firewall/basic_settings.htm", "scripts": ["js/firewall/basic_settings.js"], "children": []},
+        {"name": "Access_Rules", "visible": "yes", "link": "#/Firewall_Access_Rules", "templateUrl": "htm/firewall/access_rules.htm", "scripts": ["js/firewall/access_rules.js"], "children": []},
+        {"name": "Network_Address_Translation", "visible": "yes", "link": "#/Firewall_NAT", "templateUrl": "htm/firewall/network_address_translation.htm", "scripts": ["js/firewall/network_address_translation.js"], "children": []},
+        {"name": "Static_NAT", "visible": "yes", "link": "#/Firewall_Static_NAT", "templateUrl": "htm/firewall/static_nat.htm", "scripts": ["js/firewall/static_nat.js"], "children": []},
+        {"name": "Port_Forwarding", "visible": "yes", "link": "#/Firewall_port_forwarding", "templateUrl": "htm/firewall/port_forwarding.htm", "scripts": ["js/firewall/port_forwarding.js"], "children": []},
+        {"name": "Port_Triggering", "visible": "yes", "link": "#/Firewall_Port_triggering", "templateUrl": "htm/firewall/port_triggering.htm", "scripts": ["js/firewall/port_triggering.js"], "children": []},
+        {"name": "Session_Timeout", "visible": "yes", "link": "#/Firewall_Session_timeout", "templateUrl": "htm/firewall/session_timeout.htm", "scripts": ["js/firewall/session_timeout.js"], "children": []},
+        {"name": "DMZ_Host", "visible": "yes", "link": "#/Firewall_DMZ_host", "templateUrl": "htm/firewall/dmz_host.htm", "scripts": ["js/firewall/dmz_host.js"], "children": []}
+    ]},
+    {"name": "Security", "visible": "yes", "link": "#/Security_Application_Controller", "templateUrl": "htm/security/application_controller.htm", "scripts": [], "children": [
+        {"name": "Application_Control", "visible": "yes", "link": "#/Security_Application_Controller", "templateUrl": "htm/security/application_controller.htm", "scripts": [], "children": [
+            {"name": "Settings", "visible": "yes", "link": "#/Security_Application_Controller", "templateUrl": "htm/security/application_controller.htm", "scripts": [], "children": []},
+            {"name": "Application_Statistics", "visible": "yes", "link": "#/app_statistics", "templateUrl": "htm/stat/app_statistics.htm", "scripts": [], "children": []},
+            {"name": "Client_Statistics", "visible": "yes", "link": "#/client_statistics", "templateUrl": "htm/stat/client_statistics.htm", "scripts": [], "children": []}
+        ]},
+        {"name": "Web_Filtering", "visible": "yes", "link": "#/Security_Web_Filtering", "templateUrl": "htm/security/web_filtering.htm", "scripts": ["js/security/web_filtering.js"], "children": []},	
+        {"name": "Content_Filter", "visible": "yes", "link": "#/Security_Content_Filter", "templateUrl": "htm/security/content_filter.htm", "scripts": ["js/security/content_filter.js"], "children": []},
+        {"name": "IP_Source_Guard", "visible": "yes", "link": "#/Security_IP_Source_Guard", "templateUrl": "htm/security/ip_source_guard.htm", "scripts": ["js/security/ip_source_guard.js"], "children": []},
+        {"name": "Umbrella", "visible": "yes", "link": "#/Security_Umbrella", "templateUrl": "htm/security/umbrella.htm", "scripts": ["js/security/umbrella.js"], "children": []},
+        {"name": "Threat_IPS_Status", "visible": "yes", "link": "#/Security_Threat_Ips_Status", "templateUrl": "htm/security/dashboard.htm", "scripts": [], "children": [
+            {"name": "Status", "visible": "yes", "link": "#/Security_Threat_Ips_Status", "templateUrl": "htm/security/dashboard.htm", "scripts": [], "children": []},
+            {"name": "Anti_Threat", "visible": "yes", "link": "#/Security_Anti_Threat", "templateUrl": "htm/security/anti_threat.htm", "scripts": [], "children": []},
+            {"name": "Ips", "visible": "yes", "link": "#/Ips", "templateUrl": "htm/security/ips.htm", "scripts": [], "children": []}
+        ]}
+    ]},
+    {"name": "QoS", "visible": "yes", "link": "#/QoS_Traffic_Classes", "templateUrl": "htm/qos/traffic_classes.htm", "scripts": ["js/qos/traffic_classes.js"], "children": [
+        {"name": "Traffic_Classes", "visible": "yes", "link": "#/QoS_Traffic_Classes", "templateUrl": "htm/qos/traffic_classes.htm", "scripts": ["js/qos/traffic_classes.js"], "children": []},
+        {"name": "WAN_Queuing", "visible": "yes", "link": "#/QoS_WAN_Queuing", "templateUrl": "htm/qos/qos_lan2wan.htm", "scripts": ["js/qos/qos_lan2wan.js"], "children": []},
+        {"name": "WAN_Policing", "visible": "yes", "link": "#/QoS_WAN_Policing", "templateUrl": "htm/qos/qos_wan2lan.htm", "scripts": ["js/qos/qos_wan2lan.js"], "children": []},
+        {"name": "WAN_Bandwidth_Management", "visible": "yes", "link": "#/QoS_WAN_Bandwidth", "templateUrl": "htm/qos/qos_bandwidth_management.htm", "scripts": ["js/qos/qos_bandwidth_management.js"], "children": []},
+        {"name": "Switch_Classification", "visible": "yes", "link": "#/QoS_Switch_Classification", "templateUrl": "htm/qos/switch_classification.htm", "scripts": ["js/qos/switch_classification.js"], "children": []},
+        {"name": "Switch_Queuing", "visible": "yes", "link": "#/QoS_Switch_Queuing", "templateUrl": "htm/qos/switch_queuing.htm", "scripts": ["js/qos/switch_queuing.js"], "children": []}
+
+    ]},
+    {"name": "Configuration_Wizards", "visible": "yes", "link": "#/Configuration_Wizards", "templateUrl": "htm/system/wizards.htm", "scripts": [], "children": []},
+    {"name": "License", "visible": "yes", "link": "#/Admin_License", "templateUrl": "htm/admin/smart_license.htm", "scripts": ["js/admin/smart_license.js"], "children": []}
+]

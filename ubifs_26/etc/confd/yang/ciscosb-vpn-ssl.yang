@@ -1,0 +1,308 @@
+module ciscosb-vpn-ssl {
+    namespace "http://cisco.com/ns/ciscosb/vpn-ssl";
+ prefix ciscosb-vpn-ssl;
+ import ietf-inet-types { prefix inet; }
+ import ietf-interfaces { prefix if; }
+ organization "Cisco Systems, Inc.";
+ contact
+  "Cisco Systems, Inc. 
+  Customer Service
+  E-mail: feiqiu@cisco.com";
+ description
+  "This module contains a collection of YANG definitions 
+  for Cisco SSL VPN configuration.
+  Copyright (c) 2015 by Cisco Systems, Inc.
+  All rights reserved.";
+  revision 2016-05-05 {
+      description "Add revision ";
+      reference "";
+  }
+ revision 2015-04-29 {
+  description
+   "Initial revision.";
+  reference
+   "Proposed SSL VPN configuration";
+ }
+ grouping IE-PROXY {
+  leaf address {
+   type inet:host;
+   description "IP or domain name.";
+  }
+  leaf port {
+   type uint16 {
+    range "1 .. 65535";
+   }
+   description "Port.";
+  }
+  list ie-proxy-exception {
+   key ip;
+   leaf ip {
+    type inet:host;
+    description "IP or domain name";
+   }
+  }
+ }
+ container sslvpn {
+  leaf enable {
+   type boolean;
+   default false;
+  }
+  leaf interface {
+   type if:interface-ref;
+   description "Interface";
+  }
+  leaf gateway-port {
+   type uint16 {
+    range "1 .. 65535";
+   }
+   default "443";
+   description "Gateway port";
+  }
+  leaf certificate {
+   type string;
+   description "Refer to certificate file";
+  }
+  leaf address-pool {
+   type inet:ipv4-address;
+   description "Client address pool";
+  }
+  leaf netmask {
+   type inet:ipv4-address;
+   description "Client address netmask";
+  }
+  leaf domain-name {
+   type string;
+   description "Client domain";
+  }
+  leaf login-banner {
+   type string;
+   description "Login banner";
+  }
+  leaf idle-timeout {
+   type uint32 {
+    range "60 .. 86400";
+   }
+   default "2100";
+   units "seconds";
+   description "Idle timeout";
+  }
+  leaf session-timeout {
+   type uint32 {
+    range "0 .. 1209600";
+   }
+   default "0";
+   units "seconds";
+   description "Session timeout";
+  }
+  leaf client-dpd-timeout {
+   type uint16 {
+    range "0 .. 3600";
+   }
+   default "300";
+   units "seconds";
+   description "Client DPD timeout";
+  }
+  leaf gateway-dpd-timeout {
+   type uint16 {
+    range "0 .. 3600";
+   }
+   default "300";
+   units "seconds";
+   description "Gateway DPD timeout";
+  }
+  leaf keep-alive {
+   type uint16 {
+    range "0 .. 600";
+   }
+   default "30";
+   units "seconds";
+   description "Keep alive";
+  }
+  leaf lease-duration {
+   type uint32 {
+    range "600 .. 1209600";
+   }
+   default "43200";
+   units "seconds";
+   description "Lease duration";
+  }
+  leaf max-mtu {
+   type uint16 {
+    range "256 .. 1406";
+   }
+   default "1406";
+   description "Max MTU";
+  }
+  leaf retry-interval {
+   type uint16 {
+    range "0 .. 43200";
+   }
+   default "3600";
+   units "seconds";
+   description "Retry interval";
+  }
+  leaf max-session {
+   type uint16;
+   description "Max sessions";
+  }
+  container group-policies {
+   list group-policy {
+    key policy-name;
+    leaf enable {
+     type boolean;
+     description "Enable the policy";
+    }
+    leaf policy-name {
+     type string;
+     mandatory true;
+     description "Policy name";
+    }
+    leaf primary-dns-server {
+     type inet:ipv4-address;
+     description "Primary DNS server.";
+    }
+    leaf secondary-dns-server {
+     type inet:ipv4-address;
+     description "Secondary DNS server.";
+    }
+    leaf primary-wins-server {
+     type inet:ipv4-address;
+     description "Primary WINS server.";
+    }
+    leaf secondary-wins-server {
+     type inet:ipv4-address;
+     description "Secondary WINS server.";
+    }
+    leaf description {
+      type string;
+      description "Description for the policy";
+    }
+    choice ie-proxy {
+     default disabled;
+     case none {
+      leaf none {
+       type empty;
+      }
+     }
+     case auto {
+      container auto {
+       uses IE-PROXY;
+      }
+     }
+     case bypass-local {
+      container bypass-local {
+       uses IE-PROXY;
+      }
+     }
+     case disabled {
+      leaf disabled {
+       type empty;
+      }
+     }
+    }
+    container split-tunnelling {
+     leaf enable {
+      type boolean;
+      description "Enable split tunnel";
+     }
+     choice split-selection {
+      case include-traffic {
+       leaf include-traffic {
+        type empty;
+       }
+      }
+      case exclude-traffic {
+       leaf exclude-local-lan {
+        type boolean;
+        description "Exclude local lan";
+       }
+      }
+     }
+     list split-network {
+      key ip;
+      leaf ip {
+       type inet:ipv4-address;
+       description "IP";
+      }
+      leaf netmask {
+       type inet:ipv4-address;
+       description "Netmask";
+      }
+     }
+     list split-dns {
+                                                key domain;
+                                                leaf domain {
+                                                        type string;
+                                                }
+                                        }
+    }
+   }
+  }
+ }
+ container sslvpn-state {
+  container group-policies {
+   list group-policy{
+    config false;
+    key policy-name;
+    leaf policy-name {
+     type string;
+     description "Policy name";
+    }
+    leaf sessions {
+     type uint16;
+     description "Total sessions that connected";
+    }
+    list client {
+     key session-id;
+     leaf session-id {
+                     type uint16;
+                        description "When connected, there will allocated one session id";
+                    }
+     leaf user-name {
+                        type string;
+                        description "User name";
+                    }
+     leaf ip {
+      type inet:ipv4-address;
+      description "IP address of Client";
+     }
+     leaf vip{
+      type inet:ipv4-address;
+      description "Virtual IP of Client";
+     }
+     leaf tx-bytes {
+      type uint32;
+      units "bytes";
+      description "TX-bytes";
+     }
+     leaf rx-bytes {
+      type uint32;
+      units "bytes";
+      description "RX-bytes";
+     }
+     leaf tx-packets {
+      type uint32;
+      description "TX-packets";
+     }
+     leaf rx-packets {
+      type uint32;
+      description "RX-packets";
+     }
+     leaf connect-time {
+      type uint32;
+      description "Connected time";
+     }
+    }
+   }
+  }
+ }
+ rpc ssl-disconnect {
+  input {
+   leaf session-id {
+    type uint16;
+    description "The session id that should be disconnected";
+   }
+  }
+  description "Do disconnect the ssl vpn";
+ }
+}

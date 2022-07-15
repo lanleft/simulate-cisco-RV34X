@@ -1,0 +1,8 @@
+Package: cyclesoak
+Version: none-1
+Depends: libc, librt, libpthread, libgdbm
+Source: package/freescale/cyclesoak
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 5276
+Description:  Cyclesoak

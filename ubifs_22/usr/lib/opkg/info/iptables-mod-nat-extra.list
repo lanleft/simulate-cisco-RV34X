@@ -1,0 +1,4 @@
+/usr/lib/iptables/libipt_webstr.so
+/usr/lib/iptables/libipt_NETMAP.so
+/usr/lib/iptables/libipt_TRIGGER.so
+/usr/lib/iptables/libip6t_NETMAP.so

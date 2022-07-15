@@ -1,0 +1,8 @@
+Package: trustpool
+Version: 2.3.0-3
+Depends: libc, librt, libpthread, libopenssl
+Source: package/cisco/trustpool
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 21357
+Description:  trustpool.

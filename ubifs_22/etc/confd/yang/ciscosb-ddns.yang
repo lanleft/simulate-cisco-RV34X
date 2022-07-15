@@ -1,0 +1,107 @@
+module ciscosb-ddns {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/ddns";
+  prefix ciscosb-ddns;
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ciscosb-types { prefix ciscosb-types; }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-01-25 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-01 {
+    description
+      "First revision DDNS module";
+  }
+  augment "/if:interfaces-state/if:interface" {
+    container ddns {
+      container status {
+          config false;
+          leaf state {
+            type enumeration {
+              enum registered;
+              enum registering;
+              enum noip;
+              enum error;
+              enum disabled;
+            }
+            description
+             "The current state of the DDNS registration.  Options as follows:
+                registered - The device has successfully registered with the provider.
+                registering - A registration activity is in progress.
+                noip - The interface does not have a valid IP address to register.
+                error - The registration attempt failed. More information can be
+                              found in the detail field.
+                disabled - This registration is disabled by configuration.";
+          }
+          leaf detail {
+            type string;
+            description
+             "A human readable string providing more detail about the current status.";
+          }
+          leaf registration-time {
+            type yang:date-and-time;
+            description
+             "The date and time of the last registration attempt.";
+          }
+        }
+    }
+  }
+  container providers {
+   leaf-list provider {
+    type string;
+         description "ddns provider name";
+   }
+  }
+  augment "/if:interfaces/if:interface" {
+    container ddns {
+      leaf provider {
+       type leafref {
+             path "/providers/provider";
+         }
+      }
+      leaf hostname {
+        type inet:domain-name;
+        description
+         "The fully qualified domain name of this interface to be registered
+          with the DDNS provider.";
+      }
+      leaf username {
+        default "";
+        type string;
+        description
+         "The username to be provided when registering with the DDNS provider.";
+      }
+      leaf password {
+     type ciscosb-types:aes-cfb-128-encrypted-string;
+        description
+         "The password to be provided when registering with the DDNS provider.";
+      }
+      leaf periodic-update-interval {
+        type uint32;
+        default 0;
+        description
+         "Interval in minutes between periodic updates.  If set to 0, then
+          updates are done only when the address of the interface changes.";
+      }
+      leaf enable {
+        type boolean;
+        default "false";
+        description
+         "Controls whether or not this DDNS registration is active.  If false,
+          then no registration will be made.";
+      }
+    }
+  }
+}

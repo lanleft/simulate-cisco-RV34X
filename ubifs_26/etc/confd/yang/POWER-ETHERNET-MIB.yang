@@ -1,0 +1,247 @@
+module POWER-ETHERNET-MIB {
+  namespace "http://tail-f.com/ns/mibs/POWER-ETHERNET-MIB/200311240000Z";
+  prefix POWER_ETHERNET_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "POWER-ETHERNET-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import SNMPv2-TC {
+    prefix SNMPv2-TC;
+  }
+  import SNMP-FRAMEWORK-MIB {
+    prefix SNMP-FRAMEWORK-MIB;
+  }
+  revision 2003-11-24 {
+    description
+      "";
+  }
+  container POWER-ETHERNET-MIB {
+    container pethPsePortTable {
+      list pethPsePortEntry {
+        key "pethPsePortGroupIndex pethPsePortIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.105.1.1";
+        leaf pethPsePortGroupIndex {
+          type pethPsePortGroupIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.1";
+        }
+        leaf pethPsePortIndex {
+          type pethPsePortIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.2";
+        }
+        leaf pethPsePortAdminEnable {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.3";
+        }
+        leaf pethPsePortPowerPairsControlAbility {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.4";
+          config false;
+        }
+        leaf pethPsePortPowerPairs {
+          type pethPsePortPowerPairsType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.5";
+        }
+        leaf pethPsePortDetectionStatus {
+          type pethPsePortDetectionStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.6";
+          config false;
+        }
+        leaf pethPsePortPowerPriority {
+          type pethPsePortPowerPriorityType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.7";
+        }
+        leaf pethPsePortMPSAbsentCounter {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.8";
+          config false;
+        }
+        leaf pethPsePortType {
+          type SNMP-FRAMEWORK-MIB:SnmpAdminString;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.9";
+        }
+        leaf pethPsePortPowerClassifications {
+          type pethPsePortPowerClassificationsType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.10";
+          config false;
+        }
+        leaf pethPsePortInvalidSignatureCounter {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.11";
+          config false;
+        }
+        leaf pethPsePortPowerDeniedCounter {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.12";
+          config false;
+        }
+        leaf pethPsePortOverLoadCounter {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.13";
+          config false;
+        }
+        leaf pethPsePortShortCounter {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.1.1.14";
+          config false;
+        }
+      }
+    }
+    container pethMainPseTable {
+      list pethMainPseEntry {
+        key "pethMainPseGroupIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1";
+        leaf pethMainPseGroupIndex {
+          type pethMainPseGroupIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1.1.1";
+        }
+        leaf pethMainPsePower {
+          type pethMainPsePowerType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1.1.2";
+          config false;
+        }
+        leaf pethMainPseOperStatus {
+          type pethMainPseOperStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1.1.3";
+          config false;
+        }
+        leaf pethMainPseConsumptionPower {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1.1.4";
+          config false;
+        }
+        leaf pethMainPseUsageThreshold {
+          type pethMainPseUsageThresholdType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.3.1.1.5";
+        }
+      }
+    }
+    container pethNotificationControlTable {
+      list pethNotificationControlEntry {
+        key "pethNotificationControlGroupIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.105.1.4.1";
+        leaf pethNotificationControlGroupIndex {
+          type pethNotificationControlGroupIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.4.1.1.1";
+        }
+        leaf pethNotificationControlEnable {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.3.6.1.2.1.105.1.4.1.1.2";
+        }
+      }
+    }
+  }
+  typedef pethPsePortGroupIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef pethPsePortIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef pethPsePortPowerPairsType {
+    type enumeration {
+      enum "signal" {
+        value 1;
+      }
+      enum "spare" {
+        value 2;
+      }
+    }
+  }
+  typedef pethPsePortDetectionStatusType {
+    type enumeration {
+      enum "disabled" {
+        value 1;
+      }
+      enum "searching" {
+        value 2;
+      }
+      enum "deliveringPower" {
+        value 3;
+      }
+      enum "fault" {
+        value 4;
+      }
+      enum "test" {
+        value 5;
+      }
+      enum "otherFault" {
+        value 6;
+      }
+    }
+  }
+  typedef pethPsePortPowerPriorityType {
+    type enumeration {
+      enum "critical" {
+        value 1;
+      }
+      enum "high" {
+        value 2;
+      }
+      enum "low" {
+        value 3;
+      }
+    }
+  }
+  typedef pethPsePortPowerClassificationsType {
+    type enumeration {
+      enum "class0" {
+        value 1;
+      }
+      enum "class1" {
+        value 2;
+      }
+      enum "class2" {
+        value 3;
+      }
+      enum "class3" {
+        value 4;
+      }
+      enum "class4" {
+        value 5;
+      }
+    }
+  }
+  typedef pethMainPseGroupIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef pethMainPsePowerType {
+    type uint32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef pethMainPseOperStatusType {
+    type enumeration {
+      enum "on" {
+        value 1;
+      }
+      enum "off" {
+        value 2;
+      }
+      enum "faulty" {
+        value 3;
+      }
+    }
+  }
+  typedef pethMainPseUsageThresholdType {
+    type int32 {
+      range "1 .. 99";
+    }
+  }
+  typedef pethNotificationControlGroupIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+}

@@ -1,0 +1,9 @@
+Package: vpn-clear-connections
+Version: fsl-1
+Depends: libc, librt, libpthread, libnetfilter-conntrack
+Source: package/freescale/vpn-clear-connections
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 2944
+Description:  This package provides and utility using which we can clear connections.
+ The filters like SRC subnet of the connections and DST subnet of the connection are mandatory.

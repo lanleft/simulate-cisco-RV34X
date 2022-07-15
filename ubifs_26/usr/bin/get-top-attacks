@@ -1,0 +1,28 @@
+#!/bin/sh
+
+db="/tmp/stat.db"
+IPSFILE=/tmp/ipstafile
+
+# This is being called as
+# get-top-attacks num 10
+
+num=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "num") {print $(I+1)};}'`
+
+sql="SELECT ipssid,sig.name,sig.impact,sig.description,sig.recommend,sig.classtype,sig.severity,x from (SELECT sid as ipssid, count(*) AS x FROM ips GROUP BY sid ORDER BY x DESC LIMIT $num) INNER JOIN sig on sig.sid=ipssid;"
+
+sqlite3 "$db" "$sql" >$IPSFILE
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  sid=`echo $line | awk -F'|' '{print $1}'`
+  name=`echo $line | awk -F'|' '{print $2}'`
+  impact=`echo $line | awk -F'|' '{print $3}'`
+  description=`echo $line | awk -F'|' '{print $4}'`
+  recommend=`echo $line | awk -F'|' '{print $5}'`
+  classtype=`echo $line | awk -F'|' '{print $6}'`
+  severity=`echo $line | awk -F'|' '{print $7}'`
+  cc=`echo $line | awk -F'|' '{print $8}'`
+
+  echo "attacks __BEGIN"
+  echo "id $sid name \"$name\" impact \"$impact\" description \"$description\" recommendation \"$recommend\" category \"$category\" severity \"$severity\" clients-count $cc "
+  echo "attacks __END"
+done < $IPSFILE

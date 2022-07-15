@@ -1,0 +1,8 @@
+Package: namesvr
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Source: package/cisco/namesvr
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 37800
+Description:  namesvr.

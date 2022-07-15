@@ -1,0 +1,26 @@
+module ciscosb-microsemi {
+    namespace "http://cisco.com/ns/ciscosb/microsemi";
+    prefix ciscosb-microsemi;
+    import ciscosb-poe { prefix poe; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module contains microsemi specific definitions.";
+    revision 2017-05-09 {
+        description
+            "Initial revision.";
+        reference "TODO";
+    }
+    augment "/poe:poe-state" {
+        container microsemi {
+            leaf error-code {
+                type enumeration {
+                    enum none;
+                    enum vop;
+                    enum unknown;
+                }
+            }
+        }
+    }
+}

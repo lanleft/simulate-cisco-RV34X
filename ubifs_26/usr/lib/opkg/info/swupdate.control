@@ -1,0 +1,8 @@
+Package: swupdate
+Version: 3.1
+Depends: libc, librt, libpthread, curl, cjson, libopenssl
+Source: package/swupdate
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 16484
+Description:  swupdate application for automatic software update checks.

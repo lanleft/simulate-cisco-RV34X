@@ -1,0 +1,98 @@
+module ciscosb-lan-dot1x {
+    namespace "http://cisco.com/ns/ciscosb/lan-dot1x";
+    prefix ciscosb-lan-dot1x;
+    import ietf-interfaces { prefix if; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define 802.1x based authentication.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-21 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity auto {
+        base authorized-mode;
+    }
+    identity force {
+        base authorized-mode;
+    }
+    identity authorized-mode {
+    }
+    typedef Authorized-mode-type {
+        type identityref {
+            base "authorized-mode";
+        }
+    }
+    identity force-authorized {
+        base auth-status;
+    }
+    identity force-unauthorized {
+        base auth-status;
+    }
+    identity authFailed {
+        base auth-status;
+    }
+    identity authenticating {
+        base auth-status;
+    }
+    identity authorized {
+        base auth-status;
+    }
+    identity auth-status {
+    }
+    typedef Auth-status-type {
+        type identityref {
+            base "auth-status";
+        }
+    }
+    container dot1x {
+        leaf enable {
+            type boolean;
+            default false;
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container dot1x {
+            leaf enable {
+                type boolean;
+                default true;
+            }
+            leaf authorized-mode {
+                description "Selection one mode: force authenticat , force un authenticate
+                                or auto. ";
+                type Authorized-mode-type;
+                default force;
+            }
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        container dot1x {
+            leaf enable {
+                type boolean;
+            }
+            leaf authorized-mode {
+                description "Selection one mode: force authenticat , force unauthenticate
+                                or auto. ";
+                type Authorized-mode-type;
+            }
+            leaf auth-status {
+                description "Indicate current authenticate status for current port. ";
+                type Auth-status-type;
+            }
+            leaf user {
+                description "Indicate  user name  for current port. ";
+                type string;
+            }
+        }
+    }
+}

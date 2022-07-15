@@ -1,0 +1,8 @@
+Package: firmware
+Version: 1-1
+Depends: libc, librt, libpthread
+Source: package/freescale/firmware
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 13625
+Description:  Firmware Update Manager.

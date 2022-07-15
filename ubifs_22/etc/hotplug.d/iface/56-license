@@ -1,0 +1,39 @@
+#!/bin/sh
+# This script is executed as part of the hotplug event with
+# HOTPLUG_TYPE=iface, triggered by various scripts when an interface
+# is configured (ACTION=ifup) or deconfigured (ACTION=ifdown).  The
+# interface is available as INTERFACE, the real device as DEVICE.
+
+. /lib/functions/network.sh
+
+
+[ "$DEVICE" == "lo" ] && exit 0
+usb_exist=$(echo "${INTERFACE}" | grep "usb")
+
+local physical_ifname=`uci get network.$INTERFACE.ifname`
+echo "interface: $INTERFACE, physical_ifname: $physical_ifname" > /tmp/license_test.txt
+case "$ACTION" in
+        ifup)
+                if [ "$physical_ifname" = "eth0" ] || [ "$physical_ifname" = "eth2" ] || [ "$usb_exist" != "" ]
+                then
+                    #load feature info from confd, then do request
+                    echo "interface up" >> /tmp/license_test.txt
+                                        confd_cmd -c "x /license/features[enable='true']" | awk -F[{}]  '{print $2}' | while read name; do
+                        enabled=`confd_cmd -c "mget /license/features{$name}/enable"`
+                        count=`confd_cmd -c "mget /license/features{$name}/count"`
+                        echo "features name: $name, enabled: $enabled, count: $count" >> /tmp/license_test.txt
+                        if [ $enabled == 'true' ]; then
+                            echo "do request feature $name, count $count" >> /tmp/license_test.txt
+                            /usr/bin/license test requestEntitlement name $name count $count  >> /tmp/license_test.txt 2>&1
+							result=`cat /tmp/license_test.txt`
+							echo "$result" | grep "The entitlement is already requested"
+							if [ $? = 0 ]; then
+							    echo "Release $name entitlement" >> /tmp/license_test.txt
+                                /usr/bin/license test releaseEntitlement name $name >> /tmp/license_test.txt 2>&1
+                                /usr/bin/license test requestEntitlement name $name count $count  >> /tmp/license_request.txt 2>&1
+							fi
+                        fi
+                    done
+                fi
+        ;;
+esac

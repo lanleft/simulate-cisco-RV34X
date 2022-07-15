@@ -1,0 +1,26 @@
+#!/bin/sh
+
+pid="$1"
+index="$2"
+STATUSFILE="/tmp/stats/snmpstatscomplete"
+#rm -rf $STATUSFILE
+
+# sh /usr/bin/snmpscript
+
+/usr/bin/snmp_lan_port_stats $pid $index
+#index=$?
+index=2001
+
+/usr/bin/snmp_wan_port_stats $pid $index
+index=$?
+
+sh /usr/bin/snmp_iface_stats.sh
+
+case $pid in
+	RV340W|RV160W|RV260W)
+		/usr/bin/snmp_wlan_port_stats $index
+	;;
+esac
+
+# This file indicates that all port stats are done to avod raise conditions.
+touch $STATUSFILE

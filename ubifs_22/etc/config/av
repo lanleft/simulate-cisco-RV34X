@@ -1,0 +1,27 @@
+config protocol 'http'
+	option action 'log-destory'
+
+config protocol 'ftp'
+	option action 'log'
+
+config protocol 'smtp'
+	option action 'log-destory'
+
+config protocol 'pop3'
+	option action 'log-destory'
+
+config protocol 'imap'
+	option action 'log-destory'
+
+config threshold 'size'
+	option value '2'
+
+config av 'av'
+	option http 'on'
+	option ftp  'on'
+	option smtp 'on'
+	option pop3 'off'
+	option imap 'off'
+	option size 'on'
+	option log_level '6'
+	option enable 'false'

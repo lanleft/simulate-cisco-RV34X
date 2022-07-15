@@ -1,0 +1,81 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+WIFI_IFACE="$1"
+WIFI_OPT="$2"
+
+[ -z "$WIFI_IFACE" -o -z "$WIFI_OPT" ] && return
+
+scan_wifi() {
+	local cfgfile="$1"
+	DEVICES=
+	wl0_VIFS=
+	wl1_VIFS=
+
+	config_cb() {
+		local type="$1"
+		local section="$2"
+
+		# section start
+		case "$type" in
+			wifi-device)
+				append DEVICES "$section"
+				#config_set "$section" vifs ""
+				config_set "$section" ht_capab ""
+			;;
+		esac
+
+		# section end
+		config_get TYPE "$CONFIG_SECTION" TYPE
+		case "$TYPE" in
+			wifi-iface)
+				config_get device "$CONFIG_SECTION" device
+				eval append ${device}_VIFS "$CONFIG_SECTION"
+				eval vifs="\${${device}_VIFS}"
+				config_set "$device" vifs "$vifs"
+			;;
+		esac
+	}
+	config_load "${cfgfile:-wireless}"
+}
+
+include /lib/wifi
+scan_wifi
+
+wifi_set_ifname() {
+	device="${WIFI_IFACE%%.*}"
+
+	cd /sys/class/net
+	[ ! -e $device ] && return
+
+	local vif vifs
+	local ifname
+	local iface_set_flag=1
+	if [ "$WIFI_OPT" = "up" ]; then
+		RADIO_ISUP="$(wl -i $device isup)"
+		if [ "$RADIO_ISUP" = "0" ];then
+			wl -i $device up
+		fi
+
+		wl -i $WIFI_IFACE bss up
+	else
+		config_get vifs "$device" vifs
+
+		for vif in $vifs; do
+			config_get ifname "$vif" ifname
+			if [ "$ifname" != "$WIFI_IFACE" -a "$(wl -i $ifname bss)" = "up" ];then
+				iface_set_flag=0
+				break
+			fi
+		done
+
+		if [ "$iface_set_flag" = "1" ];then
+			wl -i $device down
+		fi
+
+		wl -i $WIFI_IFACE bss down
+	fi 
+}
+
+wifi_set_ifname

@@ -1,0 +1,77 @@
+
+<div>
+<form name="form" ng-controller="qos_statistics_main">
+    <div class="page-title-container">
+	    <div class="page-title" ng-bind="DICT('WAN_QoS_Statistics')"></div>
+    </div>
+    <div class="page-content-container" ng-if="loadReady">
+         <table class="page-block-tb-list">
+             <tr>
+                 <td ng-bind="DICT('WAN_QoS_Statistics_Interface')"></td>
+                 <td>
+                     <select ng-model="model.selected" style="margin-left:0px;" 
+	                     ng-init="(availWANList = collect_wan_list() )"
+	                     ng-change="update()"
+	                     ng-options="m.name as m.name for m in availWANList"
+                     ></select>
+                 </td>
+             </tr>
+             <tr>
+                 <td ng-bind="DICT('WAN_QoS_Statistics_Policy_Name')"></td>
+                 <td>
+                     <span class="ident_minor" >{{model.policy[model.selected].outboundpolicyname}}</span>
+                 </td>
+             </tr>
+             <tr>
+                 <td ng-bind="DICT('WAN_QoS_Statistics_Description')"></td>
+                 <td>
+                     <span class="ident_minor" >{{model.policy[model.selected].description}}</span>
+                 </td>
+             </tr>
+             <tr>
+                 <td ng-bind="DICT('WAN_QoS_Statistics_Counters_Last_Reset')" style="vertical-align: bottom"></td>
+                 <td>
+					 <span ng-bind="DICT('WAN_QoS_Statistics_Counters_Last_Reset_Time', 
+						{
+							'%d0': model.lastResetTime.days,
+							'%d1': model.lastResetTime.hours,
+							'%d2': model.lastResetTime.minutes
+						})"></span>
+					 </span>
+                     <button type="button"
+                             style="margin-left: 8px"
+                             id="btn_clear"
+                             ng-click="clear()"
+                             class="icon-reset"
+                             title="{{DICT('WAN_QoS_Statistics_Reset_Counter')}}"
+                             ng-disabled="userAccessFlag === 'RO'">
+                    </button>
+                 </td>
+             </tr>
+             <!--<tr>
+                 <td colspan="2">
+                     <span class="errstr_result" ng-class="{errstr_success: ctx.return_code, errstr_fail: !ctx.return_code}" ng-show="ctx.displayresult">{{ctx.errstr}}</span>
+                 </td>
+             </tr>-->
+         </table>
+         </br>
+         <div class="grid-cntr">
+             <div class="grid-title-cntr">
+                 <div class="grid-title" ng-bind="DICT('WAN_QoS_Statistics_Outbound_QoS_Stat')"></div>
+             </div>
+             <div class="grid-content-cntr">
+                 <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridOutboundStat"></div>
+             </div>
+         </div>
+         <div class="grid-seperator"></div>
+         <div class="grid-cntr">
+             <div class="grid-title-cntr">
+                 <div class="grid-title" ng-bind="DICT('WAN_QoS_Statistics_Inbound_QoS_Stat')"></div>
+             </div>
+             <div class="grid-content-cntr">
+                 <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridInboundStat"></div>
+             </div>
+         </div>
+</form>
+</div>
+

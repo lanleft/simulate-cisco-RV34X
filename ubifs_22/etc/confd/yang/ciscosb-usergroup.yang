@@ -1,0 +1,359 @@
+module ciscosb-usergroup {
+    namespace "http://cisco.com/ns/ciscosb/usergroup";
+  prefix ciscosb-usergroup;
+  import ietf-inet-types { prefix inet; }
+  import ietf-netconf-acm { prefix nacm; }
+  import ciscosb-types { prefix ciscosb-types; }
+  organization "Cisco Systems, Inc.";
+  description
+        "This module exposes a different set of configuration items to the management stations 
+         than what exists in the AAA YANG model";
+  contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-07 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-12-09 {
+        description
+                "Initial revision.";
+        reference "TODO";
+  }
+  typedef group-name-type {
+     type string {
+        length "1..max";
+        pattern '[^\*].*';
+     }
+     description
+        "Name of administrative group to which users can be assigned.";
+  }
+  identity authenticate-mode {
+    }
+    identity local-db {
+        base authenticate-mode;
+    }
+    identity radius {
+        base authenticate-mode;
+    }
+    identity ldap {
+        base authenticate-mode;
+    }
+    identity ad {
+        base authenticate-mode;
+    }
+    identity tacaas {
+        base authenticate-mode;
+    }
+    typedef Authenticate-mode-type {
+        type identityref {
+            base "authenticate-mode";
+        }
+    }
+    identity service-type {
+        description
+                "The AAA service type options ";
+    }
+    identity web-login-readonly {
+        base service-type;
+        description
+                "Web login readonly.";
+    }
+    identity web-login-administration {
+        base service-type;
+        description
+                "Web login administration.";
+    }
+    identity lobby-ambassador {
+        base service-type;
+    }
+    identity ezvpn {
+        base service-type;
+        description
+                "Easy VPN";
+    }
+    identity openvpn {
+        base service-type;
+        description
+                "OpenVPN";
+    }
+    identity anyconnect-vpn {
+        base service-type;
+        description
+                "Anyconnect vpn";
+    }
+    identity s2s-vpn {
+        base service-type;
+        description
+                "Anyconnect vpn";
+    }
+    identity pptp {
+        base service-type;
+        description
+                "PPTP  VPN";
+    }
+    identity l2tp {
+        base service-type;
+        description
+                "L2TP  VPN";
+    }
+    identity dot1x {
+        base service-type;
+        description
+                "802.1x authentication";
+    }
+    identity ssid {
+        base service-type;
+        description
+                "Wifi capital-portal authentication";
+    }
+    typedef Authenticate-service-type {
+        type identityref {
+            base "service-type";
+        }
+    }
+  container users {
+      list user {
+          max-elements 400;
+          key name;
+          leaf name {
+              type string;
+          }
+          leaf password {
+              type ciscosb-types:aes-cfb-128-encrypted-string;
+          }
+          leaf group {
+              type group-name-type;
+              description
+                  "Group name associated with this entry.";
+          }
+          leaf password-changed-time {
+              type uint32;
+          }
+      }
+  }
+    container groups {
+        list group {
+            key name;
+            leaf name {
+                type string;
+            }
+            leaf-list user-name {
+                type string;
+            }
+            list feature-rule {
+                key "service";
+                description
+                    "feature rules control if related service  can be used. .";
+                leaf service {
+                    type Authenticate-service-type;
+                    mandatory true;
+                    description
+                        "Authentication service, eg, vpn , capital portal.";
+                }
+                leaf-list option {
+                    type string {
+                        length "1..max";
+                    }
+                    description
+                        "Optionally, eg, if service is easy vpn, the option should be vpn group.
+                        if service is captive portal, the options are ssid and radio.";
+                }
+                leaf action {
+                    type nacm:action-type;
+                    mandatory true;
+                    description
+                        "The access control action associated with the rule. If a rule
+                        is determined to match a particular request, then this object
+                        is used to determine whether to permit or deny the request.";
+                }
+                leaf comment {
+                    type string;
+                    description
+                        "A textual description of the access rule.";
+                }
+            }
+        }
+    }
+  container password-complexity {
+      leaf enabled {
+          type boolean;
+      }
+      leaf minimum-length{
+          type uint8{
+              range 0..127;
+          }
+          default 8;
+      }
+      leaf minimum-number-character-classes{
+          type uint8{
+              range 0..4;
+          }
+          default 3;
+      }
+      leaf new-must-different-than-current{
+          type boolean ;
+          default true;
+      }
+      leaf strength-meter{
+          type enumeration{
+              enum blank;
+              enum veryweak;
+              enum weak ;
+              enum medium;
+              enum strong;
+              enum verystrong;
+          }
+      }
+  }
+  container password-aging-time {
+      leaf timeout {
+          type uint16{
+              range 0..365;
+          }
+          default 180;
+          description
+              "days";
+      }
+  }
+  container web-session-timeout{
+      leaf admin{
+          type uint32 {
+              range 0..1440;
+          }
+          default 30;
+          description
+              "minutes";
+      }
+      leaf guest{
+          type uint32 {
+              range 0..1440;
+          }
+          default 30;
+          description
+              "minutes";
+      }
+      leaf lobby-ambassador{
+          type uint32 {
+              range 0..1440;
+          }
+          default 30;
+          description
+              "minutes";
+      }
+  }
+  grouping SERVER-GROUP {
+      leaf primary-server {
+          type inet:host;
+      }
+      leaf primary-server-port {
+          type inet:port-number;
+      }
+      leaf backup-server {
+          type inet:host;
+      }
+      leaf backup-server-port {
+          type inet:port-number;
+      }
+  }
+  container remote-authentication-services {
+      leaf default-group {
+          description "in case remote AAA server (radius, ad, ldap) does not say a group";
+          type leafref {
+              path "/groups/group/name";
+          }
+      }
+      list remote-authentication-service {
+          key name;
+          leaf name {
+              description "name";
+              type string;
+          }
+          leaf enable {
+              type boolean;
+          }
+          leaf authenticate-mode {
+              type Authenticate-mode-type;
+          }
+          choice authenticate-way {
+              case ldap {
+                  container ldap-setting {
+                      description "ldap related setting";
+                      uses SERVER-GROUP;
+                      leaf base-dn {
+                          type string;
+                      }
+                      leaf user-container-path {
+                          type string;
+                      }
+                  }
+              }
+              case radius {
+                  container radius-setting {
+                      description "Radius related setting";
+                      uses SERVER-GROUP;
+                      leaf preshared-key {
+                          type ciscosb-types:aes-cfb-128-encrypted-string;
+                      }
+                  }
+              }
+              case ad {
+                  container ad-setting {
+                      description "Active directory";
+                      leaf ad-domain-name {
+                          type string;
+                      }
+                      leaf user-container-path {
+                          type string;
+                      }
+                      uses SERVER-GROUP;
+                  }
+              }
+          }
+      }
+      container authentication-order {
+          leaf-list default-order {
+              ordered-by user;
+              type Authenticate-mode-type;
+          }
+          list services {
+              key service;
+              leaf service {
+                  type Authenticate-service-type;
+                  mandatory true;
+                  description
+                      "Authentication service, eg, vpn , capital portal.";
+              }
+              leaf use-default-order {
+                  type boolean;
+                  default true;
+              }
+              leaf-list order {
+                  ordered-by user;
+                  type Authenticate-mode-type;
+              }
+          }
+      }
+  }
+  rpc import-users {
+      description
+          "import user/password to device ";
+      input {
+          leaf file-md5 {
+              type string;
+              mandatory false;
+              description
+                  "MD5 checksum of file";
+          }
+          leaf file {
+              type inet:uri;
+              mandatory true;
+              description
+                  "user/password csv file";
+          }
+      }
+  }
+}

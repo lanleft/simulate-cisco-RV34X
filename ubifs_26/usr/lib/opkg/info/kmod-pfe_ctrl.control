@@ -1,0 +1,8 @@
+Package: kmod-pfe_ctrl
+Version: 4.1.8+0.0-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Source: package/freescale/pfe_ctrl
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 143723
+Description:  PFE control path.

@@ -1,0 +1,5 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <ipsec xmlns="http://cisco.com/ns/ciscosb/vpn-ipsec">
+    <enable>true</enable>
+  </ipsec>
+</config>

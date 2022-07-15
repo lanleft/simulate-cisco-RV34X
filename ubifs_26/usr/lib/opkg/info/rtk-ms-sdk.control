@@ -1,0 +1,8 @@
+Package: rtk-ms-sdk
+Version: 2.1.4.53590-1
+Depends: libc, librt, libpthread, libpthread
+Source: package/freescale/rtk-ms-sdk
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 526586
+Description:  Realtek Managed Switch API

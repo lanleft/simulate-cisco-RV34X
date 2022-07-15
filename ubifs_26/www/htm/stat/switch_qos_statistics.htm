@@ -1,0 +1,118 @@
+<div>
+<STYLE type="text/css">
+  th {text-align: center}
+</STYLE>
+<STYLE type="text/css">
+  td {text-align: center}
+</STYLE>
+<form name="form" ng-controller="switch_qos_statistics_main">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Switch_QoS_Statistics')"></div>
+    </div>
+    <div class="page-content-container">
+    <table class="page-block-tb-list" ng-if="loadReady" ng-init="show_stat()">
+        <tr>
+            <td><button type="button" id="btn_clear" ng-click="funs.clearCounters()" ng-disabled="true">
+				<span ng-bind="DICT('Switch_QoS_Statistics_Clear_Counters')"></span></button></td>
+            <td>
+                <span class="ident_minor"></span>
+				<span ng-bind="DICT('Switch_QoS_Statistics_Counters_Last_Reset') + model.lastresettime + DICT('Switch_QoS_Statistics_Ago')"></span>
+            </td>
+        </tr>
+    </table>
+    </br>             
+
+    <table width="95%">
+        <tr>
+            <td width="49%" valign="top">
+                <div class="gridContainer">
+                    <table class="ngTable">
+                        <tr class="prompt">
+                            <th colspan="1" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_LAN')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue1')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue2')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue3')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue4')"></th>
+                        </tr>
+                        <tr class="prompt">
+                            <th width="8%" ng-bind="DICT('Switch_QoS_Statistics_Port')"></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                        </tr>
+                        <tr class="tbRow tbRowDivider" ng-repeat="r1 in model.lanList">
+                            <td>{{r1.port}}</td>
+                            <td>{{r1.queue1.sent}}</td>
+                            <td>{{r1.queue1.drop}}</td>
+                            <td>{{r1.queue2.sent}}</td>
+                            <td>{{r1.queue2.drop}}</td>
+                            <td>{{r1.queue3.sent}}</td>
+                            <td>{{r1.queue3.drop}}</td>
+                            <td>{{r1.queue4.sent}}</td>
+                            <td>{{r1.queue4.drop}}</td>
+                        </tr>
+				    </table>
+		        </div>
+	        </td>
+		    <td width="2%" valign="top">
+		    </td>
+		    <td width="49%" valign="top" Height=0px>
+		        <div class="gridContainer">
+                    <table class="ngTable"  valign="top">
+                        <tr class="prompt">
+                            <th colspan="1" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_LAN')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue1')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue2')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue3')"></th>
+                            <th colspan="2" class="rowDividerFirst" ng-bind="DICT('Switch_QoS_Statistics_Queue4')"></th>
+                        </tr>
+                        <tr class="prompt">
+                            <th width="8%" ng-bind="DICT('Switch_QoS_Statistics_Group')"></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Sent')"></span></th>
+                            <th class="rowDividerLast" width="11.5%">
+								<span ng-bind="DICT('Switch_QoS_Statistics_Packets')"></span><br><span ng-bind="DICT('Switch_QoS_Statistics_Dropped')"></span></th>
+                        </tr>
+                        <tr class="tbRow tbRowDivider" ng-repeat="r2 in model.lagList">
+                            <td>{{r2.group}}</td>
+                            <td>{{r2.queue1.sent}}</td>
+                            <td>{{r2.queue1.drop}}</td>
+                            <td>{{r2.queue2.sent}}</td>
+                            <td>{{r2.queue2.drop}}</td>
+                            <td>{{r2.queue3.sent}}</td>
+                            <td>{{r2.queue3.drop}}</td>
+                            <td>{{r2.queue4.sent}}</td>
+                            <td>{{r2.queue4.drop}}</td>
+                        </tr>
+				    </table>
+		        </div>
+            </td>
+        </tr>
+    </table>
+</form>
+</div>

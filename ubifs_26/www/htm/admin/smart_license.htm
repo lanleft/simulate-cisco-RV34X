@@ -1,0 +1,1144 @@
+<style>
+.mainBox {
+	padding-bottom: 20px;
+}
+.borderBox {
+	border: 1px solid;
+	margin: 20px;
+	padding: 10px;
+}
+
+.dropdown-menu {
+	font-size: inherit;
+}
+</style>
+<style>
+.icon_wrappper {
+	float:left;
+	margin-bottom: 20px;
+}
+.icontype2 {
+	width: 16px;
+	height: 16px;
+	margin: 0px 6px 6px 0px;
+}
+.icontype3 {
+	width: 32px;
+	height: 32px;
+	margin: 0px 6px 6px 0px;
+}
+.popover {
+	max-width: 420px;
+}
+</style>
+
+<form name="form" ng-controller="smart_license_main" id="smart-license-main">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('License')"></div>
+        <div class="page-button-container">
+            <button type="button" ng-click="go_back()" ng-if="backbtn" class="btn-back">
+                <span ng-bind="DICT('Back')"></span>
+            </button>
+        </div>
+    </div>
+	<confirmsave ng-show="env.success"></confirmsave>
+	<div class="page-content-container container-fluid">
+		<div ng-if="!model.license">
+			<span ng-bind="DICT('License_Loading')"></span>
+		</div>
+		<div class="mainBox borderBox" ng-if="model.license_state.enable==false">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/Status_information_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Not_Yet_Enabled')"></span>
+				
+			</p>
+			<br/>
+			<div>
+				<button ng-disabled="flag_errLicenseModel" ng-click="(Fns.openModal('EnableLicense', ''))">
+					<span ng-bind="DICT('License_Enable')"></span></button>
+				&nbsp;&nbsp;&nbsp;
+				<span ng-bind="DICT('License_Learn_More_About')"></span>
+				<a target="_blank" href="http://www.cisco.com/c/en/us/products/abt_sw.html">
+				<span ng-bind="DICT('License_Smart_Software_Licensing')"></span></a>
+			</div>
+		</div>
+		
+		<div class="mainBox borderBox" ng-if="model.license_state.enable && !Fns.isRegistered()" >
+			<p>
+				<div class="icon_wrappper">
+					<i class="icontype2 icon-information" ></i>
+				</div>
+				<span ng-bind="DICT('License_Currently_Running_In_Evaluation_Mode')"></span>
+				
+				<ul>
+					<li><span ng-bind="DICT('License_Ensure_To_Internet')"></span></li>
+                    <li><span pg-bind-html="ui_data.note1"</span></li>
+					<li><span ng-bind="DICT('License_Navigate_To_Virtual_Account')"></span></li>
+					<li><span ng-bind="DICT('License_Generate_Product_Instance')"></span></li>
+					<li><span ng-bind="DICT('License_Click_Register_Button')"></span></li>
+				</ul>
+			</p>
+            <textarea ng-model="model.license.token" placeholder="{{DICT('License_Token_Hint')}}" style="width:100%;min-height:100px;"></textarea>
+			<br/>
+			<div class="btn-container">
+<!--                <button ng-click="(Fns.openModal('ConfigureLicense', ''))" ng-disabled="userAccessFlag === 'RO'">-->
+<!--                    <span ng-bind="DICT('License_Transport_Settings')"></span></button>-->
+                <span ng-bind="DICT('License_Register_Click')"></span>
+				<button ng-click="(Fns.openModal('ProductRegistration', 'smart-license'))"
+                    ng-disabled="userAccessFlag === 'RO' || !model.license.token.length">
+					<span ng-bind="DICT('License_Register')"></span>
+                </button>
+				<!-- cancel Enable/Disable button (1/2)
+				<button ng-click="(Fns.openModal('DisableLicense', ''))" >Disable Smart Software Licensing</button>
+				-->
+                <div class="learn-about">
+                    <span ng-bind="DICT('License_Learn_More_About')"></span>
+                    <a target="_blank" href="http://www.cisco.com/c/en/us/products/abt_sw.html">
+                    <span ng-bind="DICT('License_Smart_Software_Licensing')"></span></a>
+                </div>
+			</div>
+		</div>
+		
+
+		
+		<div class="mainBox" ng-if="model.license_state.enable" >
+
+			<div class="mainBox" ng-if="Fns.isRegistered()" >
+				<span ng-bind="DICT('License_To_View')"></span>
+				<a id="link_smartLicensingManager" target="_blank" href="https://software.cisco.com/#SmartLicensing-Inventory">
+				<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a>
+				<span></span>
+				<div class="btn-group" uib-dropdown >
+					<button type="button" id="btn_actions" uib-dropdown-toggle ng-disabled="disabled" style="width:100px;">
+						<span ng-bind="DICT('License_Actions')"></span> &nbsp;&nbsp;&nbsp; <span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a id="link_renewRegAuth" ng-click="(Fns.openModal('RenewRegAuth', ''))"><span ng-bind="DICT('License_Refresh_License_State')"></span></a></li>
+						<!--
+						<li><a id="link_renewAuth" ng-click="(Fns.openModal('RenewAuth', ''))">Renew Authorization</a></li>
+						-->
+						<li class="divider"></li>
+						<!--
+						<li><a id="link_renewRegist" ng-click="(Fns.openModal('RenewReg', ''))" >Renew Registration</a></li>
+						-->
+						<li><a id="link_deregister" ng-click="(Fns.openModal('ProductDeregister', ''))" ><span ng-bind="DICT('License_Deregister')"></span></a></li>
+						<!-- cancel Enable/Disable button (2/2)
+						<li class="divider"></li>
+						<li><a ng-click="(Fns.openModal('DisableLicense', ''))" >Disable Smart Software Licensing...</a></li>
+						-->
+					</ul>
+				</div>
+				
+			</div>
+		
+			<style>
+			.pos_rel {position: relative;}
+			</style>
+
+			<div class="groupTitle" ng-bind="DICT('License_Smart_Software_Licensing_Status')"></div>
+			<table class="page-block-tb-list" style="width:100%">
+					<!--
+					<tr>
+						<td style="width:20%">Email</td>
+						<td>
+							<span >{{model.call_home['user_email']}}</span>
+						</td>
+					</tr>
+					<tr>
+						<td>Server IP/Domain</td>
+						<td>
+							<span>{{model.call_home['server_url']}}</span>
+						</td>
+					</tr>
+					-->
+					<tr>
+						<td style="width:20%" ng-bind="DICT('License_Registration_Status')"></td>
+						<td>
+							<span
+								uib-popover-template="'T_License_reg_popover.htm'"
+								popover-trigger="'mouseenter'"
+								cc-popover-trigger="click"
+								popover-placement="right"
+								popover-append-to-body="true"
+								ng-init="Fns.refreshStatusText('registration')"
+							>
+								<img class="icontype2" ng-src="{{ctx.reg_sobj.imgsrc}}">
+								<a id="link_registStatus">{{schema.RegMap[model.license_state.registration.status]}}</a>
+							</span>
+							<span ng-if="display_reg_attempt(lsref) !== '' ">
+								({{ display_reg_attempt(lsref) }})
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('License_License_Authorization_Status')"></td>
+						<td>
+							<span
+								uib-popover-template="'T_License_auth_popover.htm'"
+								popover-trigger="'mouseenter'"
+								cc-popover-trigger="click"
+								popover-placement="right"
+								popover-append-to-body="true"
+								ng-init="Fns.refreshStatusText('authorization')"
+							>
+								<img class="icontype2" ng-src="{{ctx.auth_sobj.imgsrc}}">
+								<a id="link_licenseAuthStatus" >{{schema.AuthMap[model.license_state.authorization.authorization_status.status]}}</a>
+							</span>
+							<!--
+							<span ng-if="lsref.authorization.last_communication_attempt.time !== undefined ">
+								({{lsref.authorization.last_communication_attempt.time}})
+							</span>
+							-->
+							<span ng-if="display_auth_eval_status(ctx)">
+								(
+								<span ng-include="'T_License_auth_eval_remain_time.htm'"></span>
+								<span ng-bind="DICT('License_Remaining')"></span>
+								)
+							</span>
+							<!--
+							<span ng-if="display_auth_expired_status(ctx)">
+								({{lsref.authorization.authorization_status.time}})
+							</span>
+							-->
+							
+							<span ng-if="display_auth_eval_status(ctx)!==true && display_auth_status_msg(lsref, ctx) !== '' && lsref.authorization.authorization_status.status !== 'license-authorization-status-no-in-use' ">
+								({{ display_auth_status_msg(lsref, ctx) }})
+							</span>
+						</td>
+					</tr>
+					<tr ng-if="Fns.isRegistered()">
+						<td ng-bind="DICT('License_Smart_Account')"></td>
+						<td>
+							<span>
+								{{model.license_state.smart_account}}
+							</span>
+						</td>
+					</tr>
+					<tr ng-if="Fns.isRegistered()">
+						<td ng-bind="DICT('License_Virtual_Account')"></td>
+						<td>
+							<span>
+								{{model.license_state.virtual_account}}
+							</span>
+						</td>
+					</tr>
+					<tr ng-if="Fns.isRegistered()">
+						<td ng-bind="DICT('License_PID')"></td>
+						<td>
+							<span>
+								{{model.license_state.pid}}
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('License_Export_Controlled_Functionality')"></td>
+						<td>
+							<span>{{schema.exportMap[model.license_state.export_controlled]}}</span>
+						</td>
+					</tr>
+				</table>
+			
+			<br />
+		
+			<div class="groupTitle" ng-bind="DICT('License_Usage')"></div>
+			<div>
+				<br/>
+				<button id="btn_chooseLicenses" ng-click="Fns.chooseLicense()" ng-disabled="userAccessFlag === 'RO'">
+					<span ng-bind="DICT('License_Choose_Licenses')"></span></button>
+				<br/>
+				<br/>
+				<div class="grid-cntr" ng-if="gridLicense.OptionsShow">
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridLicense.Options"></div>
+            </div>
+				</div>
+			</div>
+			<br/>
+		</div>
+			<!--
+			<style>
+			.debug_section textarea {
+				height: 300px;
+				width: 200px;
+			}
+			</style>
+			<div class="debug_section">
+			<textarea>model.license:{{model.license | json}}</textarea>
+			<textarea>model.license_state:{{model.license_state | json}}</textarea>
+			
+			<textarea>ctx:{{ctx | json}}</textarea>
+			<textarea>env:{{env | json}}</textarea>
+			<textarea>model.license_state:{{model.license_state | json}}</textarea>
+			<textarea>model:{{model | json}}</textarea>
+			</div>
+			-->
+			<!--
+			<input type="checkbox" ng-model="env.supportDB"/>Backend server take over the control-flow (SupportDB=true)<br/>
+				Debug: Token is valid (true/false)<input type="checkbox" ng-model="env.flag_tokenOK" /><br/>
+				Debug: CommunicationPath("./")<input ng-model="env.flag_rpcOK" ng-init="env.flag_rpcOK='./'" value="0" value="./" ng-change="testRpc(env.flag_rpcOK)" />
+			-->
+
+	</div>
+</form>
+
+
+<script type="text/ng-template" id="smart_license_modal.htm">
+	<div class="modal-container" id="modalBox">
+		<div ng-include="uiref.template"></div>
+	</div>
+	<div ng-if="uiref.commCtx.show" ng-include="'commStatusBox.htm'"></div>
+</script>
+
+<script type="text/ng-template" id="ConfigureLicense.htm">
+	<ng-form name="formConf">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('License_Configure_Licensing')"></div>
+        </div>
+		<div class="modal-content-container" ng-init="tref.funs.init()">
+			<div class="mainBox" style="margin: 10px 0px;padding:5px;border: 1px solid;">
+				<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/Status_information_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Page_Allow_You')"></span>
+				</p>
+			</div>
+			<br />
+			<table class="page-block-tb-list">
+				<tr>
+					<td ng-bind="DICT('License_Server_Addr')">
+						
+					</td>
+					<td>
+						<!--
+						<input type="url" ng-model="ctx.call_home['server_url']" size="50"
+							name="lic_server_addr"
+							placeholder="http://"
+						></input>
+						<span ng-messages="formConf.lic_server_addr.$error">
+							<span ng-messages-include src="{{::messagesInclUrl}}"></span>
+						</span>
+						-->
+						{{ ctx.call_home['server_url'] }}
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('License_Contact_Email')">
+						
+					</td>
+					<td>
+						<input type="text" email ng-model="ctx.call_home['user_email']" size="30"
+							name="lic_email"
+							placeholder="user@hostname.com"
+						></input>
+						<span ng-messages="formConf.lic_email.$error">
+							<span ng-messages-include src="{{::messagesInclUrl}}"></span>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('License_Proxy')">
+						
+					</td>
+					<td>
+						<input type="url" ng-model="ctx.call_home['proxy_url']" size="30"
+							name="lic_proxy"
+							placeholder="http://"
+						></input>
+						<span ng-messages="formConf.lic_proxy.$error">
+							<span ng-messages-include src="{{::messagesInclUrl}}"></span>
+						</span>
+					</td>
+				</tr>
+			</table>
+			
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.save()" class="btn-apply" ng-disabled="formConf.$invalid">
+				<span ng-bind="DICT('License_Apply')"></span></button>
+			<button ng-click="tref.funs.cancel()" class="btn-cancel">
+				<span ng-bind="DICT('License_Back')"></span></button>
+		</div>
+	</ng-form>
+</script>
+
+<script type="text/ng-template" id="ProductRegistration.htm">
+    <span ng-init="tref.funs.init()"></span>
+</script>
+
+<script type="text/ng-template" id="ProductRegistration1.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Licensing_Product_Registration')"></div>
+        </div>
+		<div class="modal-content-container" id="RegDialog" ng-init="tref.funs.init()">
+			<style>
+				#RegDialog .mainBox {
+					background-color: #FFE694;
+					padding:5px;border:1px red solid;
+					margin:5px 0px;
+					border-radius: 5px;
+				}
+			</style>
+			<div class="mainBox" ng-show="uiref.errToken">
+				<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/AlertCritical16Wht.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Registration_Invalid')"></span>
+				
+				</p>
+			</div>
+			<div class="mainBox" ng-show="uiref.errComm">
+				<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/AlertCritical16Wht.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Product_Unable_Register1')"></span>
+				
+				</p>
+			</div>
+			<div class="mainBox" ng-show="uiref.errTimeout">
+				<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Registration_Timeout')"></span>
+				<br/>
+				<span ng-bind="DICT('License_Refresh_Page_Manually')"></span>
+				
+				</p>
+			</div>
+			<p>
+				<span ng-bind="DICT('License_Refresh_To_Register_Licensing')"></span><br/>
+				<ul>
+					<li>
+						<span ng-bind="DICT('License_Ensure_You_Connectivity_URL')"></span>
+						
+					</li>
+					<br/>
+					<li>
+						<span ng-bind="DICT('License_Paste_Registration_Token')"></span>
+						<a target="_blank" href="https://software.cisco.com/#SmartLicensing-Inventory">
+						<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a>
+					</li>
+				</ul>
+			</p>
+			<textarea ng-model="model.license.token" style="width:100%;min-height:100px;"></textarea>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.register()" class="btn-apply">
+				<span ng-bind="DICT('License_Register')"></span></button>
+			<button ng-click="tref.funs.cancel()" class="btn-cancel">
+				<span ng-bind="DICT('License_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.cancel('close')"></button>
+</script>
+
+<script type="text/ng-template" id="ProductRegistrationErrComm.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Communication_Error')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Product_Unable_Register2')"></span>
+				
+				<br/>
+				<br/>
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="ProductRegistrationFail.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Register_Fail')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<div ng-bind="DICT('License_Registration_Invalid1')"></div>
+				<div ng-bind="DICT('License_Registration_Invalid2')"></div>
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+<script type="text/ng-template" id="ProductRegistrationTimeout.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Communication_Timeout')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Product_Unable_Register3')"></span>
+				
+				<br/>
+				<br/>
+				<span ng-bind="DICT('License_Automatically_Reattempt')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="ProductDeregister.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Confirm_Deregistration')"></div>
+        </div>
+		<div class="modal-content-container" ng-init="tref.funs.init()">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Deregister_Product')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.deregister()" class="btn-apply">
+				<span ng-bind="DICT('License_Deregister')"></span></button>
+			<button ng-click="tref.funs.cancel()" class="btn-cancel">
+				<span ng-bind="DICT('License_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.cancel('close')"></button>
+</script>
+
+<script type="text/ng-template" id="DisableLicense.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Confirm_Disable_Smart_Software_Licensing')"></div>
+        </div>
+		<div class="modal-content-container" ng-init="tref.funs.init()">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_All_Licensed_Will_Disabled_Immediately')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.disableLicense()" class="btn-apply">
+				<span ng-bind="DICT('License_Disable_Smart_Software_Licensing')"></span></button>
+			<button ng-click="tref.funs.cancel()" class="btn-cancel">
+				<span ng-bind="DICT('License_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.cancel('close')"></button>
+</script>
+
+<script type="text/ng-template" id="EnableLicenseFailed.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Enable_Licensing_Failed')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Due_To_Communication_Failure')"></span>
+			</p>
+		</div>
+		<div class="modal-button-container" class="btn-apply">
+			<button ng-click="tref.funs.ok()">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="LicenseError.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Licensing_Failed')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype2" src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Unable_Reason1')"></span>{{uiref.action_str || 'finish this action' }} 
+				<span ng-bind="DICT('License_Unable_Reason2')"></span>"{{uiref.resp_obj.errstr}}".
+				<span ng-bind="DICT('License_Unable_Reason3')"></span>
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="MiniModalBoxOverride.htm">
+<style>
+#modalBox {
+	display: none;
+}
+.commStatus {
+	top: 150px; /* override */
+}
+</style>
+	<div style="min-height:200px;" ng-init="tref.funs.init()">
+	</div>
+</script>
+
+<script type="text/ng-template" id="ManualRemovalRequired.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Manual_Removal_Required')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Unable_Deregister')"></span>
+				
+				<a target="_blank" href="https://software.cisco.com/#SmartLicensing-Inventory">
+				<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a> 
+				<span ng-bind="DICT('License_Unable_Deregister2')"></span>
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="RegistrationRenewalFailed.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Register_Renew_Fail')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Unable_Renew')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="RegistrationRenewalTimeout.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Communication_Timeout')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Product_Unable_Register3')"></span>
+				
+				<br/>
+				<br/>
+				<span ng-bind="DICT('License_Continue_Attempting_Registration_Renewal')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="LicenseAuthorizationNoticeAuthOnPending.htm">
+	<div>
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Change_Saved_Authorization_Pending')"></div>
+        </div>
+		<div class="modal-content-container" ng-init="tref.funs.init()">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_success_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_license_Selection_Saved_Successfully')"></span>
+				
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+			<span ng-if="ctx.countDownStop!=true && ctx.countDownSec <= 5"
+			>
+			
+			<span ng-bind="DICT('License_Dialog_Close', {'%d': ctx.countDownSec})"></span>
+			
+			</span>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="LicenseAuthorizationRenewalOK.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Authorization_Renewal')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<span ng-bind="DICT('License_Authorization_Renewal_Done')"></span>
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="LicenseAuthorizationRenewalFailed.htm">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Authorization_Renewal_Failed')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_ciriticalerror_icon.png"></img>
+				</div>
+				<span ng-bind="DICT('License_Unable_Renew_License')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.ok()" class="btn-apply">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="LicenseAuthorizationRenewalTimeout.htm">
+        <div class="modal-header-container">
+		    <div class="page-title" ng-bind="DICT('License_Communication_Timeout')"></div>
+        </div>
+		<div class="modal-content-container">
+			<p>
+				<div class="icon_wrappper">
+					<img class="icontype3" src="themes/img/icon/Status_warning_icon.gif"></img>
+				</div>
+				<span ng-bind="DICT('License_Unable_Renew_License_Timeout')"></span>
+				
+				<br/>
+				<br/>
+				<span ng-bind="DICT('License_Continue_Attempting_License')"></span>
+				
+			</p>
+		</div>
+		<div class="modal-button-container" class="btn-apply">
+			<button ng-click="tref.funs.ok()">
+				<span ng-bind="DICT('License_OK')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.ok('close')"></button>
+</script>
+
+<script type="text/ng-template" id="ChooseSmartLicenses.htm">
+	<ng-form name="formCLic">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('License_Choose_Smart_Licenses')"></div>
+        </div>
+		<div class="modal-content-container" ng-init="tref.funs.init()">
+			<p ng-show="!tref.funs.isRegistered()">
+				<span ng-bind="DICT('License_Choose_Smart_Licenses_To_Be_Used')"></span>
+				
+			</p>
+			<p ng-show="tref.funs.isRegistered()">
+				<span ng-bind="DICT('License_Choose_Smart_Licenses_Sufficient')"></span>
+			</p>
+      <div class="grid-cntr" ng-if="gridLicense.Options2Show">
+          <div class="grid-content-cntr">
+              <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridLicense.Options2"></div>
+          </div>
+      </div>
+		</div>
+		<div class="modal-button-container">
+			<button ng-click="tref.funs.save()" ng-if="!tref.funs.isRegistered()" class="btn-apply" ng-disabled="formCLic.$invalid">
+				<span ng-bind="DICT('License_Save')"></span></button>
+			<button ng-click="tref.funs.save()" ng-if="tref.funs.isRegistered()" ng-disabled="formCLic.$invalid">
+				<span ng-bind="DICT('License_Save_Authorize')"></span></button>
+			<button ng-click="tref.funs.cancel()" class="btn-cancel">
+				<span ng-bind="DICT('License_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="tref.funs.cancel('close')"></button>
+	</ng-form>
+</script>
+
+
+<style>
+/* style for commStatusBox */
+.commStatus {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 360px;
+	height: 54px;
+	margin-left: -180px; /* 0.5 * width */
+	margin-top: -27px; /* 0.5 * height */
+	z-index: 4000;
+
+	border:1px solid;
+	background-color: #ffffff;
+	padding: 10px;
+}
+.commStatus .icon {
+	margin:5px;
+	width:24px;
+	heigh:24px;
+}
+</style>
+<script type="text/ng-template" id="commStatusBox.htm">
+	<div modal-backdrop ng-if="!(tref.commCtx.hideMiniBackdrop==true)"></div>
+	<div class="commStatus">
+		<!-- Enabling Smart Software Licensing<br/> -->
+		<span ng-if="uiref.commCtx.state=='ongoing'">
+			<i class="icon icon-loading"></i>
+			{{uiref.commCtx.msg}}
+		</span>
+		<span ng-if="uiref.commCtx.state=='success'">
+			<i class="icon icon-success"></i>
+			{{uiref.commCtx.success}}
+		</span>
+	</div>
+</script>
+
+<style>
+.popover_msgbox td {
+	vertical-align:top;
+}
+.popover_msgbox .icontype2 {
+	margin-top:2px;
+}
+</style>
+<script type="text/ng-template" id="T_License_reg_popover.htm">
+	<table class="popover_msgbox">
+		<tr>
+			<td><img class="icontype2" ng-src="{{ctx.reg_sobj.imgsrc}}" ></td>
+			<td><span ng-include="ctx.reg_sobj.template"></span></td>
+		</tr>
+	</table>
+	<div ng-show="display_reg_status(ctx)">
+		<hr>
+		<span ng-include="'T_License_reg_popover_status.htm'" />
+	</div>
+	<!--
+	<div ng-show="display_reg_init_status(ctx)">
+		<hr>
+		<table>
+			<tr>
+				<td>Inital Registration:<span class="indent"></span> </td> <td> First Attempt Pending </td>
+			</tr>
+		</table>
+	</div>
+	<div ng-if="false" ng-show="display_reg_retry_status(ctx)">
+		<hr>
+		<span ng-include="'T_License_reg_popover_status.htm'" />
+	</div>
+	-->
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_status.htm">
+		<table>
+			<tr ng-if="!reg_last_attempt_exist(lsref) && lsref.registration.initial_registration.time !== undefined">
+				<td ng-bind="DICT('License_Inital_Registration')"></td>
+				<td>{{ shortTimeFormat(lsref.registration.initial_registration.time, 'datetime') }} ({{schema.statusMap[lsref.registration.initial_registration.status] }})</td>
+			</tr>
+			<tr ng-if="lsref.registration.initial_registration.time == undefined">
+				<td ng-bind="DICT('License_Inital_Registration')"></td>
+				<td ng-bind="DICT('License_First_Attempt_Pending')"></td>
+			</tr>
+			<tr ng-if="lsref.registration.last_renewal_attempt.time !== undefined">
+				<td ng-bind="DICT('License_Last_Renewal_Attempt')"></td> <td>{{ shortTimeFormat(lsref.registration.last_renewal_attempt.time) }} ({{schema.statusMap[lsref.registration.last_renewal_attempt.status] }})</td>
+			</tr>
+			<tr ng-if="lsref.registration.next_renewal_attempt !== undefined">
+				<td ng-bind="DICT('License_Last_Next_Attempt')"></td> <td>{{ shortTimeFormat(lsref.registration.next_renewal_attempt, 'datetime') }}</td>
+			</tr>
+			<tr ng-if="lsref.registration.next_registration_attempt !== undefined">
+				<td ng-bind="DICT('License_Next_Registration_Attempt')"></td> <td>{{ shortTimeFormat(lsref.registration.next_registration_attempt, 'datetime') }}</td>
+			</tr>
+			<tr ng-if="lsref.registration.registration_expires !== undefined">
+				<td ng-bind="DICT('License_Registration_Expire')"></td> <td>{{ shortTimeFormat(lsref.registration.registration_expires, 'datetime') }}</td>
+			</tr>
+		</table>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registrated_renewOK.htm">
+	<span ng-bind="DICT('License_Registered_For_Smart_Software_Licensing')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registrated_renewFailed.htm">
+	<span ng-bind="DICT('License_Last_Attempt_Registration_Failed')"></span>
+	<br/>
+	<span ng-bind="DICT('License_Registration_Not_Yet_Expired')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Unregistrated.htm">
+	<span ng-bind="DICT('License_Enabled_But_Product_Instance_Not_Yet_Registered')"></span>
+	
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registration_Expired.htm">
+	<span ng-bind="DICT('License_Product_Instance_Not_Successfully_Renew_Registration')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registration_Failed.htm">
+	<span ng-bind="DICT('License_Production_Instance_Registration_Token_Invalid')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registration_Inprogress.htm">
+	<span ng-bind="DICT('License_Registration_In_Progress')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_reg_popover_Registration_Retry_Inprogress.htm">
+	<span ng-bind="DICT('License_Unable_Register_Due_To_Communication_Failure')"></span>
+	
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover.htm">
+	<table class="popover_msgbox">
+		<tr>
+			<td><img class="icontype2" ng-src="{{ctx.auth_sobj.imgsrc}}" ></td>
+			<td><span ng-include="ctx.auth_sobj.template"></span></td>
+		</tr>
+	</table>
+	<div ng-show="display_auth_renew_status(ctx) || lsref.authorization.authorization_status.status == 'license-authorization-status-authorization-expired' " >
+		<hr>
+		<table>
+			<!--
+			<tr ng-if="lsref.authorization.authorization_status.time !== undefined">
+				<td>Authorization Status:</td> <td>{{lsref.authorization.authorization_status.time}}</td>
+			</tr>
+			-->
+			<tr ng-if="lsref.authorization.last_communication_attempt !== undefined">
+				<td ng-bind="DICT('License_Last_Renewal_Attempt')"></td> <td>{{ shortTimeFormat(lsref.authorization.last_communication_attempt.time) }} ({{schema.statusMap[lsref.authorization.last_communication_attempt.status] }})</td>
+			</tr>
+			<tr ng-if="lsref.authorization.next_communication_attempt !== undefined">
+				<td ng-bind="DICT('License_Last_Next_Attempt')"></td> <td>{{ shortTimeFormat(lsref.authorization.next_communication_attempt, 'datetime') }}</td>
+			</tr>
+			<tr ng-if="lsref.authorization.communication_deadline !== undefined">
+				<td ng-bind="DICT('License_Authorization_Expire')"></td> <td>{{ shortTimeFormat(lsref.authorization.communication_deadline, 'datetime') }}</td>
+			</tr>
+		</table>
+	</div>
+	<div ng-show="display_auth_eval_status(ctx)">
+		<hr>
+		<p><span ng-bind="DICT('License_Evaluation_Period_Remain')"></span>
+			
+			(
+			<span ng-include="'T_License_auth_eval_remain_time.htm'"></span>
+			)
+		</p>
+	</div>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_eval_remain_time.htm">
+	<span data-ng-tmp="{{ t = lsref.authorization.eval_period_remaining }}" >
+			<span ng-if="t.length">{{t}} </span>
+			<span ng-if="t.length == 0">--</span>
+	</span>
+	<!--
+	<span data-ng-tmp="{{ t = calcRemainTime(lsref.authorization.expired) }}" >
+		Evaluation Period Remain:
+			<span ng-if="t.length">({{t[0]}} days, {{t[1]}} hours, {{t[2]}} mins remaining)</span>
+			<span ng-if="t.length == 0">--</span>
+		<br/>
+		Evaluation Period Exceed: {{lsref.authorization.communication_deadline}}
+	</span>
+	-->
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorized_renewOK.htm">
+	<span ng-bind="DICT('License_All_Authorized_For_Use')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorized_renewFailed.htm">
+	<span ng-bind="DICT('License_Last_Attempt_Renew_License_Authorization_Failed')"></span>
+	
+	<br/>
+	<span ng-bind="DICT('License_Authorization_Not_Yet_Expired')"></span>
+	
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Evaluation.htm">
+	<span ng-bind="DICT('License_Running_In_Evaluation_Mode')"></span>
+	
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Evaluation_Period_Expired.htm">
+	<span ng-bind="DICT('License_Evaluation_Period_Has_Expired')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Out_of_Compliance.htm">
+	<span ng-bind="DICT('License_Virtual_Account_Containing')"></span>
+	
+	<br/>
+	<span ng-bind="DICT('License_Login_To')"></span><a href="https://software.cisco.com/#SmartLicensing-Inventory">
+	<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a>
+	<span ng-bind="DICT('License_Login_More')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Expired.htm">
+	<span ng-bind="DICT('License_Product_Instance_Did_Not_Successfullly_Renew')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Invalid.htm">
+	<span ng-bind="DICT('License_License_In_Error_Condition')"></span>
+	
+	<br/>
+	<span ng-bind="DICT('License_Login_To')"></span><a href="https://software.cisco.com/#SmartLicensing-Inventory">
+	<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a>
+	<span ng-bind="DICT('License_Login_More')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_NotInUse.htm">
+	<span ng-bind="DICT('License_Authorization_In_Initial_Status')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Waiting.htm">
+	<span ng-bind="DICT('License_Authorization_In_Progress')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Overage.htm">
+	<span ng-bind="DICT('License_License_Count_In_Overage')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Disabled.htm">
+	<span ng-bind="DICT('License_Has_Been_Disabled')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_NoInUse.htm">
+	<span ng-bind="DICT('License_Not_Consuming_Any_Licenses')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_auth_popover_Authorization_Invalidtag.htm">
+	<span ng-bind="DICT('License_Feature_Name_Invalid')"></span>
+</script>
+
+<script type="text/ng-template" id="UG_License_fea_popover.htm">
+	<table class="popover_msgbox">
+		<tr>
+			<td><img class="icontype2" ng-src="{{popOverCtx.fea_sobj.imgsrc}}" ></td>
+			<td><span ng-include="popOverCtx.fea_sobj.template"></span></td>
+		</tr>
+	</table>
+	<!-- <div>T:{{popOverCtx}}T</div> -->
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Authorized_renewOK.htm">
+	<span ng-bind="DICT('License_Virtual_Account_Containing_Sufficient')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Evaluation.htm">
+	<span ng-bind="DICT('License_Remain_Valid')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Evaluation_Period_Expired.htm">
+	<span ng-bind="DICT('License_Evaluation_Expired')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Out_of_Compliance.htm">
+	<span ng-bind="DICT('License_Virtual_Account2')"></span>
+	<br/>
+	<span ng-bind="DICT('License_Login_To')"></span><a href="https://software.cisco.com/#SmartLicensing-Inventory">
+	<span ng-bind="DICT('License_Smart_Licensing_Manager')"></span></a> 
+	<span ng-bind="DICT('License_Login_More')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Expired.htm">
+	<span ng-bind="DICT('License_Product_Instance_Did_Not_Successfullly_Expiration')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Invalid.htm">
+	<span ng-bind="DICT('License_License_In_Error_Condition')"></span>
+	
+	<br/>
+	<a href="https://software.cisco.com/#SmartLicensing-Inventory"></a>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_NotInUse.htm">
+	<span ng-bind="DICT('License_Authorization_In_Initial_Status')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Waiting.htm">
+	<span ng-bind="DICT('License_Authorization_In_Progress')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Overage.htm">
+	<span ng-bind="DICT('License_License_Count_In_Overage')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Disabled.htm">
+	<span ng-bind="DICT('License_Has_Been_Disabled')"></span>
+</script>
+
+<script type="text/ng-template" id="T_License_fea_popover_Invalidtag.htm">
+	<span ng-bind="DICT('License_Feature_Name_Invalid')"></span>
+</script>
+
+<script type="text/ng-template" id="UG_License_feature_status_with_popover.html">
+<div ng-class="{_greyout : row.entity['_ref']['enable'] == false}" class="ui-grid-custom-cntr">
+	<span ng-if="MODEL_COL_FIELD == undefined">
+	&nbsp;&nbsp;
+	(
+	<span ng-bind="grid.appScope.DICT('License_Updating')"></span>
+	)
+	</span>
+	<span ng-if="MODEL_COL_FIELD != undefined"
+	uib-popover-template="'UG_License_fea_popover.htm'"
+	popover-trigger="'mouseenter'"
+	cc-popover-trigger="click"
+	popover-placement="left"
+	popover-append-to-body="true"
+	data-x-tmp="{{ popOverCtx = grid.appScope.Fns.refreshFeatureStatusText(MODEL_COL_FIELD) }}"
+	>ARGS1</span>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_License_feature_count.html">
+<div data-x-tmp="{{ cnt_b = row.entity['count_based'] }}" class="ui-grid-custom-cntr">
+	<span ng-if="(cnt_b==true || cnt_b==undefined)">
+        <input type="number" number
+            style="width: 55px"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            ng-model="MODEL_COL_FIELD"
+            data-ng-expansion>
+        </input><!--
+        --><span ng-if="grid.appScope.Fns.featureSpecRule(row.entity, 'mark')">*</span>
+	</span>
+	<span ng-if="(cnt_b==false)"><div>--</div></span>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_License_feature_count_display.html">
+<div ng-class="{_greyout : row.entity['_ref']['enable'] == false}" data-x-tmp="{{ cnt_b = row.entity['count_based'] }}" class="ui-grid-custom-cntr">
+	<!--
+	<span ng-if="(cnt_b==true || cnt_b==undefined) && (row.entity['_ref']['status'] != undefined)">
+	-->
+	<span ng-if="(cnt_b==true || cnt_b==undefined)">
+        <span ng-bind="MODEL_COL_FIELD"></span><!--
+        --><span ng-if="grid.appScope.Fns.featureSpecRule(row.entity, 'mark')">*</span>
+	</span>
+	<span ng-if="(cnt_b==false)"><div>--</div></span>
+</div>
+</script>

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+while [ 1 ]
+do 
+    /usr/bin/sslvpn_server_running > /dev/null 2>&1 
+    wait
+    /etc/init.d/sslvpn start
+done

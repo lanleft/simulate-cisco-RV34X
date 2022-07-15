@@ -1,0 +1,604 @@
+module ciscosb-wan-ip {
+    namespace "http://cisco.com/ns/ciscosb/wan-ip";
+    prefix ciscosb-wan-ip;
+    import ietf-interfaces { prefix if; }
+    import ietf-ip { prefix ip; }
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-types { prefix ciscosb-types; }
+    import ciscosb-common { prefix ciscosb-common; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "First revision module for different WAN connection types .";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-04-25 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity none {
+        base authenticate-type;
+        description
+                "Authenticate type none";
+    }
+    identity auto {
+        base authenticate-type;
+        description
+                "Authenticate type ";
+    }
+    identity authenticate-type {
+        description
+                "Base authenticate-type";
+    }
+    identity PAP {
+        base authenticate-type;
+        description
+                "Authenticate type PAP ";
+    }
+    identity CHAP {
+        base authenticate-type;
+        description
+                "Authenticate type CHAP ";
+    }
+    identity MSCHAP {
+        base authenticate-type;
+        description
+                "Authenticate type MSCHAP ";
+    }
+    identity MSCHAP2 {
+        base authenticate-type;
+        description
+                "Authenticate type MSCHAP2 ";
+    }
+    typedef Authenticate-type-type {
+        type identityref {
+            base "authenticate-type";
+        }
+        description "The interface protocol.";
+    }
+    identity pppoe {
+        base if:interface-type;
+        description
+                "Point-to-Point Protocol over Ethernet ";
+    }
+    identity pptp {
+        base if:interface-type;
+        description
+                "The Point-to-Point Tunneling Protocol (PPTP). ";
+    }
+    identity l2tp {
+        base if:interface-type;
+        description
+                "Layer Two Tunneling Protocol (L2TP). ";
+    }
+    grouping NAMING_SERVERS {
+        leaf-list servers {
+         ordered-by user;
+            max-elements 2;
+            type inet:host;
+            description
+                        "Specifies host that can function as a name server to supply name
+                        information for DNS.";
+        }
+    }
+    grouping GATEWAY {
+        leaf gateway {
+            type inet:ip-address;
+            description
+                        "Default gateway IP addresses.";
+        }
+    }
+    grouping CONNECT-MODE {
+        choice connect-mode{
+            case keepalive{
+                leaf keepalive {
+                    type uint16;
+                    description
+                        "Number of connection failures before reconnect.";
+                }
+            }
+            case on-demand{
+                leaf demand {
+                    type uint16;
+                    description
+                        "Number of seconds to wait before closing the connection due to
+                        inactivity.";
+                }
+            }
+        }
+    }
+ grouping IP-UNNUMBERED {
+  container ip-unnumbered {
+   leaf enabled {
+    type boolean;
+    default false;
+   }
+   leaf interface {
+    when "../enabled='true'";
+    type if:interface-ref;
+   }
+  }
+ }
+    grouping IP-STATIC {
+        leaf ifname {
+            mandatory true;
+            type string;
+            description
+                        "Physical interface name to assign to this particular section
+                        in config file..";
+        }
+        container naming-server {
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IP-DYNAMIC {
+        leaf peerdns {
+            type boolean;
+            default true;
+            description
+                        "Use dhcp provided dns server.";
+        }
+        leaf ifname {
+            mandatory true;
+            type string;
+            description
+                        "Physical interface name to assign to this particular section
+                        in config file..";
+        }
+        container naming-server {
+            when "../ciscosb-wan-ip:peerdns='false'";
+            uses NAMING_SERVERS;
+        }
+    }
+ grouping PPPOE-SETTING {
+  leaf username {
+            type string;
+            mandatory true;
+            description
+                        "Username for PAP/CHAP authentication.";
+        }
+        leaf password {
+            type ciscosb-types:aes-cfb-128-encrypted-string;
+            mandatory true;
+            description
+                        "Password for PAP/CHAP authentication.";
+        }
+        leaf service {
+            type string;
+            description
+                        "Specifies the Service Name to connect to, If unset, pppd uses
+                        the first discovered one.";
+        }
+        uses CONNECT-MODE;
+  leaf authentication-type {
+            type Authenticate-type-type;
+        }
+ }
+ container pppoe-profiles {
+  list pppoe-profile {
+   key name;
+   leaf name {
+    type string;
+    mandatory true;
+    description
+       "PPPoE session profile name.";
+   }
+   uses PPPOE-SETTING;
+  }
+ }
+    grouping IP-PPPOE {
+  choice configure-mode {
+   case user-defined {
+    uses PPPOE-SETTING;
+   }
+   case profile {
+    leaf pppoe-profile {
+     type leafref {
+      path "/ciscosb-wan-ip:pppoe-profiles/ciscosb-wan-ip:pppoe-profile/ciscosb-wan-ip:name";
+     }
+    }
+   }
+  }
+        leaf peerdns {
+            type boolean;
+            default true;
+            description
+                        "Use dhcp provided dns server.";
+        }
+        leaf ifname {
+            mandatory true;
+            type string;
+            description
+                        "Physical interface name to assign to this particular section
+                        in config file..";
+        }
+        container naming-server {
+            when "../ciscosb-wan-ip:peerdns='false'";
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IP-PPTP {
+        uses GATEWAY;
+        leaf origin {
+             type ip:ip-address-origin;
+             description
+               "The origin of this address.";
+        }
+        leaf username {
+            type string;
+            mandatory true;
+            description
+                        "Username for PAP/CHAP authentication.";
+        }
+        leaf password {
+            type ciscosb-types:aes-cfb-128-encrypted-string;
+            mandatory true;
+            description
+                        "Password for PAP/CHAP authentication.";
+        }
+        leaf server {
+            type string;
+            description
+                        "Remote PPtP server.";
+        }
+        uses CONNECT-MODE;
+        leaf authentication-type {
+            type Authenticate-type-type;
+        }
+        leaf buffering {
+            type boolean;
+            description
+                        "Enables buffering and reordering of packets,false disables it
+                        (?�nobuffer)";
+        }
+        leaf mppe {
+            type boolean;
+            default false;
+            description
+                        "Enable MPPE encryption.";
+        }
+        leaf ifname {
+            config false;
+            type string;
+            description
+                        "Name of the physical interface. Defaults to pptp-<vpn> no matter
+                        what you use";
+        }
+        leaf peerdns {
+            type boolean;
+            default true;
+            description
+                        "Use dhcp provided dns server.";
+        }
+        container naming-server {
+            when "../ciscosb-wan-ip:peerdns='false'";
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IP-BRIDGE {
+        leaf stp {
+            type boolean;
+            description
+                        "Enable spanning tree protocal";
+        }
+        leaf-list ifnames {
+            description "List of interface names that are part of bridge.";
+            type string;
+        }
+        container naming-server {
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IP-L2TP {
+        uses GATEWAY;
+        leaf origin {
+             type ip:ip-address-origin;
+             description
+               "The origin of this address.";
+        }
+        leaf username {
+            type string;
+            mandatory true;
+            description
+                        "Username for PAP/CHAP authentication.";
+        }
+        leaf password {
+            type ciscosb-types:aes-cfb-128-encrypted-string;
+            mandatory true;
+            description
+                        "Password for PAP/CHAP authentication.";
+        }
+        leaf server {
+         type inet:host;
+            description
+                        "Remote L2TP server.";
+        }
+        uses CONNECT-MODE;
+        leaf authentication-type {
+            type Authenticate-type-type;
+        }
+        leaf pppd_options {
+            type boolean;
+            description
+                        "Additional options to pass to pppd.";
+        }
+        leaf peerdns {
+            type boolean;
+            default true;
+            description
+                        "Use dhcp provided dns server.";
+        }
+        container naming-server {
+            when "../ciscosb-wan-ip:peerdns='false'";
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IP-SLAAC {
+        leaf ifname {
+            type string;
+        }
+        leaf peerdns {
+            type boolean;
+            default true;
+            description
+                        "Use dhcp provided dns server.";
+        }
+        container naming-server {
+            when "../ciscosb-wan-ip:peerdns='false'";
+            uses NAMING_SERVERS;
+        }
+    }
+    grouping IPV4_EXTENSION {
+        choice wan-connection {
+            description "Wan connection type";
+            case static {
+                description "This connection type is used when ISP provides a permanent IP
+                                address to us. This IP will not be changed across the reboots
+                                and interface link UP/DOWN.";
+                container static {
+                    uses GATEWAY;
+                    uses IP-STATIC;
+                }
+            }
+            case dynamic {
+                container dynamic {
+                    uses IP-DYNAMIC;
+                }
+            }
+            case pppoe {
+                container pppoe {
+                    description "PPPoE (Point-to-Point Protocol over Ethernet) is a specification
+                                        for connecting multiple computer users on an Ethernet local area
+                                        network to a remote site through common customer premises equipment,
+                                        which is the telephone company's term for a modem and similar
+                                        devices. ";
+                    uses IP-PPPOE;
+     uses IP-UNNUMBERED;
+                }
+            }
+            case pptp {
+                container pptp {
+                    description "The Point-to-Point Tunneling Protocol (PPTP) is a method for
+                                        implementing virtual private networks. PPTP uses a control channel
+                                        over TCP and a GRE tunnel operating to encapsulate PPP packets
+                                        ";
+                    uses IP-PPTP;
+                }
+            }
+            case trasparent-bridge {
+                container trasparent-bridge {
+                    description "Bridge mode enables the router to connect two network segments.
+                                        Only one WAN interface can be set as transparent bridge.";
+                    uses GATEWAY;
+                    uses IP-BRIDGE;
+                }
+            }
+            case l2tp {
+                container l2tp {
+                    description "Layer Two Tunneling Protocol (L2TP) is an extension of the Point-to-Point
+                                        Tunneling Protocol (PPTP) used by an ISP to enable the operation
+                                        of VPN over the Internet.";
+                    uses IP-L2TP;
+                }
+            }
+   case multiple-pppoe {
+    container multiple-pppoe {
+     list settings {
+      key id;
+      leaf id {
+       type uint8;
+      }
+      uses IP-PPPOE;
+      uses IP-UNNUMBERED;
+     }
+    }
+   }
+        }
+    }
+    grouping IPV6_EXTENSION {
+        choice wan-connection {
+            description "Wan connection type";
+            case static {
+                description "This connection type is used when ISP provides a permanent IP
+                                address to us. This IP will not be changed across the reboots
+                                and interface link UP/DOWN.";
+                container static {
+                    uses GATEWAY;
+                    uses IP-STATIC;
+                }
+            }
+            case dynamic {
+                container dynamic {
+                    uses IP-DYNAMIC;
+                }
+            }
+            case pppoe {
+                container pppoe {
+                    description "PPPoE (Point-to-Point Protocol over Ethernet) is a specification
+                                        for connecting multiple computer users on an Ethernet local area
+                                        network to a remote site through common customer premises equipment,
+                                        which is the telephone company's term for a modem and similar
+                                        devices. ";
+                    uses IP-PPPOE;
+     leaf share-ipv4-pppoe-session {
+      type boolean;
+     }
+                }
+            }
+            case slaac {
+                container slaac {
+                    description "Stateless Auto Configuration allows the various devices attached
+                                        to an IPv6 network to connect to the Internet.";
+                    uses IP-SLAAC;
+                }
+            }
+   case pppoe-mix {
+    container pppoe-mix {
+     list settings {
+      key id;
+      leaf id {
+       type uint8;
+      }
+      choice wan-connection {
+       description "Wan connection type";
+       case static {
+        description "This connection type is used when ISP provides a permanent IP
+            address to us. This IP will not be changed across the reboots
+            and interface link UP/DOWN.";
+        container static {
+         uses GATEWAY;
+         uses IP-STATIC;
+        }
+       }
+       case dynamic {
+        container dynamic {
+         uses IP-DYNAMIC;
+        }
+       }
+       case pppoe {
+        container pppoe {
+         description "PPPoE (Point-to-Point Protocol over Ethernet) is a specification
+              for connecting multiple computer users on an Ethernet local area
+              network to a remote site through common customer premises equipment,
+              which is the telephone company's term for a modem and similar
+              devices. ";
+         uses IP-PPPOE;
+         leaf share-ipv4-pppoe-session {
+          type boolean;
+         }
+        }
+       }
+       case slaac {
+        container slaac {
+         description "Stateless Auto Configuration allows the various devices attached
+              to an IPv6 network to connect to the Internet.";
+         uses IP-SLAAC;
+        }
+       }
+      }
+     }
+    }
+   }
+        }
+    }
+    augment "/if:interfaces/if:interface/ip:ipv4" {
+        container setting {
+            uses IPV4_EXTENSION;
+        }
+    }
+    augment "/if:interfaces-state/if:interface/ip:ipv4" {
+        uses GATEWAY;
+        container naming-server {
+            uses NAMING_SERVERS;
+        }
+    }
+    augment "/if:interfaces/if:interface/ip:ipv6" {
+        container setting {
+            leaf dhcp-pd-enable {
+                type boolean;
+                default false;
+                description
+                                "Enable dhcp-pd or not.";
+            }
+            leaf prefix-name {
+                type string;
+                description
+                 "Dhcp-pd prefix name.";
+            }
+            uses IPV6_EXTENSION;
+        }
+    }
+    augment "/if:interfaces-state/if:interface/ip:ipv6" {
+        uses GATEWAY;
+        container naming-server {
+            uses NAMING_SERVERS;
+        }
+        leaf dhcp-pd-prefix {
+         type inet:ipv6-prefix;
+         description
+          "Dhcp-pd prefix";
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        leaf mac-address-clone {
+            type boolean;
+        }
+        leaf mac-address {
+            type yang:mac-address;
+        }
+        leaf mtu {
+            type uint16 {
+                range "1280..1460";
+            }
+        }
+    }
+    rpc release-ip {
+        description
+                "This operation requests to release ip for an interface.";
+        input {
+            leaf interface {
+                type if:interface-ref;
+            }
+            uses ciscosb-common:IP-VERSION;
+        }
+    }
+    rpc renew-ip {
+        description
+                "This operation requests to renew ip for an interface.";
+        input {
+            leaf interface {
+                type if:interface-ref;
+            }
+            uses ciscosb-common:IP-VERSION;
+        }
+    }
+    rpc connect {
+        description
+                "Connect  pppoe , l2tp or pptp connection";
+        input {
+            leaf interface {
+                type if:interface-ref;
+            }
+            uses ciscosb-common:IP-VERSION;
+        }
+    }
+    rpc disconnect {
+        description
+                "DisConnect  pppoe , lt2p or pptp connection";
+        input {
+            leaf interface {
+                  type if:interface-ref;
+            }
+            uses ciscosb-common:IP-VERSION;
+        }
+    }
+}

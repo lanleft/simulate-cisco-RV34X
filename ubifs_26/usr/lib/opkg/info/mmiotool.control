@@ -1,0 +1,8 @@
+Package: mmiotool
+Version: 1.00-1
+Depends: libc, librt, libpthread
+Source: package/freescale/mmiotool
+Section: opt
+Architecture: comcerto2000
+Installed-Size: 3150
+Description:  mmiotool

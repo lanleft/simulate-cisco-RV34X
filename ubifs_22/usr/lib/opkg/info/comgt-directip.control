@@ -1,0 +1,10 @@
+Package: comgt-directip
+Version: 0.32-29
+Depends: libc, librt, libpthread, comgt, kmod-usb-serial, kmod-usb-serial-sierrawireless, kmod-usb-net, kmod-usb-net-sierrawireless
+Source: package/network/utils/comgt
+License: GPL-2.0+
+Section: net
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: comcerto2000
+Installed-Size: 1570
+Description:  Sierra Wireless Direct-IP support

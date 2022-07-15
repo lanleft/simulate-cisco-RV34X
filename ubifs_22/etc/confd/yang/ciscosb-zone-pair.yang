@@ -1,0 +1,61 @@
+module ciscosb-zone-pair {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/zone-pair";
+    prefix ciscosb-zone-pair;
+    import ietf-interfaces { prefix if; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    import ciscosb-zone { prefix ciscosb-zone; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Ciscosb zone.
+            Copyright (c) 2017 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2017-08-01 {
+        description
+            "First revision";
+    }
+    container zone-pair {
+        list security {
+            key id;
+            ordered-by user;
+            leaf id {
+                type string;
+            }
+            leaf source {
+                type string;
+            }
+            leaf destination {
+                type string;
+            }
+            container service-policy {
+                leaf action {
+                    type string;
+                }
+                container source-ip {
+                    uses ciscosb-common:FIREWALL-ACL-SOURCE-FIELDS;
+                }
+                container destination-ip {
+                    uses ciscosb-common:FIREWALL-ACL-DESTINATION-FIELDS;
+                }
+                leaf log {
+                    type boolean;
+                }
+            }
+            leaf enabled {
+                type boolean;
+            }
+            leaf default {
+                type boolean;
+                default false;
+                description "This indicates whether the ACL is default rule.";
+            }
+            uses ciscosb-security-common:SCHEDULE;
+        }
+    }
+}

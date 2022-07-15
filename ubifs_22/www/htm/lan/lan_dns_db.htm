@@ -1,0 +1,43 @@
+<form name="form" ng-controller="lan_dns_db_main" novalidate ng-modification="loadReady">
+    <div ng-if="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('DNS_Local_Database')"></div>
+            <div class="page-button-container ng-hide" ng-show="true">
+                <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="save()">
+                    <span ng-bind="DICT('DNS_Local_Database_Apply')"></span>
+                </button>
+                <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('DNS_Local_Database_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+        <div class="page-content-container container-fluid ng-hide" ng-show="true">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('DNS_Local_Database_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_add"
+                                class="grid-btn-add"
+                                ng-disabled="form.$invalid || userAccessFlag === 'RO'"
+                                ng-click="gridDNSDB.add()">
+                        </button>
+                        <button id="btn_edit"
+                                class="grid-btn-edit"
+                                ng-disabled="gridDNSDB.Selections.length === 0 || userAccessFlag === 'RO'"
+                                ng-click="gridDNSDB.edit()">
+                        </button>
+                        <button id="btn_delete"
+                                class="grid-btn-delete"
+                                ng-disabled="gridDNSDB.Selections.length === 0 || userAccessFlag === 'RO'"
+                                ng-click="gridDNSDB.del()">
+                        </button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridDNSDB.Options"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

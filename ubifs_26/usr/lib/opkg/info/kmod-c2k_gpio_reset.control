@@ -1,0 +1,7 @@
+Package: kmod-c2k_gpio_reset
+Version: 4.1.8+-comcerto2000-
+Source: package/freescale/c2k_gpio_reset
+Section: opt
+Architecture: comcerto2000
+Installed-Size: 1955
+Description:  C2k gpio reset driver

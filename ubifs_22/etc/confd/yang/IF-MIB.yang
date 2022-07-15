@@ -1,0 +1,454 @@
+module IF-MIB {
+  namespace "http://tail-f.com/ns/mibs/IF-MIB/200006140000Z";
+  prefix IF_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "IF-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import SNMPv2-TC {
+    prefix SNMPv2-TC;
+  }
+  import IANAifType-MIB {
+    prefix IANAifType-MIB;
+  }
+  revision 2000-06-14 {
+    description
+      "";
+  }
+  container IF-MIB {
+    container interfaces {
+      tailf:snmp-oid "1.3.6.1.2.1.2";
+      leaf ifNumber {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.2.1.2.1";
+        config false;
+      }
+    }
+    container ifMIBObjects {
+      tailf:snmp-oid "1.3.6.1.2.1.31.1";
+      leaf ifTableLastChange {
+        type yang:timeticks;
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.5";
+        config false;
+      }
+      leaf ifStackLastChange {
+        type yang:timeticks;
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.6";
+        config false;
+      }
+    }
+    container ifTable {
+      list ifEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.2.2";
+        leaf ifIndex {
+          type InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf ifDescr {
+          type ifDescrType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.2";
+          config false;
+        }
+        leaf ifType {
+          type IANAifType-MIB:IANAifType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.3";
+          config false;
+        }
+        leaf ifMtu {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.4";
+          config false;
+        }
+        leaf ifSpeed {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.5";
+          config false;
+        }
+        leaf ifPhysAddress {
+          type yang:phys-address;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.6";
+          config false;
+        }
+        leaf ifAdminStatus {
+          type ifAdminStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.7";
+        }
+        leaf ifOperStatus {
+          type ifOperStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.8";
+          config false;
+        }
+        leaf ifLastChange {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.9";
+          config false;
+        }
+        leaf ifInOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.10";
+          config false;
+        }
+        leaf ifInUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.11";
+          config false;
+        }
+        leaf ifInNUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.12";
+          config false;
+        }
+        leaf ifInDiscards {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.13";
+          config false;
+        }
+        leaf ifInErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.14";
+          config false;
+        }
+        leaf ifInUnknownProtos {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.15";
+          config false;
+        }
+        leaf ifOutOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.16";
+          config false;
+        }
+        leaf ifOutUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.17";
+          config false;
+        }
+        leaf ifOutNUcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.18";
+          config false;
+        }
+        leaf ifOutDiscards {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.19";
+          config false;
+        }
+        leaf ifOutErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.20";
+          config false;
+        }
+        leaf ifOutQLen {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.21";
+          config false;
+        }
+        leaf ifSpecific {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.22";
+          config false;
+        }
+      }
+    }
+    container ifXTable {
+      list ifXEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.1";
+        leaf ifIndex {
+          type InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf ifName {
+          type string {
+            length "0 .. 255";
+          }
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.1";
+          config false;
+        }
+        leaf ifInMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.2";
+          config false;
+        }
+        leaf ifInBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.3";
+          config false;
+        }
+        leaf ifOutMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.4";
+          config false;
+        }
+        leaf ifOutBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.5";
+          config false;
+        }
+        leaf ifHCInOctets {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.6";
+          config false;
+        }
+        leaf ifHCInUcastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.7";
+          config false;
+        }
+        leaf ifHCInMulticastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.8";
+          config false;
+        }
+        leaf ifHCInBroadcastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.9";
+          config false;
+        }
+        leaf ifHCOutOctets {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.10";
+          config false;
+        }
+        leaf ifHCOutUcastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.11";
+          config false;
+        }
+        leaf ifHCOutMulticastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.12";
+          config false;
+        }
+        leaf ifHCOutBroadcastPkts {
+          type yang:counter64;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.13";
+          config false;
+        }
+        leaf ifLinkUpDownTrapEnable {
+          type ifLinkUpDownTrapEnableType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.14";
+        }
+        leaf ifHighSpeed {
+          type yang:gauge32;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.15";
+          config false;
+        }
+        leaf ifPromiscuousMode {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.16";
+        }
+        leaf ifConnectorPresent {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.17";
+          config false;
+        }
+        leaf ifAlias {
+          type ifAliasType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.18";
+        }
+        leaf ifCounterDiscontinuityTime {
+          type yang:timestamp;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.1.1.19";
+          config false;
+        }
+      }
+    }
+    container ifStackTable {
+      list ifStackEntry {
+        key "ifStackHigherLayer ifStackLowerLayer";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.2";
+        leaf ifStackHigherLayer {
+          type InterfaceIndexOrZero;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.2.1.1";
+        }
+        leaf ifStackLowerLayer {
+          type InterfaceIndexOrZero;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.2.1.2";
+        }
+      }
+    }
+    container ifTestTable {
+      list ifTestEntry {
+        key "ifIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.3";
+        leaf ifIndex {
+          type InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf ifTestStatus {
+          type ifTestStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.3.1.2";
+        }
+        leaf ifTestType {
+          type SNMPv2-TC:AutonomousType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.3.1.3";
+        }
+        leaf ifTestResult {
+          type ifTestResultType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.3.1.4";
+          config false;
+        }
+        leaf ifTestCode {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.3.1.5";
+          config false;
+        }
+        leaf ifTestOwner {
+          type OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.3.1.6";
+        }
+      }
+    }
+    container ifRcvAddressTable {
+      list ifRcvAddressEntry {
+        key "ifIndex ifRcvAddressAddress";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.31.1.4";
+        leaf ifIndex {
+          type InterfaceIndex;
+          tailf:snmp-oid "1.3.6.1.2.1.2.2.1.1";
+        }
+        leaf ifRcvAddressAddress {
+          type yang:phys-address;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.4.1.1";
+        }
+        leaf ifRcvAddressType {
+          type ifRcvAddressTypeType;
+          tailf:snmp-oid "1.3.6.1.2.1.31.1.4.1.3";
+          default "volatile";
+        }
+      }
+    }
+  }
+  typedef OwnerString {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef InterfaceIndex {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef InterfaceIndexOrZero {
+    type int32 {
+      range "0 .. 2147483647";
+    }
+  }
+  typedef ifDescrType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef ifAdminStatusType {
+    type enumeration {
+      enum "up" {
+        value 1;
+      }
+      enum "down" {
+        value 2;
+      }
+      enum "testing" {
+        value 3;
+      }
+    }
+  }
+  typedef ifOperStatusType {
+    type enumeration {
+      enum "up" {
+        value 1;
+      }
+      enum "down" {
+        value 2;
+      }
+      enum "testing" {
+        value 3;
+      }
+      enum "unknown" {
+        value 4;
+      }
+      enum "dormant" {
+        value 5;
+      }
+      enum "notPresent" {
+        value 6;
+      }
+      enum "lowerLayerDown" {
+        value 7;
+      }
+    }
+  }
+  typedef ifLinkUpDownTrapEnableType {
+    type enumeration {
+      enum "enabled" {
+        value 1;
+      }
+      enum "disabled" {
+        value 2;
+      }
+    }
+  }
+  typedef ifAliasType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef ifTestStatusType {
+    type enumeration {
+      enum "notInUse" {
+        value 1;
+      }
+      enum "inUse" {
+        value 2;
+      }
+    }
+  }
+  typedef ifTestResultType {
+    type enumeration {
+      enum "none" {
+        value 1;
+      }
+      enum "success" {
+        value 2;
+      }
+      enum "inProgress" {
+        value 3;
+      }
+      enum "notSupported" {
+        value 4;
+      }
+      enum "unAbleToRun" {
+        value 5;
+      }
+      enum "aborted" {
+        value 6;
+      }
+      enum "failed" {
+        value 7;
+      }
+    }
+  }
+  typedef ifRcvAddressTypeType {
+    type enumeration {
+      enum "other" {
+        value 1;
+      }
+      enum "volatile" {
+        value 2;
+      }
+      enum "nonVolatile" {
+        value 3;
+      }
+    }
+  }
+}

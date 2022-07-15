@@ -1,0 +1,36 @@
+<div ng-controller="discovery_bonjour">
+	<form name="form" ng-modification="dataReady" ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Discovery_Bonjour')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Discovery_Bonjour_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('Discovery_Bonjour_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list" style="margin-bottom: 10px">
+                <tr>
+                    <td ng-bind="DICT('Discovery_Bonjour')+':'"></td>
+                    <td>
+                        <input type="checkbox" id="chk_discoverybonjour" ng-model="model.bonjour.enable">
+                            <span ng-bind="DICT('Discovery_Bonjour_Enable')"></span>
+                        </input> 
+                    </td>
+                </tr>
+            </table>
+            <div class="grid-cntr" ng-class="{nopHint: !model.bonjour.enable}">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Discovery_Bonjour_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridBonjourOptions"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

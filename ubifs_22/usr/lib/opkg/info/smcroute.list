@@ -1,0 +1,4 @@
+/usr/bin/mcsender
+/usr/sbin/smcroute
+/etc/smcroute.conf
+/etc/init.d/smcroute

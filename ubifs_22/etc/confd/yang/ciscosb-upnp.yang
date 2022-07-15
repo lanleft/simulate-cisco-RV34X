@@ -1,0 +1,55 @@
+module ciscosb-upnp {
+    namespace "http://cisco.com/ns/ciscosb/upnp";
+    prefix ciscosb-upnp;
+    import ietf-interfaces { prefix if; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This management module is an instrumentation to manage the 'Universal
+        Plug and Play Protocol (UPNP)'.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-05 {
+        description "Initial revision.";
+        reference "TODO";
+    }
+    container upnp {
+        leaf enable {
+            type boolean;
+            description "Enable or disable UPNP protocol at system level";
+        }
+        container external_ifaces {
+         list external_iface {
+          key interface-ref;
+          leaf interface-ref {
+           type if:interface-ref;
+          }
+         }
+        }
+        container internal_ifaces {
+         list internal_iface {
+          key interface-ref;
+          leaf interface-ref {
+           type if:interface-ref;
+           description "LAN network interface name to listening on";
+          }
+         }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container upnp {
+            leaf enable {
+                type boolean;
+            }
+        }
+    }
+}

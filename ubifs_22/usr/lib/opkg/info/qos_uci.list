@@ -1,0 +1,6 @@
+/usr/sbin/qos_iface_stats.sh
+/etc/init.d/qos
+/usr/sbin/qos-ip6tables-uci
+/usr/sbin/qos-iptables-uci
+/etc/config/qos
+/etc/hotplug.d/iface/89-qos

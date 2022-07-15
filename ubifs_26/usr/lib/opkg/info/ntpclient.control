@@ -1,0 +1,8 @@
+Package: ntpclient
+Version: 2007_365-4
+Depends: libc, librt, libpthread, librt
+Source: package/openwrt/net/ntpclient
+Section: net
+Architecture: comcerto2000
+Installed-Size: 11050
+Description:  NTP client for setting system time from NTP servers.

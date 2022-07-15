@@ -1,0 +1,73 @@
+<div ng-controller="headerCtrl"> 
+    <table id="header-container" ng-class="{'nav-off': collapsed}">
+        <tr nowrap="nowrap">
+            <td id="header-left">
+                <table>
+                    <tr>
+                        <td>
+                            <img width="50px"
+                                 height="50px"
+                                 id="header-nav-switch"
+                                 src="themes/img/icon/collapsed.png"
+                                 ng-click="toggle_nav()"
+                                 ng-class="{'nav-is-off': collapsed}"
+                             ></img>
+                        </td>
+                        <td id="header-app-logo">
+                            <a href="http://www.cisco.com">
+                                <img height="60px" src="themes/img/icon/CiscoLogo.png"></img>
+                            </a>
+                        </td>
+                        <td id="header-app-title" ng-style="title_style">
+                            <span ng-bind="title" title="{{title}}"></span></td>
+                    </tr>
+                </table>
+            </td>
+            <td id="header-right" nowrap="nowrap">
+                <table>
+                    <tr>
+                        <td ng-repeat="m in warnings" ng-style="{'min-width': m.width}" ng-mouseenter="m.focus = true" ng-mouseleave="m.focus= false" class="header-alert-elm">
+                            <span ng-click="jumpToPage(m.jumpto)"
+                                  ng-show="m.enable && (m.display || m.focus)"
+                                  title="{{m.title}}"
+                                  ng-class="m.class_name"
+                                  uib-tooltip-html="m.tip_info"
+                                  tooltip-append-to-body="true"
+                                  tooltip-placement="bottom"
+                                  tooltip-enable="m.tip_info.length !== 0"
+                            ></span>
+                        </td>
+                        <td ng-show="login.user" id="header-user-info" ng-style="user_style">
+                            <span ng-bind="user_info" title="{{user_info}}"></span>
+                        </td>
+                        <td id="header-multi-lang" ng-style="multiLang_style">
+                            <select ng-model="langOptions.select"
+                                    title="{{langOptions.displayName}}"
+                                    ng-change="langOptions.change()"
+                                    ng-options="m.lang as m.displayName for m in langOptions.list"
+                            ></select>
+                        </td>
+                        <td id="header-online-help">
+                            <a ng-href="{{help_url}}" onclick="window.open(this.href, 'newwindow', 'width=700, height=1000');return false;">
+                                <i class="icon-online-help header-app-icon" aria-hidden="true" title="{{DICT('Help')}}"></i>
+                            </a>
+                        </td>
+                        <td id="header-about">
+                            <a href="" onclick="window.open('about.html', 'newwindow', 'width=550, height=400');">
+                                <i class="icon-about header-app-icon" aria-hidden="true" title="{{DICT('About')}}"></i>
+                            </a>
+                        </td>
+                        <td id="header-logout">
+                            <i class="icon-logout header-app-icon" aria-hidden="true" ng-click="logout()" title="{{DICT('Logout')}}"></i>
+                        </td>
+                        <!--
+                            <td>
+                            {{remain_session_time}}
+                            </td>
+                        -->
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

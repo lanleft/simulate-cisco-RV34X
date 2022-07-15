@@ -1,0 +1,355 @@
+<div>
+    <form name="form" ng-controller="vpn_status_main">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('VPN_Status')"></div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div ng-include="'T_VPNStatus_Summary.html'"></div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="T_VPNStatus_Summary.html">
+<div ng-if="loadReady">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('VPN_Status_S2S_Tunnel_Status')"></div>
+    </div>
+    <table class="page-block-tb-list">
+        <tr>
+            <td>
+                <input id="txt_used" disabled="disabled" value="{{ getConnNumOf('site-to-site-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Used')"></span>
+            </td>
+            <td>
+                <input id="txt_available"
+                    disabled="disabled"
+                    value="{{ (model['site-to-sites']['max-tunnel'] - getDefinedNumOf('site-to-site-state') ) }}"
+                    size="4">
+                </input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Available')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input id="txt_enabled" disabled="disabled" value="{{ getEnabledNumOf('site-to-site-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Enabled')"></span>
+            </td>
+            <td>
+                <input id="txt_defined" disabled="disabled" value="{{ getDefinedNumOf('site-to-site-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Defined')"></span>
+            </td>
+        </tr>
+    </table>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_add"
+                    class="grid-btn-add"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('S2S', 'add', gridS2SConn.Selections)"
+                ></button>
+                <button id="btn_edit"
+                    class="grid-btn-edit"
+                    ng-disabled="gridS2SConn.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('S2S', 'edit', gridS2SConn.Selections)"
+                ></button>
+                <button id="btn_delete"
+                    class="grid-btn-delete"
+                    ng-disabled="gridS2SConn.Selections.length === 0 || userAccessFlag === 'RO'"
+                    ng-click="gridS2SConn.remove()"
+                ></button>
+                <button id="btn_refresh"
+                    class="grid-btn-refresh"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="gridS2SConn.refresh()"
+                ></button>
+                <button id="btn_s2s_tableaction"
+                    class="grid-btn-tableaction"
+                    ui-grid-option="gridS2SConn.Options"
+                    ui-grid-action-cbk="gridS2SConn.toggleColumnSelect"
+                ></button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridS2SConn.Options"></div>
+        </div>
+    </div>
+
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('VPN_Status_C2S_Tunnel_Status')"></div>
+    </div>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_c2sadd"
+                    class="grid-btn-add"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('C2S', 'add', gridC2SConn.Selections)"
+                ></button>
+                <button id="btn_c2sedit"
+                    class="grid-btn-edit"
+                    ng-disabled="gridC2SConn.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('C2S', 'edit', gridC2SConn.Selections)"
+                ></button>
+                <button id="btn_c2sdelete"
+                    class="grid-btn-delete"
+                    ng-disabled="gridC2SConn.Selections.length === 0 || userAccessFlag === 'RO'"
+                    ng-click="gridC2SConn.remove()"
+                ></button>
+                <button id="btn_c2sview"
+                    class="grid-btn-look"
+                    ng-disabled="gridC2SConn.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="gridC2SConn.clickView();"
+                ></button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridC2SConn.Options"></div>
+        </div>
+    </div>
+    <div class="grid-seperator" ng-if="gridC2SConn.Selections.length > 0 && gridC2SConn.viewConn"></div>
+    <div class="grid-cntr" ng-if="gridC2SConn.Selections.length > 0 && gridC2SConn.viewConn">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table_Of') + gridC2SConn.Selections[0]['group-name']"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridC2SConnDetail.Options"></div>
+        </div>
+    </div>
+
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('VPN_Status_SSL_VPN_Status')"></div>
+    </div>
+    <table class="page-block-tb-list" ng-if="loadReady">
+        <tr>
+            <td>
+                <input id="txt_sslused" disabled="disabled" value="{{ getConnNumOf('sslvpn-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Used')"></span>
+            </td>
+            <td>
+                <input id="txt_sslavail" disabled="disabled" value="{{ (model['sslvpn']['max-session'] - getConnNumOf('sslvpn-state') ) }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Available')"></span>
+            </td>
+        </tr>
+    </table>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_ssladd"
+                    class="grid-btn-add"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('SSL', 'add', gridSSLConn.Selections)"
+                ></button>
+                <button id="btn_ssledit"
+                    class="grid-btn-edit"
+                    ng-disabled="gridSSLConn.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="pageActionJump('SSL', 'edit', gridSSLConn.Selections)"
+                ></button>
+                <button id="btn_ssldelete"
+                    class="grid-btn-delete"
+                    ng-disabled="gridSSLConn.Selections.length === 0 || userAccessFlag === 'RO'"
+                    ng-click="gridSSLConn.remove()"
+                ></button>
+                <button id="btn_sslview"
+                    class="grid-btn-look"
+                    ng-disabled="gridSSLConn.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="gridSSLConn.clickView()"
+                ></button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridSSLConn.Options" />
+        </div>
+    </div>
+    <div class="grid-seperator" ng-if="gridSSLConn.Selections.length > 0 && gridSSLConn.viewConn"></div>
+        <div class="grid-cntr" ng-if="gridSSLConn.Selections.length > 0 && gridSSLConn.viewConn">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table_Of') + gridSSLConn.Selections[0]['policy-name']"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridSSLConnDetail.Options"></div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('VPN_Status_PPTP_Tunnel_Status')"></div>
+    </div>
+    <table class="page-block-tb-list" ng-if="loadReady">
+        <tr>
+            <td>
+                <input id="txt_pptpused" disabled="disabled" value="{{ getConnNumOf('pptp-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Used')"></span>
+            </td>
+            <td>
+                <input id="txt_pptpavail" disabled="disabled" value="{{ (model.pptp['max-session'] - getConnNumOf('pptp-state') ) }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Available')"></span>
+            </td>
+        </tr>
+    </table>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridPPTPConn.Options"></div>
+        </div>
+    </div>
+
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('VPN_Status_L2TP_Tunnel_Status')"></div>
+    </div>
+    <table class="page-block-tb-list" ng-if="loadReady">
+        <tr>
+            <td>
+                <input id="txt_l2tpused" disabled="disabled" value="{{ getConnNumOf('l2tp-state') }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Used')"></span>
+            </td>
+            <td>
+                <input id="txt_l2tpavail" disabled="disabled" value="{{ (model.l2tp['max-session'] - getConnNumOf('l2tp-state') ) }}" size="4"></input>
+            </td>
+            <td>
+                <span ng-bind="DICT('VPN_Status_Tunnel_Available')"></span>
+            </td>
+        </tr>
+    </table>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('VPN_Status_Connection_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridL2TPConn.Options"></div>
+        </div>
+    </div>
+
+    <div ng-show="model['teleworker-vpn-clients']['enable'] == true">
+        <hr class="page-content-seperator"></hr>
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('VPN_Status_Teleworker_VPN_Client')"></div>
+        </div>
+        <span ng-if="loadReady" data-x-tmp="{{ twref = model['teleworker-vpn-clients-state'] }}">
+            <message-box class="page-note-cntr" ng-if="twref['status'] === 'UP' && !twref['split-dns']">
+                <table>
+                    <tr>
+                        <td class="align-top">
+                            <i class="icon-warning message-icon"></i>
+                        </td>
+                        <td ng-bind="DICT('VPN_Status_Split_DNS_Note')"></td>
+                    </tr>
+                </table>
+            </message-box>
+            <div style="display: table" class="page-block-tb-list">
+                <div style="display: table-row;">
+                    <div style="display: table-cell;padding-bottom:10px;" ng-bind="DICT('VPN_Status_Name')"></div>
+                    <div style="display: table-cell">
+                        <span id="txt_status" style="margin-left: 10px;width:170px;" ng-bind="twref['name']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell;padding-bottom:10px;" ng-bind="DICT('VPN_Status_Status')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_status" style="margin-left: 10px;width:170px;" ng-bind="twref['status']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Primary_DNS')"></div>
+                    <div style="display: table-cell;">
+                        <span type="text" id="txt_primarydns" style="margin-left: 10px;width:170px;" ng-bind="twref['primary-dns']"></span>
+                    </div>
+                    <div style="display: table-cell; padding-left:10px;" ng-bind="DICT('VPN_Status_Secnodary_DNS')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_secdns" style="margin-left: 10px;width:170px;" ng-bind="twref['secondary-dns']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Primary_WINS')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_primarywins" style="margin-left: 10px;width:170px;" ng-bind="twref['primary-wins']"></span>
+                    </div>
+                    <div style="display: table-cell; padding-left:10px;" ng-bind="DICT('VPN_Status_Secnodary_WINS')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_secwins" style="margin-left: 10px;width:170px;" ng-bind="twref['secondary-wins']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Default_Domain')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_defaultdomain" style="margin-left: 10px;width:170px;" ng-bind="twref['default-domain']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Split_Tunnel')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_splittunnel" style="margin-left: 10px;width:170px;" ng-bind="twref['split-tunnel']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Split_DNS')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_splitdns" style="margin-left: 10px;width:170px;" ng-bind="twref['split-dns']"></span>
+                    </div>
+                </div>
+                <div style="display: table-row;">
+                    <div style="display: table-cell; padding-bottom:10px;" ng-bind="DICT('VPN_Status_Backup_Server1')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_backupserver1" disabled="disabled" style="margin-left: 10px;width:170px;" ng-bind="twref['backup-server-1']"></span>
+                    </div>
+                    <div style="display: table-cell; padding-left:10px;" ng-bind="DICT('VPN_Status_Backup_Server2')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_backupserver2" disabled="disabled" style="margin-left: 10px;width:170px;" ng-bind="twref['backup-server-2']"></span>
+                    </div>
+                    <div style="display: table-cell; padding-left:10px;" ng-bind="DICT('VPN_Status_Backup_Server3')"></div>
+                    <div style="display: table-cell">
+                        <span type="text" id="txt_backupserver3" disabled="disabled" style="margin-left: 10px;width:170px;" ng-bind="twref['backup-server-3']"></span>
+                    </div>
+                </div>
+            </div>
+        </span>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="T_VPNStatus_Action.html">
+<div class="ui-grid-custom-cntr">
+    <span ng-repeat="(ri_key ,ri) in col.colDef.rowAction" ng-if="col.colDef.rowActionRule(row, ri_key, ri)">
+        <button id="{{'btn_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            ng-class="[ri.className]"
+            ng-click="$event.stopPropagation(); ri.click(grid.appScope.gridFuns.getRowIndex(row, col, grid), row)"
+            title="{{ri.toast}}"
+            ng-disabled="row.entity['_disabled']"
+        ></button>
+    </span>
+</div>
+</script>
+
+<script type="text/ng-template" id="vpnstatus_group.html">
+<div class="ui-grid-custom-cntr">
+    <span ng-bind="MODEL_COL_FIELD.info" pg-title></span>
+    <info-icon context="MODEL_COL_FIELD.tip" ng-show="MODEL_COL_FIELD.tip"></info-icon>
+</div>
+</script>

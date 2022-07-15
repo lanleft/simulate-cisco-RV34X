@@ -1,0 +1,8 @@
+Package: mtd-utils
+Version: 1.5.0-2
+Depends: libc, librt, libpthread
+Source: package/openwrt/utils/mtd-utils
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 105
+Description:  Utilities for manipulating memory technology devices.

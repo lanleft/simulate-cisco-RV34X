@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/eap-mschapv2.conf
+/usr/lib/ipsec/plugins/libstrongswan-eap-mschapv2.so

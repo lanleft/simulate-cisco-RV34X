@@ -1,0 +1,8 @@
+Package: sbr-gui
+Version: 1.0.2.11-14
+Depends: libc, librt, libpthread, confd, libjson-c, libuci, libwebsockets, libpcre
+Source: package/pegatron/sbr-gui
+Section: Pegatron
+Architecture: comcerto2000
+Installed-Size: 2615015
+Description:  Pegatron Release.

@@ -1,0 +1,1 @@
+/mnt/packages/mobile/usr/bin/update_mobile.sh

@@ -1,0 +1,11 @@
+Package: perlbase-digest
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-dynaloader, perlbase-essential, perlbase-fcntl, perlbase-integer
+Source: package/perl
+License: GPL-1.0+ Artistic-1.0-Perl
+LicenseFiles: Copying Artistic README
+Section: lang
+Maintainer: Marcel Denia <naoir@gmx.net>
+Architecture: comcerto2000
+Installed-Size: 30437
+Description:  Digest perl module

@@ -1,0 +1,8 @@
+Package: olh
+Version: 2020-11-02
+Depends: libc, librt, libpthread
+Source: package/cisco/olh
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 3540408
+Description:  online help.

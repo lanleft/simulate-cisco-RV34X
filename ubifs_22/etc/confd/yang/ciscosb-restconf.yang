@@ -1,0 +1,54 @@
+module ciscosb-restconf {
+    namespace "http://cisco.com/ns/ciscosb/restconf";
+  prefix ciscosb-restconf;
+  import ietf-inet-types { prefix inet; }
+  organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+  description
+    "This module contains a collection of YANG definitions 
+     for Cisco RESTCONF package configuration.
+     Copyright (c) 2017 by Cisco Systems, Inc.
+     All rights reserved.";
+  revision 2017-09-07 {
+      description "Add revision ";
+      reference "";
+  }
+  typedef restconf-zone-type {
+      type enumeration {
+          enum lan-vpn;
+          enum wan;
+      }
+  }
+  container ciscosb-restconf {
+      description
+              "Cisco-specific RESTCONF engine configuration elements.";
+   leaf enabled {
+        type boolean;
+      }
+      leaf rootResource {
+        type string;
+        default "restconf";
+        description
+          "The RESTCONF root resource path.";
+      }
+      leaf-list restconf-zone {
+        type restconf-zone-type;
+      }
+   container transport {
+  container https {
+    leaf enabled {
+            type boolean;
+          }
+          leaf port {
+            type inet:port-number;
+          }
+          leaf cert {
+            type string;
+          }
+  }
+   }
+ }
+}

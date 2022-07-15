@@ -1,0 +1,80 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+configure_cronjob() {
+	action=`uci get recurring-schedule-reboot.reboot.action`
+	week_day=`uci get recurring-schedule-reboot.reboot.week_day`
+	hours=`uci get recurring-schedule-reboot.reboot.hours`
+	minutes=`uci get recurring-schedule-reboot.reboot.minutes`
+	month_day=`uci get recurring-schedule-reboot.reboot.month_day`
+	if [ "$action" = 0]; then
+		logger -t system -p local0.alert "recurring-schedule: configuring cron job for system reboot."
+	else
+		logger -t system -p local0.alert "recurring-schedule: configuring cron job for wifi radio reset."
+	fi
+
+	MYCMD="/bin/sh /usr/bin/restart_system_wifi.sh"
+	uci del crontabs.schedule_reboot >/dev/null 2>&1
+	uci set crontabs.schedule_reboot=crontab
+	uci set crontabs.schedule_reboot.minutes=$minutes
+	uci set crontabs.schedule_reboot.hours=$hours
+
+	# weekly reboot is configured
+	if [ -n "$week_day" ];then
+	{
+		uci set crontabs.schedule_reboot.days=*
+		uci set crontabs.schedule_reboot.months=*
+		uci set crontabs.schedule_reboot.weekdays=$week_day
+		#logger -t system -p local0.alert "Schedule reboot configured with weekly reboot option."
+		#logger -t system -p local0.alert "Reboot triggered on week=$week_day hours=$hours minutes=$minutes."
+		logger -t system -p local0.alert "recurring-schedule:   with weekly option,week=$week_day hours=$hours minutes=$minutes."
+	}
+	# monthly reboot is configured
+	elif [ -n "$month_day" ]; then
+	{
+		uci set crontabs.schedule_reboot.days=$month_day
+		uci set crontabs.schedule_reboot.months=*
+		uci set crontabs.schedule_reboot.weekdays=*
+		#logger -t system -p local0.alert "Schedule reboot configured with monthly reboot option."
+		#logger -t system -p local0.alert "Reboot triggered on month_day=$month_day hours=$hours minutes=$minutes."
+		logger -t system -p local0.alert "recurring-schedule:   with monthly option,month_day=$month_day hours=$hours minutes=$minutes."
+	}
+	else {
+		#every day reboot is configured
+		uci set crontabs.schedule_reboot.days=*
+		uci set crontabs.schedule_reboot.months=*
+		uci set crontabs.schedule_reboot.weekdays=*
+		#logger -t system -p local0.alert "Schedule reboot configured with every day reboot option."
+		#logger -t system -p local0.alert "Reboot triggered on everyday at hours=$hours minutes=$minutes."
+		logger -t system -p local0.alert "recurring-schedule:   with every day option,hours=$hours minutes=$minutes."
+	}
+	fi
+	uci set crontabs.schedule_reboot.command="$MYCMD"
+	uci set crontabs.schedule_reboot.enabled=1
+	uci commit crontabs
+	/etc/init.d/cron reload
+
+	return 0
+}
+
+enable=`uci get recurring-schedule-reboot.reboot.enable`
+start() {
+	if [ "$enable" = 1 ]; then
+		configure_cronjob
+	else
+		uci del crontabs.schedule_reboot >/dev/null 2>&1
+		logger -t system -p local0.alert "recurring-schedule: disabled."
+		uci commit crontabs
+		/etc/init.d/cron reload
+	fi
+	return 0
+}
+
+reload() {
+	start
+	return 0
+}
+stop() {
+	logger -t system -p local0.alert "recurring-schedule: stop !!."
+}

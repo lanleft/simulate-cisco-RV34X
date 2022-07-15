@@ -1,0 +1,48 @@
+#!/bin/sh
+
+db="/tmp/stat.db"
+IPSFILE=/tmp/ipstcfile
+
+# This is being called as
+# get-top-clients num 10 type threat
+# get-top-clients num 10 type ips
+
+num=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "num") {print $(I+1)};}'`
+type=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "type") {print $(I+1)};}'`
+
+if [ "$type" = "ips" ]; then
+  sql="SELECT mac1,count,dev.ip,dev.name,dev.type,dev.os from (SELECT mac as mac1, count(*) AS count FROM ips GROUP BY ips.mac ORDER BY count DESC LIMIT $num) INNER JOIN dev on dev.mac=mac1;"
+elif [ "$type" = "threat" ]; then
+  sql="SELECT mac1,count,dev.ip,dev.name,dev.type,dev.os from (SELECT mac as mac1, count(*) AS count FROM av GROUP BY av.mac ORDER BY count DESC LIMIT $num) INNER JOIN dev on dev.mac=mac1;"
+else
+  # improper inpupt
+  #echo "clients __BEGIN"
+  #echo "mac 00:11:22:33:44:01 ipv4-address 192.168.1.100 ipv6-address 2001::100 hostname device1 device-type COMPUTER os-type Linux"
+  #echo "clients __END"
+  exit 0
+fi
+
+sqlite3 "$db" "$sql" >$IPSFILE
+
+while IFS='' read -r line || [[ -n "$line" ]]; do
+  #"D4:81:D7:6F:28:7C"|5|192.168.1.141|NXL29685|Computer|Windows
+  mac=`echo $line | awk -F'|' '{print $1}'`
+  count=`echo $line | awk -F'|' '{print $2}'`
+  ip=`echo $line | awk -F'|' '{print $3}'`
+  host=`echo $line | awk -F'|' '{print $4}'`
+  dev=`echo $line | awk -F'|' '{print $5}'`
+  os=`echo $line | awk -F'|' '{print $6}'`
+
+  if [ "$ip6" = "" ]; then
+    ip6="0::0"
+  fi
+
+  echo "clients __BEGIN"
+  if [ "$type" = "ips" ]; then
+    echo "mac $mac ipv4-address \"$ip\" ipv6-address $ip6 hostname \"$host\" device-type \"$dev\" os-type \"$os\" attacks-count $count"
+  elif [ "$type" = "threat" ]; then
+    echo "mac $mac ipv4-address \"$ip\" ipv6-address $ip6 hostname \"$host\" device-type \"$dev\" os-type \"$os\" threats-count $count"
+  fi
+  echo "clients __END"
+
+done < $IPSFILE

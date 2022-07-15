@@ -1,0 +1,9 @@
+Package: sslvpn
+Version: 1.0-24
+Depends: libc, librt, libpthread, libopenssl, smart_client, libpam, confd, kmod-tun, libxml2
+Source: package/cisco/sslvpn
+Section: Cisco
+Maintainer: Aiping Liu <aipiliu@cisco.com>
+Architecture: comcerto2000
+Installed-Size: 694897
+Description:  SSL VPN Server

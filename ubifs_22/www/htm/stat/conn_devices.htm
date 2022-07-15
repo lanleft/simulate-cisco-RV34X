@@ -1,0 +1,42 @@
+<form name="form" ng-controller="conn_devices_main">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Connected_Devices_ARP_Table')"></div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div class="grid-cntr">
+                <ng-form name="arpTableIpv4form">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Connected_Devices_IPv4_ARP', {'%d': model.ipv4State.length})"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button id="btn_add"
+                                    class="grid-btn-add-dhcp"
+                                    ng-disabled="gridIPv4State.Selections.length == 0 || arpTableIpv4form.$invalid || userAccessFlag === 'RO'"
+                                    ng-click="gridIPv4State.add_to_static_dhcp()"
+                            ></button>
+                            <button class="grid-btn-refresh" id="btn_refresh_ipv4" ng-click="gridIPv4State.refresh()"
+                            ></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridIPv4State.Options"></div>
+                    </div>
+                </ng-form>
+            </div>
+            <div class="grid-seperator"></div>
+            <div class="grid-cntr">
+                <ng-form name="arpTableIpv6form">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Connected_Devices_IPv6_NDP', {'%d': model.ipv6State.length})"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button class="grid-btn-refresh" id="btn_refresh_ipv6" ng-click="gridIPv6State.refresh()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridIPv6State.Options"></div>
+                    </div>
+                </ng-form>
+            </div>
+        </div>
+    </div>
+</form>

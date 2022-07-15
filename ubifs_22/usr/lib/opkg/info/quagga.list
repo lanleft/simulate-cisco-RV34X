@@ -1,0 +1,6 @@
+/usr/sbin/quagga.init
+/etc/config/rip
+/etc/init.d/quagga
+/etc/hotplug.d/iface/90-rip
+/usr/bin/distribute-rip.pl
+/etc/init.d/rip

@@ -1,0 +1,785 @@
+<div>
+    <form name="form" ng-controller="user_account_main" id="user-account" novalidate ng-modification="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('User_Accounts')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" ng-if="ctx.forceChangePW || ctx.pwdAging" ng-click="save()" ng-disabled="ctx.pwMeterInvalid || form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('User_Accounts_Save')"></span>
+                </button>
+                <button class="btn-apply" ng-if="!ctx.forceChangePW && !ctx.pwdAging" ng-click="save()" ng-disabled="ctx.pwMeterInvalid || form.$invalid || userAccessFlag === 'RO' || gridRAS.disableApplyBtn">
+                    <span ng-bind="DICT('User_Accounts_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-cloak ng-click="cancel()" ng-if="!ctx.forceChangePW && !ctx.pwdAging">
+                    <span ng-bind="DICT('User_Accounts_Cancel')"></span>
+                </button>
+                <button class="btn-back" ng-click="goBackPreviousPage()" ng-if="backbtn && currPage == pageMap['main']">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success && currPage == pageMap['main']"></confirmsave>
+        <div ng-if="loadReady">
+            <div class="page-content-container container-fluid">
+                    <div ng-if="currPage == pageMap['main']" ng-include="pageMap['main']"></div>
+                    <div ng-if="currPage == pageMap['user_edit']" ng-include="pageMap['user_edit']"></div>
+                    <div ng-if="currPage == pageMap['ras_edit']" ng-include="pageMap['ras_edit']"></div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="UserAccountMain.html">
+    <div ng-hide="gridUserList.importDialog"
+        ng-if="currPage === pageMap['main']"
+        ng-include="'WebSessionTimeout.htm'"
+    >
+    </div>
+    <div ng-hide="gridUserList.importDialog"
+        ng-controller="user_account_main_pw_complexity"
+        ng-include="'LocalPasswordComplexity.htm'"
+    ></div>
+
+    <div>
+        <div ng-include="'LocalUsers.html'"></div>
+        <div ng-if="gridUserList.importDialog" ng-include="'LocalUsersImport.html'"></div>
+        <br/>
+        <div ng-hide="gridUserList.importDialog" ng-include="'RemoteAuthService.html'"></div>
+        <br/>
+        <div ng-hide="gridUserList.importDialog" ng-include="'RAS_ServiceAuthSequence.html'"></div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="LocalUsersEditSection.html">
+    <div ng-include="'LocalUsersEdit.html'"
+        ng-controller="user_account_main_pw_complexity"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    ></div>
+</script>
+
+<script type="text/ng-template" id="WebSessionTimeout.htm">
+<ng-form name="form_wst">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_WST')"></div>
+    </div>
+    <table class="page-block-tb-list session-timeout"
+        data-x-tmp="{{wstctx = model['web_session_timeout']}}"
+    >
+        <tr>
+            <td>
+                <span ng-bind="DICT('User_Accounts_WST1_Administrator_Inactivity_Timeout')"></span>
+            </td>
+            <td>
+                <input type="number" number id="txt_minpwdlen_admin" min="0" max="1440"
+                    ng-model="wstctx['admin']"
+                    required
+                />
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="DICT('User_Accounts_WST1_Administrator_Inactivity_Timeout_Range')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span ng-bind="DICT('User_Accounts_WST2_Guest_Inactivity_Timeout')"></span>
+            </td>
+            <td>
+                <input type="number" number id="txt_minpwdlen_guest" min="0" max="1440"
+                    ng-model="wstctx['guest']"
+                    required
+                />
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="DICT('User_Accounts_WST2_Guest_Inactivity_Timeout_Range')"></span>
+            </td>
+        </tr>
+<!--        <tr ng-if="true">-->
+<!--            <td>-->
+<!--                <span ng-bind="DICT('User_Accounts_WST3_Lobby_Ambassador_Inactivity_Timeout')"></span>-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                <input type="number" number id="txt_minpwdlen" min="0" max="1440"-->
+<!--                    ng-model="wstctx['lobby_ambassador']"-->
+<!--                    required-->
+<!--                />-->
+<!--            </td>-->
+<!--            <td>-->
+<!--                <span ng-bind="DICT('User_Accounts_WST3_Lobby_Ambassador_Inactivity_Timeout_Range')"></span>-->
+<!--            </td>-->
+<!--        </tr>-->
+    </table>
+</ng-form>
+</script>
+
+<script type="text/ng-template" id="LocalPasswordComplexity.htm">
+<ng-form name="form_pw_complexity">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-hide="hideCcomplexityTitle" ng-bind="DICT('User_Accounts_Local_User_Pwd_Complexity')"></div>
+    </div>
+    <table class="page-block-tb-list password-complexity"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    >
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Pwd_Complexity_Settings')"></td>
+            <td><input type="checkbox" id="chk_pwdcpmplex" ng-model="pwctx['complex_enable']" ng-change="disable_pwd_complex(pwctx)" /></td>
+            <td ng-bind="DICT('User_Accounts_Enable')"></td>
+        </tr>
+    </table>    
+    <table class="page-block-tb-list password-length"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    >
+        <tr ng-if="pwctx['complex_enable']">
+            <td ng-bind="DICT('User_Accounts_Min_Pwd_Length')"></td>
+            <td>
+                <input type="number" number id="txt_minpwdlen_min" min="0" max="127" style="width: 60px;"
+                    ng-model="pwctx['minimum_length']"
+                    ng-change="update_pw_meter(ctx.user['password'], pwctx);"
+                    required
+                />
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="DICT('User_Accounts_Hint_Min_Pwd_Length')"></span>
+            </td>
+        </tr>
+    </table>    
+    <table ng-if="pwctx['complex_enable']" class="page-block-tb-list password-character"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    >
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Min_Character_Classes')"></td>
+            <td>
+                <input type="number" number id="txt_minnumclass" width="80px"  min="0" max="4" style="width: 60px;"
+                    ng-model="pwctx['minimum_number_character_classes']"
+                    ng-change="update_pw_meter(ctx.user['password'], pwctx);"
+                    required
+                />
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="DICT('User_Accounts_Hint_Min_Character_Classes')"></span>
+            </td>
+        </tr>
+        <tr ng-show="ctx.pwMeterInvalid" ng-if="ctx.pwMeterInvalid">
+            <td colspan="3">
+                <span style="color: red;" ng-bind="DICT('User_Accounts_Error_Min_Character_Classes')"></span>
+            </td>
+        </tr>
+    </table>    
+    <table class="page-block-tb-list"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    >
+        <tr ng-if="pwctx['complex_enable']">
+            <td colspan="3" ng-bind="DICT('User_Accounts_Complex1')"></td>
+        </tr>
+    </table>    
+    <table class="page-block-tb-list"
+        data-x-tmp="{{pwctx = model['password_complex']}}"
+    >
+        <tr ng-if="pwctx['complex_enable']">
+            <td ng-bind="DICT('User_Accounts_Complex2')+':'"></td>
+            <td>
+                <input type="checkbox" id="chk_complexenable" 
+                    ng-model="pwctx['new_must_different_than_current']"
+                />
+            </td>
+            <td>&nbsp; <span ng-bind="DICT('User_Accounts_Enable')"></span></td>
+        </tr>
+        <!--
+        <tr ng-if="pwctx['complex_enable']">
+            <td>Password Strength Meter:</td>
+            <td>
+                METER: {{ ctx.pwcpx.cpxScore }}
+                <input name="cpxStr" ng-show="true" ng-model="ctx.pwcpx.cpxScore" />
+            </td>
+            <td>&nbsp;</td>
+        </tr>
+        -->
+    </table>
+    <table class="page-block-tb-list password-aging-time"
+        ng-if="!ctx.forceChangePW && !ctx.pwdAging"
+        data-x-tmp="{{atctx = model['password_aging_time']}}"
+    >
+        <tr>
+            <td>
+                <span ng-bind="DICT('User_Accounts_Password_Aging_Time')"></span>
+            </td>
+            <td>
+                <input type="number" number id="txt_aging_timeout" width="80px"  min="0" max="365"
+                    ng-model="atctx['timeout']"
+                    required
+                />
+            </td>
+            <td>
+                <span class="tip-info" ng-bind="DICT('User_Accounts_Password_Aging_Time_Range')"></span>
+            </td>
+        </tr>
+    </table>
+</ng-form>
+</script>
+
+<script type="text/ng-template" id="LocalUsersImport.html">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_Local_Users_Import')"></div>
+    </div>
+    <table class="page-block-tb-list">
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Import_User_Name_Pwd')"></td>
+        </tr>
+        <tr>
+            <td>
+                <pg-upload id="slct_pcfile_useraccount" ngchange="selectUploadFile"></pg-upload>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Import_User_Name_Pwd_CSV')"></td>
+        </tr>
+    </table>
+    <button ng-click="gridUserList.doImportUserList(pcFile)" ng-disabled="!pcFile">
+        <span ng-bind="DICT('User_Accounts_Import')"></span></button>
+    <span ng-if="ctx.errstr != undefined">
+        <span ng-bind="DICT('User_Accounts_Result') + ctx.errstr"></span>
+    </span>
+    <br />
+    <br />
+    <span ng-bind="DICT('User_Accounts_Download_User_Template')"></span><button ng-click="gridUserList.doDownloadTmpl()">
+    <span ng-bind="DICT('User_Accounts_Download')"></span></button>
+    <br/>
+    <br/>
+</script>
+
+<script type="text/ng-template" id="LocalUsers.html">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_Local_Users')"></div>
+    </div>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('User_Accounts_Local_User_Member_List')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_localadd"
+                    class="grid-btn-add"
+                    ng-disabled="ctx.pwMeterInvalid || form.$invalid || userAccessFlag === 'RO'"
+                    ng-click="gridUserList.add()">
+                </button>
+                <button id="btn_localedit"
+                    class="grid-btn-edit"
+                    ng-disabled="ctx.pwMeterInvalid || form.$invalid || gridUserList.Selections.length !== 1 || userAccessFlag === 'RO'"
+                    ng-click="gridUserList.edit()">
+                </button>
+                <button id="btn_localdel"
+                    class="grid-btn-delete"
+                    ng-disabled="gridUserList.Selections.length === 0 || userAccessFlag === 'RO' || gridUserList.disabledDeleteBtn"
+                    ng-click="gridUserList.remove()">
+                </button>
+                <button id="btn_localimport"
+                    class="grid-btn-import"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="gridUserList.importDialog = !gridUserList.importDialog">
+                </button>
+            </div>
+            <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridUserList.Options"></div>
+        </div>
+    </div>
+    <div class="page-block-btn-cntr">
+
+    </div>
+    <div class="tip-info-top">
+        <span ng-bind="DICT('User_Accounts_Msg1')"></span>
+    </div>
+</script>
+
+<script type="text/ng-template" id="LocalUsersEdit.html">
+    <div ng-if="ctx.forceChangePW"
+        ng-include="'LocalPasswordComplexity.htm'"
+        ng-mark-init="hideCcomplexityTitle = true"
+    ></div>
+
+    <div class="page-block-title-cntr">
+        <div class="page-block-title">
+            <span ng-if="gridUserList.editState == 'add'" ng-bind="DICT('User_Accounts_Add_User_Account')"></span>
+            <span ng-if="gridUserList.editState !== 'add'" ng-bind="DICT('User_Accounts_Edit_User_Account')"></span>
+        </div>
+    </div>
+    <div ng-if="ctx.forceChangePW">
+        <span ng-bind="DICT('User_Accounts_Change_Pwd_From_Default')"></span><br/><br/>
+    </div>
+    <message-box ng-if="ctx.pwdAging">
+        <table>
+            <tr>
+                <td><img src="themes/img/icon/Status_warning_icon.gif" class="message-icon"></impg></td>
+                <td ng-bind="DICT('User_Accounts_Pwd_Expiration')"></td>
+            </tr>
+        </table>
+    </message-box>
+    <!--
+    Password Complexity Settings: {{pwctx['complex_enable']}}<br/>
+    <br/>
+    -->
+    <div ng-if="pwctx['complex_enable'] && !ctx.forceChangePW"
+         data-tmp="{{pwctx = model['password_complex']}}"
+         style="margin-bottom: 20px"
+    >
+        <span ng-bind="DICT('User_Accounts_Current_Minimum_Requirements')"></span><br/>
+        <ul>
+            <li><span ng-bind="DICT('User_Accounts_Min_Pwd_Length')+' '+ pwctx['minimum_length']"></span></li>
+            <li><span ng-bind="DICT('User_Accounts_Min_Character_Classes')+' '+ pwctx['minimum_number_character_classes']"></span></li>
+            <li ng-if="pwctx['new_must_different_than_current']">
+                <span ng-bind="DICT('User_Accounts_Complex2')"></span>
+            </li>
+        </ul>
+    </div>
+
+    <table class="page-block-tb-list control-input-300"
+        data-tmp="{{sel_ref = gridUserList.selectedEditItem}}"
+    >
+        <tr>
+            <td ng-bind="DICT('User_Accounts_User_Name')">
+                
+            </td>
+            <td>
+                <span ng-if="ctx.pwdAging">
+                    {{ sel_ref.name }}
+                </span>
+                <span ng-if="!ctx.pwdAging">
+                    <input type="text" id="txt_username" name="txt_username" required str-name maxlength="31"
+                        size="32"
+                        no-space
+                        contains="{array: model['users'].user, name: 'name'}" item-owner="sel_ref"
+                        ng-model="sel_ref.name"
+                        ng-click="sel_ref._oldname = sel_ref.name"
+                    ></input>
+                </span>
+            </td>
+            <td>
+                <span ng-if="gridUserList.editState == 'add || ctx.forceChangePW'">
+                    <span ng-messages="form['txt_username'].$error" ng-show="form.txt_username.$dirty" class="validation-error-text">
+                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    </span>
+                </span>
+            </td>
+        </tr>
+        <tr ng-if="gridUserList.editState == 'edit' ">
+            <td ng-bind="DICT('User_Accounts_Old_Pwd')">
+                
+            </td>
+            <td>
+                <input type="password" name="old_password" id="txt_oldpwd" legal-char maxlength="127"
+                    size="32"
+                    ng-model="sel_ref['old_password']"
+                    placeholder="Input old password"
+                >
+                </input>
+            </td>
+            <td>&nbsp;
+                <span ng-messages="form.old_password.$error" ng-show="form.old_password.$dirty"  class="validation-error-text">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('User_Accounts_New_Pwd')">
+                
+            </td>
+            <td>
+                <input type="password" name="password" id="txt_newpwd" legal-char
+                    minlength="{{ password_len(pwctx, 'min') }}" maxlength="127"
+                    ng-complexity="pwctx['complex_enable'] && form.password.$dirty && (pwctx.minimum_length !== 0 || pwctx.minimum_number_character_classes !== 0)"
+                    size="32"
+                    ng-required="pwctx['complex_enable'] && pwctx['minimum_length'] !== 0"
+                    ng-model="ctx.user['password']"
+                    ng-change="update_passwd(form.password_confirm); update_pw_meter(ctx.user['password'], pwctx);"
+                    placeholder="{{password_placeholder_msg(pwctx) }}"
+                >
+                </input>
+            </td>
+            <td>
+                <span ng-if="!ctx.forceChangePW" class="tip-info">
+                    <span>(</span>
+                    <span ng-bind="DICT('User_Accounts_Range')"></span>
+                    <span>{{ pwctx['complex_enable'] && pwctx['minimum_length'] || 0 }} - 127 )</span>
+                </span>
+                <span ng-messages="form.password.$error" ng-show="form.password.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    &nbsp;&nbsp;&nbsp;
+                </span>
+                <span class="messages" ng-if="form.password.$dirty && form.password.$error.complexity_class && form.password.$viewValue"
+                    ng-bind="DICT('User_Accounts_Minimal_Classes_Not_Match')">
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('User_Accounts_New_Pwd_Confirm')">
+                
+            </td>
+            <td>
+                <input type="password" name="password_confirm" id="txt_newpwdcom" maxlength="127"
+                    size="32"
+                    ng-model="ctx.user['confirm_password']"
+                    compare-to="ctx.user['password']"
+                    valid-ref-to="getAttr(form.password, '$dirty', form.password_confirm)"
+                    ng-change="update_passwd(form.password_confirm)"
+                    placeholder="{{password_placeholder_msg(pwctx) }}"
+                >
+                </input>
+            </td>
+            <td>&nbsp;
+                <span class="messages" ng-if="form.password.$dirty && form.password.$invalid"
+                    ng-bind="DICT('User_Accounts_Input_New_Pwd_First')"
+                >
+                    
+                </span>
+                <span ng-if="(form.password.$dirty && !form.password.$invalid)" ng-messages="form.password_confirm.$error">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        
+        <tr ng-if="pwctx['complex_enable'] && (pwctx.minimum_length !== 0 || pwctx.minimum_number_character_classes !== 0)">
+            <td ng-bind="DICT('User_Accounts_Pwd_Strength_Meter')"></td>
+            <td>
+                <password-strength-meter ng-class="{nopHint: false}" ng-model="ctx.user['password']"></password-strength-meter>
+                <span ng-if="form.password.$dirty">
+                    <span ng-if="form.password.$dirty && form.password.$error.complexity"
+                        ng-bind="DICT('User_Accounts_Not_Match_Complexity')"
+                    ></span>
+                    <input type="hidden" name="cpxStr" id="txt_pwdmeter" ng-model="ctx.pwcpx.cpxScore"/>
+                </span>
+            </td>
+            <td></td>
+        </tr>
+
+        <tr ng-if="!ctx.forceChangePW && !ctx.pwdAging" data-x-tmp="{{sel_ref = gridUserList.selectedEditItem }}">
+            <td ng-bind="DICT('User_Accounts_Group')"></td>
+            <td>
+                <select ng-model="sel_ref.group"
+                        id="slct_group"
+                        ng-options="item.name as item.name for (idx, item) in fop.get_groups_ref()"
+                        ng-disabled="select_group_disabled(sel_ref)"
+                        required
+                        >
+                </select>
+            </td>
+            <td>
+                <span ng-if="select_group_disabled(sel_ref)" class="tip-info">
+                    <span ng-bind="DICT('User_Accounts_Msg2', {'%s': sel_ref.group})"></span>
+                </span>
+            </td>
+        </tr>
+    
+    </table>
+    <!--
+    <div ng-include="'LocalPasswordComplexity.htm'"
+        
+    ></div>
+    -->
+</script>
+
+
+
+<script type="text/ng-template" id="RemoteAuthService.html">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_Remote_Authentication_Service')"></div>
+    </div>
+    <ng-form name="form_ras">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('User_Accounts_Remote_Authentication_Service_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_remoteadd" class="grid-btn-add"
+                        ng-disabled="ctx.pwMeterInvalid || form.$invalid || gridRAS.collectAvailAuthmode().length === 0 ||userAccessFlag === 'RO'"
+                        ng-click="gridRAS.add()">
+                    </button>
+                    <button id="btn_remoteedit" class="grid-btn-edit"
+                        ng-disabled="ctx.pwMeterInvalid || form.$invalid || gridRAS.Selections.length !== 1"
+                        ng-click="gridRAS.edit()">
+                    </button>
+                    <button id="btn_remotedel"
+                        class="grid-btn-delete"
+                        ng-disabled="gridRAS.Selections.length === 0"
+                        ng-click="gridRAS.remove()">
+                    </button>
+                </div>
+                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridRAS.Options"/>
+            </div>
+        </div>
+        <div class="tip-info-top">
+            <span ng-bind="DICT('User_Accounts_Remote_Authentication_Service_Note')"></span>
+        </div>
+    </ng-form>
+</script>
+
+<script type="text/ng-template" id="RAS_ServiceAuthSequence.html">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_Service_Auth_Sequence')"></div>
+    </div>
+    <ng-form name="form_ras_ao">
+        <div class="tip-info">
+            <div ng-bind="DICT('User_Accounts_Service_Auth_Sequence_Default_Sequence')"></div>
+            <div ng-bind="DICT('User_Accounts_Service_Auth_Sequence_Web_Login_Note')"></div>
+        </div>
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('User_Accounts_Service_Auth_Sequence_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridAO.Options"></div>
+            </div>
+        </div>
+    </ng-form>
+</script>
+
+<script type="text/ng-template" id="RASEdit.html">
+<ng-form name="form_ras">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Accounts_Add_Edit_New_Domain')"></div>
+    </div>
+    <table class="page-block-tb-list"
+        data-x-tmp="{{sel_ref = gridRAS.Selections[0]}}"
+    >
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Name')">
+                
+            </td>
+            <td>
+                <span ng-if="gridRAS.editState !== 'add'">
+                    {{ sel_ref.name }}
+                </span>
+                <span ng-if="gridRAS.editState == 'add'">
+                    <input type="text" id="txt_remotename" name="txt_remotename" required
+                        ng-model="sel_ref.name"
+                        ng-mark-change="syncUserName(sel_ref)"
+                        ng-click="sel_ref._oldname = sel_ref.name"
+                        contains="{array: model['ras'], name: 'name'}" item-owner="sel_ref"
+                    ></input>
+                </span>
+            </td>
+            <td>&nbsp;
+                <span ng-messages="form_ras.txt_remotename.$error" ng-show="form_ras.txt_remotename.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+
+        <!-- Auth type -->
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Authentication_Type')">
+                
+            </td>
+            <td>
+                <span ng-if="gridRAS.editState !== 'add'">
+                    {{ schema.rasAuthMap[ sel_ref['authenticate_mode'] ] }}
+                </span>
+                <span ng-if="gridRAS.editState == 'add'">
+                    <select id="slct_remoteauthtype" ng-model="sel_ref['authenticate_mode']"
+                        ng-options="item.id as item.displayName for item in gridRAS.collectAvailAuthmode()"
+                        ng-change="update_ras_auth_type(sel_ref)"
+                    >
+                    </select>
+                </span>
+            </td>
+        </tr>
+        
+        <tr ng-if="sel_ref['authenticate_mode'] == 'ad' ">
+            <td ng-bind="DICT('User_Accounts_AD_Domain_Name')">
+            </td>
+            <td>
+                <input type="text" id="txt_addomainname" name="txt_addomainname" required domain-name maxlength="253" name="base_dn"
+                    ng-model="sel_ref['_ref']['ad_domain_name']"
+                >
+                </input>
+            </td>
+            <td>&nbsp;
+                <span ng-messages="form_ras.txt_addomainname.$error" ng-show="form_ras.txt_addomainname.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        
+        <tr>
+            <td ng-bind="DICT('User_Accounts_Primary_Server')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_primaryserver" name="txt_primaryserver"
+                    fqdn-ip required
+                    maxlength="255"
+                    ng-model="sel_ref['_ref']['primary_server']"
+                ></input>
+            </td>
+            <td>
+                <span class="indent-mini"></span>
+                <span ng-bind="DICT('User_Accounts_Port')"></span>
+                <span class="indent-mini"></span>
+                <input type="number" number id="slct_primaryport" name="slct_primaryport" min="1" max="65535" required
+                    data-x-tmp="{{sel_ref = gridRAS.Selections[0]}}"
+                    ng-model="sel_ref['_ref']['primary_server_port']"
+                ></input>
+            </td>
+            <td>
+                <span ng-messages="form_ras.txt_primaryserver.$error" ng-show="form_ras.txt_primaryserver.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+                <span ng-messages="form_ras.slct_primaryport.$error" ng-show="form_ras.slct_primaryport.$dirty && !form_ras.txt_primaryserver.$invalid">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        
+        <tr ng-if="sel_ref.authenticate_mode === 'radius'">
+            <td ng-bind="DICT('User_Accounts_Backup_Server')">
+            </td>
+            <td>
+                <input type="text" id="txt_backupserver" name="txt_backupserver"
+                    fqdn-ip
+                    maxlength="255"
+                    ng-model="sel_ref['_ref']['backup_server']"
+                    ng-change="clean_backup_port(sel_ref['_ref'], form_ras.txt_backupserver)"
+                ></input>
+                
+            </td>
+            <td>
+                <span class="indent-mini"></span>
+                <span ng-bind="DICT('User_Accounts_Port')"></span>
+                <span class="indent-mini"></span>
+                <input type="number" number id="slct_backupport" name="slct_backupport" min="1" max="65535"
+                    ng-required="sel_ref['_ref']['backup_server'] != '' && sel_ref['_ref']['backup_server'] != undefined"
+                    ng-change="clean_backup_port(sel_ref['_ref'], form_ras.txt_backupserver)"
+                    ng-model="sel_ref['_ref']['backup_server_port']"
+                ></input>
+            </td>
+            <td>&nbsp;
+                <span ng-messages="form_ras.txt_backupserver.$error" ng-show="form_ras.txt_backupserver.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+                &nbsp;
+                <span ng-messages="form_ras.slct_backupport.$error" ng-show="form_ras.txt_backupserver.$dirty || form_ras.slct_backupport.$dirty">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        
+        <tr ng-if="sel_ref['authenticate_mode'] === 'radius' ">
+            <td ng-bind="DICT('User_Accounts_Preshared_Key')">
+            </td>
+            <td>
+                <input type="password" name="prekey" id="txt_presharedkey" password
+                    ng-model="ctx.ras['prekey']"
+                    ng-change="update_prekey(form_ras.prekey_confirm, sel_ref['_ref'])"
+                    placeholder="Input a new key"
+                >
+                </input>
+            </td>
+            <td>
+                <span class="indent-mini"></span>
+                <span ng-messages="form_ras.prekey.$error">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+
+        <tr ng-if="sel_ref['authenticate_mode'] == 'radius' ">
+            <td ng-bind="DICT('User_Accounts_Confirm_Preshared_Key')">
+            </td>
+            <td>
+                <input type="password" name="prekey_confirm" id="txt_compresharedkey"
+                    ng-model="ctx.ras['confirm_prekey']"
+                    compare-to="ctx.ras['prekey']"
+                    valid-ref-to="getAttr(form_ras.prekey, '$dirty', form_ras.prekey_confirm)"
+                    ng-change="update_prekey(form_ras.prekey_confirm, sel_ref['_ref'])"
+                    placeholder="Input a new key again"
+                >
+                </input>
+                
+            </td>
+            <td>
+                <span class="indent-mini"></span>
+                <span ng-if="form_ras.prekey.$dirty || form_ras['confirm_prekey'].$dirty" ng-messages="form_ras.prekey_confirm.$error">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+
+        <tr ng-if="sel_ref['authenticate_mode'] == 'radius' ">
+			<td ng-bind="DICT('User_Accounts_Radius_Timeout')"></td>
+			<td>
+				<input type="number" name="radius_timetout" min="1" style="width: 100%" max="60" ng-maxlength="2" maxlength="2" ng-model="sel_ref['_ref']['retry_timeout']" required></input>
+			</td>
+			<td>
+				<span class="tip-info" ng-bind="DICT('User_Accounts_Note_Radius_Timeout')"></span>
+			</td>
+		</tr>
+        <tr ng-if="sel_ref['authenticate_mode'] == 'radius' ">
+			<td ng-bind="DICT('User_Accounts_No_Of_Retries')"></td>
+			<td>
+				<input type="number" name="radius_retry" min="1" max="5" style="width: 100%" ng-maxlength="1" maxlength="1" ng-model="sel_ref['_ref']['retry_limit']" required></input>
+			</td>
+			<td>
+				<span class="tip-info" ng-bind="DICT('User_Accounts_Note_No_Of_Retries')"></span>
+			</td>
+		</tr>
+        <!--
+        <tr>
+            <td>
+                Preshared-Key
+            </td>
+            <td>
+                <input name="prekey" maxlength="32"
+                    ng-model="ctx.ras['prekey']"
+                    ng-change="update_passwd(form_ras.prekey_confirm)"
+                    placeholder="Input a new key"
+                >
+                </input>
+                <span ng-messages="form_ras.prekey.$error">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Confirm Preshared-Key
+            </td>
+            <td>
+                <input name="prekey_confirm" maxlength="32"
+                    ng-model="ctx.ras['confirm_prekey']"
+                    compare-to="ctx.ras['prekey']"
+                    ng-change="update_passwd(form_ras.prekey_confirm)"
+                    placeholder="Input a new key again"
+                >
+                </input>
+                <span ng-if="form_ras.prekey.$dirty || form_ras.prekey_confirm.$dirty" ng-messages="form_ras.prekey_confirm.$error">
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        -->
+
+        <tr ng-if="sel_ref['authenticate_mode'] == 'ldap' ">
+            <td ng-bind="DICT('User_Accounts_Base_DN')">
+            </td>
+            <td>
+                <input type="text" id="txt_basedn" name="base_dn" maxlength="256"
+                    ng-model="sel_ref['_ref']['base_dn']"
+                >
+                </input>
+            </td>
+        </tr>
+        
+        <tr ng-if="sel_ref['authenticate_mode'] == 'ad'">
+            <td ng-bind="DICT('User_Accounts_User_Container_Path')">
+            </td>
+            <td>
+                <input type="text" id="txt_usercontainerpath" name="base_dn" maxlength="256"
+                    ng-model="sel_ref['_ref']['user_container_path']"
+                >
+                </input>
+            </td>
+        </tr>
+    </table>
+	<div ng-if="sel_ref['authenticate_mode'] == 'radius' ">
+		<span class="bold page-note-tb-title-left ng-binding" ng-bind="DICT('User_Accounts_Note')"></span>
+		<span ng-bind="DICT('User_Accounts_Radius_Note')"></span>
+	</div>
+</ng-form>
+</script>

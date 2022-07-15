@@ -1,0 +1,8 @@
+/usr/lib/uwsgi/plugins/cgi_plugin.so
+/usr/sbin/uwsgi
+/etc/uwsgi/jsonrpc.ini
+/etc/uwsgi/blockpage.ini
+/etc/init.d/uwsgi
+/usr/bin/uwsgi-launcher
+/lib/upgrade/keep.d/uwsgi
+/etc/uwsgi/upload.ini

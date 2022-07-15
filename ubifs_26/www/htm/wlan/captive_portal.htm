@@ -1,0 +1,339 @@
+<div>
+<form name="form" ng-controller="captive_portal_main" ng-modification="loadReady" id="captive-portal">
+	<div ng-if="pageMap('ssidadd') || pageMap('ssidedit')" ng-include="'portal_profile_edit.htm'" ng-controller="portal_profile_edit"></div>
+	<div ng-if="pageMap('main')" ng-include="'tmpl_portal.htm'"></div>
+</form>
+
+</div>
+
+<script type="text/ng-template" id="tmpl_portal.htm">
+    <div ng-include="'portal_profile_overview.htm'" ng-controller="portal_profile_table"></div>
+</script>
+
+<script type="text/ng-template" id="portal_profile_overview.htm">
+
+        <div class="page-title-container">
+		    <span class="page-title" ng-bind="DICT('Captive_Portal')"></span>
+            <span ng-include="'cp_save.htm'"></span>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div ng-if="!model.wifi_button_state && loadReady" style="color: red">
+                <span ng-bind="DICT('Captive_Portal_WiFi_Push_Button_OFF')"></span>
+            </div>
+            <div ng-class="{nopHint: !model.wifi_button_state}" ng-if="loadReady">
+                <div>
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Captive_Portal_Portal_Profile_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button id="btn_groupssladd" class="grid-btn-add"
+                                    ng-disabled="userAccessFlag === 'RO' || model['portal-profiles']['portal-profile'].length >= 8"
+                                    ng-click="gridCPP.add()">
+                                </button>
+                                <button id="btn_groupssledit" class="grid-btn-edit"
+                                    ng-disabled="!(gridCPP.Selections.length === 1) || userAccessFlag === 'RO'"
+                                    ng-click="gridCPP.edit()">
+                                </button>
+                                <button id="btn_groupssldelete" class="grid-btn-delete"
+                                    ng-disabled="gridCPP.Selections.length === 0 || userAccessFlag === 'RO' || chkDefProfile()"
+                                    ng-click="gridCPP.remove()">
+                                </button>
+                            </div>
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridCPP.Options"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+</script>
+
+<script type="text/ng-template" id="portal_profile_edit.htm">
+    <div class="page-title-container" ng-if="pageMap('ssidadd')">
+	    <span class="page-title" ng-bind="DICT('Captive_Portal_Add_Profile')"></span>
+        <span ng-include="'cp_save.htm'"></span>
+    </div>
+    <div class="page-title-container" ng-if="pageMap('ssidedit')">
+        <span class="page-title" ng-bind="DICT('Captive_Portal_Edit_Profile')"></span>
+        <span ng-include="'cp_save.htm'"></span>
+    </div>
+	<div class="page-content-container">
+		<div>
+			<div data-x-tmp="{{cppref = gridCPP.Selections[0]}}"
+			     data-x-tmp2="{{cpp_ux = cppref['portal-ux'] }}"
+			>
+				<table class="page-block-tb-list control-input-200">
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Profile_Name')+':'">
+							
+						</td>
+						<td>
+							<input type="text" uci-name required maxlength="32"
+								name="txt_cp_name"
+								ng-model="cppref['name']"
+								contains="{array: model['portal-profiles']['portal-profile'], name: 'name'}" item-owner="cppref"
+								ng-if="pageMap('ssidadd')"
+							>
+							<span ng-if="pageMap('ssidedit')">{{cppref['name']}}</span>
+							<span ng-messages="form.txt_cp_name.$error" ng-show="form.txt_cp_name.$dirty">
+                                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                                </span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Authentication')+':'">
+							
+						</td>
+						<td>
+							<select ng-model="cppref['authentication']" style="margin-left:0px;"
+							  ng-options="item.id as item.displayName for item in schema.cpp_auth">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Redirect_To')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" value="original-url" name="redirect_mode" id="redirect_mode_original_url"
+								ng-model="redirectModeChoice"
+								ng-model-options=" {getterSetter: true }"
+							>
+								<span ng-bind="DICT('Captive_Portal_Original_URL')"></span></input>
+							<br/>
+							<input type="radio" value="redirect-url" name="redirect_mode" id="redirect_mode_redirect_url"
+								ng-model="redirectModeChoice"
+								ng-model-options=" {getterSetter: true }"
+							>
+								<span ng-bind="DICT('Captive_Portal_New_URL')"></span></input>
+							<span class="indent"></span>
+							<input type="text" size="64" 
+                                style="width: auto"
+								ng-model="modelRedirectUrlTmp"
+								ng-model-options=" {getterSetter: true }"
+								ng-disabled="redirectModeChoice() != 'redirect-url'"
+								maxlength="256"
+								legal-char
+							>
+							<!--
+							<br/>
+							<select ng-model="redirectModeChoice"
+							ng-model-options=" {getterSetter: true }"
+							>
+								<option value="redirect-auto">AUTO</option>
+								<option value="original-url">ORIG</option>
+								<option value="redirect-url">REDIR</option>
+							</select>
+							-->
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Idle_Timeout')+':'">
+							
+						</td>
+						<td>
+							<input type="number" min="0" max="1440"
+								ng-model="cppref['idle-timeout']"
+							>
+							<span class="tip-info" ng-bind="DICT('Captive_Portal_Idle_Range')"></span>
+						</td>
+					</tr>
+				</table>
+			    <hr class="page-content-seperator">
+				<div class="page-block-title-cntr'">
+					<div class="page-block-title" ng-bind="DICT('Captive_Portal_Portal_Page_Customization')"></div>
+				</div>
+				<table class="page-block-tb-list control-input-200">
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Font_Color')+':'">
+							
+						</td>
+						<td>
+							<select ng-model="cpp_ux['font-color']" style="margin-left:0px;"
+							  ng-options="item.id as item.displayName for item in schema.ux_font_color">
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Background_Picture')+':'">
+							
+						</td>
+						<td>
+							<!--
+							<input type="file"
+								ng-model="cpp_ux['background']['uri']"
+							>
+							-->
+							<span>({{showShortName( cpp_ux['background']['uri'] ) }})</span>
+							
+						</td>
+						<td>
+                            <pg-upload id="slct_bgfile" ngchange="bgFileFormatCheck" is-invalid="bg_invalid"></pg-upload>
+						</td>
+						<td>
+							<span class="tip-info" ng-bind="DICT('Captive_Portal_Format_Type')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Company_Name')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="64"
+								ng-model="cpp_ux['company-name']"
+							>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Company_Logo_Picture')+':'">
+							
+						</td>
+						<td>
+							<!--
+							<input type="file"
+								ng-model="cpp_ux['logo']['uri']"
+							>
+							-->
+							<span>({{showShortName( cpp_ux['logo']['uri'] ) }})</span>
+							
+						</td>
+						<td>
+                            <pg-upload id="slct_logofile" ngchange="logoFileFormatCheck" is-invalid="logo_invalid"></pg-upload>
+						</td>
+						<td>
+							<span class="tip-info" ng-bind="DICT('Captive_Portal_Company_Logo_Picture_Type')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Welcome_Message')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="256"
+								ng-model="cpp_ux['welcome-message']"
+							>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Username_Field')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="64"
+								ng-model="cpp_ux['username-field']"
+							>
+						</td>
+					</tr>
+					<tr ng-show="cppref['authentication'] === 'auth'">
+						<td ng-bind="DICT('Captive_Portal_Password_Field')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="64"
+								ng-model="cpp_ux['password-field']"
+							>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Login_Button_Name')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="64"
+								ng-model="cpp_ux['login-button-title']"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Copyright_Message')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="256"
+								ng-model="cpp_ux['copyright']"
+							/>
+						</td>
+					</tr>
+					<tr ng-show="cppref['authentication'] === 'auth'">
+						<td ng-bind="DICT('Captive_Portal_Error_Message_Authentication')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="256"
+								ng-model="cpp_ux['login-error-msg']"
+							/>
+						</td>
+					</tr>
+					<tr ng-show="false">
+						<td ng-bind="DICT('Captive_Portal_Error_Message_Exceeding_Client')+':'">
+							
+						</td>
+						<td>
+							<input type="text" legal-char maxlength="256"
+								ng-model="cpp_ux['login-error-msg2']"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Captive_Portal_Show_Agreement')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="cpp_ux['agreement']['enable']"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td class="indent" ng-bind="DICT('Captive_Portal_Agreement_Title')+':'">
+							
+						</td>
+						<td>
+							<input type="text" ng-disabled="!cpp_ux['agreement']['enable']"
+								ng-model="cpp_ux['agreement']['agreement-title']"
+								legal-char maxlength="128"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td class="indent" ng-bind="DICT('Captive_Portal_Agreement_Message')+':'">
+							
+						</td>
+						<td>
+							<input type="text" ng-disabled="!cpp_ux['agreement']['enable']"
+								ng-model="cpp_ux['agreement']['agreement-text']"
+								legal-char maxlength="256"
+							>
+						</td>
+					</tr>
+
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="cp_save.htm">
+    <div class="page-button-container" ng-if="loadReady" ng-class="{nopHint: !model.wifi_button_state}">
+        <button id="btn_save" ng-disabled="form.$invalid || userAccessFlag === 'RO' || bg_invalid || logo_invalid" ng-click="save()" class="btn-apply">
+            <span ng-bind="DICT('Captive_Portal_Apply')"></span>
+        </button>
+        <button id="btn_cancel" ng-click="cancel()" class="btn-cancel">
+            <span ng-bind="DICT('Captive_Portal_Cancel')"></span>
+        </button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_Portal_preview_button.html">
+<div class="ui-grid-custom-cntr">
+	<button ng-click="grid.appScope.gridCPP.openPortalPreview(row)">
+		<span ng-bind="grid.appScope.DICT('Captive_Portal_Preview')"></span>
+    </button>
+</div>
+</script>
+
+
+
+

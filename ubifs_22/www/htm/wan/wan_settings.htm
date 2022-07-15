@@ -1,0 +1,1578 @@
+<div class="wan_setting" ng-controller="WANSettingCtrl" id="wan-setting">
+	<form name="form" ng-modification="dataReady">
+        <div ng-include="'wan_settings_main_table.htm'"></div>
+    </form>
+</div>
+
+
+<script type="text/ng-template" id="wan_settings_main_table.htm">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('WAN_Settings')"></div>
+        <div class="page-button-container">
+            <button type="button" id="btn_table_save" class="btn-apply" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                <span ng-bind="DICT('WAN_Settings_Apply')"></span>
+            </button>
+            <button type="button" id="btn_table_cancel" class="btn-cancel" ng-click="funs.cancel()">
+                <span ng-bind="DICT('WAN_Settings_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <div class="content-title"></div>
+	<confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <div class="grid-cntr" style="min-width: 1150px">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('WAN_Settings_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.add()"></button>
+                    <button id="btn_edit" class="grid-btn-edit" ng-disabled="model.selects.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.edit()"></button>
+                    <button id="btn_delete" class="grid-btn-delete" ng-disabled="funs.delDisable() || userAccessFlag === 'RO'" ng-click="funs.del()"></button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridDualWanOptoins"/>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_add_edit.htm">
+<form name="wanform">
+    <div class="modal-container" id="wan-setting-edit">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('WAN_Settings_Add_Edit_WAN_Sub_Interface')"></div>
+        </div>
+        <div class="modal-content-container">
+            <div class="modal-context">
+                <div ng-include="'wan_settings_interface_settings.htm'"></div>
+                <br>
+                <uib-tabset>
+                    <uib-tab ng-repeat="tab in tabs" heading="{{tab.heading}}" active="tab.active" disabled="tab.active" ng-click="funs.clickTab(tab)" index="tab.templateUrl">
+                        <div ng-include="tab.templateUrl"/>
+                    </uib-tab>
+                </uib-tabset>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" id="btn_save" class="btn-apply"
+                ng-click="funs.save('addEdit')"
+                ng-disabled="!vlanIdNoRepeat || wanform.$invalid || userAccessFlag === 'RO'">
+				<span ng-bind="DICT('WAN_Settings_Apply')"></span>
+			</button>
+            <button type="button" id="btn_cancel" class="btn-cancel" ng-click="funs.cancel('addEdit')">
+				<span ng-bind="DICT('WAN_Settings_Cancel')"></span>
+			</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.cancel('addEdit')"></button>
+    </div>
+</form>
+</script>
+
+
+<script type="text/ng-template" id="wan_settings_note.html">
+    <div class="page-note-cntr" ng-hide="isDefInterface()">
+        <table class="page-note-tb-list">
+            <tr>
+                <td class="bold page-note-tb-title-left" ng-bind="DICT('WAN_Settings_Note')"></td>
+                <td ng-bind="DICT('WAN_Settings_Note1')"></td>
+            </tr>
+            <tr ng-show="tabSelect === 'ipv4'">
+                <td></td>
+                <td>
+                    <span pg-bind-html="note2"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="page-note-cntr" ng-show="isDefInterface() && tabSelect === 'ipv4'">
+        <table class="page-note-tb-list">
+            <tr>
+                <td class="bold page-note-tb-title-left" ng-bind="DICT('WAN_Settings_Note')"></td>
+                <td>
+                    <span pg-bind-html="note3"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_note_for_other.html">
+    <div class="page-note-cntr" ng-hide="isDefInterface()">
+        <table class="page-note-tb-list">
+            <tr>
+                <td class="page-note-tb-title-left" ng-bind="DICT('WAN_Settings_Note')"></td>
+                <td ng-bind="DICT('WAN_Settings_Note1')"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td ng-bind="DICT('WAN_Settings_Minimum_Value2_Ipv6')"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="page-note-cntr" ng-show="isDefInterface()">
+        <table class="page-note-tb-list">
+            <tr>
+                <td class="page-note-tb-title-left" ng-bind="DICT('WAN_Settings_Note')"></td>
+                <td ng-bind="DICT('WAN_Settings_Minimum_Value1_Ipv6')"></td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_interface_settings.htm">
+    <div class="page-block-cntr">
+        <table class="page-block-tb-list interface-setting">
+            <tr>
+                <td ng-bind="DICT('WAN_Settings_Sub_Interface_Name')"></td>
+                <td ng-class="{nopHint: isDefInterface() || !edit.isCreateSubInterface}">
+                    <input
+                        ng-disabled="isDefInterface() || !edit.isCreateSubInterface"
+                        type="radio"
+                        id="rdo_if_wan1"
+                        ng-model="edit.intf"
+                        ng-change="checkEdit()"
+                        value="WAN1"
+                    ></input>
+                    <span>WAN1</span>
+                    <input ng-disabled="isDefInterface() || !edit.isCreateSubInterface"
+                        ng-change="checkEdit()"
+                        type="radio"
+                        id="rdo_if_wan2"
+                        ng-model="edit.intf"
+                        value="WAN2"
+                    ></input>
+                    <span>WAN2</span>
+                </td>
+            </tr>
+            <tr style="margin: 2px 0px;" ng-class="{nopHint: isDefInterface()}">
+                <td ng-bind="DICT('WAN_Settings_VLAN_ID')"></td>
+                <td>
+                    <input
+                        type="number" number
+                        name="vlanId"
+                        id="txt_vlan_id"
+                        min="1"
+                        max="4094"
+                        style="width: 90px"
+                        maxlength="4"
+                        ng-disabled="!edit.isCreateSubInterface"
+                        ng-model="edit.vlan_interface_settings.vlan_id"
+                        ng-change="checkEdit()"
+                        ng-required="!isDefInterface()">
+                    </input>
+                    <span class="tip-info" ng-bind="DICT('WAN_Settings_VLAN_Range')"></span>
+                    <span class="validation-error-text-right"
+                        ng-show="vlanIdNoRepeat === false" 
+						ng-bind="DICT('WAN_Settings_VLAN_ID_Repeat')">
+                    </span>
+                    <span class="validation-error-text-right"
+                        ng-show="(vlanIdNoRepeat === true && (wanform.vlanId.$error.min || wanform.vlanId.$error.max || wanform.vlanId.$error.required) && wanform.vlanId.$dirty)"
+						ng-bind="DICT('WAN_Settings_Please_Input')">
+                    </span>
+                </t>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_ipv4_settings.htm">
+<div style="min-height: 300px">
+    <div>
+        <pg-list-radio obj="edit.ipv4.connectTypeList"></pg-list-radio>
+    </div>
+    <hr>
+    <div>
+        <!-- DHCP Settings Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'dynamic'" ng-If="edit.ipv4.connectTypeList.selected === 'dynamic'">
+            <div ng-bind="DICT('WAN_Settings_DHCP_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4dhcp_dnssrvtype"
+                              ng-disabled="model.opendns"
+                              ng-if="!model.opendns"
+                              ng-options="m.id as m.displayName for m in model.schema.dhcppeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4dhcp_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4dhcp_dns1" name="ipv4dhcp_dns1" ng-ipv4-ip="!edit.ipv4.setting.peerdns" notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                            ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                            ng-required="edit.ipv4.setting.naming_server.servers[1]" ng-model="edit.ipv4.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4dhcp_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                            <span ng-show="edit.ipv4.setting.dns1Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns || !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4dhcp_dns2"  name="ipv4dhcp_dns2" ng-ipv4-ip="!edit.ipv4.setting.peerdns"
+                            ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                            notequal="{{edit.ipv4.setting.naming_server.servers[0]}}" ng-model="edit.ipv4.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                            <span ng-show="edit.ipv4.setting.dns2Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- Static IP Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'static'" ng-If="edit.ipv4.connectTypeList.selected === 'static'">
+        <div ng-bind="DICT('WAN_Settings_Static_IP_Settings')"></div>
+        <div class="wan_edit_type_content page-block-cntr">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('WAN_Settings_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_ipv4static_ipaddr" ng-change="chkV4GW()" required ipv4-ip ng-model="edit.ipv4.address.ip"
+								name="txt_ipv4static_ipaddr" custom-vld custom-vld-cbk="ipv4Vali" 
+								custom-vld-relationship="['txt_ipv4static_ipaddr', 'txt_ipv4static_netmask']">
+                        <span ng-show="edit.ipv4.ipAddressErr === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                    </td>
+					<td>
+                        <span ng-show="wanform.txt_ipv4static_ipaddr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Addr_Conflicts')"></span>
+                    </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Netmask')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4static_netmask" ng-change="chkV4GW()" required ipv4-netmask ng-model="edit.ipv4.address.netmask"
+								name="txt_ipv4static_netmask" custom-vld custom-vld-cbk="ipv4Vali" 
+								custom-vld-relationship="['txt_ipv4static_ipaddr', 'txt_ipv4static_netmask']">
+                        </td>
+                        <td>
+                            <span ng-show="edit.ipv4.ipNetmaskErr === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Default_Gateway')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4static_gw" name="v4_static_gw" ipv4-ip ng-change="chkV4GW()" ng-model="edit.ipv4.setting.gateway">
+                        </td>
+                        <td>
+                            <span ng-show="wanform.v4_static_gw.$error.ipGwIsTheSame" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Not_Gateway')"></span>
+                            <span ng-show="wanform.v4_static_gw.$error.gwOutRange" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Gateway_Same_Subnet')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4static_dnssrvtype"
+                              ng-disabled="model.opendns"
+                              ng-if="!model.opendns"
+                              ng-options="m.id as m.displayName for m in model.schema.staticpeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4static_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4static_dns1" name="ipv4static_dns1" ipv4-ip notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                                ng-disabled="model.opendns"
+                                ng-required="edit.ipv4.setting.naming_server.servers[1]" ng-model="edit.ipv4.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4static_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                            <span ng-show="edit.ipv4.setting.dns1Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4static_dns2" name="ipv4static_dns2" ipv4-ip
+                                ng-disabled="model.opendns"
+                                notequal="{{edit.ipv4.setting.naming_server.servers[0]}}" ng-model="edit.ipv4.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                            <span ng-show="edit.ipv4.setting.dns2Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- PPPoE Settings Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'pppoe'" ng-If="edit.ipv4.connectTypeList.selected === 'pppoe'">
+            <div ng-bind="DICT('WAN_Settings_PPPoE_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Username')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pppoe_username" name="txt_ipv4pppoe_username"
+                                ng-change="syncPPPoESession()"
+                                checkspace required legal-char maxlength="255" ng-model="edit.ipv4.setting.username">
+                            </input>
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.txt_ipv4pppoe_username.$error.checkspace" ng-bind="DICT('WAN_Settings_Not_Allow_White_Space')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pppoe_username.$dirty && wanform.txt_ipv4pppoe_username.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Password')"></td>
+                        <td>
+                            <input type="password"
+                                id="txt_ipv4pppoe_pwd"
+                                name="txt_ipv4pppoe_pwd"
+                                checkpassword required legal-char
+                                maxlength="255"
+                                select-when-focus
+                                ng-change="change_pwd('ipv4'); syncPPPoESession()"
+                                ng-model="edit.ipv4.setting.password">
+                            </input>
+                        </td>
+                        <td>
+							<span class="validation-error-text-right" ng-show="wanform.txt_ipv4pppoe_pwd.$error.checkpassword" ng-bind="DICT('WAN_Settings_Not_Allow_Special_Character')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pppoe_pwd.$dirty && wanform.txt_ipv4pppoe_pwd.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4pppoe_dnssrvtype"
+                              ng-disabled="model.opendns"
+                              ng-if="!model.opendns"
+                              ng-options="m.id as m.displayName for m in model.schema.pppoepeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4pppoe_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pppoe_dns1" name="ipv4pppoe_dns1"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                ng-ipv4-ip="!edit.ipv4.setting.peerdns" notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                                ng-required="edit.ipv4.setting.naming_server.servers[1]" ng-model="edit.ipv4.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4pppoe_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                            <span ng-show="edit.ipv4.setting.dns1Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns || !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pppoe_dns2" name="ipv4pppoe_dns2" ng-ipv4-ip="!edit.ipv4.setting.peerdns"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                notequal="{{edit.ipv4.setting.naming_server.servers[0]}}" ng-model="edit.ipv4.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                            <span ng-show="edit.ipv4.setting.dns2Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+				</table>
+				
+				<table class="page-block-tb-list">
+					<tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4pppoe_ondemand" ng-model="edit.ipv4.setting.selectDemand" ng-value="true">
+								<span ng-bind="DICT('WAN_Settings_Demand')"></span>
+							</input>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <span ng-bind="DICT('WAN_Settings_Max_Idle_Time')"></span>
+							<input
+								type="number"
+								id="txt_ipv4pppoe_idletime"
+                                ng-if="edit.ipv4.setting.selectDemand === true"
+                                ng-required="edit.ipv4.setting.selectDemand === true"
+								min="1" 
+								max="9999"
+                                class="idle-time"
+								ng-model="edit.ipv4.setting.demand"
+						    ></input>
+							<input
+								type="text"
+								id="txt_ipv4pppoe_idletime"
+                                ng-if="edit.ipv4.setting.selectDemand === false"
+                                ng-disabled="true"
+                                class="idle-time"
+								ng-model="edit.ipv4.setting.demand"
+						    ></input>
+                        </td>
+                        <td>
+							<span class="tip-info" ng-bind="DICT('WAN_Settings_Minutes_Range')"></span>
+                        </td>
+                    </tr>
+					<tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4pppoe_keepalive" ng-model="edit.ipv4.setting.selectDemand" ng-value="false">
+							<span ng-bind="DICT('WAN_Settings_Keep_Alive')"></span>
+                        </td>
+						<td></td>
+                    </tr>
+				</table>
+				
+                    <!--<tr>
+                        <td style="text-align:right; padding-right:5px; ">{{DICT("max_idle_time")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === true ? 1 : undefined" ng-max="edit.ipv4.setting.selectDemand === true ? 9999 : undefined" 
+							
+							id="txt_ipv4pppoe_idletime" >
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("minutes")+"("+DICT("range")+"1 - 9999," + DICT("default_colon")+"5)"}}</span>
+                        </td>
+                    </tr>-->
+					<!--<tr>
+                        <td style="text-align:right;padding-right:5px; ">{{DICT("redial_period")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === false ? 20 : undefined" ng-max="edit.ipv4.setting.selectDemand === false ? 180 : undefined" id="txt_ipv4pppoe_redial" ng-disabled="edit.ipv4.setting.selectDemand" ng-model="edit.ipv4.setting.keepalive">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("seconds")+"("+DICT("range")+"20 - 180," + DICT("default_colon")+"30)"}}</span>
+                        </td>
+                    </tr>-->
+					
+				<table class="page-block-tb-list">
+					<tr>
+                        <td ng-bind="DICT('WAN_Settings_Authentication_Type')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.authentication_type" id="slct_ipv4pppoe_authtype" ng-options="m.id as m.displayName for m in model.schema.auth_type"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Service_Name')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pppoe_srvname" legal-char maxlength="64" ng-model="edit.ipv4.setting.service">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- PPTP Settings Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'pptp'" ng-If="edit.ipv4.connectTypeList.selected === 'pptp'">
+            <div ng-bind="DICT('WAN_Settings_PPTP_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_IP_Assignment')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.physical"
+                                id="slct_ipv4pptp_ipassigntype"
+                                ng-change="chkV4GW()"
+                                ng-options="m.id as m.displayName for m in model.schema.ipAssignList"
+                            ></select>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_IP_Addr')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pptp_ipaddr" ng-required="edit.ipv4.physical === 'static'" 
+									ng-ipv4-ip="edit.ipv4.physical === 'static'" ng-model="edit.ipv4.address.ip"
+									name="txt_ipv4pptp_ipaddr" 
+                                    ng-change="chkV4GW()"
+									ng-custom-vld="edit.ipv4.physical === 'static'" 
+									custom-vld-cbk="ipv4Vali"
+									custom-vld-relationship="['txt_ipv4pptp_ipaddr', 'txt_ipv4pptp_netmask']">
+                        </td>
+						<td>
+	                    	<span ng-show="wanform.txt_ipv4pptp_ipaddr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Addr_Conflicts')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_Netmask')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pptp_netmask" ng-required="edit.ipv4.physical === 'static'" ng-ipv4-netmask="edit.ipv4.physical === 'static'" 
+									ng-model="edit.ipv4.address.netmask"
+									name="txt_ipv4pptp_netmask" 
+                                    ng-change="chkV4GW()"
+									ng-custom-vld="edit.ipv4.physical === 'static'"
+									custom-vld-cbk="ipv4Vali"
+									custom-vld-relationship="['txt_ipv4pptp_ipaddr', 'txt_ipv4pptp_netmask']">
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_Default_Gateway')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_ipv4pptp_gw"
+                                name="txt_ipv4pptp_gw"
+                                ng-change="chkV4GW()"
+                                ng-ipv4-ip="edit.ipv4.physical === 'static'"
+                                ng-model="edit.ipv4.setting.gateway"
+                            ></input>
+                        </td>
+                        <td>
+                            <span ng-show="wanform.txt_ipv4pptp_gw.$error.ipGwIsTheSame" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Not_Gateway')"></span>
+                            <span ng-show="wanform.txt_ipv4pptp_gw.$error.gwOutRange" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Gateway_Same_Subnet')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('pptp_server_ip_fqdn')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_ipv4pptp_ipfqdn"
+                                name="txt_ipv4pptp_ipfqdn"
+                                fqdn-ipv4
+                                required
+                                maxlength="63"
+                                ng-custom-vld="edit.ipv4.connectTypeList.selected === 'pptp'" 
+                                custom-vld-cbk="chkL2tpPptpServerVali"
+                                ng-model="edit.ipv4.setting.server"
+                            ></input>
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pptp_ipfqdn.$dirty && wanform.txt_ipv4pptp_ipfqdn.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pptp_ipfqdn.$error.customVld"
+								ng-bind="DICT('WAN_Settings_PPTP_Repeated')"
+                            ></span>
+						</td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Username')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pptp_username" name="txt_ipv4pptp_username" checkspace required legal-char maxlength="64" ng-model="edit.ipv4.setting.username">
+                        </td>
+						<td>
+							<span class="validation-error-text-right" ng-show="wanform.txt_ipv4pptp_username.$error.checkspace" ng-bind="DICT('WAN_Settings_Not_Allow_White_Space')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pptp_username.$dirty && wanform.txt_ipv4pptp_username.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+						</td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Password')"></td>
+                        <td>
+                            <input type="password"
+                                id="txt_ipv4pptp_pwd"
+                                name="txt_ipv4pptp_pwd"
+                                checkpassword required
+                                maxlength="64"
+                                select-when-focus
+                                ng-change="change_pwd('ipv4')"
+                                ng-model="edit.ipv4.setting.password">
+                            </input>
+                        </td>
+						<td>
+							<span class="validation-error-text-right" ng-show="wanform.txt_ipv4pptp_pwd.$error.checkpassword" ng-bind="DICT('WAN_Settings_Not_Allow_Special_Character')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4pptp_pwd.$dirty && wanform.txt_ipv4pptp_pwd.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+						</td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4pptp_dnssrvtype"
+                                ng-if="!model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.pptppeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4pptp_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pptp_dns1" name="ipv4pptp_dns1" ng-ipv4-ip="!edit.ipv4.setting.peerdns"  notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                ng-required="edit.ipv4.setting.naming_server.servers[1]" ng-model="edit.ipv4.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4pptp_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                            <span ng-show="edit.ipv4.setting.dns1Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns || !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4pptp_dns2" name="ipv4pptp_dns2" ng-ipv4-ip="!edit.ipv4.setting.peerdns"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                notequal="{{edit.ipv4.setting.naming_server.servers[0]}}" ng-model="edit.ipv4.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                            <span ng-show="edit.ipv4.setting.dns2Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+				</table>
+
+					<!--<tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4pptp_ondemand" ng-model="edit.ipv4.setting.selectDemand" ng-value="true">{{DICT("connect_on_demand")}}
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.selectDemand === false}">
+                        <td style="text-align:right; padding-right:5px; ">{{DICT("max_idle_time")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === true ? 1 : undefined" ng-max="edit.ipv4.setting.selectDemand === true ? 9999 : undefined" id="txt_ipv4pptp_idletime" ng-model="edit.ipv4.setting.demand">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("minutes")+"("+DICT("range")+"1 - 9999," + DICT("default_colon")+"5)"}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4pptp_keepalive" ng-model="edit.ipv4.setting.selectDemand" ng-value="false">{{DICT("keep_alive")}}
+                        </td>
+                    </tr>
+					<tr ng-class="{nopHint: edit.ipv4.setting.selectDemand}">
+                        <td style="text-align:right; padding-right:5px; ">{{DICT("redial_period")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === false ? 20 : undefined" max="edit.ipv4.setting.selectDemand === false ? 180 : undefined" id="txt_ipv4pptp_redial" ng-model="edit.ipv4.setting.keepalive">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("seconds")+"("+DICT("range")+"20 - 180," + DICT("default_colon")+"30)"}}</span>
+                        </td>
+                    </tr>-->
+
+				<table class="page-block-tb-list">
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv4pptp_ondemand" ng-model="edit.ipv4.setting.selectDemand" ng-value="true">
+								<span ng-bind="DICT('WAN_Settings_Demand')"></span>
+							</input>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <span class="max-idle-time-title" ng-bind="DICT('WAN_Settings_Max_Idle_Time')"></span>
+							<input
+								type="number"
+								id="txt_ipv4pptp_idletime" 
+								min="1"
+								max="9999"
+                                class="idle-time"
+								ng-if="edit.ipv4.setting.selectDemand === true" 
+								ng-required="edit.ipv4.setting.selectDemand === true" 
+								ng-model="edit.ipv4.setting.demand"
+							></input>
+							<input
+								type="text"
+								id="txt_ipv4pptp_idletime" 
+                                class="idle-time"
+								ng-disabled="true" 
+								ng-if="edit.ipv4.setting.selectDemand === false" 
+								ng-model="edit.ipv4.setting.demand"
+							></input>
+                        </td>
+                        <td>
+							<span class="tip-info" ng-bind="DICT('WAN_Settings_Minutes_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv4pptp_keepalive" ng-model="edit.ipv4.setting.selectDemand" ng-value="false">
+							<span ng-bind="DICT('WAN_Settings_Keep_Alive')"></span>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+				
+				<table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Authentication_Type')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.authentication_type" id="slct_ipv4pptp_authtype" ng-options="m.id as m.displayName for m in model.schema.auth_type"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox"
+                                id="chk_ipv4pptp_mppe"
+                                ng-model="edit.ipv4.setting.mppe"
+                                ng-true-value="true"
+                                ng-false-value="false"
+                                ng-change="chkAuthType()"
+                            >
+							<span ng-bind="DICT('WAN_Settings_MPPE_Encryption')"></span>
+                        <td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- L2TP Settings Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'l2tp'" ng-If="edit.ipv4.connectTypeList.selected === 'l2tp'">
+            <div ng-bind="DICT('WAN_Settings_L2TP_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_IP_Assignment')"> </td>
+                        <td>
+                            <select ng-model="edit.ipv4.physical"
+                                id="slct_ipv4l2tp_ipassign"
+                                ng-change="chkV4GW()"
+                                ng-options="m.id as m.displayName for m in model.schema.ipAssignList"
+                            ></select>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_IP_Addr')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4l2tp_ipaddr"
+                                ng-required="edit.ipv4.physical === 'static'" 
+                                ng-ipv4-ip="edit.ipv4.physical === 'static'"
+                                ng-model="edit.ipv4.address.ip"
+                                name="txt_ipv4l2tp_ipaddr" 
+                                ng-change="chkV4GW()"
+                                ng-custom-vld="edit.ipv4.physical === 'static'" 
+                                custom-vld-cbk="ipv4Vali"
+                                custom-vld-relationship="['txt_ipv4l2tp_ipaddr', 'txt_ipv4l2tp_netmask']"
+                            ></input>
+                        </td>
+						<td>
+	                    	<span ng-show="wanform.txt_ipv4l2tp_ipaddr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Addr_Conflicts')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_Netmask')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_ipv4l2tp_netmask"
+                                ng-required="edit.ipv4.physical === 'static'"
+                                ng-ipv4-netmask="edit.ipv4.physical === 'static'" 
+                                ng-model="edit.ipv4.address.netmask" 
+                                name="txt_ipv4l2tp_netmask" 
+                                ng-change="chkV4GW()"
+                                ng-custom-vld="edit.ipv4.physical === 'static'" 
+                                custom-vld-cbk="ipv4Vali"
+                                custom-vld-relationship="['txt_ipv4l2tp_ipaddr', 'txt_ipv4l2tp_netmask']"
+                            ></input>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.physical === 'dhcp'}">
+                        <td ng-bind="DICT('WAN_Settings_Default_Gateway')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_ipv4l2tp_gw"
+                                name="txt_ipv4l2tp_gw"
+                                ng-change="chkV4GW()"
+                                ng-ipv4-ip="edit.ipv4.physical === 'static'"
+                                ng-model="edit.ipv4.setting.gateway"
+                            ></input>
+                        </td>
+                        <td>
+                            <span ng-show="wanform.txt_ipv4l2tp_gw.$error.ipGwIsTheSame" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Not_Gateway')"></span>
+                            <span ng-show="wanform.txt_ipv4l2tp_gw.$error.gwOutRange" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Gateway_Same_Subnet')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_L2TP_Server_IP_FQDN')"></td>
+                        <td>
+                            <input type="text"
+                                id="txt_ipv4l2tp_ipfqdn"
+                                name="txt_ipv4l2tp_ipfqdn"
+                                fqdn-ipv4
+                                required
+                                maxlength="63"
+                                ng-custom-vld="edit.ipv4.connectTypeList.selected === 'l2tp'" 
+                                custom-vld-cbk="chkL2tpPptpServerVali"
+                                ng-model="edit.ipv4.setting.server"
+                            ></input>
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4l2tp_ipfqdn.$dirty && wanform.txt_ipv4l2tp_ipfqdn.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4l2tp_ipfqdn.$error.customVld"
+								ng-bind="DICT('WAN_Settings_L2TP_Repeated')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Username')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4l2tp_username" name="txt_ipv4l2tp_username" checkspace required legal-char maxlength="64" ng-model="edit.ipv4.setting.username">
+                        </td>
+						<td>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4l2tp_username.$error.checkspace"
+								ng-bind="DICT('WAN_Settings_Not_Allow_White_Space')"
+                            ></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4l2tp_username.$dirty && wanform.txt_ipv4l2tp_username.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Password')"></td>
+                        <td>
+                            <input type="password"
+                                id="txt_ipv4l2tp_pwd"
+                                name="txt_ipv4l2tp_pwd"
+                                checkpassword required
+                                maxlength="64"
+                                select-when-focus
+                                ng-change="change_pwd('ipv4')"
+                                ng-model="edit.ipv4.setting.password">
+                            </input>
+                        </td>
+						<td>
+                            <span class="validation-error-text-right" ng-show="wanform.txt_ipv4l2tp_pwd.$error.checkpassword" ng-bind="DICT('WAN_Settings_Not_Allow_Special_Character')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv4l2tp_pwd.$dirty && wanform.txt_ipv4l2tp_pwd.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4l2tp_dnssrvtype"
+                                ng-if="!model.opendns"
+                              ng-disabled="model.opendns"
+                              ng-options="m.id as m.displayName for m in model.schema.l2tppeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4l2tp_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4l2tp_dns1" name="ipv4l2tp_dns1" ng-ipv4-ip="!edit.ipv4.setting.peerdns" notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                ng-required="edit.ipv4.setting.naming_server.servers[1]" ng-model="edit.ipv4.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4l2tp_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                            <span ng-show="edit.ipv4.setting.dns1Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.peerdns || !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv4l2tp_dns2" name="ipv4l2tp_dns2" ng-ipv4-ip="!edit.ipv4.setting.peerdns"
+                                ng-disabled="model.opendns || edit.ipv4.setting.peerdns"
+                                notequal="{{edit.ipv4.setting.naming_server.servers[0]}}" ng-model="edit.ipv4.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                            <span ng-show="edit.ipv4.setting.dns2Err === true" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_Error')"></span>
+                        </td>
+                    </tr>
+				</table>
+				
+				<table class="page-block-tb-list">
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv4l2tp_ondemand" ng-model="edit.ipv4.setting.selectDemand" ng-value="true">
+								<span ng-bind="DICT('WAN_Settings_Demand')"></span>
+							</input>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <span class="max-idle-time-title" ng-bind="DICT('WAN_Settings_Max_Idle_Time')"></span>
+							<input
+								type="number"
+								id="txt_ipv4l2tp_idletime"
+                                ng-if="edit.ipv4.setting.selectDemand === true"
+                                ng-required="edit.ipv4.setting.selectDemand === true"
+								min="1"
+								max="9999"
+                                class="idle-time"
+								ng-model="edit.ipv4.setting.demand"
+							></input>
+							<input
+								type="text"
+								id="txt_ipv4l2tp_idletime"
+                                ng-if="edit.ipv4.setting.selectDemand === false"
+                                ng-disabled="true"
+                                class="idle-time"
+								ng-model="edit.ipv4.setting.demand"
+							></input>
+                        </td>
+                        <td>
+							<span class="tip-info" ng-bind="DICT('WAN_Settings_Minutes_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv4l2tp_keepalive" ng-model="edit.ipv4.setting.selectDemand" ng-value="false">
+							<span ng-bind="DICT('WAN_Settings_Keep_Alive')"></span>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+                    <!--<tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4l2tp_ondemand" ng-model="edit.ipv4.setting.selectDemand" ng-value="true">{{DICT("connect_on_demand")}}
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.selectDemand === false}">
+                        <td style="text-align:right; padding-right:5px;">{{DICT("max_idle_time")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === true ? 1 : undefined" ng-max="edit.ipv4.setting.selectDemand === true ? 9999 : undefined" id="txt_ipv4l2tp_idletime" ng-model="edit.ipv4.setting.demand">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("minutes")+"("+DICT("range")+"1 - 9999," + DICT("default_colon")+"5)"}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv4l2tp_keepalive" ng-model="edit.ipv4.setting.selectDemand" ng-value="false">{{DICT("keep_alive")}}
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv4.setting.selectDemand}">
+                        <td style="text-align:right;padding-right:5px;">{{DICT("redial_period")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv4.setting.selectDemand === false ? 20 : undefined" ng-max="edit.ipv4.setting.selectDemand === false ? 180 : undefined" id="txt_ipv4l2tp_redial" ng-model="edit.ipv4.setting.keepalive">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("seconds")+"("+DICT("range")+"20 - 180," + DICT("default_colon")+"30)"}}</span>
+                        </td>
+                    </tr>-->
+				<table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Authentication_Type')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.authentication_type" id="slct_ipv4l2tp_authtype" ng-options="m.id as m.displayName for m in model.schema.auth_type"></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bridge Settings Page -->
+        <div ng-show="edit.ipv4.connectTypeList.selected === 'trasparent-bridge'" ng-If="edit.ipv4.connectTypeList.selected === 'trasparent-bridge'">
+            <div ng-bind="DICT('WAN_Settings_Bridge_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Bridge_To')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.ifnames"
+                                ng-disabled="!model.vlans.length"
+                                required
+                                id="slct_ipv4br_brto"
+                                ng-options="m.id as m.displayName for m in model.vlans"
+								name="slct_ipv4br_brto"
+								ng-custom-vld="edit.ipv4.connectTypeList.selected === 'trasparent-bridge'" 
+								custom-vld-cbk="ipv4Vali"
+								custom-vld-relationship="['slct_ipv4br_brto', 'txt_ipv4br_ipaddr', 'txt_ipv4br_netmask']"
+                            ></select>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_IP_Addr')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="!model.vlans.length"
+                                id="txt_ipv4br_ipaddr"
+                                required ipv4-ip
+                                ng-model="edit.ipv4.address.ip"
+                                ng-ipv4="edit.ipv4.connectTypeList.selected === 'bridge'"
+                                ng-change="chkV4GW()"
+								name="txt_ipv4br_ipaddr" 
+								ng-custom-vld="edit.ipv4.connectTypeList.selected === 'trasparent-bridge'" 
+								custom-vld-cbk="ipv4Vali"
+								custom-vld-relationship="['slct_ipv4br_brto', 'txt_ipv4br_ipaddr', 'txt_ipv4br_netmask']"
+                            ></input>
+                        </td>
+						<td>
+	                    	<span ng-show="wanform.txt_ipv4br_ipaddr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Addr_Conflicts')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Netmask')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="!model.vlans.length"
+                                id="txt_ipv4br_netmask"
+                                required ipv4-netmask
+                                ng-change="chkV4GW()"
+                                ng-model="edit.ipv4.address.netmask"
+                                ng-netmask="edit.ipv4.connectTypeList.selected === 'bridge'"
+								name="txt_ipv4br_netmask"
+								ng-custom-vld="edit.ipv4.connectTypeList.selected === 'trasparent-bridge'" 
+								custom-vld-cbk="ipv4Vali"
+								custom-vld-relationship="['slct_ipv4br_brto', 'txt_ipv4br_ipaddr', 'txt_ipv4br_netmask']"
+                            ></input>
+                        </td>
+                    </tr>
+                    </tr>
+                        <td ng-bind="DICT('WAN_Settings_Default_Gateway')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="!model.vlans.length"
+                                id="txt_ipv4br_gw"
+                                name="txt_ipv4br_gw"
+                                ng-change="chkV4GW()"
+                                ipv4-ip
+                                ng-model="edit.ipv4.setting.gateway"
+                            ></input>
+                        </td>
+                        <td>
+                            <span ng-show="wanform.txt_ipv4br_gw.$error.ipGwIsTheSame" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Not_Gateway')"></span>
+                            <span ng-show="wanform.txt_ipv4br_gw.$error.gwOutRange" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Gateway_Same_Subnet')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4bridge_dnssrvtype"
+                              ng-if="!model.opendns"
+                              ng-disabled="model.opendns"
+                              ng-options="m.id as m.displayName for m in model.schema.bridgepeerdns"></select>
+
+                            <select ng-model="edit.ipv4.setting.peerdns" id="slct_ipv4bridge_dnssrvtype"
+                                ng-if="model.opendns"
+                                ng-disabled="model.opendns"
+                                ng-options="m.id as m.displayName for m in model.schema.opendnspeerdns"></select>
+                        </td>
+                        <td ng-if="model.opendns">
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="!model.vlans.length || model.opendns"
+                                id="txt_ipv4br_dns1"
+                                name="ipv4br_dns1"
+                                ipv4-ip
+                                notequal="{{edit.ipv4.setting.naming_server.servers[1]}}"
+                                ng-required="edit.ipv4.setting.naming_server.servers[1]"
+                                ng-model="edit.ipv4.setting.naming_server.servers[0]"
+                            ></input>
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv4br_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: !edit.ipv4.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text"
+                                ng-disabled="!model.vlans.length || model.opendns"
+                                id="txt_ipv4br_dns2"
+                                name="ipv4br_dns2"
+                                ipv4-ip
+                                notequal="{{edit.ipv4.setting.naming_server.servers[0]}}"
+                                ng-model="edit.ipv4.setting.naming_server.servers[1]"
+                            ></input>
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div ng-include="'wan_settings_note.html'"></div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_ipv6_settings.htm">
+<div ng-class="{'wan-ipv6-enabled': edit.ipv6.connectTypeList.selected !== 'disabled'}">
+    <div style="position: relative;width:90%">
+        <pg-list-radio obj="edit.ipv6.connectTypeList"></pg-list-radio>
+    </div>
+    <hr ng-if="edit.ipv6.connectTypeList.selected !== 'disabled'">
+    <div style="width:auto">
+      <!-- SLACC -->
+        <div ng-show="edit.ipv6.connectTypeList.selected === 'slaac'" ng-If="edit.ipv6.connectTypeList.selected === 'slaac'">
+            <div ng-bind="DICT('WAN_Settings_SLAAC_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv6.setting.peerdns" id="slct_ipv6static_slaactype" ng-options="m.id as m.displayName for m in model.schema.staticpeerdns"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6slaac_dns1" name="ipv6slaac_dns1" ipv6-ip notequal="{{edit.ipv6.setting.naming_server.servers[1]}}"
+                            ng-required="edit.ipv6.setting.naming_server.servers[1]" ng-model="edit.ipv6.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv6slaac_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: !edit.ipv6.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6slaac_dns2" name="ipv6slaac_dns2" ipv6-ip
+                            notequal="{{edit.ipv6.setting.naming_server.servers[0]}}" ng-model="edit.ipv6.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- DHCP -->
+        <div ng-show="edit.ipv6.connectTypeList.selected === 'dynamic'" ng-If="edit.ipv6.connectTypeList.selected === 'dynamic'">
+            <div ng-bind="DICT('WAN_Settings_DHCP_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv6.setting.peerdns" id="slct_ipv6dyn_dnssrvtype" ng-options="m.id as m.displayName for m in model.schema.dhcppeerdns"></select>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6dyn_dns1" name="ipv6dyn_dns1" ng-ipv6-ip="!edit.ipv6.setting.peerdns" notequal="{{edit.ipv6.setting.naming_server.servers[1]}}"
+                            ng-required="edit.ipv6.setting.naming_server.servers[1]" ng-model="edit.ipv6.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv6dyn_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.peerdns || !edit.ipv6.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6dyn_dns2" name="ipv6dyn_dns2" ng-ipv6-ip="!edit.ipv6.setting.peerdns"
+                            notequal="{{edit.ipv6.setting.naming_server.servers[0]}}" ng-model="edit.ipv6.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Static IP -->
+        <div ng-show="edit.ipv6.connectTypeList.selected === 'static'" ng-If="edit.ipv6.connectTypeList.selected === 'static'">
+            <div ng-bind="DICT('WAN_Settings_Static_IP_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_IP_Addr')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6static_ipaddr" required ipv6-ip ng-model="edit.ipv6.address.ip"
+									name="txt_ipv6static_ipaddr" 
+                                    ng-change="chkIPv6StaticIPGw()"
+									ng-custom-vld="edit.ipv6.connectTypeList.selected === 'static'" 
+									custom-vld-cbk="ipv6Vali"
+									custom-vld-relationship="['txt_ipv6static_ipaddr', 'txt_ipv6static_prefixlen']">
+                        </td>
+						<td>
+                            <span ng-show="wanform.txt_ipv6static_ipaddr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Addr_Conflicts')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Prefix_Length')"></td>
+                        <td>
+                            <input type="number" number min=0 max=128 required id="txt_ipv6static_prefixlen" 
+									ng-model="edit.ipv6.address.prefix_length"
+									name="txt_ipv6static_prefixlen"
+                                    ng-change="chkIPv6StaticIPGw()"
+									ng-custom-vld="edit.ipv6.connectTypeList.selected === 'static'" 
+									custom-vld-cbk="ipv6Vali"
+									custom-vld-relationship="['txt_ipv6static_ipaddr', 'txt_ipv6static_prefixlen']">
+                            </input>
+                        </td>
+                        <td>
+                            <span class="tip-info" ng-bind="DICT('WAN_Settings_IPv6_Prefix_Length_Note')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Default_Gateway')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6static_gw"
+                                name="txt_ipv6static_gw"
+                                ng-change="chkIPv6StaticIPGw()"
+                                ipv6-ip ng-model="edit.ipv6.setting.gateway">
+                            </input>
+                        </td>
+                        <td>
+                            <span ng-show="wanform.txt_ipv6static_gw.$error.ipGwIsTheSame" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Not_Gateway')"></span>
+                            <span ng-show="wanform.txt_ipv6static_gw.$error.gwOutRange" class="validation-error-text-right" ng-bind="DICT('WAN_Settings_IP_Gateway_Same_Subnet')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv6.setting.peerdns" id="slct_ipv6static_dnssrvtype" ng-options="m.id as m.displayName for m in model.schema.staticpeerdns"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6static_dns1" name="ipv6static_dns1" ipv6-ip notequal="{{edit.ipv6.setting.naming_server.servers[1]}}"
+                            ng-required="edit.ipv6.setting.naming_server.servers[1]" ng-model="edit.ipv6.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv6static_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: !edit.ipv6.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6static_dns2" name="ipv6static_dns2" ipv6-ip
+                            notequal="{{edit.ipv6.setting.naming_server.servers[0]}}" ng-model="edit.ipv6.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- PPPoE -->
+        <div ng-show="edit.ipv6.connectTypeList.selected === 'pppoe'" ng-If="edit.ipv6.connectTypeList.selected === 'pppoe'">
+            <div ng-bind="DICT('WAN_Settings_PPPoE_Settings')"></div>
+            <div class="wan_edit_type_content page-block-cntr">
+                <table class="page-block-tb-list no-warp">
+                    <tr ng-show="edit.ipv4.connectTypeList.selected === 'pppoe'">
+                        <td colspan="3">
+                            <input type="radio" ng-model="edit.ipv6.setting.share_ipv4_pppoe_session" ng-value="true" ng-change="changeShareIPv4Session()">
+                                <span ng-bind="DICT('WAN_Settings_Share_Same_Session_With_IPv4')"></span>
+                            </input>
+                            <input type="radio" ng-model="edit.ipv6.setting.share_ipv4_pppoe_session" ng-value="false" ng-change="changeShareIPv4Session()">
+                                <span ng-bind="DICT('WAN_Settings_Separate_IPv4_And_IPv6_Session')"></span>
+                            </input>
+                        </td>
+                    </tr>
+					<tr>
+                        <td ng-bind="DICT('WAN_Settings_Username')"></td>
+                        <td>
+                            <input type='text' id="txt_ipv6pppoe_username" name="txt_ipv6pppoe_username"
+                                ng-disabled="edit.ipv6.setting.share_ipv4_pppoe_session"
+                                checkspace required legal-char maxlength="255" ng-model="edit.ipv6.setting.username">
+                            </input>
+                        </td>
+						<td>
+                            <span class="validation-error-text-right" ng-show="wanform.txt_ipv6pppoe_username.$error.checkspace" ng-bind="DICT('WAN_Settings_Not_Allow_White_Space')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv6pppoe_username.$dirty && wanform.txt_ipv6pppoe_username.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Password')"></td>
+                        <td>
+                            <input type='password'
+                                id="txt_ipv6pppoe_pwd"
+                                name="txt_ipv6pppoe_pwd"
+                                checkpassword required
+                                legal-char maxlength="255"
+                                select-when-focus
+                                ng-change="change_pwd('ipv6')"
+                                ng-disabled="edit.ipv6.setting.share_ipv4_pppoe_session"
+                                ng-model="edit.ipv6.setting.password">
+                            </input>
+                        </td>
+						<td>
+                            <span class="validation-error-text-right" ng-show="wanform.txt_ipv6pppoe_pwd.$error.checkpassword" ng-bind="DICT('WAN_Settings_Not_Allow_Special_Character')"></span>
+                            <span class="validation-error-text-right"
+                                ng-show="wanform.txt_ipv6pppoe_pwd.$dirty && wanform.txt_ipv6pppoe_pwd.$error.required"
+								ng-bind="DICT('WAN_Settings_Empty_Value_Invalid')"
+                            ></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_DNS_Server')"></td>
+                        <td>
+                            <select ng-model="edit.ipv6.setting.peerdns" id="slct_ipv6pppoe_dnssrvtype" ng-options="m.id as m.displayName for m in model.schema.pppoepeerdns"></select>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.peerdns}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS1')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6pppoe_dns1" name="ipv6pppoe_dns1" ng-ipv6-ip="!edit.ipv6.setting.peerdns" notequal="{{edit.ipv6.setting.naming_server.servers[1]}}"
+                            ng-required="edit.ipv6.setting.naming_server.servers[1]" ng-model="edit.ipv6.setting.naming_server.servers[0]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.ipv6pppoe_dns1.$error.required" ng-bind="DICT('WAN_Settings_Please_Configure_Correct_DNS1_First')"></span>
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.peerdns || !edit.ipv6.setting.naming_server.servers[0]}">
+                        <td ng-bind="DICT('WAN_Settings_Static_DNS2')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6pppoe_dns2" name="ipv6pppoe_dns2" ng-ipv6-ip="!edit.ipv6.setting.peerdns"
+                            notequal="{{edit.ipv6.setting.naming_server.servers[0]}}" ng-model="edit.ipv6.setting.naming_server.servers[1]">
+                        </td>
+                        <td>
+                            <span class="validation-error-text-right" ng-show="wanform.$error.notequal" ng-bind="DICT('WAN_Settings_DNS2_Can_Not_Same_DNS1')"></span>
+                        </td>
+                    </tr>
+				</table>
+					
+				<table class="page-block-tb-list">
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv6pppoe_ondemand" ng-model="edit.ipv6.setting.selectDemand" ng-value="true">
+								<span ng-bind="DICT('WAN_Settings_Demand')"></span>
+							</input>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <span ng-bind="DICT('WAN_Settings_Max_Idle_Time')"></span>
+							<input
+								type="number"
+								id="txt_ipv6pppoe_idletime" 
+                                class="idle-time"
+								min="1"
+								max="9999"
+								ng-if="edit.ipv6.setting.selectDemand === true" 
+								ng-required="edit.ipv6.setting.selectDemand === true" 
+								ng-model="edit.ipv6.setting.demand"
+						    ></input>
+							<input
+								type="text"
+								id="txt_ipv6pppoe_idletime" 
+                                class="idle-time"
+								ng-if="edit.ipv6.setting.selectDemand === false" 
+								ng-disabled="true"
+								ng-model="edit.ipv6.setting.demand"
+						    ></input>
+                        </td>
+                        <td>
+							<span class="tip-info" ng-bind="DICT('WAN_Settings_Minutes_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="radio" id="rdo_ipv6pppoe_keepalive" ng-model="edit.ipv6.setting.selectDemand" ng-value="false">
+							<span ng-bind="DICT('WAN_Settings_Keep_Alive')"></span>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+					
+                    <!--<tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv6pppoe_ondemand" ng-model="edit.ipv6.setting.selectDemand" ng-value="true">{{DICT("connect_on_demand")}}
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.selectDemand === false}">
+                        <td style=" text-align:right; padding-right:5px; ">{{DICT("max_idle_time")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv6.setting.selectDemand === true ? 1 : undefined" ng-max="edit.ipv6.setting.selectDemand === true ? 9999 : undefined" id="txt_ipv6pppoe_idletime" ng-model="edit.ipv6.setting.demand">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("minutes")+"("+DICT("range")+"1 - 9999," + DICT("default_colon")+"5)"}}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="radio" id="rdo_ipv6pppoe_keepalive" ng-model="edit.ipv6.setting.selectDemand" ng-value="false">{{DICT("keep_alive")}}
+                        </td>
+                    </tr>
+                    <tr ng-class="{nopHint: edit.ipv6.setting.selectDemand}">
+                        <td style="text-align:right; padding-right:5px; ">{{DICT("redial_period")}}</td>
+                        <td>
+                            <input type="number" number ng-min="edit.ipv6.setting.selectDemand === false ? 20 : undefined" ng-max="edit.ipv6.setting.selectDemand === false ? 180 : undefined" id="txt_ipv6pppoe_redial" ng-model="edit.ipv6.setting.keepalive">
+                        </td>
+                        <td>
+                            <span class="tip-info">{{DICT("seconds")+"("+DICT("range")+"20 - 180," + DICT("default_colon")+"30)"}}</span>
+                        </td>
+                    </tr>-->
+					
+					
+				<table class="page-block-tb-list">	
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Authentication_Type')"></td>
+                        <td>
+                            <select ng-model="edit.ipv6.setting.authentication_type" id="slct_ipv6pppoe_authtype" ng-options="m.id as m.displayName for m in model.schema.auth_type"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WAN_Settings_Service_Name')"></td>
+                        <td>
+                            <input type="text" id="txt_ipv6pppoe_srvname" legal-char maxlength="64" ng-model="edit.ipv6.setting.service">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div ng-if="edit.ipv6.connectTypeList.selected !== 'disabled'">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td>
+                        <input type="checkbox" id="chk_ipv6pppoe_dhcppd" ng-model="edit.ipv6.setting['dhcp_pd_enable']" ng-true-value="true" ng-false-value="false">
+                        <span ng-bind="DICT('WAN_Settings_DHCP_PD')"></span>
+                    </td>
+                    <td ng-class="{nopHint: edit.ipv6.setting['dhcp_pd_enable'] === false}">
+                        <span ng-bind="DICT('WAN_Settings_Prefix_Name')"></span>
+                        <input type="text"
+                            class="prefix-name"
+                            id="txt_ipv6pppoe_prefixname"
+                            name="txt_ipv6pppoe_prefixname"
+                            ng-required="edit.ipv6.setting['dhcp_pd_enable']"
+                            uci-name
+                            maxlength="{{edit.ipv6.setting['dhcp_pd_enable'] ? 64 : ''}}"
+                            ng-model="edit.ipv6.setting['prefix_name']"
+                            ng-custom-vld="edit.ipv6.setting['dhcp_pd_enable']"
+                            custom-vld-cbk="chkPDName"
+                            custom-vld-ops="{modifyEmptyStr: true}"
+                        ></input>
+                        <span class="validation-error-text-right" ng-show="wanform.txt_ipv6pppoe_prefixname.$error.customVld" ng-bind="DICT('WAN_Settings_Prefix_Repeated')"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<div ng-show="edit.ipv6.connectTypeList.selected !== 'disabled'" ng-include="'wan_settings_note.html'"></div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_other_settings.htm">
+    <table class="page-block-tb-list">
+        <tr>
+            <td ng-bind="DICT('WAN_Settings_MTU')"></td>
+            <td>
+                <input type="radio" id="rdo_mtutype_auto" ng-model="edit.mtuType" ng-value="'auto'"></input>
+                    <span ng-bind="DICT('WAN_Settings_Auto')"></span>
+                <input type="radio" id="rdo_mtutype_manual" ng-model="edit.mtuType" ng-value="'manual'"></input>
+                    <span ng-bind="DICT('manual')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="number" number
+                    min="{{edit.mtuType === 'manual' ? 576 : ''}}"
+                    max="{{edit.mtuType === 'manual' ? max_mtu : ''}}"
+                    id="txt_mtu_size"
+                    ng-required="edit.mtuType === 'manual'"
+                    ng-disabled="edit.mtuType === 'auto'"
+                    ng-model="edit.mtu">
+                </input>
+            </td>
+            <td>
+                <span class="tip-info-0" ng-bind="mtu_note"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('WAN_Settings_Default_MAC')"></td>
+            <td ng-bind="model.dmac"></td>
+        </tr>
+        <tr>
+            <td>
+                <span ng-bind="DICT('WAN_Settings_MAC_Address_Clone')"></span>
+                <info-icon context="DICT('WAN_Settings_MAC_Clone_Note')" ng-show="!model.is_from_lan || !model.mac"></info-icon>
+            </td>
+            <td>
+                <input type="checkbox" id="chk_macclone_enable" ng-disabled="!model.is_from_lan || !model.mac" ng-model="edit.mac_address_clone" ng-true-value="true" ng-false-value="false">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span ng-bind="DICT('WAN_Settings_MAC_Address')"></span>
+            </td>
+            <td>
+                <input type="text"
+                    id="txt_macclone_mac"
+                    ng-required="edit.mac_address_clone === true && model.is_from_lan && model.mac"
+                    ng-disabled="!edit.mac_address_clone || !model.is_from_lan || !model.mac"
+                    mac-address ng-model="edit.mac_address">
+                </input>
+            </td>
+            <td>
+                <button type="button" id="btn_clonemac" ng-click="funs.cloneMAC()" ng-disabled="!edit.mac_address_clone || !model.is_from_lan || !model.mac">
+                    <span ng-bind="DICT('WAN_Settings_Clone_My_PC_MAC_Address')"></span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <div ng-include="'wan_settings_note_for_other.html'"></div>
+</script>
+
+<script type="text/ng-template" id="wan_settings_ip_perfix.htm">
+    <span data-x-tmp="{{rowtmp=COL_FIELD}}">
+        <div style="padding-left: 8px" uib-popover-template="COL_FIELD.templateUrl" popover-append-to-body="true" popover-trigger="'mouseenter'">{{COL_FIELD.ipAddrMask}}</div>
+    </span>
+</script>
+
+<script type="text/ng-template" id="popover_ip_perfixs.htm">
+    <div style="z-index: 2" ng-repeat="(id, ip) in rowtmp.list">
+        {{ip}}
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_wan_settings_ip_perfix.htm">
+    <div class="ui-grid-custom-cntr">
+        <span>
+            <div style="padding-left: 8px" uib-popover-template="COL_FIELD.templateUrl" popover-append-to-body="true" popover-trigger="'mouseenter'">{{COL_FIELD.ipAddrMask}}</div>
+        </span>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_wan_settings_ip_perfix1.htm">
+    <div class="ui-grid-custom-cntr">
+        <div style="z-index: 2" ng-repeat="(id, ip) in COL_FIELD.list">
+            <div ng-bind="ip" pgtitle></span>
+        </div>
+    </div>
+</script>

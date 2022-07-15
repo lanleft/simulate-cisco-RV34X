@@ -1,0 +1,10 @@
+Package: comgt-ncm
+Version: 0.32-29
+Depends: libc, librt, libpthread, comgt
+Source: package/network/utils/comgt
+License: GPL-2.0+
+Section: net
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: comcerto2000
+Installed-Size: 2838
+Description:  NCM 3G/4G Support

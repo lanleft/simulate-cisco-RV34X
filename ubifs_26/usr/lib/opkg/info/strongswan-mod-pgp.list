@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/pgp.conf
+/usr/lib/ipsec/plugins/libstrongswan-pgp.so

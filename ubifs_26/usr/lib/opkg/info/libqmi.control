@@ -1,0 +1,8 @@
+Package: libqmi
+Version: 1.8.0-1
+Depends: libc, librt, libpthread, glib2, zlib
+Source: package/libs/libqmi
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 416719
+Description:  Helper library and utils to talk to QMI enabled modems

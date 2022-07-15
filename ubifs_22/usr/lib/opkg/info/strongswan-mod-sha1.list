@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/sha1.conf
+/usr/lib/ipsec/plugins/libstrongswan-sha1.so

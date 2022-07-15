@@ -1,0 +1,355 @@
+<form ng-controller="appControllerCtrl" name="appform" ng-modification="dataReady" id="app-controller">
+<div ng-if="dataReady">
+    <div ng-show="currPage === 'main'" ng-if="currPage === 'main'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Application_Control')"></div>
+            <div class="page-button-container" ng-class="{nopHint: model.status === 0}">
+                <button type="button" class="btn-apply" id="btn_save" ng-click="funs.mainSave()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Application_Control_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_cancel" ng-click="funs.mainCancel()">
+                    <span ng-bind="DICT('Application_Control_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <message-box ng-if="model.status === 0">
+                <table>
+                    <tr>
+                        <td class="align-top">
+                            <i class="icon-warning message-icon"></i>
+                        </td>
+                        <td>
+                            <span pg-bind-html="combineNote"></span>
+                        </td>
+                    </tr>
+                </table>
+            </message-box>
+            <div class="page-content" ng-class="{nopHint: model.status === 0}">
+                <div>
+                    <span ng-bind="DICT('Application_Control')+':'"></span>
+                    <input type="radio" id="rdo_on" ng-model="model.enable" ng-value="true">
+                        <span ng-bind="DICT('Application_Control_On')"></span></input>
+                    <input type="radio" id="rdo_off" ng-model="model.enable" ng-value="false">
+                        <span ng-bind="DICT('Application_Control_Off')"></span></input>
+                </div>
+                <hr class="page-content-seperator">
+                <div class="grid-cntr" style="min-width: 800px">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Application_Control_Policies')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" id="btn_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.policyAdd()"></button>
+                            <button type="button" id="btn_edit" class="grid-btn-edit" ng-disabled="sel_policy_cnts !== 1 || userAccessFlag === 'RO'" ng-click="funs.policyEdit()"></button>
+                            <button type="button" id="btn_delete" class="grid-btn-delete" ng-disabled="sel_policy_cnts <= 0 || userAccessFlag === 'RO'" ng-click="funs.policyDel()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridMainOptions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!-- End main page -->
+    <!-- policy edit page -->
+    <div ng-show="currPage === 'policy_edit'" ng-if="currPage !== 'main'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Application_Control_Policy_Profile_Add_Edit')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" id="btn_policysave" ng-disabled="appform.$invalid || userAccessFlag === 'RO'" ng-click="funs.policySave()">
+                    <span ng-bind="DICT('Application_Control_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_policycancel" ng-click="funs.policyCancel()">
+                    <span  ng-bind="DICT('Application_Control_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Application_Control_Policy_Name')"></td>
+                    <td>
+                        <input type="text"
+                            id="txt_policyname"
+                            legal-char
+                            name="name"
+                            ng-model="edit.name"
+                            ng-disabled="edit.isEditMode"
+                            ng-change="checkPolicyName()"
+                            no-space
+                            maxlength="63"
+                            required
+                        ></input>
+                    </td>
+                    <td>
+						<span class="validation-error-text-right" ng-show="appform.name.$error.repeat" ng-bind="DICT('Application_Control_Policy_Name_Existed')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Application_Control_Description')"></td>
+                    <td>
+                        <input type="text" id="txt_description" legal-char ng-model="edit.description" maxlength="64"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Application_Control_Enable')+':'"></td>
+                    <td>
+                        <input type="checkbox" id="chk_enable" ng-model="edit.enable"></input>
+                    </td>
+                </tr>
+            </table>
+            <hr class="page-content-seperator"/>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Application_Control_Application')"></td>
+                    <td>
+                        <button style="margin-left:0px;" type="button" id="btn_appedit" ng-click="funs.policy2AppEdit()">
+							<span ng-bind="DICT('Application_Control_Edit')"></span></button>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+            <div class="page-indent1" style="margin-bottom: 10px">
+                <div class="grid-cntr" style="min-width: 1100px">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Application_Control_Application_List_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridApplicationOptions"></div>
+                    </div>
+                </div>
+            </div>
+            <hr class="page-content-seperator"/>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Application_Control_IP_Group')"></td>
+                    <td>
+                        <select style="margin-left:0px;" id="slct_ipgroup" ng-model="edit.ipgroup" ng-options="m.id as m.displayName for m in model.ipgroups" ng-change="change_ipgroup()"></select>
+                        <!--<button type="button" style="margin-left: 10px" type="button" ng-click="funs.policy2IpGroupEdit()">Edit</button>-->
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+            <div ng-if="edit.ipgroup === '@none'">
+                <table class="page-block-tb-list policy-edit-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('Application_Control_Device_Type')"></td>
+                        <td>
+                            <select style="margin-left:0px;" ng-model="edit.policydevicetype"
+                                ng-options="m.id as m.displayName for m in edit.policydevicelist"
+                                ng-change="chk_device_os()"
+                                id="slct_devicetype"
+                            ></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Application_Control_OS_Type')"></td>
+                        <td>
+                            <select style="margin-left:0px;" ng-model="edit.policyostype"
+                                ng-options="m.id as m.displayName for m in edit.policyostypelist"
+                                id="slct_ostype"
+                            ></select>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div ng-if="edit.ipgroup !== '@none'">
+                <div class='grid-cntr'>
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Application_Control_IP_Address_List_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIPSOptions"></div>
+                    </div>
+                </div>
+                <div class="grid-seperator"></div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Application_Control_Device_List_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridMACOptions"></div>
+                    </div>
+                </div>
+                <div class="grid-seperator"></div>
+            </div>
+            <div class="grid-cntr" style="margin-bottom: 10px; min-width: 1100px">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Application_Control_Exclusion_List_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button type="button" id="btn_exclusionadd" class="grid-btn-add" ng-disabled="" ng-click="funs.exclusionAdd()"></button>
+                        <button type="button" id="btn_exclusionedit" class="grid-btn-edit" ng-disabled="sel_cnts === 0" ng-click="funs.exclusionEdit()"></button>
+                        <button type="button" id="btn_exclusiondelete" class="grid-btn-delete" ng-disabled="sel_cnts === 0" ng-click="funs.exclusionDel()"></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridExclusionOptions"></div>
+                </div>
+            </div>
+            <hr class="page-content-seperator"/>
+            <table class="page-block-tb-list policy-edit-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Application_Control_Schedule')">:</td>
+                    <td>
+                        <select style="margin-left:0px;" id="slct_schedule" ng-model="edit.schedule" ng-options="m.id as m.displayName for m in model.schedules"></select>
+                        <!--<button type="button" style="margin-left: 10px" type="button" ng-click="funs.policy2ScheduleEdit()">Edit</button>-->
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- End policy edit page -->
+    <!-- application edit page -->
+    <div ng-show="currPage === 'application_edit'" ng-if="currPage === 'application_edit'">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Application_Control_Policy_Profile_Add_Edit_Categories')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" id="btn_appsave" ng-click="funs.appSave()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Application_Control_Apply')"></span>
+                </button>
+                <button type="button" class="btn-back" id="btn_appback" ng-click="funs.appBack()">
+                    <span ng-bind="DICT('Application_Control_Back')"></span>
+                </button>
+                <button type="button" id="btn_expand" ng-click="expandAll('true')" ng-show="!expandFlag">
+                    <span ng-bind="DICT('Application_Control_Expand')"></span>
+                </button>
+                <button type="button" id="btn_collapse" ng-click="expandAll('false')" ng-show="expandFlag">
+                    <span ng-bind="DICT('Application_Control_Collapse')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <div class="nest" ng-repeat="g in edit.meta">
+                <div>
+                    <span ng-show="g.expanded" class="expand-style icon-btn-hide-children" ng-click="g.expanded = !g.expanded"></span>
+                    <span ng-show="!g.expanded" class="expand-style icon-btn-show-children" ng-click="g.expanded = !g.expanded"></span>
+                    <input type="checkbox" id="chk_meta_{{g.id}}" ng-model="g.checked" indeterminate-checkbox child-list="g.categories" property="checked"></input>
+                    <span style="width: 297px; display:inline-block" ng-bind="g.name"></span>
+                </div>
+                <div ng-repeat="c in g.categories" uib-collapse="!g.expanded" ng-if="g.expanded">
+                    <div style="margin-left: 40px">
+                        <span ng-show="c.expanded" class="expand-style icon-btn-hide-children" ng-click="c.expanded = !c.expanded"></span>
+                        <span ng-show="!c.expanded" class="expand-style icon-btn-show-children" ng-click="c.expanded = !c.expanded"></span>
+                        <input type="checkbox" id="chk_category_{{c.name}}" ng-model="c.checked" indeterminate-checkbox child-list="c.applications" property="checked"></input>
+                        <span style="width: 258px; display:inline-block" ng-bind="c.name"></span>
+                        <select id="slct_category_{{c.name}}" ng-model="c.action" style="margin-left:0px;right: -2%" ng-change="change_behaviors(c, 'category')"
+                            ng-options="m.id as m.displayName for m in model.schema.global_action"
+                        ></select>
+                    </div>
+                    <div ng-repeat="app in c.applications | orderBy: 'name'" uib-collapse="!c.expanded" ng-if="c.expanded">
+                        <div style="margin-left: 80px">
+                            <span ng-show="app.expanded" class="expand-style icon-btn-hide-children" ng-click="app.expanded = !app.expanded"></span>
+                            <span ng-show="!app.expanded" class="expand-style icon-btn-show-children" ng-click="app.expanded = !app.expanded"></span>
+                            <input type="checkbox" id="chk_app_{{app.name}}" ng-model="app.checked" indeterminate-checkbox child-list="app.behaviors" property="checked"></input>
+                            <span style="width: 219px; display:inline-block" ng-bind="app.name"></span>
+                            <select id="slct_app_{{app.name}}" ng-model="app.action" style="margin-left:0px;right: -2%" ng-change="change_behaviors(app, 'application')"
+                                ng-options="m.id as m.displayName for m in model.schema.global_action"
+                            ></select>
+                        </div>
+                        <div ng-repeat="b in app.behaviors" uib-collapse="!app.expanded" ng-if="app.expanded">
+                            <div style="margin-left: 120px;">
+                                <input type="checkbox" id="chk_behavior_{{b.name}}" ng-model="b.checked"></input>
+                                <span style="width:203px; display:inline-block" ng-bind="b.name"></span>
+                                <select id="slct_behavior_{{b.name}}" ng-model="b.action" style="margin-left:0px;right: -2%" ng-options="m.id as m.displayName for m in model.schema.action"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <!--End application edit -->
+</div>
+</form>
+
+<script type="text/ng-template" id="application_ctrl_ipsel_mactxt.html">
+<div class="ui-grid-custom-cntr grid-exclusion-ip-mac-cntr">
+    <div ng-show="MODEL_COL_FIELD.select === 'ipgroup'">
+        <select id="{{col.colDef.id ? 'slct_' + col.colDef.id + '_' + row.rowIndex : 'slct_' + row.rowIndex}}"
+            ng-model="MODEL_COL_FIELD.ip_group"
+            ng-class="'colt' + col.index"
+            ng-options="m.id as m.displayName for m in MODEL_COL_FIELD.ipgroups"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+        ></select>
+    </div>
+    <div ng-show="MODEL_COL_FIELD.select === 'any'">
+        <span class="grid-exclusion-sub-title" ng-bind="grid.appScope.DICT('Application_Control_Any')"></span>
+    </div>
+    <div ng-show="MODEL_COL_FIELD.select === 'mac'">
+        <input type="text" ng-model="MODEL_COL_FIELD.mac" ng-required="MODEL_COL_FIELD.select === 'mac'?col.colDef.required:false"
+            placeholder="{{grid.appScope.DICT('Application_Control_MAC')}}"
+            ng-mac-address="MODEL_COL_FIELD.select === 'mac'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+    </div>
+    <div ng-show="MODEL_COL_FIELD.select === 'ipv4-ip' || MODEL_COL_FIELD.select === 'ipv6-ip'">
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_ip" ng-required="MODEL_COL_FIELD.select === 'ipv4-ip'?col.colDef.required:false"
+            placeholder="{{grid.appScope.DICT('Application_Control_IP')}}"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-ip'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-ip'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_ip_' + row.rowIndex : 'txt_ip_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_ip" ng-required="MODEL_COL_FIELD.select === 'ipv6-ip'?col.colDef.required:false"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-ip'"
+            placeholder="{{grid.appScope.DICT('Application_Control_IP')}}"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-ip'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_ip_' + row.rowIndex : 'txt_ip_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+    </div>
+    <div ng-show="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+        ng-if="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+    >
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_rangeS" ng-required="MODEL_COL_FIELD.select === 'ipv4-range'?col.colDef.required:false"
+            placeholder="{{grid.appScope.DICT('Application_Control_Start_IP')}}"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-range'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value ip-range"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_rangeS" ng-required="MODEL_COL_FIELD.select === 'ipv6-range'?col.colDef.required:false"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-range'"
+            placeholder="{{grid.appScope.DICT('Application_Control_Start_IP')}}"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value ip-range"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input> -
+    </div>
+    <div ng-show="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+        ng-if="MODEL_COL_FIELD.select === 'ipv4-range' || MODEL_COL_FIELD.select === 'ipv6-range'"
+    >
+        <input type="text" ng-model="MODEL_COL_FIELD.v4_rangeE" ng-required="MODEL_COL_FIELD.select === 'ipv4-range'?col.colDef.required:false"
+            ng-ipv4-ip="MODEL_COL_FIELD.select === 'ipv4-range'"
+            placeholder="{{grid.appScope.DICT('Application_Control_End_IP')}}"
+            ng-show="MODEL_COL_FIELD.select === 'ipv4-range'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value ip-range"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+        <input type="text" ng-model="MODEL_COL_FIELD.v6_rangeE" ng-required="MODEL_COL_FIELD.select === 'ipv6-range'?col.colDef.required:false"
+            placeholder="{{grid.appScope.DICT('Application_Control_End_IP')}}"
+            ng-ipv6-ip="MODEL_COL_FIELD.select === 'ipv6-range'"
+            ng-show="MODEL_COL_FIELD.select === 'ipv6-range'"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_range_start_' + row.rowIndex : 'txt_range_start_' + row.rowIndex}}"
+            class="grid-exclusion-sub-value ip-range"
+            ng-disabled="!row.entity[col.colDef.editRow]"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ></input>
+    </div>
+</div>
+</script>

@@ -1,0 +1,8 @@
+Package: pnp
+Version: 1.8.0.dev13-1
+Depends: libc, librt, libpthread
+Source: package/cisco/pnp
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 101506
+Description:  Cisco Network Plug and Play Agent

@@ -1,0 +1,50 @@
+<div id="nav-container" ng-controller="menuCtrl">
+    <ul id="menu-tree">
+        <li ng-class="{'expanded': t1.selected}" class="tree-layer0" ng-repeat="t1 in treedata" ng-style="genStyle(t1)" title="{{t1.displayName}}">
+            <a ng-click="reload(t1)">
+                <table class="tree-list layer0" ng-class="{'selected': t1.selected}">
+                    <tr>
+                        <td class="tree-icon">
+                            <i ng-class="[t1.iconClass]"></i>
+                        </td>
+                        <td class="tree-name">
+                            <span ng-bind="t1.displayName"></span>
+                        </td>
+                    </tr>
+                </table>
+            </a>
+            <ul>
+                <li ng-repeat="t2 in t1.children" ng-style="genStyle(t2)" title="{{t2.displayName}}" class="tree-layer1">
+                    <a ng-click="reload(t2)">
+                        <table class="tree-list layer1" ng-class="{'selected': t2.selected}">
+                            <tr>
+                                <td class="tree-icon" ng-class="{'has-subtree': t2.children.length}">
+                                    <i ng-if="t2.children.length" ng-class="{'icon-caret-right': !t2.expanded, 'icon-caret-down': t2.expanded}"></i>
+                                </td>
+                                <td class="tree-name">
+                                    <span ng-bind="t2.displayName"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </a>
+                    <ul>
+                        <li ng-repeat="t3 in t2.children" ng-style="genStyle(t3)" title="{{t3.displayName}}" class="tree-layerx">
+                            <a ng-click="reload(t3)">
+                                <table class="tree-list layerx" ng-class="{'selected': t3.selected}">
+                                    <tr>
+                                        <td class="tree-icon">
+                                            <i ng-hide="true"></i>
+                                        </td>
+                                        <td class="tree-name">
+                                            <span ng-bind="t3.displayName"></span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,6 @@
+/etc/msmtprc
+/etc/init.d/email
+/usr/bin/msmtp
+/usr/bin/testserver
+/usr/bin/sendmail
+/etc/config/email

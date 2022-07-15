@@ -1,0 +1,288 @@
+ module ciscosb-syslog {
+    namespace "http://cisco.com/ns/ciscosb/syslog";
+    prefix ciscosb-syslog;
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ietf-syslog-types { prefix ietf-syslog-types; }
+    import ietf-syslog { prefix ietf-syslog; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module for syslog configrations.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-22 {
+        description "Proposed";
+        reference "TODO";
+    }
+    identity vpn {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for VPN";
+    }
+    identity ssl-vpn {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for SSL VPN";
+    }
+    identity open-vpn {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Open VPN";
+    }
+    identity firewall {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Firewall";
+    }
+    identity system {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for System";
+    }
+    identity network {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Network";
+    }
+    identity license {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for License";
+    }
+    identity web-filter {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Web Filter";
+    }
+    identity application-control {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Application Control";
+    }
+    identity mobile {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for 3G/4G";
+    }
+    identity wireless {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Wireless";
+    }
+    identity pnp {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for PnP";
+    }
+    identity ips {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for IPS(Intrusion Prevention System)";
+    }
+    identity anti-virus {
+        base ietf-syslog-types:syslog-facility;
+        description
+                "The facility for Anti-Virus";
+    }
+    grouping LOG-RECORD {
+        leaf timestamp {
+            type yang:date-and-time;
+        }
+        leaf severity {
+            type ietf-syslog-types:Severity;
+        }
+        leaf facility {
+            type identityref {
+                base ietf-syslog-types:syslog-facility;
+            }
+        }
+        leaf message {
+            type string;
+        }
+    }
+    augment "/ietf-syslog:syslog/ietf-syslog:file-logging-action" {
+        leaf file-size {
+            type uint32;
+            default 1024;
+            description
+                        "This leaf specifies the maximum log file size in KB.";
+        }
+    }
+    augment "/ietf-syslog:syslog" {
+        container email-logging-action {
+            description
+                        "This container describes the configuration parameters for email
+                        logging.";
+            leaf enable {
+                type boolean;
+                description
+                                "enable/disble email logging action";
+            }
+            leaf email-subject {
+                type string;
+                description
+                                "Email subject for sending syslog";
+            }
+            uses ietf-syslog:syslog-selector;
+            leaf queue-length {
+                description
+                                "the maxium log queue buffer";
+                type int16;
+                default 50;
+            }
+            leaf time-threshold {
+                type enumeration {
+                    enum hourly;
+                    enum daily;
+                    enum weekly;
+                }
+            }
+        }
+    }
+    augment "/ietf-syslog:syslog/ietf-syslog:remote-logging-action" {
+        leaf enable {
+            type boolean;
+            default false;
+            description
+                        "Enable/disable remote logging server";
+        }
+    }
+    augment "/ietf-syslog:syslog/ietf-syslog:remote-logging-action/ietf-syslog:remote-logging-destination" {
+     leaf order {
+      type int32;
+     }
+  leaf transport {
+      type enumeration {
+    enum UDP;
+    enum TCP;
+    enum TLS;
+   }
+   default UDP;
+     }
+  leaf port {
+      type int32;
+   default 514;
+     }
+    }
+    container syslog-view-stat {
+        list logging-facilities {
+            key "facility";
+            description
+                        "This list describes a collection of Syslog facilities for viewing.";
+            leaf facility {
+                type identityref {
+                    base ietf-syslog-types:syslog-facility;
+                }
+            }
+        }
+        list logging-sevirity {
+            key "severity";
+            description
+                        "This list describes a collection of Syslog view severities for
+                        viewing.";
+            leaf severity {
+                type ietf-syslog-types:Severity;
+            }
+        }
+        list logs {
+            key "timestamp";
+            uses LOG-RECORD;
+        }
+    }
+    rpc query-syslog {
+        description
+                "Query syslog based on filters.";
+        input {
+            list logging-facilities {
+                key "facility";
+                description
+                                "This list describes a collection of Syslog facilities for viewing.";
+                leaf facility {
+                    type identityref {
+                        base ietf-syslog-types:syslog-facility;
+                    }
+                }
+            }
+            list logging-sevirity {
+                key "severity";
+                description
+                                "This list describes a collection of Syslog view severities for
+                                viewing.";
+                leaf severity {
+                    type ietf-syslog-types:Severity;
+                }
+            }
+            leaf keyword {
+             type string;
+             description "the keyword to match in message body";
+            }
+            leaf page-size {
+                type uint32;
+                mandatory true;
+            }
+            uses ciscosb-common:TIMERANGE;
+        }
+        output {
+            choice result {
+                case success {
+                    leaf total {
+                        type uint32;
+                    }
+                }
+                case fail {
+                }
+            }
+        }
+     }
+     rpc query-syslog-current-page {
+      description
+         "Query syslog based on filters.";
+        input {
+               leaf page-index {
+                       type uint32;
+               }
+               leaf page-size {
+                 type uint32;
+               }
+        }
+     output {
+             choice result {
+                 case success {
+                 list log {
+                        key "timestamp";
+                        uses LOG-RECORD;
+                    }
+                }
+                case fail {
+                }
+            }
+        }
+    }
+    notification syslog-critical{
+        description "A link failure has been detected";
+        leaf log-timestamp {
+            type yang:date-and-time;
+        }
+        leaf severity {
+            type ietf-syslog-types:Severity;
+        }
+        leaf facility {
+            type identityref {
+                base ietf-syslog-types:syslog-facility;
+            }
+        }
+        leaf message {
+            type string;
+        }
+ }
+}

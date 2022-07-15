@@ -1,0 +1,110 @@
+<form name="form" ng-controller="pptp_server_main" ng-modification="dataReady" id="pptp-server">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('PPTPServer')"></div>
+            <div class="page-button-container ng-hide" ng-show="true">
+                <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="save()">
+                    <span ng-bind="DICT('PPTPServer_Apply')"></span>
+                </button>
+                <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('PPTPServer_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+        <div class="page-content-container ng-hide" ng-show="true">
+            <table class="page-block-tb-list control-input-300" style="width: 100%">
+                <tr>
+                    <td ng-bind="DICT('PPTPServer') + ':'"></td>
+                    <td>
+                        <input type="radio" id="rdo_pptpserveron" ng-model="model.pptp.enable" ng-value="true" />
+                        <span ng-bind="DICT('PPTPServer_On')"></span>
+                        <span class="indent"></span>
+                        <input type="radio" id="rdo_pptpserveroff" ng-model="model.pptp.enable" ng-value="false" />
+                        <span ng-bind="DICT('PPTPServer_Off')"></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_Addr_Pool')"></td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_Start_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_startip" custom-vld name="pptp_start_ip" custom-vld-cbk="poolValidation" 
+                            custom-vld-relationship="['pptp_start_ip', 'pptp_end_ip']" 
+                            ipv4-ip-nonzero ng-required="model.pptp.enable" ng-model="model.pptp['start-ip']" />
+
+                        <span class="validation-error-text-right"
+                            ng-if="form.pptp_start_ip.$error.range && !form.pptp_start_ip.$error.required"
+                            ng-bind="DICT('PPTPServer_IP_Range_Error')"
+                        ></span>
+                        <span class="validation-error-text-right"
+                            ng-if="form.pptp_start_ip.$error.subnet && !form.pptp_start_ip.$error.required"
+                            ng-bind="DICT('PPTPServer_Subnet_Range_Error')"
+                        ></span>
+                        <span class="validation-error-text-right"
+                            ng-if="form.pptp_start_ip.$error.required && form.pptp_start_ip.$dirty"
+                            ng-bind="DICT('PPTPServer_Please_Input_IP_Addr')"
+                        ></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_End_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_endip" custom-vld name="pptp_end_ip" custom-vld-cbk="poolValidation" 
+                            custom-vld-relationship="['pptp_start_ip', 'pptp_end_ip']" 
+                            ipv4-ip-nonzero ng-required="model.pptp.enable" ng-model="model.pptp['end-ip']" />
+
+                        <span class="validation-error-text-right" ng-if="form.pptp_end_ip.$error.range && !form.pptp_end_ip.$error.required" ng-bind="DICT('PPTPServer_IP_Range_Error')"></span>
+                        <span class="validation-error-text-right" ng-if="form.pptp_end_ip.$error.subnet && !form.pptp_end_ip.$error.required" ng-bind="DICT('PPTPServer_Subnet_Range_Error')"></span>
+                        <span class="validation-error-text-right" ng-if="form.pptp_end_ip.$error.required && form.pptp_end_ip.$dirty" ng-bind="DICT('PPTPServer_Please_Input_IP_Addr')"></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_DNS1_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_dns1ip" ipv4-ip-nonzero ng-model="model.pptp['primary-dns']" />
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_DNS2_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_dns2ip" ipv4-ip-nonzero ng-model="model.pptp['secondary-dns']" />
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td colspan="2" ng-bind="DICT('PPTPServer_User_Authentication')"></td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td colspan="2">
+                        <div class="grid-cntr">
+                            <div class="grid-content-cntr">
+                                <div class="grid-btn-cntr">
+                                    <button type="button" id="btn_add_group" class="grid-btn-add" ng-disabled="disable_add_user_group || userAccessFlag === 'RO'" ng-click="addGroup()">
+                                    </button>
+                                    <button type="button" id="btn_del_group" class="grid-btn-delete" ng-disabled="disable_del_user_group || userAccessFlag === 'RO'" ng-click="delGroup()">
+                                    </button>
+                                </div>
+                                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridGroup"></div>
+                            </div>
+                        </div>
+                        
+                        <!--
+                        <select id="slct_userauth" ng-model="model.pptp['user-authentication']"
+                            ng-options="item.name as item.name for item in model.nacm.groups.group"></select>
+                        -->
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: !model.pptp.enable}">
+                    <td ng-bind="DICT('PPTPServer_MPPE_Encryption')"></td>
+                    <td>
+                        <select style="margin-left:0px;" id="slct_mpppencryp" ng-model="model.pptp['mppe-encryption']"
+                            ng-options="item.id as item.displayName for item in schema.mppeencryptionMap"
+                            >
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,11 @@
+Package: libdb47
+Version: 4.7.25.NC-6
+Depends: libc, librt, libpthread, libxml2
+Source: package/openwrt/libs/db47
+License: BSD-2c
+LicenseFiles: LICENSE
+Section: libs
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Architecture: comcerto2000
+Installed-Size: 282113
+Description:  Berkeley DB library (4.7).

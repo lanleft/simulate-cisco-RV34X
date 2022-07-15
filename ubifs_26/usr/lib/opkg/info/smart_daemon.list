@@ -1,0 +1,8 @@
+/usr/bin/ch_agent_monitor
+/usr/lib/libdaemonagent.so
+/etc/hotplug.d/iface/56-license
+/usr/bin/smart_agent_monitor
+/etc/init.d/license
+/etc/confd/phase2.d/90_license
+/etc/confd/stop.d/90_license
+/usr/bin/smart_agent

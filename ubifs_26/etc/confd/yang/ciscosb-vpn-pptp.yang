@@ -1,0 +1,134 @@
+module ciscosb-vpn-pptp {
+    namespace "http://cisco.com/ns/ciscosb/vpn-pptp";
+ prefix ciscosb-vpn-pptp;
+ import ietf-inet-types { prefix inet; }
+ import ietf-yang-types { prefix yang; }
+ import ciscosb-common { prefix ciscosb-common; }
+ organization "Cisco Systems, Inc.";
+ contact
+  "Cisco Systems, Inc. 
+  Customer Service
+  E-mail: feiqiu@cisco.com";
+ description
+  "This module contains a collection of YANG definitions 
+  for Cisco PPTP VPN configuration.
+  Copyright (c) 2015 by Cisco Systems, Inc.
+  All rights reserved.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+ revision 2015-04-29 {
+  description
+  "Initial revision.";
+  reference
+  "Proposed PPTP VPN configurat,ion";
+ }
+ identity mppe-encryption {
+  description "MPPE encryption algorithm.";
+ }
+ identity mppe-auto {
+  base mppe-encryption;
+  description "Auto.";
+ }
+ identity mppe-none {
+  base mppe-encryption;
+  description "No encryption algorithm.";
+ }
+ identity mppe-40 {
+  base mppe-encryption;
+  description "MPPE 40 bits. ";
+ }
+ identity mppe-128 {
+  base mppe-encryption;
+  description "MPPE 128 bits. ";
+ }
+ typedef Mppe-encryption-type {
+  type identityref {
+   base "mppe-encryption";
+  }
+  description "type define for mppe-encryption.";
+ }
+ container pptp {
+  leaf enable {
+   type boolean;
+   default false;
+   description "Enable";
+  }
+  leaf start-ip {
+    type inet:ipv4-address;
+    description "Range start";
+  }
+  leaf end-ip {
+    type inet:ipv4-address;
+    description "Range end";
+  }
+  leaf primary-dns {
+   type inet:ipv4-address;
+   description "DNS IP address";
+  }
+  leaf secondary-dns {
+   type inet:ipv4-address;
+   description "DNS IP address";
+  }
+  leaf mppe-encryption {
+   type Mppe-encryption-type;
+   default "mppe-auto";
+  }
+  leaf max-session {
+   type uint16;
+   description "Max sessions";
+  }
+ }
+ container pptp-passthrough {
+  leaf enable {
+   type boolean;
+   description "Enable pptp passthrough";
+  }
+ }
+ container pptp-state{
+  container connections {
+   list connection{
+    key session-id;
+    config false;
+    leaf session-id {
+     type uint16;
+     description "When connected, there will allocated one session id";
+    }
+    leaf user-name {
+     type string;
+     description "The connected user name";
+    }
+    leaf remote-address {
+     type inet:host;
+     description "The connected remote client address";
+    }
+    leaf tunnel-ip {
+     type inet:host;
+     description "The allocated tunnel ip address";
+    }
+    leaf connect-time {
+     type yang:date-and-time;
+     description "Connected time";
+    }
+   }
+  }
+ }
+ rpc pptp-disconnect {
+  input {
+   leaf tunnel-ip {
+    type inet:host;
+    description "The allocated tunnel ip address";
+   }
+   leaf session-id {
+    type uint16;
+    description "The session id that should be disconnected";
+   }
+  }
+  description "Do disconnect the pptp vpn";
+ }
+}

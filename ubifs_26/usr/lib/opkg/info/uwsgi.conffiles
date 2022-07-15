@@ -1,0 +1,3 @@
+/etc/uwsgi/upload.ini
+/etc/uwsgi/blockpage.ini
+/etc/uwsgi/jsonrpc.ini

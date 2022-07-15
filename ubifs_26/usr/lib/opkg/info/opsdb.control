@@ -1,0 +1,8 @@
+Package: opsdb
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, ciscosb-yang, libsqlite3
+Source: package/freescale/opsdb
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 90511
+Description:  Operation data statistics module.

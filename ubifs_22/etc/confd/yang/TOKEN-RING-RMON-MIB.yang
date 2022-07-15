@@ -1,0 +1,987 @@
+module TOKEN-RING-RMON-MIB {
+  namespace "http://tail-f.com/ns/mibs/TOKEN-RING-RMON-MIB/1.0";
+  prefix TOKEN_RING_RMON_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "TOKEN-RING-RMON-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import RFC1271-MIB {
+    prefix RFC1271-MIB;
+  }
+  container TOKEN-RING-RMON-MIB {
+    container tokenRingMLStatsTable {
+      list tokenRingMLStatsEntry {
+        key "tokenRingMLStatsIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.2";
+        leaf tokenRingMLStatsIndex {
+          type tokenRingMLStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.1";
+        }
+        leaf tokenRingMLStatsDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.2";
+        }
+        leaf tokenRingMLStatsDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.3";
+          config false;
+        }
+        leaf tokenRingMLStatsMacOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.4";
+          config false;
+        }
+        leaf tokenRingMLStatsMacPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.5";
+          config false;
+        }
+        leaf tokenRingMLStatsRingPurgeEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.6";
+          config false;
+        }
+        leaf tokenRingMLStatsRingPurgePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.7";
+          config false;
+        }
+        leaf tokenRingMLStatsBeaconEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.8";
+          config false;
+        }
+        leaf tokenRingMLStatsBeaconTime {
+          type TimeInterval;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.9";
+          config false;
+        }
+        leaf tokenRingMLStatsBeaconPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.10";
+          config false;
+        }
+        leaf tokenRingMLStatsClaimTokenEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.11";
+          config false;
+        }
+        leaf tokenRingMLStatsClaimTokenPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.12";
+          config false;
+        }
+        leaf tokenRingMLStatsNAUNChanges {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.13";
+          config false;
+        }
+        leaf tokenRingMLStatsLineErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.14";
+          config false;
+        }
+        leaf tokenRingMLStatsInternalErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.15";
+          config false;
+        }
+        leaf tokenRingMLStatsBurstErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.16";
+          config false;
+        }
+        leaf tokenRingMLStatsACErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.17";
+          config false;
+        }
+        leaf tokenRingMLStatsAbortErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.18";
+          config false;
+        }
+        leaf tokenRingMLStatsLostFrameErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.19";
+          config false;
+        }
+        leaf tokenRingMLStatsCongestionErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.20";
+          config false;
+        }
+        leaf tokenRingMLStatsFrameCopiedErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.21";
+          config false;
+        }
+        leaf tokenRingMLStatsFrequencyErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.22";
+          config false;
+        }
+        leaf tokenRingMLStatsTokenErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.23";
+          config false;
+        }
+        leaf tokenRingMLStatsSoftErrorReports {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.24";
+          config false;
+        }
+        leaf tokenRingMLStatsRingPollEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.25";
+          config false;
+        }
+        leaf tokenRingMLStatsOwner {
+          type RFC1271-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.26";
+        }
+        leaf tokenRingMLStatsStatus {
+          type RFC1271-MIB:EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.2.1.27";
+        }
+      }
+    }
+    container tokenRingPStatsTable {
+      list tokenRingPStatsEntry {
+        key "tokenRingPStatsIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.1.3";
+        leaf tokenRingPStatsIndex {
+          type tokenRingPStatsIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.1";
+        }
+        leaf tokenRingPStatsDataSource {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.2";
+        }
+        leaf tokenRingPStatsDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.3";
+          config false;
+        }
+        leaf tokenRingPStatsDataOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.4";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.5";
+          config false;
+        }
+        leaf tokenRingPStatsDataBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.6";
+          config false;
+        }
+        leaf tokenRingPStatsDataMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.7";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts18to63Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.8";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts64to127Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.9";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts128to255Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.10";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts256to511Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.11";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts512to1023Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.12";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts1024to2047Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.13";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts2048to4095Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.14";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts4096to8191Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.15";
+          config false;
+        }
+        leaf tokenRingPStatsDataPkts8192to18000Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.16";
+          config false;
+        }
+        leaf tokenRingPStatsDataPktsGreaterThan18000Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.17";
+          config false;
+        }
+        leaf tokenRingPStatsOwner {
+          type RFC1271-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.18";
+        }
+        leaf tokenRingPStatsStatus {
+          type RFC1271-MIB:EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.1.3.1.19";
+        }
+      }
+    }
+    container tokenRingMLHistoryTable {
+      config false;
+      list tokenRingMLHistoryEntry {
+        key "tokenRingMLHistoryIndex tokenRingMLHistorySampleIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.2.3";
+        leaf tokenRingMLHistoryIndex {
+          type tokenRingMLHistoryIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.1";
+        }
+        leaf tokenRingMLHistorySampleIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.2";
+        }
+        leaf tokenRingMLHistoryIntervalStart {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.3";
+          config false;
+        }
+        leaf tokenRingMLHistoryDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.4";
+          config false;
+        }
+        leaf tokenRingMLHistoryMacOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.5";
+          config false;
+        }
+        leaf tokenRingMLHistoryMacPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.6";
+          config false;
+        }
+        leaf tokenRingMLHistoryRingPurgeEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.7";
+          config false;
+        }
+        leaf tokenRingMLHistoryRingPurgePkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.8";
+          config false;
+        }
+        leaf tokenRingMLHistoryBeaconEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.9";
+          config false;
+        }
+        leaf tokenRingMLHistoryBeaconTime {
+          type TimeInterval;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.10";
+          config false;
+        }
+        leaf tokenRingMLHistoryBeaconPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.11";
+          config false;
+        }
+        leaf tokenRingMLHistoryClaimTokenEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.12";
+          config false;
+        }
+        leaf tokenRingMLHistoryClaimTokenPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.13";
+          config false;
+        }
+        leaf tokenRingMLHistoryNAUNChanges {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.14";
+          config false;
+        }
+        leaf tokenRingMLHistoryLineErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.15";
+          config false;
+        }
+        leaf tokenRingMLHistoryInternalErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.16";
+          config false;
+        }
+        leaf tokenRingMLHistoryBurstErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.17";
+          config false;
+        }
+        leaf tokenRingMLHistoryACErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.18";
+          config false;
+        }
+        leaf tokenRingMLHistoryAbortErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.19";
+          config false;
+        }
+        leaf tokenRingMLHistoryLostFrameErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.20";
+          config false;
+        }
+        leaf tokenRingMLHistoryCongestionErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.21";
+          config false;
+        }
+        leaf tokenRingMLHistoryFrameCopiedErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.22";
+          config false;
+        }
+        leaf tokenRingMLHistoryFrequencyErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.23";
+          config false;
+        }
+        leaf tokenRingMLHistoryTokenErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.24";
+          config false;
+        }
+        leaf tokenRingMLHistorySoftErrorReports {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.25";
+          config false;
+        }
+        leaf tokenRingMLHistoryRingPollEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.26";
+          config false;
+        }
+        leaf tokenRingMLHistoryActiveStations {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.3.1.27";
+          config false;
+        }
+      }
+    }
+    container tokenRingPHistoryTable {
+      config false;
+      list tokenRingPHistoryEntry {
+        key "tokenRingPHistoryIndex tokenRingPHistorySampleIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.2.4";
+        leaf tokenRingPHistoryIndex {
+          type tokenRingPHistoryIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.1";
+        }
+        leaf tokenRingPHistorySampleIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.2";
+        }
+        leaf tokenRingPHistoryIntervalStart {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.3";
+          config false;
+        }
+        leaf tokenRingPHistoryDropEvents {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.4";
+          config false;
+        }
+        leaf tokenRingPHistoryDataOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.5";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.6";
+          config false;
+        }
+        leaf tokenRingPHistoryDataBroadcastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.7";
+          config false;
+        }
+        leaf tokenRingPHistoryDataMulticastPkts {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.8";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts18to63Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.9";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts64to127Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.10";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts128to255Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.11";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts256to511Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.12";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts512to1023Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.13";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts1024to2047Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.14";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts2048to4095Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.15";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts4096to8191Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.16";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPkts8192to18000Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.17";
+          config false;
+        }
+        leaf tokenRingPHistoryDataPktsGreaterThan18000Octets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.2.4.1.18";
+          config false;
+        }
+      }
+    }
+    container ringStationControlTable {
+      list ringStationControlEntry {
+        key "ringStationControlIfIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.1";
+        leaf ringStationControlIfIndex {
+          type ringStationControlIfIndexType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.1";
+        }
+        leaf ringStationControlTableSize {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.2";
+          config false;
+        }
+        leaf ringStationControlActiveStations {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.3";
+          config false;
+        }
+        leaf ringStationControlRingState {
+          type ringStationControlRingStateType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.4";
+          config false;
+        }
+        leaf ringStationControlBeaconSender {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.5";
+          config false;
+        }
+        leaf ringStationControlBeaconNAUN {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.6";
+          config false;
+        }
+        leaf ringStationControlActiveMonitor {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.7";
+          config false;
+        }
+        leaf ringStationControlOrderChanges {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.8";
+          config false;
+        }
+        leaf ringStationControlOwner {
+          type RFC1271-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.9";
+        }
+        leaf ringStationControlStatus {
+          type RFC1271-MIB:EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.1.1.10";
+        }
+      }
+    }
+    container ringStationTable {
+      config false;
+      list ringStationEntry {
+        key "ringStationIfIndex ringStationMacAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.2";
+        leaf ringStationIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.1";
+        }
+        leaf ringStationMacAddress {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.2";
+        }
+        leaf ringStationLastNAUN {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.3";
+          config false;
+        }
+        leaf ringStationStationStatus {
+          type ringStationStationStatusType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.4";
+          config false;
+        }
+        leaf ringStationLastEnterTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.5";
+          config false;
+        }
+        leaf ringStationLastExitTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.6";
+          config false;
+        }
+        leaf ringStationDuplicateAddresses {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.7";
+          config false;
+        }
+        leaf ringStationInLineErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.8";
+          config false;
+        }
+        leaf ringStationOutLineErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.9";
+          config false;
+        }
+        leaf ringStationInternalErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.10";
+          config false;
+        }
+        leaf ringStationInBurstErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.11";
+          config false;
+        }
+        leaf ringStationOutBurstErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.12";
+          config false;
+        }
+        leaf ringStationACErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.13";
+          config false;
+        }
+        leaf ringStationAbortErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.14";
+          config false;
+        }
+        leaf ringStationLostFrameErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.15";
+          config false;
+        }
+        leaf ringStationCongestionErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.16";
+          config false;
+        }
+        leaf ringStationFrameCopiedErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.17";
+          config false;
+        }
+        leaf ringStationFrequencyErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.18";
+          config false;
+        }
+        leaf ringStationTokenErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.19";
+          config false;
+        }
+        leaf ringStationInBeaconErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.20";
+          config false;
+        }
+        leaf ringStationOutBeaconErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.21";
+          config false;
+        }
+        leaf ringStationInsertions {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.2.1.22";
+          config false;
+        }
+      }
+    }
+    container ringStationOrderTable {
+      config false;
+      list ringStationOrderEntry {
+        key "ringStationOrderIfIndex ringStationOrderOrderIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.3";
+        leaf ringStationOrderIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.3.1.1";
+        }
+        leaf ringStationOrderOrderIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.3.1.2";
+        }
+        leaf ringStationOrderMacAddress {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.3.1.3";
+          config false;
+        }
+      }
+    }
+    container ringStationConfigControlTable {
+      list ringStationConfigControlEntry {
+        key "ringStationConfigControlIfIndex ringStationConfigControlMacAddress";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.4";
+        leaf ringStationConfigControlIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.4.1.1";
+        }
+        leaf ringStationConfigControlMacAddress {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.4.1.2";
+        }
+        leaf ringStationConfigControlRemove {
+          type ringStationConfigControlRemoveType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.4.1.3";
+        }
+        leaf ringStationConfigControlUpdateStats {
+          type ringStationConfigControlUpdateStatsType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.4.1.4";
+        }
+      }
+    }
+    container ringStationConfigTable {
+      config false;
+      list ringStationConfigEntry {
+        key "ringStationConfigIfIndex ringStationConfigMacAddress";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.5";
+        leaf ringStationConfigIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.1";
+        }
+        leaf ringStationConfigMacAddress {
+          type MacAddress;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.2";
+        }
+        leaf ringStationConfigUpdateTime {
+          type yang:timeticks;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.3";
+          config false;
+        }
+        leaf ringStationConfigLocation {
+          type ringStationConfigLocationType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.4";
+          config false;
+        }
+        leaf ringStationConfigMicrocode {
+          type ringStationConfigMicrocodeType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.5";
+          config false;
+        }
+        leaf ringStationConfigGroupAddress {
+          type ringStationConfigGroupAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.6";
+          config false;
+        }
+        leaf ringStationConfigFunctionalAddress {
+          type ringStationConfigFunctionalAddressType;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.5.1.7";
+          config false;
+        }
+      }
+    }
+    container sourceRoutingStatsTable {
+      list sourceRoutingStatsEntry {
+        key "sourceRoutingStatsIfIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.2.1.16.10.6";
+        leaf sourceRoutingStatsIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.1";
+        }
+        leaf sourceRoutingStatsRingNumber {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.2";
+          config false;
+        }
+        leaf sourceRoutingStatsInFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.3";
+          config false;
+        }
+        leaf sourceRoutingStatsOutFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.4";
+          config false;
+        }
+        leaf sourceRoutingStatsThroughFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.5";
+          config false;
+        }
+        leaf sourceRoutingStatsAllRoutesBroadcastFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.6";
+          config false;
+        }
+        leaf sourceRoutingStatsSingleRouteBroadcastFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.7";
+          config false;
+        }
+        leaf sourceRoutingStatsInOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.8";
+          config false;
+        }
+        leaf sourceRoutingStatsOutOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.9";
+          config false;
+        }
+        leaf sourceRoutingStatsThroughOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.10";
+          config false;
+        }
+        leaf sourceRoutingStatsAllRoutesBroadcastOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.11";
+          config false;
+        }
+        leaf sourceRoutingStatsSingleRoutesBroadcastOctets {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.12";
+          config false;
+        }
+        leaf sourceRoutingStatsLocalLLCFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.13";
+          config false;
+        }
+        leaf sourceRoutingStats1HopFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.14";
+          config false;
+        }
+        leaf sourceRoutingStats2HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.15";
+          config false;
+        }
+        leaf sourceRoutingStats3HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.16";
+          config false;
+        }
+        leaf sourceRoutingStats4HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.17";
+          config false;
+        }
+        leaf sourceRoutingStats5HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.18";
+          config false;
+        }
+        leaf sourceRoutingStats6HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.19";
+          config false;
+        }
+        leaf sourceRoutingStats7HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.20";
+          config false;
+        }
+        leaf sourceRoutingStats8HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.21";
+          config false;
+        }
+        leaf sourceRoutingStatsMoreThan8HopsFrames {
+          type yang:counter32;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.22";
+          config false;
+        }
+        leaf sourceRoutingStatsOwner {
+          type RFC1271-MIB:OwnerString;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.23";
+        }
+        leaf sourceRoutingStatsStatus {
+          type RFC1271-MIB:EntryStatus;
+          tailf:snmp-oid "1.3.6.1.2.1.16.10.6.1.24";
+        }
+      }
+    }
+  }
+  typedef MacAddress {
+    type tailf:hex-list {
+      tailf:value-length "6";
+    }
+  }
+  typedef TimeInterval {
+    type int32 {
+      range "-2147483648 .. 2147483647";
+    }
+  }
+  typedef tokenRingMLStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef tokenRingPStatsIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef tokenRingMLHistoryIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef tokenRingPHistoryIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef ringStationControlIfIndexType {
+    type int32 {
+      range "1 .. 65535";
+    }
+  }
+  typedef ringStationControlRingStateType {
+    type enumeration {
+      enum "normalOperation" {
+        value 1;
+      }
+      enum "ringPurgeState" {
+        value 2;
+      }
+      enum "claimTokenState" {
+        value 3;
+      }
+      enum "beaconFrameStreamingState" {
+        value 4;
+      }
+      enum "beaconBitStreamingState" {
+        value 5;
+      }
+      enum "beaconRingSignalLossState" {
+        value 6;
+      }
+      enum "beaconSetRecoveryModeState" {
+        value 7;
+      }
+    }
+  }
+  typedef ringStationStationStatusType {
+    type enumeration {
+      enum "active" {
+        value 1;
+      }
+      enum "inactive" {
+        value 2;
+      }
+      enum "forcedRemoval" {
+        value 3;
+      }
+    }
+  }
+  typedef ringStationConfigControlRemoveType {
+    type enumeration {
+      enum "stable" {
+        value 1;
+      }
+      enum "removing" {
+        value 2;
+      }
+    }
+  }
+  typedef ringStationConfigControlUpdateStatsType {
+    type enumeration {
+      enum "stable" {
+        value 1;
+      }
+      enum "updating" {
+        value 2;
+      }
+    }
+  }
+  typedef ringStationConfigLocationType {
+    type tailf:hex-list {
+      tailf:value-length "4";
+    }
+  }
+  typedef ringStationConfigMicrocodeType {
+    type tailf:hex-list {
+      tailf:value-length "10";
+    }
+  }
+  typedef ringStationConfigGroupAddressType {
+    type tailf:hex-list {
+      tailf:value-length "4";
+    }
+  }
+  typedef ringStationConfigFunctionalAddressType {
+    type tailf:hex-list {
+      tailf:value-length "4";
+    }
+  }
+}

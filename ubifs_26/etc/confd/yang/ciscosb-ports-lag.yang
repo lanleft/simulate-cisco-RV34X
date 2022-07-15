@@ -1,0 +1,56 @@
+module ciscosb-ports-lag {
+    namespace "http://cisco.com/ns/ciscosb/ports-lag";
+    prefix ciscosb-ports-lag;
+    import ietf-interfaces { prefix if; }
+    import iana-if-type { prefix ianaift; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "Link aggregation on the switch ports.";
+    reference "TODO";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2014-05-14 {
+        description "Proposed";
+    }
+    identity aggregate-model-manual {
+        base aggregate-model;
+    }
+    identity aggregate-model-auto {
+        base aggregate-model;
+    }
+    identity aggregate-model {
+    }
+    typedef Aggregate-model-type {
+        type identityref {
+            base "aggregate-model";
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd' or 'ianaift:channel'"{
+ }
+        leaf lag-ref {
+         description "One port can be added to only single  LAG group.";
+            type if:interface-ref;
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ieee8023adLag' "{
+        }
+        container lag {
+            leaf aggregator-mode {
+             description "Manual and Cisco auto mode are supported";
+                type Aggregate-model-type;
+            }
+        }
+    }
+}

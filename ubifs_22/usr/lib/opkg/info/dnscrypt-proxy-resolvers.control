@@ -1,0 +1,10 @@
+Package: dnscrypt-proxy-resolvers
+Version: 1.9.5+git-20171001-2d43be3-8
+Depends: libc, librt, libpthread
+Source: package/network/services/dnscrypt-proxy
+License: ISC
+Section: net
+Maintainer: Damiano Renfer <damiano.renfer@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 7510
+Description:  Package with current list of dnscrypt-proxy resolvers.

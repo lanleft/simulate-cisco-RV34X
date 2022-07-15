@@ -1,0 +1,647 @@
+<div>
+<form name="form" ng-controller="cert_main" id="admin-certificate">
+    <div ng-include="ctx.currPage" ></div>
+</form>
+
+</div>
+
+<script type="text/ng-template" id="main_cert.htm">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Certificate')"></div>
+    </div>
+	<confirmsave ng-show="success"></confirmsave>
+	<div class="page-content-container">
+		<br />
+		<div class="grid-cntr">
+            <div class="grid-title-cntr">
+			    <div class="grid-title" ng-bind="DICT('Certificate_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_delete" class="grid-btn-delete"
+                        ng-disabled="gridCERT.Selections.length === 0 || isDeleteable() || userAccessFlag === 'RO'" ng-click="gridCERT.deleteCert()">
+                    </button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridCERT.Options"/>
+            </div>
+		</div>
+        <div class="btn-container">
+            <button id="btn_importCert" ng-disabled="userAccessFlag === 'RO'" ng-click="importCert()">
+                <span ng-bind="DICT('Certificate_Import_Certificate_E')"></span>
+            </button>
+            <button id="btn_generateCSRCert" ng-disabled="userAccessFlag === 'RO'" ng-click="openGenCert()">
+                <span ng-bind="DICT('Certificate_Generate_CSR_Certificate_E')"></span>
+            </button>
+            <button id="btn_generateCACert" ng-disabled="userAccessFlag === 'RO'" ng-click="pic.showPreinstalledCerts()">
+                <span ng-bind="DICT('Certificate_Show_Builtin_3rd_Party_CA_Certificates')"></span>
+            </button>
+            <button id="btn_primaryCert" ng-disabled="gridCERT.Selections.length !== 1 || userAccessFlag === 'RO' || gridCERT.notPrimaryCert" ng-click="gridCERT.selectAsPrimaryCert()">
+                <span ng-bind="DICT('Certificate_Select_As_Primary_Certificate')"></span>
+            </button>
+        </div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="import_cert.htm">
+<ng-form name="formConf">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Certificate')"></div>
+        <div class="page-button-container">
+            <button id="btn_impupload" ng-click="uploadCert(pcFile)" ng-disabled="form.$invalid" class="btn-apply">
+                <span ng-bind="DICT('Certificate_Upload')"></span>
+            </button>
+            <button id="btn_impcancel" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Certificate_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <div class="page-content-container">
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-if="ctx.certType === 'cert'" ng-bind="DICT('Certificate_Import_Certificate')"></div>
+            <div class="page-block-title" ng-if="ctx.certType === 'CSR'" ng-bind="DICT('Certificate_Import_Signed_Certificate')"></div>
+        </div>
+        <table class="page-block-tb-list" ng-if="ctx.certType === 'cert' ">
+            <tr>
+                <td ng-bind="DICT('Certificate_Type_Colon')"></td>
+                <td>
+                    <select id="slct_importtype" ng-model="ctx.rpc_importCert['type']"
+                        ng-options="item.id as item.displayName for item in schema.importCertType"
+                    ></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Certificate_Name')"></td>
+                <td>
+                    <input type="text" uci-name maxlength="64" id="txt_importcertificateName" name="importcertificateName"
+                        required
+                        ng-model="ctx.rpc_importCert['name']"
+                        contains="{array: model['certs-state'].cert, name: 'name'}"
+                    ></input>
+                    <span ng-messages="formConf.importcertificateName.$error">
+                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    </span>
+                </td>
+            </tr>
+            <tr ng-if="ctx.rpc_importCert['type'] == 'pkcs12' ">
+                <td ng-bind="DICT('Certificate_Import_Password')"></td>
+                <td>
+                    <input type="password" id="txt_importPassword" password ng-maxlength="64" ng-model="ctx.rpc_importCert['password']"></input>
+                </td>
+            </tr>
+        </table>
+        <table class="page-block-tb-list"  ng-if="ctx.certType === 'CSR'">
+            <tr>
+                <td ng-bind="DICT('Certificate_Certificate_Name')" style="width: 120px;"></td>
+                <td>
+                    <input type="text" uci-name maxlength="64" id="txt_importcertificateName" name="importcertificateName"
+                        required
+                        ng-model="ctx.rpc_importCert['name']"
+                        contains="{array: model['certs-state'].cert, name: 'name'}"
+                    ></input>
+                    <span ng-messages="formConf.importcertificateName.$error">
+                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('Certificate_Upload_Certificate_File')"></div>
+        </div>
+        <table class="page-block-tb-list">
+            <tr>
+                <td colspan="2" nowrap>
+                    <input type="radio" id="rdo_importFromPc" name="certname" value="pc" ng-model="ctx.importFrom">
+                        <span ng-bind="DICT('Certificate_Import_From_PC')"></span>
+                    </input>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent28">
+                    <pg-upload id="slct_importFromPc" ngchange="selectCertFile"
+                        ng-required="ctx.importFrom === 'pc'"
+                    ></pg-upload>
+                    <span class="progress" ng-show="pcFile && pcFile.progress >= 0">
+                        <span style="width:{{pcFile.progress}}%" ng-bind="pcFile.progress + '%'" class="ng-binding"></span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td nowrap>
+                    <input type="radio" id="rdo_importFromUsb" name="certname" value="usb"
+                        ng-disabled="ctx.rpc_importCert.usbDevList == undefined || ctx.rpc_importCert.usbDevList.length < 1"
+                        ng-model="ctx.importFrom"
+                    >
+                        <span ng-bind="DICT('Certificate_Import_From_USB')"></span>
+                    </input>
+                    
+                    <button ng-click="RPC_check_USB_attached()" class="icon-btn-refresh page-indent"></button>
+                </td>
+            </tr>
+            <tr>
+                <td class="page-indent28">
+                    <span ng-if="ctx.importFrom == 'usb'" ng-include="'USB_list.htm'"
+                        data-x-tmp="{{usb_sel_file_ctx = ctx.rpc_importCert}}"
+                    ></span>
+                    
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <div>
+            <br/>
+            <p class="warning-msg errstr_{{ ctx.rpc_importCert.rpc_msg_type }}">
+                {{ctx.rpc_importCert.errstr}}
+            </p>
+        </div>
+    </div>
+</ng-form>
+</script>
+
+
+
+<script type="text/ng-template" id="gen_cert.htm">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Certificate')"></div>
+        <div class="page-button-container">
+            <button id="btn_generate" ng-click="generateCertCsr()" ng-disabled="form.$invalid" class="btn-apply">
+                <span ng-bind="DICT('Certificate_Generate')"></span>
+            </button>
+            <button id="btn_gencancel" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Certificate_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <div class="page-content-container">
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('Certificate_Generate_CSR_Certificate')"></div>
+        </div>
+        <ng-form name="formConf">
+            <table class="page-block-tb-list control-input-300">
+                <tr>
+                    <td ng-bind="DICT('Certificate_Type_Colon')">
+                        
+                    </td>
+                    <td>
+                        <select id="slct_gentype" ng-model="ctx.rpc_genCert['type']"
+                            ng-init="ctx.rpc_genCert['type'] = schema.genCertType[0].id"
+                            ng-options="item.id as item.displayName for item in schema.genCertType"
+                            ng-change="updCertTypeState()"
+                        ></select>
+                    </td>
+                </tr>
+                <tr ng-if="isCertTypeState('CSByCA')">
+                    <td ng-bind="DICT('Certificate_Authority_External_CSR')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_gencertificateAuthorityExtCsr" name="gencertificateAuthorityExtCsr"
+                            ng-model="ctx.rpc_genCert['ext_csr']"
+                            ng-change="updCertTypeState()"
+                        ></input>
+                    </td>
+                </tr>
+                <tr ng-if="ctx.rpc_genCert['ext_csr'] && isCertTypeState('CSByCA')">
+                    <td></td>
+                    <td>
+                        <div>
+                            <pg-upload id="file_gencertificateAuthorityExtCsrFile"
+                                ng-required="true"
+                                ngchange="selectCSRCert"
+                            ></pg-upload>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Certificate_Certificate_Name')"></td>
+                    <td>
+                        <input type="text" id="txt_gencertificateName" name="gencertificateName"
+                            required uci-name maxlength="64"
+                            ng-model="ctx.rpc_genCert['name']"
+                            contains="{array: model['certs-state'].cert, name: 'name'}"
+                        ></input>
+                        <span class="validation-error-text-right"
+                            ng-show="formConf.gencertificateName.$error.required" ng-bind="DICT('Certificate_Not_Blank')">
+                            
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Subject_Alternative_Name')"></td>
+                    <td>
+                        <input type="text" id="txt_subjectalertname" maxlength="64" name="sub_alt_name" ng-ip="ctx.rpc_genCert['subject-alternative-type'] == 'ip-type'" 
+                                ng-fqdn="ctx.rpc_genCert['subject-alternative-type'] == 'fqdn-type'" ng-email="ctx.rpc_genCert['subject-alternative-type'] == 'email-type'" 
+                                cert-str ng-model="ctx.rpc_genCert['subject-alternative-name']">
+                        </input>
+                    </td>
+                    <td>
+                        <span ng-messages="form['sub_alt_name'].$error" >
+                            <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td></td>
+                    <td>
+                        <input type="radio" id="rdo_ip" ng-model="ctx.rpc_genCert['subject-alternative-type']" value="ip-type">
+                            <span ng-bind="DICT('Certificate_IP_Addr')"></span>
+                        </input>
+                        <input type="radio" id="rdo_dns" ng-model="ctx.rpc_genCert['subject-alternative-type']" value="fqdn-type">
+                            <span ng-bind="DICT('Certificate_FQDN')"></span>
+                        </input>
+                        <input type="radio" id="rdo_email" ng-model="ctx.rpc_genCert['subject-alternative-type']" value="email-type">
+                            <span ng-bind="DICT('Certificate_Email')"></span>
+                        </input>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Country_Name')">
+                    </td>
+                    <td>
+                        <select id="slct_countryname" ng-model="ctx.rpc_genCert['country']"
+                            ng-options="item.id as (item.id +' - '+item.displayName) for item in schema.genCertCountryName"
+                        ></select>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_State_Name')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_stateProvname" cert-common-name cert-str maxlength="64" ng-model="ctx.rpc_genCert['state-province']"></input>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Locality_Name')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_localityname" cert-common-name cert-str maxlength="64" ng-model="ctx.rpc_genCert['locality']"></input>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Organization_Name_O')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_organizname" cert-common-name cert-str maxlength="64" ng-model="ctx.rpc_genCert['organization']"></input>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Organization_Unit_Name_OU')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_organizunitname" name="genOU" required cert-common-name cert-str maxlength="64" ng-model="ctx.rpc_genCert['organization-unit']"></input>
+                        <span class="validation-error-text-right"
+                            ng-show="formConf.genOU.$error.required && formConf.genOU.$dirty" ng-bind="DICT('Certificate_Not_Blank')">
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Common_Name')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_commonname" name="genCN" required cert-common-name cert-str maxlength="64" ng-model="ctx.rpc_genCert['common-name']"></input>
+                        <span class="validation-error-text-right"
+                            ng-show="formConf.genCN.$error.required && formConf.genCN.$dirty" ng-bind="DICT('Certificate_Not_Blank')">
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Email_Address')">
+                        
+                    </td>
+                    <td>
+                        <input type="text" id="txt_emailaddr" email cert-str ng-model="ctx.rpc_genCert['email']"></input>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSByCA,EXT')">
+                    <td ng-bind="DICT('Certificate_Key_Encryption_Length')">
+                        
+                    </td>
+                    <td>
+                        <select id="slct_keyencryplen" ng-model="ctx.rpc_genCert['key-encryption-length']"
+                            ng-options="item.id as item.displayName for item in schema.genCertKeyLenType"
+                        ></select>
+                    </td>
+                </tr>
+                <tr ng-if="!isCertTypeState('CSR')">
+                    <td ng-bind="DICT('Certificate_Valid_Duration')">
+                        
+                    </td>
+                    <td>
+                        <input type="number" id="slct_validduration" number min="1" max="10950"
+                               ng-model="ctx.rpc_genCert['valid-duration']"
+                        >
+                            <span class="tip-info" ng-bind="DICT('Certificate_Days')"></span></input>
+                        
+                    </td>
+                </tr>
+                <tr ng-if="isCertTypeState('CSByCA')">
+                    <td ng-bind="DICT('Certificate_Certificate_Authority')">
+                        
+                    </td>
+                    <td>
+                        <select id="slct_ca_file" ng-model="ctx.rpc_genCert['ca-file']"
+                            ng-options="item.id as item.displayName for item in schema.genCertCA"
+                            ng-init="ctx.rpc_genCert['ca-file'] = schema.genCertCA[0].id"
+                        ></select>
+                    </td>
+                </tr>
+            </table>
+        </ng-form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modal_cert_detail.htm">
+<div class="modal-container">
+    <div class="modal-header-container">
+        <div class="modal-title" ng-bind="DICT('Certificate_Certificate_Detail')"></div>
+    </div>
+    <div class="modal-content-container" >
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Certificate_Name')"></td>
+                <td ng-bind="cert.name"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Subject_Alternative_Name')"></td>
+                <td ng-bind="cert.info['subject-alternative-name']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Subject_Alternative_Type')"></td>
+                <td ng-bind="cert.info['subject-alternative-type']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Key_Encryption_Length')"></td>
+                <td>
+                    <span ng-bind="cert.info['key-encryption-length']"></span>
+                    <span ng-bind="DICT('Certificate_Bit')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Subject')"></td>
+                <td ng-bind="cert.subject_str"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Country')"></td>
+                <td ng-bind="cert.info.subject['country']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_State_Province')"></td>
+                <td ng-bind="cert.info.subject['state-province']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Locality')"></td>
+                <td ng-bind="cert.info.subject['locality']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Organization')"></td>
+                <td ng-bind="cert.info.subject['organization']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Organization_Unit_Name')"></td>
+                <td ng-bind="cert.info.subject['organization-unit']"></td>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Common')"></td>
+                <td ng-bind="cert.info.subject['common-name']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Email_Colon')"></td>
+                <td ng-bind="cert.info.subject['email']"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Issuer')"></td>
+                <td ng-bind="cert.issuer_str"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Country_Name')"></td>
+                <td ng-bind="cert.info.issuer['country']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_State_Name')">
+                </td>
+                <td ng-bind="cert.info.issuer['state-province']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Locality_Name')"></td>
+                <td ng-bind="cert.info.issuer['locality']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Organization_Name_O')"></td>
+                <td ng-bind="cert.info.issuer['organization']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Organization_Unit_Name_OU')"></td>
+                <td ng-bind="cert.info.issuer['organization-unit']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Common_Name')"></td>
+                <td ng-bind="cert.info.issuer['common-name']"></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Certificate_Email_Address')"></td>
+                <td ng-bind="cert.info.issuer['email']"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-button-container">
+        <button id="btn_detailclose" ng-click="cancel()" class="btn-primary" autofocus>
+            <span ng-bind="DICT('Certificate_Close')"></span>
+        </button>
+    </div>
+    <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+</div>
+</script>
+
+<script type="text/ng-template" id="modal_cert_preinstalled.htm">
+	<div class="modal-container">
+		<div class="modal-header-container">
+			<div class="modal-title" ng-bind="DICT('Certificate_Builtin_3rd_Party_CA_Certificates')"></div>
+		</div>
+		<div class="modal-content-container" >
+            <div class="grid-cntr">
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridPIC.Options"/>
+                </div>
+            </div>
+		</div>
+		<div class="modal-button-container">
+			<button id="btn_cancel" ng-click="cancel()" class="btn-primary" autofocus>
+				<span ng-bind="DICT('Certificate_Close')"></span>
+			</button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="modal_export_cert.htm">
+<form name="form">
+	<div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Certificate_Export_Certificate')"></div>
+        </div>
+		<div class="modal-content-container" >
+			<table class="page-block-tb-list full-width">
+				<tr ng-if="ctx.rpc_export.pkcs12_support">
+					<td>
+						<input type="radio" id="rdo_exportpkcs12fmt" name="certfmt" value="pkcs12"
+							ng-model="ctx.rpc_export.format"
+						/>
+						<span ng-bind="DICT('Certificate_Export_PKCS_ormat')"></span>
+					</td>
+				</tr>
+				
+				<tr ng-if="ctx.rpc_export.pkcs12_support">
+					<td>
+						<table class="page-block-tb-list">
+							<tr>
+								<td ng-bind="DICT('Certificate_Enter_Password')"></td>
+								<td>
+									<input type="password"
+                                        id="txt_exportpwd"
+                                        name="password"
+                                        ng-disabled="ctx.rpc_export.format !== 'pkcs12'"
+										ng-password="ctx.rpc_export.format === 'pkcs12'"
+										ng-model="ctx.rpc_export.password"
+										ng-required="ctx.rpc_export.format === 'pkcs12'"
+									/>
+									<span ng-messages="form.password.$error">
+										<span ng-messages-include src="{{::messagesInclUrl}}"></span>
+									</span>
+								</td>
+							</tr>
+							<tr>
+								<td ng-bind="DICT('Certificate_Confirm_Password')"></td>
+								<td>
+									<input type="password"
+                                        id="txt_exportconfirmpwd"
+                                        name="password_confirm" 
+                                        ng-disabled="ctx.rpc_export.format !== 'pkcs12'"
+										ng-model="ctx.rpc_export.password_confirm"
+										compare-to="ctx.rpc_export.password"
+                                        ng-compare="ctx.rpc_export.format === 'pkcs12'"
+									/>
+									<span ng-if="form.password.$dirty || form.password_confirm.$dirty" ng-messages="form.password_confirm.$error">
+										<span ng-messages-include src="{{::messagesInclUrl}}"></span>
+									</span>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="radio" id="rdo_exportpemfmt" name="certfmt" value="pem" ng-model="ctx.rpc_export.format" />
+						<span ng-bind="DICT('Certificate_Export_PEM_ormat')"></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<hr/>
+					</td>
+				</tr>
+				<tr ng-init="RPC_check_USB_attached()">
+					<td ng-bind="DICT('Certificate_Select_Destination')">
+						
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="radio" id="rdo_export_dest_pc" name="cert_export_dest" value="pc" ng-model="ctx.rpc_export.dest" />
+						<span ng-bind="DICT('Certificate_PC')"></span>
+						<span ng-repeat="item in ctx.usbDev.usbDevList" class="rdo-entity">
+							<input type="radio" id="rdo_export_dest_usb_{{$index}}" name="cert_export_dest"
+                                value="{{item}}"
+                                ng-model="ctx.rpc_export.dest"
+                                ng-disabled="!ctx.usbDev.stateReady">
+							</input>
+                            <span ng-bind="item"></span>
+						</span>
+						<span ng-if="!ctx.usbDev.stateReady" ng-bind="DICT('Certificate_Refreshing')"></span>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="modal-button-container">
+			<button id="btn_expdownload"
+                    ng-click="download()"
+                    class="btn-primary"
+                    autofocus
+                    ng-init="ctx.export_btn_download = false"
+                    ng-disabled="downloadable()">
+                <span ng-bind="DICT('Certificate_Export')"></span>
+            </button>
+			<button id="btn_expcancel" ng-click="cancel()" class="btn-secondary" ng-init="ctx.export_btn_cancel = 'Cancel'">
+				<span ng-bind="DICT('Certificate_Cancel')"></span>
+            </button>
+			<div ng-if="ctx.rpc_export.rpc_msg_text != undefined">
+				<br />
+				<p class="warning-msg errstr_{{ ctx.rpc_export.rpc_msg_type }}">
+					{{ ctx.rpc_export.rpc_msg_text }}
+				</p>
+			</div>
+			<span ng-if="ctx.export_btn_download" >
+				<br />
+				<br />
+				
+				<span ng-bind="DICT('Certificate_Msg')"></span>
+				
+				<br />
+				<span ng-bind="DICT('Certificate_Link')"></span><a id="link_download" href="{{ctx.rpc_export.url}}" target="_blank">{{ctx.rpc_export.url}}</a>
+			</span>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+	</div>
+</form>
+</script>
+
+<script type="text/ng-template" id="T_cert_duration.html">
+<div class="ui-grid-custom-cntr">
+    <div class="ngCellText" ng-if="MODEL_COL_FIELD">
+        <span ng-bind="grid.appScope.DICT('Certificate_From', {'%s': MODEL_COL_FIELD.start_str})"></span>
+    </div>
+    <div class="ngCellText" ng-if="MODEL_COL_FIELD">
+        <span ng-bind="grid.appScope.DICT('Certificate_To', {'%s': MODEL_COL_FIELD.end_str})"></span>
+    </div>
+    <div class="ngCellText" ng-if="MODEL_COL_FIELD == undefined">-</div>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_CellText.html">
+<div class="ui-grid-custom-cntr" data-ng-expansion>
+       {{(MODEL_COL_FIELD)}}
+</div>
+</script>
+
+<script type="text/ng-template" id="set_cert_as_primary_success.html">
+    <div ng-bind="DICT('Certificate_Set_Certficate_As_Default_Success', {'%s': model.cert})"></div>
+    <ul>
+        <li ng-bind="DICT('Certificate_Web_Server')"></li>
+        <li ng-bind="DICT('Certificate_Restconf')"></li>
+        <li ng-bind="DICT('Certificate_Netconf')"></li>
+    </ul>
+</script>
+
+<script type="text/ng-template" id="set_cert_as_primary_failure.html">
+    <div ng-bind="DICT('Certificate_Set_Certficate_As_Default_Failure', {'%s': model.cert})"></div>
+    <ul>
+        <li ng-bind="DICT('Certificate_Remote_Web_Management')"></li>
+        <li ng-bind="DICT('Certificate_Restconf')"></li>
+        <li ng-bind="DICT('Certificate_Netconf')"></li>
+    </ul>
+</script>

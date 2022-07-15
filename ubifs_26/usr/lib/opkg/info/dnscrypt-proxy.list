@@ -1,0 +1,9 @@
+/usr/lib/dnscrypt-proxy/libdcplugin_example_ldns_blocking.so
+/etc/config/dnscrypt-proxy
+/usr/lib/dnscrypt-proxy/libdcplugin_example_cache.so
+/usr/lib/dnscrypt-proxy/libdcplugin_example_ldns_forwarding.so
+/usr/lib/dnscrypt-proxy/libdcplugin_example_logging.so
+/usr/lib/dnscrypt-proxy/libdcplugin_example_ldns_opendns_deviceid.so
+/usr/lib/dnscrypt-proxy/libdcplugin_example_ldns_aaaa_blocking.so
+/usr/sbin/dnscrypt-proxy
+/etc/init.d/dnscrypt-proxy

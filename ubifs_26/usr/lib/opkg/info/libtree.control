@@ -1,0 +1,8 @@
+Package: libtree
+Version: 1.0.0-1
+Depends: libc, librt, libpthread
+Source: package/libtree
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 5190
+Description:  libtree

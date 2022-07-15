@@ -1,0 +1,73 @@
+#!/bin/sh
+
+##############################################
+#	usage: 
+#	
+#	ex: /usr/bin/form-base-upload filepath /tmp/input filename config.xml inputfile /tmp/upload.input
+#
+#	curl ex: curl -i -u cisco:cisco -k http://127.0.0.1/api/operations/ciscosb-file:form-file-upload -X POST -F 'filename=config.xml' -F 'input="<input><fileType>configuration</fileType><source><location-url>FILE://Configuration/config.xml</location-url></source><destination><config-type>config-running</config-type></destination></input>"' -F "file=@/tmp/config.xml" -F "file.path=/tmp/input" -H "Accept: application/vnd.yang.data+xml"
+##############################################
+
+FIRMWARE_PATH="/tmp/firmware"
+CONFIGURATION_PATH="/tmp/configuration"
+FILE_CONFIGURATION="FILE://Configuration"
+FILE_FIRMWARE="FILE://Firmware"
+output="/tmp/upload.output"
+http_url="/tmp/ucicfg.d/http-rest-url"
+https_url="/tmp/ucicfg.d/https-rest-url"
+DEFAULT_URL="http://127.0.0.1:8008"
+
+while [ $# -gt 0 ]; do
+        case "$1" in
+        "filepath" )
+                shift 1
+                filepath=$1
+        ;;
+        "filename" )
+                shift 1
+                filename=$1
+        ;;
+        "inputfile" )
+                shift 1
+                inputfile=$1
+        ;;
+        * )
+                shift 1
+        ;;
+        esac
+done
+
+
+if [ $HTTPS ]; then
+	url=`cat $http_url 2>/dev/null`
+else
+	url=`cat $http_url 2>/dev/null`
+fi
+
+[ $url ] || url=$DEFAULT_URL
+
+if [ -e $filepath ]; then
+	[ $filename ] || {
+		if [ `cat $inputfile | grep $FILE_CONFIGURATION` ]; then
+			filename="config.xml"
+		elif [ `cat $inputfile | grep $FILE_FIRMWARE` ]; then
+			filename="image.img"
+		fi
+	}
+
+	if [ `echo $filename | grep ".xml"` ]; then
+		mkdir -p $CONFIGURATION_PATH
+		cp -f $filepath $CONFIGURATION_PATH/$filename
+	elif [ `echo $filename | grep ".img"` ]; then
+		mkdir -p $FIRMWARE_PATH
+		cp -f $filepath $FIRMWARE_PATH/$filename
+	fi
+fi
+
+`curl -i -X POST -H "Authorization:$HTTP_AUTHORIZATION" -H "Content-type:$HTTP_ACCEPT" -k "$url/api/operations/ciscosb-file:file-copy" -d@$inputfile 2>/dev/null > $output`
+
+#Return http header and response, remove "HTTP/1.1 200 OK" for legal response
+cat $output | sed '/HTTP\// d'
+
+rm $output $inputfile
+

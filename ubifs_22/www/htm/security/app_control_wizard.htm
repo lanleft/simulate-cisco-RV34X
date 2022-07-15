@@ -1,0 +1,240 @@
+<style>
+    .wizard_step tr td {
+        padding-left: 10px;
+    }
+
+    .wizard_step tr td:first-child {
+        padding-left: 0px;
+    }
+
+    .wizard_step span {
+        display: inline-block;
+    }
+
+    .page-block-tb-list .Ttitle {
+        width: 170px;
+    }
+
+    .vpn_wizard_4 select,
+    .vpn_wizard_4 input[type='number'],
+    .vpn_wizard_4 input[type='password'],
+    .vpn_wizard_2 select {
+        width: 100%
+    }
+    .wizard_step > span:first-child {
+        left: 0px;
+    }
+
+    .vpn_indent1 tr > td:first-child {
+        padding-left: 22px;
+    }
+
+    .vpn_indent2 tr > td:first-child {
+        padding-left: 44px;
+    }
+
+    .vpn_wizard_5_left tr td:first-child {
+        width: 250px;
+    }
+
+    .nest input[type="checkbox"] {
+        margin-right: 10px;
+    }
+    .expand_style {
+        width: 20px;
+        font-size: 22px;
+        margin-bottom: 2px;
+        display:inline-block;
+        cursor: pointer;
+    }
+</style>
+
+<script type="text/ng-template" id="app_control_wizard_dialog.html">
+<div class="wizard-container">
+    <form name="wizardform">
+        <div class="wizard-appearance">
+            <div class="wizard-title-cntr">
+                    <span class="wizard-title" ng-bind="title"></span>
+            </div>
+            <div class="wizard-content-cntr">
+                <div class="wizard-step-name-cntr">
+                    <div ng-repeat="(idx, step) in step_list" ng-class="{'focus-step': idx === current_step, 'future-step': idx > current_step, 'completed-step': idx < current_step}">
+                        <img src="themes/img/speciel/_blank.gif" class="wizard-blank-icon" ng-show="idx >= current_step"></img>
+                        <span class="wizard-check-circle" ng-show="idx < current_step"></span>
+                        <span class="wizard-step-name" ng-bind="step.name"></span>
+                    </div>
+                </div>
+                <div ng-repeat="(idx, step) in step_list" class="wizard-content" ng-show="current_step === idx">
+                    <ng-form name="{{'step'+idx}}" ng-show="current_step === idx">
+                        <div ng-include="step.templateUrl"></div>
+                    </ng-form>
+                </div>
+            </div>
+            <div class="wizard-btn-cntr" ng-show="!isSubAppEdit">
+                <button type="button" ng-click="back()" class="btn-back" ng-show="current_step !== 0">
+                    <span ng-bind="DICT('Wizard_Back')"></span>
+                </button>
+                <button type="button" ng-click="next()" class="btn-next" ng-show="!show_submit_btn" ng-disabled="wizardform['step'+current_step].$invalid">
+                    <span ng-bind="DICT('Wizard_Next')"></span>
+                </button>
+                <button type="button" ng-click="submit()" class="btn-apply" ng-show="show_submit_btn" ng-disabled="wizardform['step'+current_step].$invalid">
+                    <span ng-bind="DICT('Wizard_Submit')"></span>
+                </button>
+                <button type="button" ng-click="cancel()" class="btn-cancel">
+                    <span ng-bind="DICT('Wizard_Cancel')"></span>
+                </button>
+            </div>
+            <div class="wizard-btn-cntr" ng-show="isSubAppEdit">
+                <button type="button" ng-click="sub_submit()" class="btn-apply">
+                    <span ng-bind="DICT('Wizard_Apply')"></span>
+                </button>
+                <button type="button" ng-click="sub_cancel()" class="btn-cancel">
+                    <span ng-bind="DICT('Wizard_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</script>
+
+<script  type="text/ng-template" id="step1.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Application_Control_Wizard_Application_Controller')"></td>
+                <td>
+                    <input type="radio" id="rdo_on" ng-model="model.enable" ng-value="true">
+                        <span ng-bind="DICT('Application_Control_Wizard_On')"></span></input>
+                    <input type="radio" id="rdo_off" ng-model="model.enable" ng-value="false" style="margin-left: 10px">
+                        <span ng-bind="DICT('Application_Control_Wizard_Off')"></span></input>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Application_Control_Wizard_Enter_Name')"></td>
+                <td>
+                    <input type="text"
+                        id="txt_policyname"
+                        ng-model="edit.name"
+                        name="name"
+                        legal-char maxlength="63"
+                        required
+                        no-space
+                        ng-change="checkPolicyName()"
+                    ></input>
+                </td>
+                <td>
+                    <span class="validation-error-text-right" ng-show="wizardform.step0.name.$error.repeat" ng-bind="DICT('Application_Control_Wizard_Policy_Name_Existed')"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script  type="text/ng-template" id="step2.html">
+    <div class="page-content-container" ng-cloak ng-show="!isSubAppEdit">
+        <table class="page-block-tb-list">
+            <tr>
+                <td>
+                    <span ng-bind="DICT('Application_Control_Wizard_Enter_Application_Names')"></span>
+                    <button type="button" id="btn_edit" ng-click="appEdit()">
+                        <span ng-bind="DICT('Application_Control_Wizard_Edit')"></span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <div class="indent1" style="margin-bottom: 10px">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Application_Control_Wizard_Application_List_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridApplicationOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-content-container" ng-show="isSubAppEdit">
+        <div class="nest" ng-repeat="g in edit.meta">
+            <div>
+                  <span ng-show="g.expanded" class="expand_style" ng-click="g.expanded = !g.expanded">-</span>
+                  <span ng-show="!g.expanded" class="expand_style" ng-click="g.expanded = !g.expanded">+</span>
+                  <input type="checkbox" id="chk_meta_{{g.id}}" ng-model="g.checked" indeterminate-checkbox child-list="g.categories" property="checked"></input>
+                  <span style="width: 297px; display:inline-block">{{g.name}}</span>
+              </div>
+              <div ng-repeat="c in g.categories" uib-collapse="!g.expanded" ng-if="g.expanded">
+                  <div style="margin-left: 40px">
+                      <span ng-show="c.expanded" class="expand_style" ng-click="c.expanded = !c.expanded">-</span>
+                      <span ng-show="!c.expanded" class="expand_style" ng-click="c.expanded = !c.expanded">+</span>
+                      <input type="checkbox" id="chk_category_{{c.name}}" ng-model="c.checked" indeterminate-checkbox child-list="c.applications" property="checked"></input>
+                      <span style="width: 258px; display:inline-block">{{c.name}}</span>
+                      <select id="slct_category_{{c.name}}" ng-model="c.action" style="right: -2%" ng-change="change_behaviors(c, 'category')"
+                          ng-options="m.id as m.displayName for m in model.schema.global_action"
+                      ></select>
+                  </div>
+                  <div ng-repeat="app in c.applications | orderBy: 'name'" uib-collapse="!c.expanded" ng-if="c.expanded">
+                      <div style="margin-left: 80px">
+                          <span ng-show="app.expanded" class="expand_style" ng-click="app.expanded = !app.expanded">-</span>
+                          <span ng-show="!app.expanded" class="expand_style" ng-click="app.expanded = !app.expanded">+</span>
+                          <input type="checkbox" id="chk_app_{{app.name}}" ng-model="app.checked" indeterminate-checkbox child-list="app.behaviors" property="checked"></input>
+                          <span style="width: 219px; display:inline-block">{{app.name}}</span>
+                          <select id="slct_app_{{app.name}}" ng-model="app.action" style="right: -2%" ng-change="change_behaviors(app, 'application')"
+                              ng-options="m.id as m.displayName for m in model.schema.global_action"
+                          ></select>
+                      </div>
+                      <div ng-repeat="b in app.behaviors" uib-collapse="!app.expanded" ng-if="app.expanded">
+                          <div style="margin-left: 120px;;">
+                              <input type="checkbox" id="chk_behavior_{{b.name}}" ng-model="b.checked"></input>
+                              <span style="width:203px; display:inline-block">{{b.name}}</span>
+                              <select id="slct_behavior_{{b.name}}" ng-model="b.action" style="right: -2%" ng-options="m.id as m.displayName for m in model.schema.action"></select>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+</script>
+
+<script  type="text/ng-template" id="step3.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Application_Control_Wizard_Select_Schedule')"></td>
+                <td>
+                    <select id="slct_schedule" ng-model="edit.schedule" ng-options="m.id as m.displayName for m in model.schedules"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script  type="text/ng-template" id="step4.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Application_Control_Wizard_Policy')"></td>
+                <td>{{edit.name}}</td>
+            </tr>
+        </table>
+        <div class="indent1" style="margin-bottom: 10px">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Application_Control_Wizard_Application_List_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridApplicationOptions"></div>
+                </div>
+            </div>
+        </div>
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Application_Control_Wizard_Schedule_D')"></td>
+                <td>
+                    <select id="slct_summaryschedule" ng-model="edit.schedule" ng-options="m.id as m.displayName for m in model.schedules" ng-disabled="true"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<form ng-controller="AppWizardCtrl" name="wizard_form" ng-modification="dataReady">
+</form>

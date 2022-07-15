@@ -1,0 +1,110 @@
+#!/bin/sh
+. /lib/functions.sh
+
+wl_schedule="$1"
+
+sch_path="schedule"
+
+get_time(){
+	local start="$1"
+	local end="$2"
+       
+	if [ -n "$start" ]; then
+		start_hours="$(echo $start | cut -d':' -f1)"
+		start_minutes="$(echo $start | cut -d':' -f2)"
+		start_seconds="$(echo $start | cut -d':' -f3)"
+		
+		[ $start_hours -eq 23 -a $start_minutes -eq 59 -a $start_seconds -eq 59 ] && {
+			start_hours="00"
+			start_minutes="00"
+		}
+	fi
+
+	if [ -n "$op_end_time" ]; then
+		end_hours="$(echo $end | cut -d':' -f1)"
+		end_minutes="$(echo $end | cut -d':' -f2)"
+		end_seconds="$(echo $end | cut -d':' -f3)"
+
+		[ $end_hours -eq 23 -a $end_minutes -eq 59 -a $end_seconds -eq 59 ] && {
+			end_hours="24"
+			end_minutes="00"
+		}
+	fi
+}
+
+config_cb() {
+	local cfg_type="$1"
+	local cfg_name="$2"
+
+	case "$cfg_type" in
+	schedule)
+		append SCHEDULE_cfg "$cfg_name"
+		;;
+	esac
+}
+
+schedule_compare() {
+	config_load ${sch_path}
+
+	for schedule_name in $SCHEDULE_cfg; do
+		config_get op_name $schedule_name name
+		if [ "$op_name" = "$wl_schedule" ]; then
+			cur_week="$(date | cut -d' ' -f1 | tr -s A-Z a-z)"
+			cur_hour="$(date | awk -F' ' '{print $4}' | cut -d':' -f1)"
+			cur_min="$(date | awk -F' ' '{print $4}' | cut -d':' -f2)"
+			config_get op_week $schedule_name $cur_week
+            config_get op_start_time $schedule_name start_time
+            config_get op_end_time $schedule_name end_time
+
+			[ "$op_week" = "1" ] || {
+				echo "0"
+				return
+			} 
+
+			get_time $op_start_time $op_end_time
+
+			[ $start_hours -eq 0 -a $end_hours -eq 24 -a $start_minutes -eq 0 -a $end_minutes -eq 0 ] && {
+				return
+			}
+
+			if [ $start_hours -gt $end_hours ]; then
+				if [ $cur_hour -gt $start_hours -o $cur_hour -lt $end_hours ];then
+					return
+				elif [ $cur_hour -eq $start_hours -a $cur_min -ge $start_minutes ]; then
+					return
+				elif [ $cur_hour -eq $end_hours -a $cur_min -lt $end_minutes ]; then
+					return
+				else
+					echo "0"
+					return
+				fi
+			elif [ $start_hours -eq $end_hours -a $start_minutes -gt $end_minutes ]; then
+				if [ $cur_hour -ne $start_hours ];then
+					return
+				else
+					if [ $cur_min -ge $start_minutes -o $cur_min -lt $end_minutes ]; then
+						return
+					fi
+
+					echo "0"
+					return
+				fi
+			else
+				if [ $cur_hour -lt $start_hours -o $cur_hour -gt $end_hours ]; then
+					echo "0"
+					return
+				elif [ $cur_hour -eq $start_hours -a $cur_min -lt $start_minutes ]; then
+					echo "0"
+					return
+				elif [ $cur_hour -eq $end_hours -a $cur_min -ge $end_minutes ]; then
+					echo "0"
+					return
+				else
+					return
+				fi
+			fi
+		fi
+	done
+}
+
+schedule_compare

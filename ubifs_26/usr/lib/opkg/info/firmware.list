@@ -1,0 +1,10 @@
+/usr/bin/postupgrade.sh
+/usr/bin/rv340_led.sh
+/usr/bin/postupgrade/flag
+/usr/bin/rv340_fw_unpack.sh
+/usr/bin/boardutil
+/etc/init.d/firmware
+/etc/config/firmware
+/usr/bin/kill_led.sh
+/etc/hotplug.d/iface/51-led
+/usr/lib/libboardinfo.so

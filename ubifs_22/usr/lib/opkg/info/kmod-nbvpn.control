@@ -1,0 +1,8 @@
+Package: kmod-nbvpn
+Version: 4.1.8+1.0-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Source: package/freescale/nbvpn
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 5191
+Description:  This package is for sending NetBIOS packets to remote over VPN 

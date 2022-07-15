@@ -1,0 +1,130 @@
+module ciscosb-vpn-l2tp {
+    namespace "http://cisco.com/ns/ciscosb/vpn-l2tp";
+ prefix ciscosb-vpn-l2tp;
+ import ietf-inet-types { prefix inet; }
+ import ciscosb-vpn-ipsec { prefix vpn-ipsec; }
+ import ietf-interfaces { prefix if; }
+ import ietf-yang-types { prefix yang; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-types { prefix ciscosb-types; }
+ organization "Cisco Systems, Inc.";
+ contact
+  "Cisco Systems, Inc. 
+   Customer Service
+   E-mail: feiqiu@cisco.com";
+ description
+  "This module contains a collection of YANG definitions 
+  for Cisco L2TP VPN configuration.
+  Copyright (c) 2015 by Cisco Systems, Inc.
+  All rights reserved.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+ revision 2015-04-29 {
+  description
+   "Initial revision.";
+  reference
+   "Proposed L2TP VPN configuration";
+ }
+ container l2tp {
+  leaf enable {
+   type boolean;
+   default false;
+   description "Enable";
+  }
+  leaf interface {
+   type if:interface-ref;
+   description "Interface";
+  }
+  leaf mtu {
+   type uint16 {
+    range "128 .. 1400";
+   }
+   units "bytes";
+   default "1400";
+   description "MTU";
+  }
+  leaf start-ip {
+   type inet:ipv4-address;
+   description "The start IP of the pool";
+  }
+  leaf end-ip {
+   type inet:ipv4-address;
+   description "The end IP of the pool";
+  }
+  leaf primary-dns {
+   type inet:ipv4-address;
+   description "DNS IP address";
+  }
+  leaf secondary-dns {
+   type inet:ipv4-address;
+   description "DNS IP address";
+  }
+  leaf ipsec {
+   type boolean;
+   default false;
+   description "Enable l2tp over ipsec";
+  }
+  uses vpn-ipsec:IPSEC-PROFILE;
+  leaf preshared-key {
+   type ciscosb-types:aes-cfb-128-encrypted-string;
+   description "Pre-shared key";
+  }
+  leaf max-session {
+   type uint16;
+   description "Max sessions";
+  }
+ }
+ container l2tp-passthrough {
+  leaf enable {
+   type boolean;
+   description "Enable l2tp passthrough";
+  }
+ }
+ container l2tp-state{
+  container connections {
+   list connection{
+    key session-id;
+    config false;
+    leaf session-id {
+     type uint16;
+     description "When connected, there will allocated one session id";
+    }
+    leaf user-name {
+     type string;
+     description "The connected user name";
+    }
+    leaf remote-address {
+     type inet:host;
+     description "The connected remote client address";
+    }
+    leaf tunnel-ip {
+     type inet:host;
+     description "The allocated tunnel ip address";
+    }
+    leaf connect-time {
+     type yang:date-and-time;
+     description "Connected time";
+    }
+   }
+  }
+ }
+    rpc l2tp-disconnect {
+        input {
+         leaf tunnel-ip {
+          type inet:host;
+          description "The allocated tunnel ip address";
+         }
+            leaf session-id {
+                    type uint16;
+                    description "The session id that should be disconnected";
+            }
+        }
+        description "Do disconnect the l2tp vpn";
+    }
+}

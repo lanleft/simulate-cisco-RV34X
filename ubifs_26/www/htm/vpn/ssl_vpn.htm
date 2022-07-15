@@ -1,0 +1,589 @@
+<form name="form" ng-controller="ssl_vpn_main" novalidate ng-modification="loadReady" id="ssl-vpn">
+    <div ng-if="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('SSL_VPN')"></div>
+            <div class="page-button-container">
+                <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="save()">
+                    <span ng-bind="DICT('SSL_VPN_Apply')"></span>
+                </button>
+                <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('SSL_VPN_Cancel')"></span>
+                </button>
+            </div>    
+        </div>
+        <confirmsave ng-show="success && gridSSLVPNGROUP.Edit !== true"></confirmsave>
+        <div class="page-content-container">
+            <div ng-include="'tmpl_tabset.htm'"></div>
+        </div>   
+    </div>
+</form>
+
+<script type="text/ng-template" id="tmpl_tabset.htm">
+    <uib-tabset>
+        <uib-tab heading="{{DICT('SSL_VPN_General_Config')}}" active="ctx.sslvpn_tab[0].active" disabled="">
+            <div style="min-height:20px">
+                <div ng-if="loadReady" ng-include="'sslvpn_general.htm'" ng-controller="ssl_vpn_general" ></div>
+            </div>
+        </uib-tab>
+        <uib-tab heading="{{DICT('SSL_VPN_Group_Policies')}}" active="ctx.sslvpn_tab[1].active" disabled="">
+            <div style="min-height:20px">
+                <div ng-if="loadReady" ng-include="'sslvpn_group.htm'" ng-controller="ssl_vpn_group" ></div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</script>
+
+<script type="text/ng-template" id="sslvpn_general.htm">
+<ng-form name="generalform" class="ssl-vpn-general">
+    <div>
+        <div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('SSL_VPN_Cisco_Server')"></td>
+                    <td>
+                        <input type="radio" id="rdo_generalsslvpnon" name="sslvpnEn" ng-model="model.sslvpn.enable" ng-change="sslvpnEnable()" ng-value="true">
+                            <span ng-bind="DICT('SSL_VPN_On')"></span>
+                        </input>
+                        <input type="radio" id="rdo_generalsslvpnoff" name="sslvpnEn" ng-model="model.sslvpn.enable" ng-change="sslvpnEnable()" ng-value="false">
+                            <span ng-bind="DICT('SSL_VPN_Off')"></span>
+                        </input>
+                    </td>
+                </tr>
+            </table>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('SSL_VPN_Mandatory_Gateway_Settings')"></div>
+            </div>
+            <div>
+                <table class="page-block-tb-list control-input-200">
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Gateway_Interface')">
+                            
+                        </td>
+                        <td>
+                            <select style="margin-left:0px;" id="slct_generalgwinterface" ng-model="model.sslvpn['interface']"
+                                ng-options="item.name as item.name for item in ctx.wans_ref"
+                                ng-disabled="!model.sslvpn.enable"
+                            >
+                            </select>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Gateway_Port')">
+                            
+                        </td>
+                        <td>
+                            <input type="number"
+                                   required
+                                   number
+                                   id="slct_generalgwport"
+                                   name="g_gateway_port"
+                                   ng-disabled="!model.sslvpn.enable"
+                                   ng-change="chkGwPort()"
+                                   ng-model="model.sslvpn['gateway-port']"
+                                   min="1"
+                                   max="65535" />
+                        </td>
+                        <td>
+                            <span class="tip-info" ng-bind="DICT('SSL_VPN_Port_Range')"></span>
+                            <span ng-messages="generalform['g_gateway_port'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Certificate_File')">
+                            
+                        </td>
+                        <td>
+                            <select style="margin-left:0px;" id="slct_generalcertificatefile" name="g_certfile" ng-model="model.sslvpn['certificate']"
+                                ng-options="item.name as item.name for item in ctx.cert_ref"
+                                required="required" ng-disabled="!model.sslvpn.enable"
+                                ng-change="certFileChange()"
+                            >
+                            </select>
+                        </td>
+                        <td>
+                            <span ng-messages="generalform['g_certfile'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                            <span class="validation-error-text-right" ng-if="generalform.g_certfile.$error.special" ng-bind="DICT('SSL_VPN_Key_Encryption_Length')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Client_Address_Pool')">
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="txt_generalclientaddr" 
+                                    ng-required="model.sslvpn.enable" 
+                                    ng-ipv4-ip="model.sslvpn.enable"
+                                    ng-model="model.sslvpn['address-pool']"
+                                    ng-disabled="!model.sslvpn.enable"
+                                    ng-custom-vld="model.sslvpn.enable" 
+                                    name="g_cli_addr" custom-vld-cbk="poolValidation"
+                                    custom-vld-relationship="['g_cli_addr', 'g_cli_netmask']"
+                                    ipv4-subnet-prefix="model.sslvpn.enable" ipv4-subnet-netmask="model.sslvpn['netmask']"
+                            />
+                        </td>
+                        <td>
+<!--                            <span ng-messages="generalform['g_cli_addr'].$error" ng-show="generalform.g_cli_addr.$dirty">-->
+<!--                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>-->
+<!--                            </span>-->
+                            <span ng-show="form.generalform.g_cli_addr.$error.customVld" class="validation-error-text-right" ng-bind="DICT('SSL_VPN_Subnet_Range_Error')">    
+                                    
+                            </span>
+                            <span class="validation-error-text-right"
+                                  ng-if="form.generalform.g_cli_addr.$error.required && form.generalform.g_cli_addr.$dirty"
+                                ng-bind="DICT('SSL_VPN_Please_Input_IP_Addr')"
+                            ></span>
+                            <span class="validation-error-text-right" ng-if="form.generalform.g_cli_addr.$error.ipv4SubnetPrefix && form.generalform.g_cli_addr.$dirty && !form.generalform.g_cli_addr.$error.required && !form.generalform.g_cli_addr.$error.customVld"
+                                ng-bind="DICT('SSL_VPN_Invalid_Subnet_Prefix')">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Client_Netmask')">
+                            
+                        </td>
+                        <td>
+                            <select style="margin-left:0px;" id="slct_generalclientnetmask" name="g_cli_netmask" required ipv4-netmask
+                                ng-options="item.id as item.displayName for item in schema.listClientNetmask"
+                                ng-model="model.sslvpn['netmask']"
+                                ng-disabled="!model.sslvpn.enable"
+                                ng-custom-vld="model.sslvpn.enable" 
+                                custom-vld-cbk="poolValidation"
+                                custom-vld-relationship="['g_cli_addr', 'g_cli_netmask']"
+                            >
+                            </select>
+                        </td>
+                        <td>
+                            <span ng-messages="generalform['g_cli_netmask'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                            <span class="validation-error-text-right" ng-if="form.generalform.g_cli_netmask.$error.subnet && !form.generalform.g_cli_netmask.$error.required" 
+                                ng-bind="DICT('SSL_VPN_Subnet_Range_Error')">
+                            </span>
+                            <span class="validation-error-text-right" ng-if="form.generalform.g_cli_netmask.$error.required && form.generalform.g_cli_netmask.$dirty" 
+                                ng-bind="DICT('SSL_VPN_Please_Input_IP_Addr')">
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Client_Domain')">
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="txt_generalclientdomain" name="txt_generalclientdomain" 
+                                domain-name maxlength="253" ng-model="model.sslvpn['domain-name']" ng-disabled="!model.sslvpn.enable" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Login_Banner')">
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="txt_generalloginbanner" maxlength="128" name="g_login_banner" login-banner
+                                ng-model="model.sslvpn['login-banner']" ng-disabled="!model.sslvpn.enable" />
+                        </td>
+                        <td>
+                            <span ng-messages="generalform['g_login_banner'].$error" ng-show="generalform.g_login_banner.$dirty">
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <hr class="page-content-seperator"></hr>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('SSL_VPN_Optional_Gateway_Settings')"></div>
+            </div>
+            <div>
+                <table class="page-block-tb-list control-input-200">
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Idle_Timeout')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalidletimeout" name="g_opt_idle_timeout" ng-model="model.sslvpn['idle-timeout']" min="60" max="86400" />
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Idle_Range')"></span>
+                            <span ng-messages="generalform['g_opt_idle_timeout'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Session_Timeout')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalsessiontimeout" name="g_opt_ses_timeout" ng-model="model.sslvpn['session-timeout']" zeromin="60" max="1209600" />
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Session_Range')"></span>
+                            <span ng-show="generalform['g_opt_ses_timeout'].$error.max" class="validation-error-text-right" ng-bind="DICT('SSL_VPN_Too_Large')">
+                                
+                            </span>
+                            <span ng-show="generalform['g_opt_ses_timeout'].$error.zeromin" class="validation-error-text-right" ng-bind="DICT('SSL_VPN_Too_Small')">
+                                
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Client_DPD_Timeout')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generaldpdtimeout" name="g_opt_cli_dpd_timeout" ng-model="model.sslvpn['client-dpd-timeout']" min="0" max="3600"/>
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Client_Range')"></span>
+                            <span ng-messages="generalform['g_opt_cli_dpd_timeout'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Gateway_DPD_Timeout')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalgwdpdtimeout" name="g_opt_gw_dpd_timeout" ng-model="model.sslvpn['gateway-dpd-timeout']" min="0" max="3600"/>
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Client_Range')"></span>
+                            <span ng-messages="generalform['g_opt_gw_dpd_timeout'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Keep_Alive')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalkeepalive" name="g_opt_keep_alive" ng-model="model.sslvpn['keep-alive']" min="0" max="600"/>
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Keep_Alive_Range')"></span>
+                            <span ng-messages="generalform['g_opt_keep_alive'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Lease_Duration')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalleaseduration" name="g_opt_lease_dur" ng-model="model.sslvpn['lease-duration']" min="600" max="1209600"/>
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Lease_Duration_Range')"></span>
+                            <span ng-messages="generalform['g_opt_lease_dur'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Max_MTU')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalmaxmtu" name="g_opt_mtu" ng-model="model.sslvpn['max-mtu']" min="576" max="1406"/>
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Max_MTU_Range')"></span>
+                            <span ng-messages="generalform['g_opt_mtu'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Rekey_Interval')">
+                            
+                        </td>
+                        <td>
+                            <input type="number" ng-disabled="!model.sslvpn.enable" number id="slct_generalrelayinterval" name="g_opt_retry_interval" ng-model="model.sslvpn['retry-interval']" min="0" max="43200" />
+                                <span class="tip-info" ng-bind="DICT('SSL_VPN_Rekey_Interval_Range')"></span>
+                            <span ng-messages="generalform['g_opt_retry_interval'].$error" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-form>
+</script>
+
+<script type="text/ng-template" id="sslvpn_group.htm">
+<ng-form name="groupform">
+    <div>
+        <div ng-include="'sslvpn_group_overview.htm'" ng-show="gridSSLVPNGROUP.Edit !== true" ></div>
+        <div ng-include="'sslvpn_group_edit.htm'" ng-if="gridSSLVPNGROUP.Edit === true" ></div>
+    </div>
+</ng-form>
+</script>
+
+<script type="text/ng-template" id="sslvpn_group_overview.htm">
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('SSL_VPN_Group_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_groupssladd"
+                    class="grid-btn-add"
+                    ng-disabled="userAccessFlag === 'RO'"
+                    ng-click="gridSSLVPNGROUP.add()">
+                </button>
+                <button id="btn_groupssledit"
+                    class="grid-btn-edit"
+                    ng-disabled="!(gridSSLVPNGROUP.Selections.length === 1) || userAccessFlag === 'RO'"
+                    ng-click="gridSSLVPNGROUP.edit()">
+                </button>
+                <button id="btn_groupssldelete"
+                    class="grid-btn-delete"
+                    ng-disabled="gridSSLVPNGROUP.Selections.length === 0 || userAccessFlag === 'RO'"
+                    ng-click="gridSSLVPNGROUP.remove()">
+                </button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridSSLVPNGROUP.Options"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="sslvpn_group_edit.htm">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('SSL_VPN_Group_Policy_Add_Edit')"></div>
+        <div class="page-block-title" ng-bind="DICT('SSL_VPN_Basic_Settings')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Policy_Name')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_grouppolicyname" maxlength="50" no-space required ng-model="gpref[ctx.ie_index]['policy-name']"/>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Primary_DNS')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_groupprimarydns" ipv4-ip name="p_dns1" ng-model="gpref[ctx.ie_index]['primary-dns-server']"/>
+                <span ng-messages="groupform['p_dns1'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Secondary_DNS')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_groupsecondarydns" ipv4-ip name="p_dns2" ng-model="gpref[ctx.ie_index]['secondary-dns-server']"/>
+                <span ng-messages="groupform['p_dns2'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Primary_WINS')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_groupprimarywins" ipv4-ip name="p_wins1" ng-model="gpref[ctx.ie_index]['primary-wins-server']"/>
+                <span ng-messages="groupform['p_wins1'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Secondary_WINS')">
+                
+            </td>
+            <td>
+                <input type="text" id="txt_groupsecondarywins" ipv4-ip name="p_wins2" ng-model="gpref[ctx.ie_index]['secondary-wins-server']"/>
+                <span ng-messages="groupform['p_wins2'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+            <td></td>
+
+        </tr>
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_Description')">
+                
+            </td>
+            <td>
+                <textarea type="text" id="txt_groupdescription" maxlength="64" ng-model="gpref[ctx.ie_index]['description']" style="height: 100%; width: 200px;"></textarea>
+            </td>
+            <td></td>
+        </tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('SSL_VPN_IE_Proxy_Settings')"></div>
+    </div>
+    <table class="page-block-tb-list">
+        <tr>
+            <td ng-bind="DICT('SSL_VPN_IE_Proxy_Policy')" style="width: 120px;"></td>
+            <td>
+                <input type="radio" id="rdo_groupienone" ng-click="update_proxy_type('none')" value="none" ng-model="gridSSLVPNGROUP.Selections[0].ie_proxy_path">
+                    <span ng-bind="DICT('SSL_VPN_None')"></span>
+                </input>
+                <input type="radio" id="rdo_groupieauto" ng-click="update_proxy_type('auto')" value="auto" ng-model="gridSSLVPNGROUP.Selections[0].ie_proxy_path">
+                    <span ng-bind="DICT('SSL_VPN_Auto')"></span>
+                </input>
+                <input type="radio" id="rdo_groupiebypasslocal" ng-click="update_proxy_type('bypass-local')" value="bypass-local" ng-model="gridSSLVPNGROUP.Selections[0].ie_proxy_path">
+                    <span ng-bind="DICT('SSL_VPN_Bypass')"></span>
+                </input>
+                <input type="radio" id="rdo_groupiedisabled" ng-click="update_proxy_type('disabled')" value="disabled" ng-model="gridSSLVPNGROUP.Selections[0].ie_proxy_path">
+                    <span ng-bind="DICT('SSL_VPN_Disabled')"></span>
+                </input>
+            </td>
+        </tr>
+        <tr ng-if="display_ie_proxy(ctx)">
+            <td></td>
+            <td>
+                <table class="page-block-tb-list control-input-200">
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Addr')">
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="txt_groupieaddress" name="p_ie_addr" required fqdn-ipv4 ng-model="gpref[ctx.ie_index][ctx.ie_proxy_path].address"/>
+                            <span class="tip-info" ng-bind="DICT('SSL_VPN_Hint_IP')"></span>
+                            <span ng-messages="groupform['p_ie_addr'].$error && groupform['p_ie_addr'].$dirty" 
+                                ng-if="groupform['p_ie_addr'].$error.ipv4Ip && groupform['p_ie_addr'].$error.domainName"
+                            >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('SSL_VPN_Port')"></td>
+                        <td>
+                            <input type="number" number id="slct_groupieport" name="p_ie_port" required ng-model="gpref[ctx.ie_index][ctx.ie_proxy_path].port" min="1" max="65535" />
+                            <span class="tip-info" ng-bind="DICT('SSL_VPN_Port_Range')"></span>
+                            <span ng-messages="groupform['p_ie_port'].$error && groupform['p_ie_port'].$dirty" >
+                                <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div class="grid-cntr" ng-if="display_ie_proxy(ctx)">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('SSL_VPN_IE_Proxy_Exception_Table')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button id="btn_groupieadd"
+                    class="grid-btn-add"
+                    ng-disabled=""
+                    ng-click="gridIEException.add()">
+                </button>
+                <button id="btn_groupieedit"
+                    class="grid-btn-edit"
+                    ng-disabled="gridIEException.Selections.length === 0"
+                    ng-click="gridIEException.operations.edit()">
+                </button>
+                <button id="btn_groupiedelete"
+                    class="grid-btn-delete"
+                    ng-disabled="gridIEException.Selections.length === 0"
+                    ng-click="gridIEException.remove()">
+                </button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIEException.Options"></div>
+        </div>
+    </div>
+    <hr class="page-content-seperator"></hr>
+    <span data-x-tmp="{{ split_tun = model['sslvpn']['group-policies']['group-policy'][ctx.ie_index]['split-tunnelling'] }}">
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('SSL_VPN_Split_Tunneling_Settings')"></div>
+        </div>
+        <table class="page-block-tb-list">
+            <tr>
+                <td>
+                    <input type="checkbox" id="chk_groupsplittunnel" ng-model="split_tun.enable" />
+                    <span ng-bind="DICT('SSL_VPN_Enable_Split_Tunneling')"></span>
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+            <tr ng-if="split_tun.enable">
+                <td ng-bind="DICT('SSL_VPN_Split_Selection')">
+                    
+                </td>
+                <td>
+                    <input type="radio" id="rdo_groupincludetraffic" ng-model="split_tun._split_type" value="include" name="split_type">
+                        <span ng-bind="DICT('SSL_VPN_Include_Traffic')"></span></input>
+                    <input type="radio" id="rdo_groupexcludetraffic" ng-model="split_tun._split_type" value="exclude" name="split_type">
+                        <span ng-bind="DICT('SSL_VPN_Exclude_Traffic')"></span></input>
+                </td>
+            </tr>
+            <tr ng-if="split_tun.enable && split_tun._split_type == 'exclude' ">
+                <td>
+                    <input type="checkbox" id="chk_groupieexcludelocalan" ng-model="split_tun['exclude-local-lan']">
+                        <span ng-bind="DICT('SSL_VPN_Exclude_Local_LAN')"></span></input>
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+        </table>
+        <div class="grid-cntr" ng-if="split_tun.enable">
+            <ng-form name="split_netform">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('SSL_VPN_Split_Network_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_groupsplitnetadd"
+                            class="grid-btn-add"
+                            ng-disabled="split_netform.$invalid"
+                            ng-click="gridSplitNetwork.add()">
+                        </button>
+                        <button id="btn_groupsplitnetedit"
+                            class="grid-btn-edit"
+                            ng-disabled="gridSplitNetwork.Selections.length === 0"
+                            ng-click="gridSplitNetwork.edit()">
+                        </button>
+                        <button id="btn_groupsplitnetdelete"
+                            class="grid-btn-delete"
+                            ng-disabled="gridSplitNetwork.Selections.length === 0"
+                            ng-click="gridSplitNetwork.remove()">
+                        </button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridSplitNetwork.Options"></div>
+                </div>
+            </ng-form>
+        </div>
+        <div class="grid-seperator" ng-if="split_tun.enable"></div>
+        <div class="grid-cntr" ng-if="split_tun.enable">
+            <ng-form name="split_dnsform">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('SSL_VPN_Split_DNS_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_groupsplitdnsadd"
+                            class="grid-btn-add"
+                            ng-disabled="split_dnsform.$invalid"
+                            ng-click="gridSplitDNS.add()">
+                        </button>
+                        <button id="btn_groupsplitdnsedit"
+                            class="grid-btn-edit"
+                            ng-disabled="gridSplitDNS.Selections.length === 0"
+                            ng-click="gridSplitDNS.edit()">
+                        </button>
+                        <button id="btn_groupsplitdnsdelete"
+                            class="grid-btn-delete"
+                            ng-disabled="gridSplitDNS.Selections.length === 0" ng-click="gridSplitDNS.remove()">
+                        </button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridSplitDNS.Options"></div>
+                </div>
+            </ng-form>
+        </div>
+    </span>
+</script>

@@ -1,0 +1,9 @@
+Package: libip4tc
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, libxtables
+Source: package/network/utils/iptables
+License: GPL-2.0
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 17673
+Description:  IPv4 firewall - shared libiptc library

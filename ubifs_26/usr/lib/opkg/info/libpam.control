@@ -1,0 +1,9 @@
+Package: libpam
+Version: 1.1.8-4
+Depends: libc, librt, libpthread
+Source: package/libs/libpam
+Section: libs
+Maintainer: Nikos Mavrogiannopoulos <n.mavrogiannopoulos@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 185483
+Description:  The Linux-PAM Pluggable Authentication Modules.

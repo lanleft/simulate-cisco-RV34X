@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/pubkey.conf
+/usr/lib/ipsec/plugins/libstrongswan-pubkey.so

@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<script language="javascript" type="text/javascript"></script>
+		<script src="jquery-1.11.3.min.js"></script>
+    </head>
+    <style type="text/css">
+        body {
+            margin: 0px;
+        }
+
+        .container {
+            display: block;
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            padding: 10% 3% 10px 2%;
+            overflow: auto;
+        }
+        #bg {
+            background: url("##background-image-uri##") no-repeat center top fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+            color: ##font-color##;  /*Please replace custom want color, can be color english or RGB Hex number*/
+        }
+        .tb_seg {
+            width: 95%;
+            height: 100%;
+        }
+        .tb_seg > tbody > tr > td:first-child {
+            width: 70%;
+            padding-right: 20px;
+        }
+
+        .tb_seg > tbody > tr > td {
+            padding-top: 5%;
+        }
+
+        .tb_left_seg_logo {
+            min-width: 400px;
+            width: 100%;
+            word-break: break-all;
+        }
+
+        .tb_left_seg_agree {
+            /*display: none;*/
+            display: ##agreement-enable##;  /*if enable should replace to table else none*/
+            min-width: 400px;
+            width: 100%;
+        }
+
+        .tb_right_seg {
+            #padding-top: 20px;
+            min-width: 400px;
+            width: 100%;
+        }
+
+        .pwd_show {
+            display:##auth##;
+        }
+
+        #tb_logo {
+            width: 60px;
+            padding-right: 20px;
+        }
+
+        #logo {
+            width: 62px;
+            height: 33px;
+            background-image: url("##logo-uri##");
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+        #company_name {
+            font-size: 14px;
+        }
+
+        #welcome {
+            font-size: 20px;
+        }
+
+        #agrees_messages {
+            width: 95%;
+            height: 100px;
+        }
+
+        #copyright_message {
+            position: relative;
+            bottom: 5px;
+        }
+
+    </style>
+    <script language="javascript" type="text/javascript">
+        function login() {
+            var username = document.getElementById('username').value,
+                pwd = document.getElementById('pwd').value,
+                url = document.location.protocol + "//" + document.location.host +"/login",
+
+                obj = {username: username, password: pwd};
+
+            var t = $.ajax({
+                headers: {
+                    'Content-Type': "form-data"
+                },
+                url: url,
+                type: "post",
+                data: JSON.stringify(obj)
+            })
+            .success(function(resp, status) {
+
+             })
+            .error(function(resp, status) {
+
+             });
+        };
+
+        function checking() {
+			var tb_agree = document.getElementById('tb_agree');
+			var style = window.getComputedStyle(tb_agree);
+
+            if (style.display !== 'table' || (style.display === 'table' && document.getElementById('confirm_agree').checked))
+            {
+                document.getElementById('bt_login').disabled = false;
+            } else {
+                document.getElementById('bt_login').disabled = true;
+            }
+        };
+
+		function getCookie(cname) {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			for(var i=0; i<ca.length; i++) {
+				var c = ca[i];
+	            while (c.charAt(0)==' ') c = c.substring(1);
+	            if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+			}
+			return "";
+		};
+		
+        function init() {
+			var tb_agree = document.getElementById('tb_agree');
+			var style = window.getComputedStyle(tb_agree);
+			var url = getCookie("COOVA_USERURL");
+
+			document.title = "Guest Network";
+			checking();
+			document.getElementById('userurl').value = url;
+			initHiddenVar();//Calling new init Method
+			sendErrorMsg();
+        }
+		
+		/*Reading the URL Paramets*/
+		function getParameterByName(name, url) {
+			if (!url) url = window.location.href;
+			name = name.replace(/[\[\]]/g, "\\$&");
+			var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+			results = regex.exec(url);
+			if (!results) return null;
+			if (!results[2]) return '';
+			return decodeURIComponent(results[2].replace(/\+/g, " "));
+		}
+		
+		/*Initialising the Hidden Variables*/
+		function initHiddenVar(){
+			var url = window.location.href;
+			var ap_ip = getParameterByName('ap_ip',url);
+			var ap_port = getParameterByName('ap_port',url);
+			var client_ip = getParameterByName('client_ip',url);
+			var client_mac = getParameterByName('client_mac',url);
+			var ssid = getParameterByName('ssid',url);			
+
+			document.getElementById("ap_ip").value = ap_ip;
+			document.getElementById("ap_port").value = ap_port;
+			document.getElementById("client_ip").value = client_ip;
+			document.getElementById("client_mac").value = client_mac;
+			document.getElementById("ssid").value = ssid;
+			document.getElementById("loginform").action = "https://"+ap_ip+":"+ap_port+"/logon";
+		}
+
+		function sendErrorMsg(){
+			var url = window.location.href;
+			var resp = getParameterByName('resp',url);
+			var msg;
+			if(resp == 1)
+				msg = document.getElementById("error_msg1").innerHTML;
+			else if(resp == 2)
+				msg = document.getElementById("error_msg2").innerHTML;
+
+			if(msg != undefined && msg != "")
+				alert(msg);
+		}
+
+    </script>
+    <body id="bg" onload="init()">
+        <form name="form" method="post" action="logon" id='loginform'>
+        <div class="container">
+            <table class="tb_seg">
+                <tbody>
+                    <tr valign="top">
+                        <td>
+                            <table class="tb_left_seg_logo">
+                                <tbody>
+                                    <tr>
+                                        <td rowspan="2" id="tb_logo">
+                                            <div id="logo"></div>
+                                        </td>
+                                        <td>
+                                            <span id="company_name">##company-name##</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span id="welcome">##welcome-message##</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br></br>
+                            <table class="tb_left_seg_agree" id="tb_agree">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <textarea disabled id="agrees_messages">##agreement-text##</textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" onclick="checking()" id="confirm_agree">##agreement-title##</input>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td>
+                            <table class="tb_right_seg">
+                                <tbody>
+                                    <tr>
+                                        <td>##username-field##</td>
+                                        <td>
+                                            <input id="username" name="username" type="text" value="" onkeypress="checking()" maxlength="32" style="width: 18em"></input>
+                                        </td>
+                                    </tr>
+                                    <tr class="pwd_show">
+                                        <td>##password-field##</td>
+                                        <td>
+                                            <input id="pwd" name="password" type="password" maxlength="32" onkeypress="checking()" style="width: 18em" value=""></input>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <button type="submit" id="bt_login" name="bt_login">##login-button-title##</button>
+                                        </td>
+                                    </tr>
+                                    <tr style="display:none;">
+                                        <td colspan="2">
+                                            <div id="error_msg1" style="visibility:hidden;">##login-error-msg##</div>
+                                            <div id="error_msg2" style="visibility:hidden;">##login-error-msg2##</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tfoot>
+                        <td colspan="2">
+                            <div id="copyright_message">##copyright##</div>
+                        </td>
+                    </tfoot>
+                </tbody>
+            </table>
+            <input id="userurl" name="userurl" value="" type="hidden" />
+			<!--Added new Req -->
+				<input type="hidden" name="ap_ip" id='ap_ip' value=""/>
+				<input type="hidden" name="ap_port"  id='ap_port' value=""/>
+				<input type="hidden" name="client_ip" id='client_ip' value=""/>
+				<input type="hidden" name="client_mac" id='client_mac' value=""/>
+				<input type="hidden" name="ssid" id='ssid' value=""/>
+			<!--Added new Req -->
+            </div>
+        </form>
+    </body>
+</html>

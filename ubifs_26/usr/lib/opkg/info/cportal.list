@@ -1,0 +1,3 @@
+/usr/sbin/cportald
+/etc/init.d/captive_portal
+/usr/sbin/cportalctl

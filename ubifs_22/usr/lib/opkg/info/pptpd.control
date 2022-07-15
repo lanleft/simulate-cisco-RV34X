@@ -1,0 +1,8 @@
+Package: pptpd
+Version: 1.3.3-1
+Depends: libc, librt, libpthread, kmod-ppp, kmod-gre, ppp
+Source: package/pptpd
+Section: net
+Architecture: comcerto2000
+Installed-Size: 20220
+Description:  PopTop pptp server(Accel-pptp)

@@ -1,0 +1,60 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2015 cisco.com
+
+START=13
+STOP=90
+
+. /lib/functions.sh
+
+request_license() {
+        retry_times=0
+        while [ $retry_times -lt 60 ]
+        do
+				if [ -f "/tmp/request_license" ]; then
+                        #load feature info from confd, then do request
+                        echo "Begin to get features" >> /tmp/license_startup_test.txt
+                        confd_cmd -c "x /license/features[enable='true']" | awk -F[{}]  '{print $2}' >> /tmp/license_startup_test.txt
+                        confd_cmd -c "x /license/features[enable='true']" | awk -F[{}]  '{print $2}' | while read name; do
+                                enabled=`confd_cmd -c "mget /license/features{$name}/enable"`
+                                count=`confd_cmd -c "mget /license/features{$name}/count"`
+                                echo "features name: $name, enabled: $enabled, count: $count" >> /tmp/license_startup_test.txt
+                                if [ $enabled == 'true' ]; then
+                                    echo "do request feature $name, count $count" >> /tmp/license_startup_test.txt
+                                    /usr/bin/license test requestEntitlement name $name count $count  >> /tmp/license_startup_test.txt 2>&1
+                                fi
+                        done
+                        break
+                else
+                        echo "Wait for Confd..." >> /tmp/license_startup_test.txt
+                fi
+                sleep 6
+                retry_times=$((retry_times + 1))
+        done
+}
+
+start() {
+        echo "Starting smart license"
+
+        /usr/bin/xosdsd &
+        sleep 1
+        /usr/bin/ch_agent_monitor >  /dev/null 2>&1 &
+        sleep 1
+        /usr/bin/smart_agent_monitor >  /dev/null 2>&1 &
+        sleep 5
+
+        request_license &
+}
+
+stop() {
+        echo "Stoping smart license"
+        killall xosdsd > /dev/null 2>&1
+    killall smart_agent_monitor > /dev/null 2>&1
+    killall ch_agent_monitor > /dev/null 2>&1
+    killall call_home_agent > /dev/null 2>&1
+    killall smart_agent > /dev/null 2>&1
+}
+
+restart() {
+        stop
+        start
+}

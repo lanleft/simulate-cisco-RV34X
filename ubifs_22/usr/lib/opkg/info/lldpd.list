@@ -1,0 +1,4 @@
+/etc/config/lldpd
+/usr/sbin/lldpd
+/etc/init.d/lldpd
+/usr/sbin/lldpctl

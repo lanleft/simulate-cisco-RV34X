@@ -1,0 +1,80 @@
+module ciscosb-snmp {
+    namespace "http://cisco.com/ns/ciscosb/snmp";
+  prefix ciscosb-snmp;
+  import ietf-inet-types { prefix inet; }
+  import ietf-yang-types { prefix yang; }
+  import ciscosb-types { prefix ciscosb-types; }
+  organization "Cisco Systems, Inc.";
+  contact
+    "Cisco Systems, Inc. 
+     Customer Service
+     Postal: 170 West Tasman Drive
+     San Jose, CA 95134
+     Tel: +1 800 553-NETS
+     E-mail: cs-yang@cisco.com";
+  description
+    "This module contains a collection of YANG definitions 
+     for Cisco SNMP package configuration. This module
+     augments the IETF yang model by M. Bjorklund and
+     J. Schoenwaelder.
+     Copyright (c) 2014 by Cisco Systems, Inc.
+     All rights reserved.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-25 {
+    description
+      "Initial revision.";
+    reference "RFC XXXX: A YANG Data Model for SNMP Configuration";
+  }
+  container snmp {
+      description
+              "Cisco-specific SNMP engine configuration elements.";
+   leaf enabled {
+        type boolean;
+      }
+   leaf ip {
+          type inet:ip-address;
+    default 0.0.0.0;
+      }
+      leaf port {
+        type inet:port-number;
+  default 161;
+      }
+   container system {
+    leaf sysDescr {
+   type string;
+    }
+    leaf sysObjectID {
+   type yang:object-identifier;
+    }
+   }
+   container snmpEngine {
+    leaf snmpEngineID {
+   type ciscosb-types:hex-list;
+    }
+   }
+   container snmpVersions {
+        leaf v1 {
+          type boolean;
+        }
+        leaf v2c {
+          type boolean;
+        }
+        leaf v3 {
+          type boolean;
+        }
+      }
+      leaf allow-access-from-wan {
+       type boolean;
+      }
+      leaf allow-access-from-vpn {
+       type boolean;
+      }
+  }
+}

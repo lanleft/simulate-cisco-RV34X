@@ -1,0 +1,62 @@
+module ciscosb-anti-virus {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/anti-virus";
+    prefix ciscosb-anti-virus;
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Cisco anti-virus.
+            Copyright (c) 2017 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2017-08-01 {
+        description
+            "First revision";
+    }
+    container anti-virus {
+        leaf enabled {
+            type boolean;
+        }
+        leaf file-size-threshold {
+            type uint8;
+        }
+        leaf-list in-zone {
+            type string;
+        }
+        list protocols {
+            key name;
+            leaf name {
+                type string;
+            }
+            leaf action {
+                type string;
+            }
+        }
+    }
+  container anti-virus-state {
+      config false;
+      leaf last-reset-time {
+          type yang:date-and-time;
+      }
+      list summary {
+          key "hours days weeks months";
+          uses ciscosb-security-common:TIME-RANGE;
+          leaf scanned {
+              type uint32;
+          }
+          leaf detected {
+              type uint32;
+          }
+      }
+  }
+  rpc reset-anti-virus-state{
+        description
+            " reset the counters .";
+  }
+  uses ciscosb-security-common:SIGNATURE-STATE;
+}

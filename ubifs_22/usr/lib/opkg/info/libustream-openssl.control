@@ -1,0 +1,10 @@
+Package: libustream-openssl
+Version: 2015-07-09-c2d73c22618e8ee444e8d346695eca908ecb72d3
+Depends: libc, librt, libpthread, libubox, libopenssl
+Source: package/libs/ustream-ssl
+License: ISC
+Section: libs
+Maintainer: Felix Fietkau <nbd@openwrt.org>
+Architecture: comcerto2000
+Installed-Size: 4335
+Description:  ustream SSL Library (openssl)

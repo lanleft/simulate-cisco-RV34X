@@ -1,0 +1,87 @@
+ module ciscosb-alert {
+    namespace "http://cisco.com/ns/ciscosb/alert";
+    prefix cisco-alert;
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module for email alert.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-22 {
+        description "Proposed";
+        reference "TODO";
+    }
+    identity wan-up {
+        base alert-event;
+    }
+    identity wan-down {
+        base alert-event;
+    }
+    identity usb-link-up {
+        base alert-event;
+    }
+    identity usb-link-down {
+        base alert-event;
+    }
+    identity failover-recovery {
+        base alert-event;
+    }
+    identity system-startup {
+        base alert-event;
+    }
+    identity s2s-vpn-up {
+        base alert-event;
+    }
+    identity s2s-vpn-down {
+        base alert-event;
+    }
+    identity poe-start-end-power-supply {
+        base alert-event;
+    }
+    identity unauthorized-loging-attempt {
+        base alert-event;
+    }
+    identity dos-detected {
+        base alert-event;
+    }
+    identity virus-detected {
+        base alert-event;
+    }
+    identity intrusion-detected {
+        base alert-event;
+    }
+    identity alert-event {
+        description
+                "Base alert event";
+    }
+    typedef alert-event-type {
+        type identityref {
+            base "alert-event";
+        }
+        description "The alert event.";
+    }
+    container alert {
+        container email-alerting-action {
+            list alert-facilities {
+             key "facility";
+                description
+                                "This list describes a collection of alert facilities";
+                leaf facility {
+                    type alert-event-type;
+                }
+                leaf enable {
+                    type boolean;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,367 @@
+<div>
+    <form name="form" ng-controller="user_group_main" novalidate ng-modification="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('User_Groups')"></div>
+            <div class="page-button-container" ng-if="loadReady">
+                <button class="btn-apply" ng-click="save()" ng-disabled="form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('User_Groups_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('User_Groups_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+        <div ng-include="'UserGroupMainPanel.html'"></div>
+    </form>
+</div>
+
+
+<script type="text/ng-template" id="UserGroupMainPanel.html">
+	<div class="page-content-container container-fluid">
+		<div>
+			<div>
+				<div class="grid-cntr" ng-show="!gridUserGroup.edit" ng-if="loadReady">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('User_Groups_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button id="btn_add" class="grid-btn-add"
+                                ng-disabled="userAccessFlag === 'RO'" ng-click="gridUserGroup.addItem()"
+                            ></button>
+                            <button id="btn_edit" class="grid-btn-edit"
+                                ng-disabled="gridUserGroup.Selections.length !== 1 || userAccessFlag === 'RO'" ng-click="gridUserGroup.editItem()"
+                            ></button>
+                            <button id="btn_delete" class="grid-btn-delete" title="{{remove_disabled_reason()}}"
+                                ng-disabled="check_remove_condition() || check_inuse() || userAccessFlag === 'RO' "
+                                ng-click="gridUserGroup.delItem()"
+                            ></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridUserGroup.Options"/>
+                    </div>
+				</div>
+				<div ng-if="gridUserGroup.edit" ng-include="'UserGroupEdit.html'"></div>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="UserGroupEdit.html">
+    <style>
+        .page-block-tb-list td {
+            vertical-align: top;
+        }
+    </style>
+
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Groups_Overview')"></div>
+    </div>
+    <span ng-bind="DICT('User_Groups_Group_Name')"></span>
+    <span ng-if="gridUserGroup.action == 'add'">
+        <input type="text" id="txt_groupname" name="txt_groupname" required str-name maxlength="64"
+            item-owner="gridUserGroup.Selections[0]"
+            ng-model="gridUserGroup.Selections[0].name"
+            no-space
+            ng-change="syncGroupName(gridUserGroup.Selections[0])"
+        ></input>
+        <span ng-messages="form['txt_groupname'].$error" ng-show="form.txt_groupname.$dirty && !form.txt_groupname.$error.special" class="validation-error-text-right">
+            <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+        </span>
+        <span class="validation-error-text-right" ng-show="form.txt_groupname.$error.exist" ng-bind="DICT('User_Groups_User_Group_Exists')"></span>
+        <span class="validation-error-text-right" ng-show="form.txt_groupname.$error.noSpace" ng-bind="DICT('User_Groups_Not_Allow_White_Space')"></span>
+    </span>
+
+
+    <span ng-if="gridUserGroup.action != 'add' ">{{ gridUserGroup.Selections[0].name }}</span>
+    <br/>
+    <br/>
+
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('User_Groups_Local_User_Member_List')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr" ng-if="false">
+                <button id="btn_editadd" class="grid-btn-add" ng-click="gridUserList.operations.add(gridUserList.add_empty_cb)"></button>
+                <button id="btn_editedit" class="grid-btn-edit" ng-disabled="gridUserList.Selections.length !== 1" ng-click="gridUserList.operations.edit()"></button>
+                <button id="btn_editdel" class="grid-btn-delete" ng-disabled="gridUserList.Selections.length === 0" ng-click="gridUserList.operations.remove()"></button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridUserList.Options"/>
+        </div>
+    </div>
+    <div>
+        <span ng-bind="DICT('User_Groups_Msg1')"></span>
+    </div>
+    <div class="page-content-seperator"></div>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('User_Groups_Services')"></div>
+    </div>
+    <table class="page-block-tb-list" style="width: 100%">
+        <tr>
+            <td ng-bind="DICT('User_Groups_Web_Login')" style="width: 230px"></td>
+            <td>
+                <input type="radio"
+                    id="rdo_weblogindisabled" name="rdo_weblogin"
+                    ng-model="gridUserGroup.Selections[0]._ctx.weblogin"
+                    ng-disabled="gridUserGroup.Selections[0]._priv == 'reserved'"
+                    value="web-login-disabled">
+                    <span ng-bind="DICT('User_Groups_Disabled')"></span>
+                </input>
+                <input type="radio"
+                    id="rdo_webloginreadonly" name="rdo_weblogin"
+                    ng-model="gridUserGroup.Selections[0]._ctx.weblogin"
+                    ng-disabled="gridUserGroup.Selections[0]._priv == 'reserved'"
+                    value="web-login-readonly">
+                    <span ng-bind="DICT('User_Groups_Read_Only')"></span>
+                </input>
+                <span ng-if="gridUserGroup.Selections[0]._priv !== 'adminNotAllow'">
+                    <input type="radio"
+                        id="rdo_webloginadmin" name="rdo_weblogin"
+                        ng-model="gridUserGroup.Selections[0]._ctx.weblogin"
+                        ng-disabled="gridUserGroup.Selections[0]._priv == 'reserved'"
+                        value="web-login-administration">
+                        <span ng-bind="DICT('User_Groups_Administrator')"></span>
+                    </input>
+                </span>
+            </td>
+            <td></td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td ng-bind="DICT('User_Groups_S2S_VPN')"></td>
+            <td>
+                <input type="checkbox"
+                    id="chk_s2svpngroup"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx['s2s-vpn'].ref.action"
+                    ng22-disabled="gridUserGroup.Selections[0]._ctx['s2s-vpn'].ref.names[0]"
+                    ng-if="false"
+                ></input>
+                <!--Permit in this group-->
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td colspan="3">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('User_Groups_S2S_VPN_Profile')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr" ng-if="true">
+                            <button id="btn_s2sadd" class="grid-btn-add" ng-click="open(['', gridS2SGroup, 'S2S'])"></button>
+                            <button id="btn_s2sdel" class="grid-btn-delete" ng-disabled="gridS2SGroup.Selections.length === 0" ng-click="gridS2SGroup.remove()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridS2SGroup.Options"/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td ng-bind="DICT('User_Groups_EzVPN_Party')">
+
+            </td>
+            <td>
+                <input type="checkbox"
+                    id="chk_ezvpngroup"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx['ezvpn'].ref.action"
+                    ng22-disabled="gridUserGroup.Selections[0]._ctx['ezvpn'].ref.names[0]"
+                    ng-if="false"
+                ></input>
+                <!--Permit in this group-->
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td colspan="3">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('User_Groups_EzVPN_Party_Member')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr" ng-if="true">
+                            <button id="btn_ezvpnadd" class="grid-btn-add" ng-click="open(['', gridEZVPNGroup, 'ezvpn'])"></button>
+                            <!--
+                                <button id="btn_ezvpnedit" class="grid-btn-edit"
+                                    ng-disabled="gridEZVPNGroup.Selections.length !== 1"
+                                    ng-click="gridEZVPNGroup.operations.edit()"
+                                ></button>
+                            -->
+                            <button id="btn_ezvpndel" class="grid-btn-delete" ng-disabled="gridEZVPNGroup.Selections.length === 0" ng-click="gridEZVPNGroup.delItem()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridEZVPNGroup.Options"/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td ng-bind="DICT('User_Groups_SSL_VPN')">
+
+            </td>
+            <td data-x-tmp1="{{ ctx.profile_ref = model['sslvpn']['group-policies']['group-policy'];
+                ctx.target = gridUserGroup.Selections[0]._ctx['anyconnect-vpn'].member;
+                ctx.ref_key = 'policy-name'; }}">
+                <span ng-bind="DICT('User_Groups_Select_Profile')"></span>
+                <select id="slct_anyconnprofile"
+                    ng-model="ctx.selItem"
+                    ng-init="ctx.selItem = ctx.target[0].name"
+                    ng-options="item[ctx.ref_key] as item[ctx.ref_key] for item in ctx.profile_ref"
+                    ng-change="update_sslvpn(ctx)">
+                    <option value="">--</option>
+                </select>
+            </td>
+            <td ng-if="false">
+                <input type="checkbox"
+                    id="chk_permit"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx['anyconnect-vpn'].ref.action"
+                    ng22-disabled="gridUserGroup.Selections[0]._ctx['anyconnect-vpn'].ref.names[0]"
+                ></input>
+                <!--Permit in this group-->
+            </td>
+        </tr>
+        <tr ng-if="false">
+            <td colspan="3">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('User_Groups_Wireless_SSID_Profile_Member')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr" ng-if="true">
+                            <button id="btn_anyadd" class="grid-btn-add" ng-click="open(['', gridAnyConnectGroup, 'anyconnect-vpn'])"></button>
+                            <!--
+                                <button
+                                    class="grid-btn-edit"
+                                    id="btn_anyedit"
+                                    ng-disabled="gridAnyConnectGroup.Selections.length !== 1"
+                                    ng-click="gridAnyConnectGroup.operations.edit()">
+                                </button>
+                            -->
+                            <button id="btn_anydel" class="grid-btn-delete"
+                                ng-disabled="gridAnyConnectGroup.Selections.length === 0"
+                                ng-click="gridAnyConnectGroup.operations.remove()">
+                            </button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridAnyConnectGroup.Options"/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td ng-bind="DICT('User_Groups_PPTP_VPN')"></td>
+            <td>
+                <input type="checkbox"
+                    id="chk_permitpptpvpn"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx.pptp.ref.action">
+                    <span ng-bind="DICT('User_Groups_Permit')"></span>
+                </input>
+            </td>
+        </tr>
+        <tr ng-if="!ruFlag">
+            <td ng-bind="DICT('User_Groups_L2TP')"></td>
+            <td>
+                <input type="checkbox"
+                    id="chk_permitl2tp"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx.l2tp.ref.action">
+                    <span ng-bind="DICT('User_Groups_Permit')"></span>
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('User_Groups_802.1x')"></td>
+            <td>
+                <input type="checkbox"
+                    id="chk_permit8021x"
+                    ng-true-value="'permit'"
+                    ng-false-value="'deny'"
+                    ng-model="gridUserGroup.Selections[0]._ctx.dot1x.ref.action">
+                    <span ng-bind="DICT('User_Groups_Permit')"></span>
+                </input>
+            </td>
+        </tr>
+        <tr ng-show="rv340w_flag === 1 ? true : false" ng-if="rv340w_flag === 1 ? true : false">
+            <td ng-bind="DICT('User_Groups_Captive_Portal')"></td>
+            <td>
+                <input type="checkbox"
+                       id="chk_permitcaptive"
+                       ng-true-value="'permit'"
+                       ng-false-value="'deny'"
+                       ng-model="gridUserGroup.Selections[0]._ctx['ssid'].ref.action"
+                       ng22-disabled="gridUserGroup.Selections[0]._ctx['ssid'].ref.names[0]"
+                       ng-if="false"
+                ></input>
+                <!--Permit in this group-->
+            </td>
+        </tr>
+        <tr ng-show="rv340w_flag === 1 ? true : false" ng-if="rv340w_flag === 1 ? true : false">
+            <td colspan="3">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('User_Groups_Wireless_SSID_Profile_Member')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr" ng-if="true">
+                            <button id="btn_captiveadd" class="grid-btn-add" ng-click="open(['', gridCaptivePortalGroup, 'ssid'])"></button>
+                            <!--
+                                <button id="btn_captiveedit"
+                                    class="grid-btn-edit"
+                                    ng-disabled="gridCaptivePortalGroup.Selections.length !== 1"
+                                    ng-click="gridCaptivePortalGroup.operations.edit()">
+                                </button>
+                            -->
+                            <button id="btn_captivedel" class="grid-btn-delete"
+                                ng-disabled="gridCaptivePortalGroup.Selections.length === 0" ng-click="gridCaptivePortalGroup.delItem()">
+                            </button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridCaptivePortalGroup.Options"/>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="feature_add.htm">
+	<div class="modal-container">
+        <div class="modal-header-container">
+		    <div class="modal-title" ng-bind="DICT('User_Groups_Add_Feature_List')"></div>
+        </div>
+	<div class="modal-content-container" >
+			<table class="page-block-tb-list">
+				<tr>
+					<td data-x-tmp="{{ availList = getNotInUseItems(ctx.profile_ref, ctx.target) }}">
+						<span ng-bind="DICT('User_Groups_Select_Profile_Dot')"></span>
+						<select id="slct_addprofile" name="slct_addprofile" ng-model="ctx.selItem"
+							ng-init="ctx.selItem = availList[0][ctx.ref_key]"
+							ng-options="item[ctx.ref_key] as item[ctx.ref_key] for item in availList"
+							required
+						></select>
+						<span ng-if="availList.length <= 0" ng-bind="DICT('User_Groups_No_Profiles_Available')"></span>
+						<!--
+						<pre>{{availList | json}}</pre>
+						-->
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="modal-button-container">
+			<button id="btn_addadd" ng-click="add()" ng-disabled="form.$invalid || ctx.selItem === undefined " class="btn-primary" autofocus>
+				<span ng-bind="DICT('User_Groups_Add')"></span></button>
+			<button id="btn_addcancel" ng-click="cancel()" class="btn-secondary">
+				<span ng-bind="DICT('User_Groups_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="T_gridUserList_join_checkbox.html"><div>
+<span ng-if="(row.entity['invisible']!==true)">ARGS1</span>
+<span ng-if="(row.entity['invisible']===true)"><div class="ngCellText"></div></span>
+</div>
+</script>

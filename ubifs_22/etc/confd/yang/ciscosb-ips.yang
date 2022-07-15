@@ -1,0 +1,66 @@
+module ciscosb-ips {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/ips";
+    prefix ciscosb-ips;
+ import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions 
+        for Ciscosb IPS.
+            Copyright (c) 2017 by Cisco Systems, Inc.
+                All rights reserved.";
+    revision 2017-08-01 {
+        description
+            "First revision";
+    }
+  container ips {
+      leaf enabled {
+          type boolean;
+      }
+      leaf mode {
+          type enumeration {
+              enum prevention;
+              enum detection;
+          }
+      }
+      leaf level {
+          type enumeration {
+              enum connectivity;
+              enum balanced;
+              enum security;
+          }
+      }
+      leaf-list zone {
+          type string;
+      }
+  }
+  uses ciscosb-security-common:SIGNATURE-STATE;
+  container ips-state {
+      config false;
+      leaf last-reset-time {
+          type yang:date-and-time;
+      }
+      list summary {
+          key "hours days weeks months";
+          uses ciscosb-security-common:TIME-RANGE;
+          leaf scanned {
+              type uint32;
+          }
+          leaf detected {
+              type uint32;
+          }
+      }
+  }
+  rpc reset-ips-state{
+        description
+            " reset the counters .";
+  }
+}

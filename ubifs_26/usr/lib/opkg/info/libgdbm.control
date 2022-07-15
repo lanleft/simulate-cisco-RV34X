@@ -1,0 +1,10 @@
+Package: libgdbm
+Version: 1.10-1
+Depends: libc, librt, libpthread
+Source: package/openwrt/libs/gdbm
+License: GPLv3
+LicenseFiles: COPYING
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 11304
+Description:  GNU database manager

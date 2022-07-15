@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/rc2.conf
+/usr/lib/ipsec/plugins/libstrongswan-rc2.so

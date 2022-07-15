@@ -1,0 +1,8 @@
+Package: rp-pppoe-relay
+Version: 3.8-1
+Depends: libc, librt, libpthread, ppp, cmm
+Source: package/openwrt/net/rp-pppoe
+Section: net
+Architecture: comcerto2000
+Installed-Size: 13596
+Description:  PPPoE (PPP over Ethernet) relay

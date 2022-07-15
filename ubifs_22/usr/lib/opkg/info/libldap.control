@@ -1,0 +1,9 @@
+Package: libldap
+Version: 186-1
+Depends: libc, librt, libpthread, openldap-server, libpam
+Source: package/libldap
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 18808
+Description:  pamldap is a free implementation for ldap authentication using pam. 
+ 

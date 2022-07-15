@@ -1,0 +1,10 @@
+#Check if "/confdConfig/snmpAgent/enabled" as "true"
+ret="`confd_cmd -c "mget /confdConfig/snmpAgent/enabled"`"
+[ "x$ret" = "xtrue" ] && {
+	# Stop snmpglue using following command gracefully.
+	/usr/bin/snmpglue -n 0 &
+}
+
+killall -9 operdb_stats
+killall -9 opsdb_cisco
+killall -9 snmpglue

@@ -1,0 +1,220 @@
+module ciscosb-avc {
+    namespace "http://cisco.com/ns/ciscosb/avc";
+    prefix ciscosb-avc;
+    import ciscosb-schedule { prefix ciscosb-schedule; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ietf-inet-types { prefix inet; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define  application control  and webfilter";
+  revision 2016-07-29 {
+      description "change type of category, application and behavior in AVC-SETTING from leafref to string to ignore error if application removed from avc-meta-data";
+      reference "";
+  }
+  revision 2016-04-29 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity action {
+    }
+    identity pass {
+        base action;
+    }
+    identity block {
+        base action;
+    }
+    identity log {
+        base action;
+    }
+    identity log-block {
+        base action;
+    }
+    typedef Action-type {
+        type identityref {
+            base "action";
+        }
+        description "Action type Pass, Block, Log Only, and Block&Log. .";
+    }
+    grouping USER-EXCLUSION-LIST {
+        list user-exclusion-entry {
+         ordered-by user;
+            key "seq";
+            leaf seq {
+                type uint8;
+                description
+                                "number is used for ordering";
+            }
+            uses ciscosb-security-common:USER-EXCLUSION-LIST;
+            uses ciscosb-security-common:DEVICE-OS-TYPE;
+        }
+    }
+    grouping AVC-SETTING {
+        leaf enable {
+            type boolean ;
+            description " Indicate if enable policy";
+        }
+        list applications {
+            ordered-by user;
+            key "seq";
+            leaf seq {
+                type string;
+                description
+                    "number is used for ordering";
+            }
+            leaf category {
+                type string;
+            }
+            leaf application {
+                type string;
+            }
+            leaf behaviour {
+                type string;
+            }
+            leaf action {
+                type Action-type;
+            }
+        }
+        leaf-list zone {
+            type string;
+        }
+        leaf apply-ip-group {
+            type boolean ;
+            description " Indicate if apply ipgroups";
+        }
+        leaf-list ip-groups {
+            type leafref {
+                path "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:name";
+            }
+        }
+        uses ciscosb-security-common:DEVICE-OS-TYPE;
+        uses USER-EXCLUSION-LIST ;
+    }
+    grouping AVCSTATE {
+        leaf in-pkts {
+            type yang:counter64;
+            description
+                "Received traffic";
+        }
+        leaf out-pkts {
+            type yang:counter64;
+            description
+                "Transmitted traffic";
+        }
+    }
+    container avc {
+        leaf enable {
+            type boolean ;
+            description "Indicate if enable avc or not";
+            default false;
+        }
+        list policy {
+            ordered-by user;
+            key name;
+            leaf name {
+                type string;
+                description "Policy name";
+            }
+            leaf description {
+                type string;
+                description "Policy description";
+            }
+            uses AVC-SETTING ;
+            uses ciscosb-security-common:SCHEDULE;
+        }
+    }
+    container avc-state{
+        config false;
+        leaf last-reset-time {
+            type yang:date-and-time;
+        }
+        list applications {
+            key application;
+            leaf application {
+                type string;
+            }
+            leaf protocol {
+                type enumeration {
+                    enum TCP;
+                    enum UDP;
+                    enum IP;
+                    enum ICMP;
+                }
+            }
+            leaf port {
+                type uint16;
+            }
+            leaf flows {
+                type uint32;
+            }
+            list clients {
+                key mac;
+                leaf mac {
+                    type yang:mac-address;
+                }
+                uses AVCSTATE;
+            }
+        }
+        list clients {
+            key mac;
+            uses ciscosb-security-common:CLIENT;
+            leaf status {
+                type enumeration {
+                    enum connected;
+                    enum disconnected;
+                    enum unknown;
+                }
+            }
+            list applications {
+                key app-id;
+                leaf app-id {
+                    type string;
+                }
+                leaf active-time {
+                    type uint32;
+                    units "seconds";
+                }
+                uses AVCSTATE;
+            }
+            leaf ip-group {
+                type string;
+            }
+        }
+    }
+    uses ciscosb-security-common:SIGNATURE-STATE;
+    rpc reset-avc-state{
+        description
+            " reset the counters .";
+    }
+    rpc update-clients {
+        input {
+            list clients {
+                key mac;
+                leaf mac {
+                    type yang:mac-address;
+                    mandatory true;
+                }
+                leaf hostname {
+                    type inet:domain-name;
+                }
+
+                uses ciscosb-security-common:DEVICE-OS-TYPE;
+            }
+        }
+    }
+    augment "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:ips" {
+        uses ciscosb-security-common:DEVICE-OS-TYPE;
+    }
+    augment "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:macs" {
+        uses ciscosb-security-common:DEVICE-OS-TYPE;
+    }
+}

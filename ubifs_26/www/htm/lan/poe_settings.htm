@@ -1,0 +1,318 @@
+<style>
+    .main_edit {
+        margin-left: 10px;
+    }
+</style>
+<form ng-controller="poeCtrl" name="poeform" ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div ng-show="currPage === 'main'">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('PoE_Settings')"></div>
+                <div class="page-button-container">
+                    <button type="button" class="btn-apply" ng-click="funs.apply('main')" id="chk_apply" ng-disabled="userAccessFlag === 'RO'">
+                        <span ng-bind="DICT('PoE_Settings_Apply')"></span>
+                    </button>
+                    <button type="button" class="btn-cancel" ng-click="funs.cancel('main')" id="chk_cancel">
+                        <span ng-bind="DICT('PoE_Settings_Cancel')"></span>
+                    </button>
+                </div>
+            </div>
+            <confirmsave ng-show="success"></confirmsave>
+            <div class="page-content-container">
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('PoE_Settings_Power_Mode')"></td>
+                        <td>
+                            <input type="radio"
+                                ng-model="model.poe_setting.power_mode"
+                                id="rdo_port_limit"
+                                ng-value="schema.power_mode[0].id"
+								ng-change="switchRadio()"
+                            >{{schema.power_mode[0].displayName}}</input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <input type="radio"
+                                ng-model="model.poe_setting.power_mode"
+                                id="rdo_class_limit"
+                                ng-value="schema.power_mode[1].id"
+								ng-change="switchRadio()"
+                            >{{schema.power_mode[1].displayName}}</input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('PoE_Settings_Legacy')"></td>
+                        <td>
+                            <input type="checkbox" id="chk_enable_legacy" ng-model="model.poe_setting.legacy">
+								<span ng-bind="DICT('PoE_Settings_Enable')"></span></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('PoE_Settings_SNMP_Traps')"></td>
+                        <td>
+                            <input type="checkbox" id="chk_enable_snmp" ng-model="model.poe_setting.snmp_trap_enable">
+								<span ng-bind="DICT('PoE_Settings_Enable')"></span></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('PoE_Settings_Power_Trap_Threshold')"></td>
+                        <td colspan="2">
+                            <input type="number" min="1" max="99" required ng-model="model.poe_setting.power_trap_thread"></input>
+                            <span>%</span>
+                            <span class="tip_info" ng-bind="DICT('PoE_Settings_Range')"></span>
+                        </td>
+                    </tr>
+                </table>
+                <br></br>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('PoE_Settings_POE_Properties_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridProperiesOptions"></div>
+                    </div>
+                </div>
+                <br></br>
+                <div ng-show="model.poe_setting.power_mode === 'port-limit'" ng-if="model.poe_setting.power_mode === 'port-limit'">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('PoE_Settings_Port_Limit_Mode_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button"
+                                    id="btn_edit"
+                                    class="grid-btn-edit"
+                                    ng-click="funs.edit('port')"
+                                    ng-disabled="model.selectIdx === -1"
+                                >
+                                </button>
+                            </div>
+                            <div ui-grid="gridPortLimitOptions" ui-grid-resize-columns ui-grid-auto-resize class="grid-content"></div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="model.poe_setting.power_mode === 'class-limit'" ng-if="model.poe_setting.power_mode === 'class-limit'">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('PoE_Settings_Class_Limit_Mode_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button"
+                                    id="btn_edit"
+                                    class="grid-btn-edit"
+                                    ng-click="funs.edit('class')"
+                                    ng-disabled="model.selectIdx === -1"
+                                >
+                                </button>
+                            </div>
+                            <div ui-grid="gridClassLimitOptions" ui-grid-resize-columns ui-grid-auto-resize class="grid-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</form>
+
+<script type="text/ng-template" id="edit_port_limit.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('PoE_Settings_PS_Port_Limit')"></div>
+        </div>
+		<div class="modal-content-container">
+			<table class="page-block-tb-list">
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Port')"></td>
+					<td>{{edit.name}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_PoE_Enable')"></td>
+					<td>
+						<input type="checkbox" id="chk_port_poe_enable" ng-model="edit.enable">
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Power_Priority_Level')"></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_port_priority_critical"
+							value="critical"
+						>
+							<span ng-bind="DICT('PoE_Settings_Critical')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_port_priority_high"
+							value="high"
+						>
+							<span ng-bind="DICT('PoE_Settings_High')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_port_priority_low"
+							value="low"
+						>
+							<span ng-bind="DICT('PoE_Settings_Low')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Administrative_Power_Allocation')"></td>
+					<td><input type="number" 
+							min="0" max="30000" 
+                            required
+							ng-model="edit.administration_power_allocation">
+						<span ng-bind="DICT('PoE_Settings_mW_Range')"></span>
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Class')"></td>
+					<td>{{edit.state.class}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Max_Power_Allocation')"></td>
+					<td>{{edit.state.max_power}} mW</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Power_Consumption')"></td>
+					<td>{{edit.state.consumed_power}} mW</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Overload_Counter')"></td>
+					<td>{{edit.state.overload_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Short_Counter')"></td>
+					<td>{{edit.state.short_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Denied_Counter')"></td>
+					<td>{{edit.state.denied_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Absent_Counter')"></td>
+					<td>{{edit.state.absent_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Invalid_Signature_Counter')"></td>
+					<td>{{edit.state.invalid_signature_counter}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="modal-button-container">
+			<button type="button" id="btn_port_save" ng-click="funs.save('edit_port')" ng-disabled="userAccessFlag === 'RO'">
+				<span ng-bind="DICT('PoE_Settings_Apply')"></span></button>
+			<button type="button" id="btn_port_cancel" ng-click="funs.cancel('edit_port')">
+				<span ng-bind="DICT('PoE_Settings_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="funs.cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edit_class_limit.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('PoE_Settings_PoE_Settings_Class_Limit')"></div>
+        </div>
+		<div class="modal-content-container">
+			<table class="page-block-tb-list">
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Port')"></td>
+					<td>{{edit.name}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_PoE_Enable')"></td>
+					<td>
+						<input type="checkbox" id="chk_class_poe_enable" ng-model="edit.enable">
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Power_Priority_Level')"></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_class_priority_critical"
+							value="critical"
+						>
+							<span ng-bind="DICT('PoE_Settings_Critical')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_class_priority_high"
+							value="high"
+						>
+							<span ng-bind="DICT('PoE_Settings_High')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="radio"
+							ng-model="edit.priority"
+							id="rdo_class_priority_low"
+							value="low"
+						>
+							<span ng-bind="DICT('PoE_Settings_Low')"></span></input>
+					</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Class')"></td>
+					<td>{{edit.state.class}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Max_Power_Allocation')"></td>
+					<td>{{edit.state.max_power}} mW</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Power_Consumption')"></td>
+					<td>{{edit.state.consumed_power}} mW</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Overload_Counter')"></td>
+					<td>{{edit.state.overload_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Short_Counter')"></td>
+					<td>{{edit.state.short_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Denied_Counter')"></td>
+					<td>{{edit.state.denied_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Absent_Counter')"></td>
+					<td>{{edit.state.absent_counter}}</td>
+				</tr>
+				<tr>
+					<td ng-bind="DICT('PoE_Settings_Invalid_Signature_Counter')"></td>
+					<td>{{edit.state.invalid_signature_counter}}</td>
+				</tr>
+			</table>
+		</div>
+		<div class="modal-button-container">
+			<button type="button" id="btn_class_save" ng-click="funs.save('edit_class')">
+				
+					<span ng-bind="DICT('PoE_Settings_Apply')"></span></button>
+			<button type="button" id="btn_class_cancel" ng-click="funs.cancel('edit_class')">
+				
+					<span ng-bind="DICT('PoE_Settings_Cancel')"></span></button>
+		</div>
+        <button type="button" class="modal-close-btn" ng-click="funs.cancel('close')"></button>
+    </div>
+</script>

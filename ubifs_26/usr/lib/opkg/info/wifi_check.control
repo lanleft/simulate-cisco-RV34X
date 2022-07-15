@@ -1,0 +1,8 @@
+Package: wifi_check
+Version: fsl-1
+Depends: libc, librt, libpthread, uci
+Source: package/freescale/wifi_check
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 4814
+Description:  standby mode and normal mode switch daemon.

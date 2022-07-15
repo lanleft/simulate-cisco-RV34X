@@ -1,0 +1,10 @@
+Package: miniupnpd
+Version: 1.9.20151212-1
+Depends: libc, librt, libpthread, iptables, libip4tc, libip6tc, ip6tables
+Source: package/openwrt/net/miniupnpd
+License: BSD-3-Clause
+Section: net
+Maintainer: Markus Stenberg <fingon@iki.fi>
+Architecture: comcerto2000
+Installed-Size: 54366
+Description:  Lightweight UPnP IGD, NAT-PMP & PCP daemon

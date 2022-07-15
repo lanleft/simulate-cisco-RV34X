@@ -1,0 +1,10 @@
+Package: quagga-watchquagga
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra
+Source: package/network/services/quagga
+License: GPL-2.0
+Section: net
+Maintainer: Vasilis Tsiligiannis <b_tsiligiannis@silverton.gr>
+Architecture: comcerto2000
+Installed-Size: 11444
+Description:  Quagga watchdog

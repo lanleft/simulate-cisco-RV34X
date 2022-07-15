@@ -1,0 +1,78 @@
+#!/bin/sh /etc/rc.common
+
+wlan_led() {
+	local cfg="$1"
+	local cmd="$2"
+	local target="$3"
+	LEDS_SYSFS="/sys/class/leds/"
+
+	config_get mode "$cfg" mode "tx rx"
+	config_get radio "$cfg" radio
+	config_get interval "$cfg" interval "50"
+	config_get trigger "$cfg" trigger "netdev"
+	config_get sysfs "$cfg" sysfs
+	config_get dev "$cfg" dev
+
+	if [ -n "$sysfs" -a -n "$dev" -a "$radio" = "$target" ];then
+		if [ -e ${LEDS_SYSFS}$sysfs ];then
+			if [ "$cmd" = "start" ];then
+				echo "$trigger" > ${LEDS_SYSFS}$sysfs/trigger
+				echo "$dev" > ${LEDS_SYSFS}$sysfs/device_name
+				echo "$interval" > ${LEDS_SYSFS}$sysfs/interval
+				echo "$mode" > ${LEDS_SYSFS}$sysfs/mode
+			else
+				echo "none" > ${LEDS_SYSFS}$sysfs/trigger
+			fi
+		fi
+	fi
+}
+
+wlan_led_24_start() {
+	wlan_led "$1" "start" "radio0"
+}
+
+wlan_led_5_start() {
+	wlan_led "$1" "start" "radio1"
+}
+
+wlan_led_24_stop() {
+	wlan_led "$1" "stop" "radio0"
+}
+
+wlan_led_5_stop() {
+	wlan_led "$1" "stop" "radio1"
+}
+
+start() {
+	board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+	if [ "$board" = "RV160W" ];then
+		config_load	wlan_led_rv160w
+	else
+		config_load	wlan_led
+	fi
+	if [ "$1" = "radio0" ];then
+		config_foreach	wlan_led_24_start	wlan_led
+	elif [ "$1" = "radio1" ];then
+		config_foreach	wlan_led_5_start	wlan_led
+	else
+		config_foreach	wlan_led_24_start	wlan_led
+		config_foreach	wlan_led_5_start	wlan_led
+	fi
+}
+
+stop() {
+	board=`uci get systeminfo.sysinfo.pid | cut -d'-' -f1`
+	if [ "$board" = "RV160W" ];then
+		config_load	wlan_led_rv160w
+	else
+		config_load	wlan_led
+	fi
+	if [ "$1" = "radio0" ];then
+		config_foreach	wlan_led_24_stop	wlan_led
+	elif [ "$1" = "radio1" ];then
+		config_foreach	wlan_led_5_stop	wlan_led
+	else
+		config_foreach	wlan_led_24_stop	wlan_led
+		config_foreach	wlan_led_5_stop	wlan_led
+	fi
+}

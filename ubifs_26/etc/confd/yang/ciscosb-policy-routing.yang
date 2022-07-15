@@ -1,0 +1,92 @@
+module ciscosb-policy-routing {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/policy-routing";
+  prefix ciscosb-policy-routing;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ciscosb-service {
+    prefix sb-svc;
+  }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-01-25 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-01 {
+    description
+      "First revision Policy Routing module";
+  }
+  container policy-routing {
+ leaf enable {
+  type boolean;
+  default true;
+  description
+        "Controls whether the policy routing is active or not.";
+ }
+    list entry {
+      key "name";
+      ordered-by user;
+      unique "source-ip-address destination-ip-address service";
+      leaf name {
+        type string;
+        description
+         "An arbitrary name describing the entry.";
+      }
+      leaf source-ip-address {
+        type union {
+          type inet:ipv4-prefix;
+          type inet:ipv6-prefix;
+          type enumeration {
+            enum "any";
+          }
+        }
+        description
+          "Match source ip address against this prefix or 'any'.";
+      }
+      leaf destination-ip-address {
+        type union {
+          type inet:ipv4-prefix;
+          type inet:ipv6-prefix;
+          type enumeration {
+            enum "any";
+          }
+        }
+        description
+          "Match destination ip address against this prefix or 'any'.";
+      }
+      leaf service {
+        type leafref {
+          path "/sb-svc:services/sb-svc:service/sb-svc:name";
+        }
+        description
+         "Match IP protocol and port numbers against this service.";
+      }
+      leaf interface {
+        type leafref {
+          path "/if:interfaces/if:interface/if:name";
+        }
+        description
+         "The interface that matching traffic will be sent through.";
+      }
+      leaf failover {
+        type boolean;
+        default true;
+        description
+         "If the target interface fails, should traffic re-route through a different interface?";
+      }
+      leaf enable {
+        type boolean;
+        default true;
+        description
+         "Controls whether the rule is active or not.";
+      }
+    }
+  }
+}

@@ -1,0 +1,96 @@
+<form name="fwsession" ng-controller="sessionTimeoutCtrl" novalidate ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Session_Timeout')"></div>
+            <div class="page-button-container">
+                <button id="btn_sessiontimeout_save" class="btn-apply" ng-click="funs.save()" ng-disabled="fwsession.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Session_Timeout_Apply')"></span>
+                </button>
+                <button id="btn_sessiontimeout_cancel" class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('Session_Timeout_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list control-input-200">
+                <tr>
+                    <td ng-bind="DICT('Session_Timeout_TCP')"></td>
+                    <td>
+                        <input type="number" name="tcp" number required id="txt_sessiontimeout_tcp" ng-model="model.sessions.tcp_session_timeout" min="30" max="86400" >
+                        <span class="tip-info" ng-bind="DICT('Session_Timeout_TCP_Seconds')"></span>
+                    </td>
+                    <td>
+                        <span class="validation-error-text-right" ng-if="fwsession.tcp.$error.min" ng-bind="DICT('Session_Timeout_Too_Small')"></span>
+                        <span class="validation-error-text-right" ng-if="fwsession.tcp.$error.max" ng-bind="DICT('Session_Timeout_Too_Large')"></span>
+                        <span class="validation-error-text-right" ng-if="fwsession.tcp.$error.number" ng-bind="DICT('Session_Timeout_Not_Integer')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Session_Timeout_UDP')"></td>
+                    <td>
+                        <input type="number" name="udp" number required id="txt_sessiontimeout_udp" ng-model="model.sessions.udp_session_timeout" min="30" max="86400">
+                        <span class="tip-info" ng-bind="DICT('Session_Timeout_UDP_Seconds')"></span>
+                    </td>
+                    <td>
+                        <span class="validation-error-text-right" ng-if="fwsession.udp.$error.min" ng-bind="DICT('Session_Timeout_Too_Small')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.udp.$error.max" ng-bind="DICT('Session_Timeout_Too_Large')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.udp.$error.number" ng-bind="DICT('Session_Timeout_Not_Integer')">
+                            
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Session_Timeout_ICMP')"></td>
+                    <td>
+                        <input type="number" name="icmp" number required id="txt_sessiontimeout_icmp" ng-model="model.sessions.icmp_session_timeout" min="15" max="60">
+                        <span class="tip-info" ng-bind="DICT('Session_Timeout_ICMP_Seconds')"></span>
+                    </td>
+                    <td>
+                        <span class="validation-error-text-right" ng-if="fwsession.icmp.$error.min" ng-bind="DICT('Session_Timeout_Too_Small')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.icmp.$error.max" ng-bind="DICT('Session_Timeout_Too_Large')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.icmp.$error.number" ng-bind="DICT('Session_Timeout_Not_Integer')">
+                            
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Session_Timeout_Maximum_Concurrent_Connections')"></td>
+                    <td>
+                        <input type="number" name="mcc" number required id="txt_sessiontimeout_maximum"
+                            ng-model="model.sessions.max_concurrent_connections" min="10000" max="45000">
+                        <span class="tip-info" ng-bind="DICT('Session_Timeout_Maximum_Concurrent_Range')"></span>
+                    </td>
+                    <td>
+                        <span class="validation-error-text-right" ng-if="fwsession.mcc.$error.min" ng-bind="DICT('Session_Timeout_Too_Small')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.mcc.$error.max" ng-bind="DICT('Session_Timeout_Too_Large')">
+                            
+                        </span>
+                        <span class="validation-error-text-right" ng-if="fwsession.mcc.$error.number" ng-bind="DICT('Session_Timeout_Not_Integer')">
+                            
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Session_Timeout_Current_Connections')"></td>
+                    <td>
+                        <input type="text" ng-disabled="true" ng-model="model.sessions.current_connections">
+                        <button id="btn_sessiontimeout_clearconnections" style="margin-left: 8px" ng-click="funs.clear()" ng-disabled="userAccessFlag === 'RO'">
+                            <span ng-bind="DICT('Session_Timeout_Clear_Connections')"></span>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

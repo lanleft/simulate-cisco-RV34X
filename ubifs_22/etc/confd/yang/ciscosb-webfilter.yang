@@ -1,0 +1,136 @@
+module ciscosb-webfilter {
+    namespace "http://cisco.com/ns/ciscosb/webfilter";
+    prefix ciscosb-webfilter;
+    import ietf-inet-types { prefix inet; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define  application control  and webfilter";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-04-29 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    grouping WEBFILTER-SETTING {
+        choice setting{
+            case profile {
+               leaf filtering-level {
+                   type leafref {
+                        path "/ciscosb-security-common:webfilter-meta-data/ciscosb-security-common:filter-levels/ciscosb-security-common:filter-level/ciscosb-security-common:level";
+                   }
+               }
+               list custom-categories {
+                   ordered-by user;
+                   key category;
+                   leaf category {
+                       type leafref {
+                           path "/ciscosb-security-common:webfilter-meta-data/ciscosb-security-common:categories/ciscosb-security-common:category/ciscosb-security-common:id";
+                       }
+                   }
+                   leaf checked {
+                       type boolean;
+                   }
+               }
+            }
+            case custom {
+                leaf-list categories {
+                 ordered-by user;
+                    type leafref {
+                        path "/ciscosb-security-common:webfilter-meta-data/ciscosb-security-common:categories/ciscosb-security-common:category/ciscosb-security-common:id";
+                    }
+                }
+            }
+        }
+        leaf apply-ip-group{
+         type boolean ;
+         description " Indicate if apply ipgroups";
+        }
+        leaf enable{
+         type boolean ;
+         description " Indicate if enable policy";
+        }
+        leaf web-reputation{
+         type boolean ;
+         description " Web Reputation";
+        }
+        leaf-list zone {
+            type string;
+        }
+        leaf-list ip-groups{
+         type leafref{
+           path "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:name";
+         }
+        }
+        leaf-list black-domain-list {
+            type inet:domain-name;
+            ordered-by user;
+        }
+        leaf-list black-url-keyword-list {
+            type string;
+            ordered-by user;
+        }
+        leaf-list white-domain-list {
+            type inet:domain-name;
+            ordered-by user;
+        }
+        leaf-list white-url-keyword-list {
+            type string;
+            ordered-by user;
+        }
+        uses ciscosb-security-common:DEVICE-OS-TYPE;
+        uses ciscosb-security-common:USER-EXCLUSION-LIST;
+    }
+    container webfilter {
+        leaf enable{
+         type boolean ;
+         description "Indicate if enable webfilter or not";
+         default false;
+        }
+        leaf blocked-page-message {
+            type string;
+        }
+        list policy {
+            key name;
+            ordered-by user;
+            leaf name {
+                type string;
+                description "Policy name";
+            }
+            leaf description {
+                type string;
+                description "Policy description";
+            }
+            uses WEBFILTER-SETTING;
+            uses ciscosb-security-common:SCHEDULE;
+        }
+    }
+    rpc url-lookup {
+        input {
+            leaf url{
+                type string;
+            }
+        }
+        output {
+            leaf category{
+                type string;
+            }
+            leaf reputation{
+                type string;
+            }
+            leaf status{
+                type string;
+            }
+        }
+    }
+}

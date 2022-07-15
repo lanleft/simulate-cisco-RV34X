@@ -1,0 +1,8 @@
+Package: system
+Version: fsl-1
+Depends: libc, librt, libpthread, libuci
+Source: package/freescale/system
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 94334
+Description:  system base module.

@@ -1,0 +1,8 @@
+Package: usb-modem-mgmt
+Version: 1.0.00.03-1
+Depends: libc, librt, libpthread
+Source: package/pegatron/usb-modem-mgmt
+Section: Pegatron
+Architecture: comcerto2000
+Installed-Size: 10984
+Description:  3G/4G USB Modem Management Application

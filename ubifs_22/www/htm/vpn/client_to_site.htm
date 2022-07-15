@@ -1,0 +1,835 @@
+<style>
+    .c2s_indent2 {
+        padding-left: 28px;
+    }
+</style>
+<form name="c2sform" ng-controller="clientToSiteCtrl" autocomplete="off" ng-modification="dataReady" id="client-to-site">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-show="currPage === 'main'" ng-bind="DICT('Client_to_Site')"></div>
+            <div class="page-title" ng-show="currPage === 'edit' && edit.editType === 'edit'" ng-bind="DICT('Client_to_Site_Edit_Tunnel')"></div>
+            <div class="page-title" ng-show="currPage === 'edit' && edit.editType === 'new'" ng-bind="DICT('Client_to_Site_Add_Tunnel')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" id="btn_c2ssave" ng-disabled="c2sform.$invalid || userAccessFlag === 'RO' || waitForCert" ng-click="funs.save()">
+                    <span ng-bind="DICT('Client_to_Site_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_c2scancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('Client_to_Site_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div ng-include="pageMap[currPage]" ng-cloak></div>
+    </div>
+</form>
+
+
+<script type="text/ng-template" id="ipsec_c2s_main.html">
+<div class="page-content-container ng-cloak">
+    <message-box class="page-note-cntr" ng-if="!model.ipsec_enable">
+        <table>
+            <tr>
+                <td class="align-top">
+                    <i class="icon-warning message-icon"></i>
+                </td>
+                <td>
+                    <span pg-bind-html="ipsecprofile_note"></span>
+                </td>
+            </tr>
+        </table>
+    </message-box>
+    <div class="grid-cntr">
+        <div class="grid-title-cntr">
+            <div class="grid-title" ng-bind="DICT('Client_to_Site_IPSec_Client2Site_Groups')"></div>
+        </div>
+        <div class="grid-content-cntr">
+            <div class="grid-btn-cntr">
+                <button type="button" class="grid-btn-add" id="btn_add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.add()"></button>
+                <button type="button" class="grid-btn-edit" id="btn_edit" ng-disabled="selection.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.edit()"></button>
+                <button type="button" class="grid-btn-delete" id="btn_del" ng-disabled="selection.length <= 0 || userAccessFlag === 'RO'" ng-click="funs.del()"></button>
+            </div>
+            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridC2SOptions"></div>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="ipsec_c2s_edit.html">
+    <div class="page-content-container ng-cloak">
+        <input type='radio'
+            id="rdo_c2sciscovpnclient"
+            ng-model="edit.type"
+            value="cisco-vpn">
+            <span ng-bind="DICT('Client_to_Site_Cisco_VPN_Client')"></span>
+        </input>
+        <input type='radio'
+            id="rdo_c2s3rdpartyclient"
+            style="margin-left: 20px"
+            ng-model="edit.type"
+            value="third-party-vpn">
+            <span ng-bind="DICT('Client_to_Site_3rd_Party_Client')"></span>
+        </input>
+        <hr class="page-content-seperator"></hr>
+        <div ng-If="edit.type === 'cisco-vpn'">
+            <div ng-include="'ipsec_c2s_easy_vpn.html'" ng-cloak></div>
+        </div>
+        <div ng-If="edit.type === 'third-party-vpn'">
+            <div ng-include="'ipsec_c2s_3rd.html'" ng-cloak></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="ipsec_c2s_easy_vpn.html">
+<div class="ng-cloak" id="client-to-site-easy-vpn">
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Enable') + ':'"></td>
+            <td>
+                <input type="checkbox" id="chk_c2senable" ng-model="edit.enable" ng-change="changeEnable()">
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Group_Name')"></td>
+            <td class="ng-cloak">
+                <input type="text"
+                    id="txt_c2sgroupname"
+                    name="model_name"
+                    ng-model="edit.seq"
+                    ng-maxlength="40"
+                    ng-disabled="edit.editType === 'edit'"
+                    ng-change="checkSeq('model_name')"
+                    required>
+                </input>
+                <span class="validation-error-text-right"
+                    ng-show="c2sform.model_name.$error.required"
+					ng-bind="DICT('Client_to_Site_Please_Input_Group_Name')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="c2sform.model_name.$error.maxlength"
+					ng-bind="DICT('Client_to_Site_Group_Name_Max_Length')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="c2sform.model_name.$error.special"
+					ng-bind="DICT('Client_to_Site_Group_Name_Only_Support')">
+                    
+                </span>
+                <span class="validation-error-text-right" ng-show="c2sform.model_name.$error.repeat"
+					ng-bind="DICT('Client_to_Site_Group_Name_Repeated')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Interface')"></td>
+            <td>
+                <select ng-model="edit.intf"
+                    id="slct_c2sinterface"
+                    ng-options="m.id as m.displayName for m in model.ifs"
+                ></select>
+            </td>
+        </tr>
+    </table>
+    <div class="page-content-seperator"></div>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Client_to_Site_IKE_Authentication_Method')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200" style="width: 100%">
+        <tr>
+            <td>
+                <input type="radio" id="rdo_c2spresharekey" ng-change="change_auth_method()"
+                    ng-model="edit.auth.method" value="preshared-key"
+                >
+					<span ng-bind="DICT('Client_to_Site_Preshared_Key_Colon')"></span></input>
+            </td>
+            <td ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+                <pg-pwd 
+                    ng-is-plain="edit.auth.show_key_in_plain"
+                    ng-disabled="edit.auth.method !== 'preshared-key'"
+                    id="txt_c2spresharedkey"
+                    name="preshared_key"
+                    ng-model="edit.auth.password" 
+                    ng-change="change_pwd()"
+                    ng-need-complexity="edit.auth.method === 'preshared-key' && edit.auth.min_complexity"
+                    ng-required="edit.auth.method === 'preshared-key'"
+                ></pg-pwd>
+                <span class="validation-error-text-right"
+                    ng-show="c2sform.preshared_key.$dirty && c2sform.preshared_key.$error.required"
+					ng-bind="DICT('Client_to_Site_Please_Input_Preshared_Key')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr ng-class="{nopHint: edit.auth.method !== 'preshared-key'}" ng-show="edit.auth.min_complexity">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Preshared_Key_Strength_Meter')"></td>
+            <td>
+                <password-strength-meter ng-class="{nopHint: edit.auth.method !== 'preshared-key'}" class="pwd-strength-meter" ng-model="edit.auth.password"></password-strength-meter>
+            </td>
+        </tr>
+        <tr class="c2s_indent2" ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Minumum_Preshared_Key_Complexity')"></td>
+            <td>
+                <input type="checkbox"
+                    ng-disabled="edit.auth.method !== 'preshared-key'"
+                    id="chk_c2smpkcenable"
+                    ng-model="edit.auth.min_complexity"
+                >
+					<span ng-bind="DICT('Client_to_Site_Enable')"></span></input>
+            </td>
+        </tr>
+        <tr class="c2s_indent2" ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Show_Plain')"></td>
+            <td>
+                <input type="checkbox"
+                    ng-disabled="edit.auth.method !== 'preshared-key' || !edit.auth.enable_show_key_in_plain"
+                    id="chk_c2splainkeycenable"
+                    ng-model="edit.auth.show_key_in_plain"
+                >
+					<span ng-bind="DICT('Client_to_Site_Enable')"></span></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" ng-model="edit.auth.method" ng-change="change_auth_method()"
+                    value="certificate" id="rdo_c2scertificate"
+                >
+					<span ng-bind="DICT('Client_to_Site_Certificate_Colon')"></span></input>
+            </td>
+            <td ng-class="{nopHint: edit.auth.method !== 'certificate'}">
+            </td>
+        </tr>
+        <tr ng-if="edit.auth.method === 'certificate'">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Local_Certificate')"></td>
+            <td>
+                <select id="slct_c2scertificate"
+                    ng-change="checkASN1DNCert()"
+                    ng-model="edit.auth.certificate"
+                    ng-required="certReady"
+                    ng-options="m.name as m.name for m in model.certs"
+                ></select>
+                <span ng-show="!certReady" class="icon-loading"></span>
+            </td>
+        </tr>
+        <tr ng-if="edit.auth.method === 'certificate'">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Remote_CA_Certificate')"></td>
+            <td>
+                <select id="Slct_c2scacertificate"
+                    ng-model="edit.auth.remote_certificate"
+                    ng-required="certReady"
+                    ng-options="m.name as m.displayName for m in model.ca_certs"
+                ></select>
+                <span ng-show="!certReady" class="icon-loading"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_User_Group')"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Client_to_Site_User_Group_Table')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" class="grid-btn-add" id="btn_ug_vpn_add_group" ng-disabled="disable_add_user_group" ng-click="addGroup()"></button>
+                            <button type="button" class="grid-btn-delete" id="btn_ug_vpn_del_group" ng-disabled="disable_del_user_group" ng-click="delGroup()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridGroup"></div>
+                    </div>
+				</div>
+				
+				<!--
+				<select id="slct_c2susergroup" ng-model="edit.group_auth" ng-options="m.id as m.displayName for m in model.auth_groups"></select>
+				-->
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Mode')"></td>
+            <td>
+                <input type="radio" id="rdo_c2smodeclient" ng-model="edit.mode.type" value="client">
+					<span ng-bind="DICT('Client_to_Site_Client')"></span></input>
+                <input type="radio" id="rdo_c2smodenem" ng-model="edit.mode.type" value="nem">
+					<span ng-bind="DICT('Client_to_Site_NEM')"></span></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Pool_Range_Client_LAN')"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Start_IP')"></td>
+            <td ng-class="{nopHint: edit.mode.type !== 'client'}">
+                <input type="text" id="txt_c2sstartip" ng-required="edit.mode.type === 'client'" ipv4-ip ng-model="edit.mode.start_ip"
+						ng-custom-vld="edit.type === 'cisco-vpn'" name="txt_c2sstartip" custom-vld-cbk="poolValidation" 
+						custom-vld-relationship="['txt_c2sstartip', 'txt_c2sendip']"></input>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sstartip.$error.range && !c2sform.txt_c2sstartip.$error.required" ng-bind="DICT('Client_to_Site_IP_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sstartip.$error.subnet && !c2sform.txt_c2sstartip.$error.required" ng-bind="DICT('Client_to_Site_Subnet_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sstartip.$error.required && c2sform.txt_c2sstartip.$dirty" ng-bind="DICT('Client_to_Site_Please_Input_IP_Addr')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_End_IP')"></td>
+            <td ng-class="{nopHint: edit.mode.type !== 'client'}">
+                <input type="text" id="txt_c2sendip" ng-required="edit.mode.type === 'client'" ipv4-ip ng-model="edit.mode.end_ip"
+						ng-custom-vld="edit.type === 'cisco-vpn'" name="txt_c2sendip" custom-vld-cbk="poolValidation" 
+						custom-vld-relationship="['txt_c2sstartip', 'txt_c2sendip']"></input>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sendip.$error.range && !c2sform.txt_c2sendip.$error.required" ng-bind="DICT('Client_to_Site_IP_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sendip.$error.subnet && !c2sform.txt_c2sendip.$error.required" ng-bind="DICT('Client_to_Site_Subnet_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2sendip.$error.required && c2sform.txt_c2sendip.$dirty" ng-bind="DICT('Client_to_Site_Please_Input_IP_Addr')"></span>
+            </td>
+        </tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div ng-include="'ipsec_c2s_mode_configure.html'" ng-cloak></div>
+</div>
+</script>
+
+<script type="text/ng-template" id="ipsec_c2s_mode_configure.html">
+<div class="ng-cloak">
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Client_to_Site_Mode_Configuration')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200" style="width: 100%">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Primary_DNS_Server')"></td>
+            <td>
+                <input type="text" id="txt_c2sprimarydns" ipv4-ip ng-model="edit.primary_dns"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Secondary_DNS_Server')"></td>
+            <td>
+                <input type="text" id="txt_c2ssecondarydns" ipv4-ip ng-model="edit.secondary_dns"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Primary_WINS_Server')"></td>
+            <td>
+                <input type="text" id="txt_c2sprimarywins" ipv4-ip ng-model="edit.primary_wins"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Secondary_WINS_Server')"></td>
+            <td>
+                <input type="text" id="txt_c2ssecondarywins" ipv4-ip ng-model="edit.secondary_wins"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Default_Domain')"></td>
+            <td>
+                <input type="text" id="txt_c2sdefaultdomain" domain-name maxlength="253" ng-model="edit.default_domain"></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.type === 'cisco-vpn'">
+            <td ng-bind="DICT('Client_to_Site_Backup_Server1')"></td>
+            <td>
+                <input type="text" id="txt_c2sbackupserver1" fqdn-ipv4 ng-model="edit.backup_server_1"></input>
+                <span class="tip-info" ng-bind="DICT('Client_to_Site_Hint_IP')"></span>
+            </td>
+        </tr>
+        <tr ng-show="edit.type === 'cisco-vpn'">
+            <td ng-bind="DICT('Client_to_Site_Backup_Server2')"></td>
+            <td>
+                <input type="text" id="txt_c2sbackupserver2" fqdn-ipv4 ng-model="edit.backup_server_2"></input>
+                <span class="tip-info" ng-bind="DICT('Client_to_Site_Hint_IP')"></span>
+            </td>
+        </tr>
+        <tr ng-show="edit.type === 'cisco-vpn'">
+            <td ng-bind="DICT('Client_to_Site_Backup_Server3')"></td>
+            <td>
+                <input type="text" id="txt_c2sbackupserver3" fqdn-ipv4 ng-model="edit.backup_server_3"></input>
+                <span class="tip-info" ng-bind="DICT('Client_to_Site_Hint_IP')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Split_Tunnel')"></td>
+            <td>
+                <input type="checkbox" id="btn_c2ssplittunnel"
+                    ng-model="edit.split_tunnel.enable"
+                ></input>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2"
+                ng-class="{nopHint: !edit.split_tunnel.enable}">
+                <ng-form name="splittunnel_form">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Client_to_Site_Split_Tunnel_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button"
+                                        class="grid-btn-add"
+                                        id="btn_c2ssplittunneladd"
+                                        ng-disabled="splittunnel_form.$invalid"
+                                        ng-click="funs.split_tunnel.add()">
+                                </button>
+                                <button type="button"
+                                        class="grid-btn-edit"
+                                        id="btn_c2ssplittunneledit"
+                                        ng-disabled="edit_split_tunnels.length <= 0"
+                                        ng-click="funs.split_tunnel.edit()">
+                                </button>
+                                <button type="button"
+                                        class="grid-btn-delete"
+                                        id="btn_c2ssplittunneldel"
+                                        ng-disabled="edit_split_tunnels.length <= 0"
+                                        ng-click="funs.split_tunnel.del()">
+                                </button>
+                            </div>
+                            <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridSplitTunnelOptions"></div>
+                        </div>
+                    </div>
+                </ng-form>
+            </td>
+        </tr>
+        <tr ng-if="edit.ike_mode !== 'v2'">
+            <td ng-bind="DICT('Client_to_Site_Split_DNS')"></td>
+            <td>
+                <input type="checkbox" id="btn_c2ssplitdns" ng-model="edit.split_dns.enable"></input>
+            </td>
+        </tr>
+        <tr ng-if="edit.ike_mode !== 'v2'">
+            <td colspan="2" ng-class="{nopHint: !edit.split_dns.enable}">
+                <ng-form name="splitdns_form">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Client_to_Site_Split_DNS_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button"
+                                        class="grid-btn-add"
+                                        id="btn_c2ssplitdnsadd"
+                                        ng-disabled="splitdns_form.$invalid"
+                                        ng-click="funs.split_dns.add()">
+                                </button>
+                                <button type="button"
+                                        class="grid-btn-edit"
+                                        id="btn_c2ssplitdnsedit"
+                                        ng-disabled="edit_split_fqdns.length <= 0"
+                                        ng-click="funs.split_dns.edit()">
+                                </button>
+                                <button type="button"
+                                        class="grid-btn-delete"
+                                        id="btn_c2ssplitdnsdel"
+                                        ng-disabled="edit_split_fqdns.length <= 0"
+                                        ng-click="funs.split_dns.del()">
+                                </button>
+                            </div>
+                            <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridSplitDNSOptions"></div>
+                        </div>
+                    </div>
+                </ng-form>
+            </td>
+        </table>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="ipsec_c2s_3rd.html"><div class="ng-cloak">
+    <uib-tabset>
+        <uib-tab ng-repeat="tab in tabs" id="{{tab.id}}"
+            heading="{{tab.heading}}"
+            active="tab.active"
+            disabled="tab.active"
+            ng-click="funs.clickTab(tab)"
+            index="tab.templateUrl"
+            >
+
+            <div style="min-height:320px">
+                <div ng-include="tab.templateUrl" ng-cloak></div>
+            </div>
+        </uib-tab>
+    </uib-tabset>
+</div>
+</script>
+
+<script type="text/ng-template" id="ipsec_c2s_3rd_basic.html">
+<div class="ng-cloak" id="client-to-site-3rd-basic">
+    <table class="page-block-tb-list control-input-200" style="width:100%">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Enable')"></td>
+            <td>
+                <input id="chk_c2s3rdenable" type="checkbox" ng-model="edit.enable" ng-change="changeEnable()"></input>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Tunnel_Name')"></td>
+            <td>
+                <input type="text"
+                    id="txt_c2s3rdtunnelname"
+                    name="tunnel_name"
+                    ng-model="edit.seq"
+                    ng-maxlength="40"
+                    ng-disabled="edit.editType === 'edit'"
+                    ng-change="checkSeq('tunnel_name')"
+                    required>
+                </input>
+                <span ng-show="c2sform.tunnel_name.$error.required" class="validation-error-text-right" ng-bind="DICT('Client_to_Site_Please_Input_Tunnel_Name')">
+                    
+                </span>
+                <span ng-show="c2sform.tunnel_name.$error.maxlength" class="validation-error-text-right" ng-bind="DICT('Client_to_Site_Tunnel_Name_Max_Length')">
+                    
+                </span>
+                <span ng-show="c2sform.tunnel_name.$error.special" class="validation-error-text-right" ng-bind="DICT('Client_to_Site_Tunnel_Name_Only_Support')">
+                    
+                </span>
+                <span ng-show="c2sform.tunnel_name.$error.repeat" class="validation-error-text-right" ng-bind="DICT('Client_to_Site_Tunnel_Name_Repeated')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Interface')"></td>
+            <td>
+                <select id="slct_c2s3rdinterface"
+                    ng-model="edit.intf"
+                    ng-change="updateIntfState()"
+                    ng-options="m.id as m.displayName for m in model.ifs">
+                </select>
+            </td>
+        </tr>
+    </table>
+    <div class="page-content-seperator"></div>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Client_to_Site_IKE_Authentication_Method')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td>
+                <input type="radio" id="rdo_c2s3rdpresharekey" ng-model="edit.auth.method"
+                    ng-change="change_auth_method()" value="preshared-key">
+					<span ng-bind="DICT('Client_to_Site_Preshared_Key_Colon')"></span></input>
+            </td>
+            <td ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+                <pg-pwd
+                    ng-is-plain="edit.auth.show_key_in_plain"
+                    id="txt_c2s3rdpresharedkey"
+                    name="preshared_key"
+                    ng-change="change_pwd()"
+                    ng-model="edit.auth.password" 
+                    ng-need-complexity="edit.auth.method === 'preshared-key' && edit.auth.min_complexity"
+                    ng-required="edit.auth.method === 'preshared-key'"
+                ></pg-pwd>
+                <span class="validation-error-text-right"
+                    ng-show="c2sform.preshared_key.$dirty && c2sform.preshared_key.$error.required" ng-bind="DICT('Client_to_Site_Please_Input_Preshared_Key')">
+                    
+                </span>
+            </td>
+        </tr>
+        <tr ng-class="{nopHint: edit.auth.method !== 'preshared-key'}" ng-show="edit.auth.min_complexity">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Preshared_Key_Strength_Meter')"></td>
+            <td>
+                <password-strength-meter ng-class="{nopHint: edit.auth.method !== 'preshared-key'}"  class="pwd-strength-meter" ng-model="edit.auth.password"></password-strength-meter>
+            </td>
+        </tr>
+        <tr class="c2s_indent2" ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Minumum_Preshared_Key_Complexity')"></td>
+            <td>
+                <input type="checkbox" id="chk_c2s3rdmpkcenable" ng-model="edit.auth.min_complexity">
+					<span ng-bind="DICT('Client_to_Site_Enable')"></span></input>
+            </td>
+        </tr>
+        <tr class="c2s_indent2" ng-class="{nopHint: edit.auth.method !== 'preshared-key'}">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Show_Plain')"></td>
+            <td>
+                <input type="checkbox"
+                    ng-disabled="edit.auth.method !== 'preshared-key' || !edit.auth.enable_show_key_in_plain"
+                    id="chk_c2s3rdplainkeyenable"
+                    ng-model="edit.auth.show_key_in_plain"
+                >
+					<span ng-bind="DICT('Client_to_Site_Enable')"></span></input>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" ng-model="edit.auth.method" value="certificate"
+                    ng-change="change_auth_method()"
+                    id="rdo_c2s3rdcertificate"
+                >
+					<span ng-bind="DICT('Client_to_Site_Certificate_Colon')"></span></input>
+            </td>
+            <td></td>
+        </tr>
+        <tr ng-if="edit.auth.method === 'certificate'">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Local_Certificate')"></td>
+            <td>
+                <select id="slct_c2scertificate"
+                    ng-change="checkASN1DNCert()"
+                    ng-model="edit.auth.certificate"
+                    ng-required="certReady"
+                    ng-options="m.name as m.name for m in model.certs"
+                ></select>
+                <span ng-show="!certReady" class="icon-loading"></span>
+            </td>
+        </tr>
+        <tr ng-if="edit.auth.method === 'certificate'">
+            <td class="c2s_indent2" ng-bind="DICT('Client_to_Site_Remote_CA_Certificate')"></td>
+            <td>
+                <select id="Slct_c2scacertificate"
+                    ng-model="edit.auth.remote_certificate"
+                    ng-required="certReady"
+                    ng-options="m.name as m.displayName for m in model.ca_certs"
+                ></select>
+                <span ng-show="!certReady" class="icon-loading"></span>
+            </td>
+        </tr>
+    </table>
+    <div class="page-content-seperator"></div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Local_Identifier')"></td>
+            <td>
+                <select id="slct_c2slocalidentifier"
+                        ng-model="edit.local_identifier.type"
+                        ng-change="checkLocalIdentifier()"
+                        ng-options="m.id as m.displayName for m in schema.local_identifier">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="text" 
+					ng-show="edit.local_identifier.type === 'interface'" 
+                    ng-disabled="true"
+                    title="{{edit.local_identifier.interface}}"
+					ng-model="edit.local_identifier.interface"></input>
+                <input type="text" 
+					ng-show="edit.local_identifier.type === 'ip'" 
+					id="txt_c2s3rdlocalidentip"
+					ng-required="edit.local_identifier.type === 'ip'"
+					ng-ipv4-ip="edit.local_identifier.type === 'ip'" 
+					ng-model="edit.local_identifier.ip"></input>
+                <input type="text" 
+					ng-show="edit.local_identifier.type === 'fqdn'" 
+					ng-required="edit.local_identifier.type === 'fqdn'"
+					id="txt_c2s3rdlocalidentfqdn"
+					ng-model="edit.local_identifier.fqdn"></input>
+                <input type="text" 
+					ng-show="edit.local_identifier.type === 'user-fqdn'"
+					ng-required="edit.local_identifier.type === 'user-fqdn'"
+					id="txt_c2s3rdlocalidentuserfqdn"
+					ng-model="edit.local_identifier.user_fqdn">
+                </input>
+                <input type="text" 
+					ng-show="edit.local_identifier.type === 'der-asn1-dn'"
+					ng-disabled="true" 
+					id="txt_c2s3rdlocalidentasn1dn"
+                    title="{{edit.local_identifier.der_asn1_dn}}"
+					ng-model="edit.local_identifier.der_asn1_dn">
+                </input>
+                <span class="tip-info"
+                    ng-show="edit.local_identifier.type === 'der-asn1-dn'"
+					ng-bind="DICT('Client_to_Site_Chosen_From_Certificate')"
+                >
+            </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Remote_Identifier')"></td>
+            <td>
+                <select id="slct_c2s3rdremoteidentifier"
+                        ng-model="edit.remote_identifier.type"
+                        ng-options="m.id as m.displayName for m in schema.remote_identifier">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="text"
+					ng-show="edit.remote_identifier.type === 'ip'" 
+					ng-required="edit.remote_identifier.type === 'ip'"
+					ng-ipv4-ip="edit.remote_identifier.type === 'ip'" 
+					id="txt_c2s3rdremoteidentip" 
+					ng-model="edit.remote_identifier.ip"></input>
+                <input type="text" 
+					ng-show="edit.remote_identifier.type === 'fqdn'"
+					ng-required="edit.remote_identifier.type === 'fqdn'"
+					id="txt_c2s3rdremoteidentfqdn" 
+					ng-model="edit.remote_identifier.fqdn"></input>
+                <input type="text" 
+					ng-show="edit.remote_identifier.type === 'user-fqdn'"
+					ng-required="edit.remote_identifier.type === 'user-fqdn'"
+					id="txt_c2s3rdremoteidentuserfqdn"
+					ng-model="edit.remote_identifier.user_fqdn">
+                </input>
+                <input type="text" 
+					ng-show="edit.remote_identifier.type === 'der-asn1-dn'"
+					id="txt_c2s3rdremoteidentasn1dn"
+					ng-model="edit.remote_identifier.der_asn1_dn">
+                </input>
+            </td>
+        </tr>
+    </table>
+    <div class="page-content-seperator"></div>
+    <table class="page-block-tb-list" style="width: 100%">
+        <tr>
+            <td>
+                <input type="checkbox" id="chk_c2s3rdextendauthenable" ng-model="edit.extended_auth.enable">
+					<span ng-bind="DICT('Client_to_Site_Extended_Authentication')"></span>
+                </input>
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div class="grid-cntr" ng-class="{'nopHint': !edit.extended_auth.enable}">
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button type="button" class="grid-btn-add" id="btn_ea_vpn_add_group" ng-disabled="disable_add_user_group || !edit.extended_auth.enable" ng-click="addGroup()"></button>
+                            <button type="button" class="grid-btn-delete" id="btn_ea_vpn_del_group" ng-disabled="disable_del_user_group || !edit.extended_auth.enable" ng-click="delGroup()"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridGroup"></div>
+                    </div>
+				</div>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Pool_Range_Client_LAN')"></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Start_IP')"></td>
+            <td>
+                <input type="text" id="txt_c2s3rdstartip" ng-required="true" ipv4-ip ng-model="edit.ip_pool.start_ip"
+					ng-custom-vld="edit.type === 'third-party-vpn'" name="txt_c2s3rdstartip" custom-vld-cbk="poolValidation3rd" 
+					custom-vld-relationship="['txt_c2s3rdstartip', 'txt_c2s3rdendip']"
+                ></input>
+                <span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdstartip.$error.range && !c2sform.txt_c2s3rdstartip.$error.required" ng-bind="DICT('Client_to_Site_IP_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdstartip.$error.subnet && !c2sform.txt_c2s3rdstartip.$error.required" ng-bind="DICT('Client_to_Site_Subnet_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdstartip.$error.required && c2sform.txt_c2s3rdstartip.$dirty" ng-bind="DICT('Client_to_Site_Please_Input_IP_Addr')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_End_IP')"></td>
+            <td>
+                <input type="text" id="txt_c2s3rdendip" ng-required="true" ipv4-ip ng-model="edit.ip_pool.end_ip"
+					ng-custom-vld="edit.type === 'third-party-vpn'" name="txt_c2s3rdendip" custom-vld-cbk="poolValidation3rd" 
+					custom-vld-relationship="['txt_c2s3rdstartip', 'txt_c2s3rdendip']"
+                ></input>
+                <span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdendip.$error.range && !c2sform.txt_c2s3rdendip.$error.required" ng-bind="DICT('Client_to_Site_IP_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdendip.$error.subnet && !c2sform.txt_c2s3rdendip.$error.required" ng-bind="DICT('Client_to_Site_Subnet_Range_Error')"></span>
+				<span class="validation-error-text-right" ng-if="c2sform.txt_c2s3rdendip.$error.required && c2sform.txt_c2s3rdendip.$dirty" ng-bind="DICT('Client_to_Site_Please_Input_IP_Addr')"></span>
+            </td>
+        </tr>
+    </table>
+</div>
+</script>
+
+
+<script type="text/ng-template" id="ipsec_c2s_3rd_adv.html">
+<div class="ng-cloak" id="client-to-site-3rd-adv">
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_IPSec_Profile')"></td>
+            <td>
+                <select id="slct_c2sadvprofiles"
+                    ng-model="edit.ipsec_profile"
+                    ng-change="changeIpsecProfile()"
+                    ng-options="m.id as m.id for m in model.profiles">
+                </select>
+            </td>
+            <td class="tip-info" ng-bind="model.profileInfo"></td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Remote_Endpoint')"></td>
+            <td>
+                <select id="slct_c2sadvremoteendpoing" 
+                    ng-model="edit.remote_endpoint.type"
+                    ng-options="m.id as m.displayName for m in schema.endpoint">
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input type="text" id="txt_c2sadvremoteendpointstaticip"
+                    ng-show="edit.remote_endpoint.type === 'static-ip'"
+                    ng-required="edit.remote_endpoint.type === 'static-ip'"
+                    ng-ipv4-ip="edit.remote_endpoint.type === 'static-ip'"
+                    ng-model="edit.remote_endpoint.static_ip">
+                </input>
+                <input type="text" id="c2sadvremoteendpointfqdn"
+                    ng-show="edit.remote_endpoint.type === 'fqdn'"
+                    ng-required="edit.remote_endpoint.type === 'fqdn'"
+                    ng-fqdn="edit.remote_endpoint.type === 'fqdn'"
+                    ng-model="edit.remote_endpoint.fqdn">
+                </input>
+            </td>
+        </tr>
+        <tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Client_to_Site_Local_Group_Setup')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('Client_to_Site_Local_IP_Type')"></td>
+            <td>
+                <select id="slct_c2sadvlocaliptype"
+                    ng-model="edit.local_group.type"
+                    ng-options="m.id as m.displayName for m in schema.group">
+                </select>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.type === 'subnet'">
+            <td ng-bind="DICT('Client_to_Site_IP_Addr')"></td>
+            <td>
+                <input id="txt_c2sadvlocalsubnetip" type="text" ng-required="edit.local_group.type === 'subnet'" ng-ipv4-ip="edit.local_group.type === 'subnet'" ng-model="edit.local_group.subnet_ip"></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.type === 'subnet'">
+            <td ng-bind="DICT('Client_to_Site_Subnet_Mask')"></td>
+            <td>
+                <input id="txt_c2sadvlocalsubnetnetmask" type="text" ng-required="edit.local_group.type === 'subnet'" ng-ipv4-netmask="edit.local_group.type === 'subnet'" ng-model="edit.local_group.subnet_netmask"></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.type === 'ip'">
+            <td ng-bind="DICT('Client_to_Site_IP_Addr')"></td>
+            <td>
+                <input id="txt_c2sadvlocalip" type="text" ng-required="edit.local_group.type === 'ip'" ng-ipv4-ip="edit.local_group.type === 'ip'" ng-model="edit.local_group.ip"></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.type === 'ip-range'">
+            <td ng-bind="DICT('Client_to_Site_Begin_IP')"></td>
+            <td>
+                <input id="txt_c2sadvlocalbeginip" type="text" ng-required="edit.local_group.type === 'ip-range'" ng-ipv4-ip="edit.local_group.type === 'ip-range'" ng-model="edit.local_group.begin_ip"></input>
+            </td>
+        </tr>
+        <tr ng-show="edit.local_group.type === 'ip-range'">
+            <td ng-bind="DICT('Client_to_Site_End_IP')"></td>
+            <td>
+                <input id="txt_c2sadvlocalendip" type="text" ng-required="edit.local_group.type === 'ip-range'" ng-ipv4-ip="edit.local_group.type === 'ip-range'" compare-ip-range="edit.local_group.begin_ip" ng-model="edit.local_group.end_ip"></input>
+            </td>
+        </tr>
+    </table>
+    <hr class="page-content-seperator"></hr>
+    <div ng-include="'ipsec_c2s_mode_configure.html'" ng-cloak></div>
+    <hr class="page-content-seperator"></hr>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('Client_to_Site_Additional_Settings')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200 full-width">
+        <tr ng-show="edit.ike_mode === 'v1'">
+            <td>
+                <input type="checkbox" id="chk_c2sadvaggressive" ng-model="edit.aggressive_mode">
+					<span ng-bind="DICT('Client_to_Site_Aggressive_Mode')"></span>
+                </input>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="checkbox" id="chk_c2sadvcompress" ng-model="edit.compress">
+					<span ng-bind="DICT('Client_to_Site_Compress')"></span>
+                </input>
+            </td>
+        </tr>
+    </table>
+</div>
+</script>

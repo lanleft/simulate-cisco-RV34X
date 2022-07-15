@@ -1,0 +1,133 @@
+module ciscosb-types {
+    namespace "http://cisco.com/ns/ciscosb/types";
+    prefix ciscosb-types;
+    import ietf-yang-types { prefix yang; }
+    import tailf-common { prefix tailf; }
+    import tailf-xsd-types {
+        prefix xs;
+    }
+    revision 2016-12-29 {
+        description
+                "Initial Version";
+    }
+    typedef percent {
+        type uint8 {
+            range "0 .. 100";
+        }
+        description "Percentage";
+    }
+    typedef image-state {
+        type enumeration {
+            enum active;
+            enum inactive;
+        }
+    }
+    typedef firmware-state {
+        type image-state;
+    }
+    typedef bootloader-state {
+        type image-state;
+    }
+    typedef config-type {
+        type enumeration {
+            enum config-backup;
+            enum config-startup;
+            enum config-mirror;
+            enum config-running;
+        }
+    }
+    typedef reboot-option-type {
+        type enumeration {
+            enum none;
+            enum factory-default-config;
+            enum factory-default-config-certificate;
+        }
+    }
+    typedef email-address-type {
+        type string;
+    }
+    typedef wifi-id-type {
+        type yang:mac-address;
+        description
+          "wifi-id  it should be the mac address of wifi device";
+      }
+      typedef wifi-vlan-assignment-type {
+        type enumeration {
+          enum "Static";
+          enum "Auto" { tailf:code-name "enum-wifi-vlan_Auto"; }
+        }
+        description
+          "Indicate how to assign vlan , static means user can input a vlan id, Auto means system will assign the default vlan id";
+      }
+      typedef wifi-band-assigned-type {
+        type enumeration {
+          enum "2.4GHz";
+          enum "5GHz";
+          enum "Auto" { tailf:code-name "enum-wifi-band_Auto"; }
+        }
+        description
+          "Indicate which band will be assigned, Auto means the system default band will be assigned";
+      }
+      typedef wifi-band-type {
+        type enumeration {
+          enum "2.4GHz";
+          enum "5GHz";
+        }
+        description
+          "Two kind of band type";
+      }
+      typedef wifi-security-mode-type {
+        type enumeration {
+          enum "None";
+          enum "WEP-64";
+          enum "WEP-128";
+          enum "WPA-Personal";
+          enum "WPA2-Personal";
+          enum "WPA-WPA2-Personal";
+          enum "WPA-Enterprise";
+          enum "WPA2-Enterprise";
+          enum "WPA-WPA2-Enterprise";
+        }
+      }
+    typedef aes-cfb-128-encrypted-string {
+        //type tailf:aes-cfb-128-encrypted-string;
+	type string;
+    }
+    typedef hexBinary {
+        type xs:hexBinary;
+    }
+   typedef if-config-mode {
+       type enumeration {
+           enum auto { tailf:code-name enum-configure-mode-auto; }
+           enum manual { tailf:code-name enum-configure-mode-manual; }
+       }
+   }
+   typedef poe-power-mode {
+       type enumeration {
+           enum class-limit {tailf:code-name enum-power-mode-class-limit; }
+           enum port-limit {tailf:code-name enum-power-mode-port-limit; }
+       }
+   }
+   typedef poe-power-standard {
+       type enumeration {
+           enum "802.3af";
+           enum "802.3at";
+           enum "802.3bt";
+       }
+   }
+   typedef poe-detection-state {
+       type enumeration {
+           enum "signal";
+           enum "spare";
+       }
+   }
+   typedef firmware-notification-type {
+       type enumeration {
+           enum email { tailf:code-name "enum-notification-email"; }
+           enum gui;
+       }
+   }
+   typedef hex-list {
+       type tailf:hex-list;
+   }
+}

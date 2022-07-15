@@ -1,0 +1,9 @@
+/etc/init.d/abootpattern0
+/etc/init.d/abootpattern1
+/etc/init.d/abootpattern2
+/etc/init.d/abootpattern3
+/etc/init.d/abootpattern4
+/usr/sbin/rtkssdk
+/etc/init.d/switch
+/usr/sbin/swlinkmon
+/etc/config/switch

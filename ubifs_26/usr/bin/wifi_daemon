@@ -1,0 +1,53 @@
+#!/bin/sh
+
+/usr/bin/wifi_bttn_init.sh
+
+WPS_PID_FILE="/var/run/wps_daemon.pid"
+STA_CONNECTION="/sys/module/wl/parameters/sta_connection"
+SET_DONE_FLAG=0
+
+while true; do
+	wifi_button="$(/usr/bin/wifi_bttn_check.sh)"
+
+	if [ "$wifi_button" = "0" ]; then
+		[ -e /var/lock/wifi_button ] && {
+			logger -t wireless "Wireless physical button is OFF"
+			rm /var/lock/wifi_button
+			/sbin/wifi down
+			[ -e ${WPS_PID_FILE} ] && {
+				start-stop-daemon -K -q -s SIGTERM -n wps_daemon
+				rm -rf ${WPS_PID_FILE}
+			}
+
+			/etc/init.d/lot26 stop
+		}
+	else
+		[ -e $STA_CONNECTION ] && {
+			sta_cnt="$(cat $STA_CONNECTION)"
+			if [ -n "$sta_cnt" -a $sta_cnt -gt 0 ]; then
+				[ $SET_DONE_FLAG -eq 0 ] && {
+					echo 2 > /proc/irq/36/smp_affinity
+					SET_DONE_FLAG=1
+				}
+			else
+				[ $SET_DONE_FLAG -eq 1 ] && {
+					echo 3 > /proc/irq/36/smp_affinity
+					SET_DONE_FLAG=0
+				}
+			fi
+		}
+		[ ! -e /var/lock/wifi_button ] && {
+			logger -t wireless "Wireless physical button is ON"
+			touch /var/lock/wifi_button
+			[ -e ${WPS_PID_FILE} ] || {
+				start-stop-daemon -S -b -m -p ${WPS_PID_FILE} -x wps_daemon
+			}
+
+			/sbin/wifi up
+
+			/etc/init.d/lot26 start
+		}
+	fi
+
+	sleep 1
+done

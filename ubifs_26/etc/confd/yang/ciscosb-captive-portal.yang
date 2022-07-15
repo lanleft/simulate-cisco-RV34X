@@ -1,0 +1,151 @@
+module ciscosb-captive-portal {
+    namespace "http://cisco.com/ns/ciscosb/captive-portal";
+    prefix ciscosb-cp;
+    import ietf-inet-types { prefix inet; }
+    import ciscosb-types { prefix ciscosb-types; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module defines captive portal related.";
+    revision 2016-07-28 {
+        description "1.Adding rpc to terminate captive portal user
+            2.Changing captive portal user state";  
+            reference "";
+    }
+    revision 2016-04-25 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    typedef Portal-profile-ref {
+        type leafref {
+            path "/ciscosb-cp:portal-profiles/ciscosb-cp:portal-profile/ciscosb-cp:name";
+        }
+        description
+                "This type is used by data models that need to reference configured
+                interfaces.";
+    }
+    grouping IMAGE {
+        leaf uri {
+            description "image uri, e.g. image://abc.jpg";
+            type inet:uri;
+        }
+        leaf content {
+            description "image content";
+            type ciscosb-types:hexBinary;
+        }
+    }
+    container portal-profiles {
+        list portal-profile {
+            description "";
+            key name;
+            leaf name {
+                type string;
+                mandatory true;
+            }
+            leaf authentication {
+                type enumeration{
+                    enum noauth;
+                    enum auth;
+                }
+            }
+            choice redirect-mode {
+                case redirect-auto {
+                    leaf redirect-auto {
+                        type empty;
+                    }
+                }
+                case redirect-to-orginial-url {
+                    leaf original-url {
+                        type empty;
+                    }
+                }
+                case redirect-to-new-url {
+                    leaf redirect-url {
+                        type inet:uri;
+                        mandatory true;
+                    }
+                }
+            }
+            leaf session-timeout {
+                type uint32 {
+                    range "0 .. 1440";
+                }
+                default "0";
+                units "seconds";
+                description "Session timeout,  0 means unlimited ";
+            }
+            leaf idle-timeout {
+                type uint32 {
+                    range "0 .. 1440";
+                }
+                default "0";
+                units "seconds";
+                description "idle timeout,  0 means unlimited ";
+            }
+            container portal-ux {
+                leaf font-color {
+                    type enumeration {
+                        enum white;
+                        enum red;
+                        enum green;
+                        enum gray;
+                        enum blue;
+                        enum magenta;
+                        enum cyan;
+                        enum black;
+                    }
+                }
+                container background {
+                    uses IMAGE;
+                }
+                container logo {
+                    uses IMAGE;
+                }
+                leaf company-name {
+                    type string;
+                }
+                leaf welcome-message {
+                    type string;
+                }
+                leaf username-field {
+                    type string;
+                }
+                leaf password-field {
+                    type string;
+                }
+                leaf login-button-title {
+                    type string;
+                }
+                leaf copyright {
+                    type string;
+                }
+                leaf login-error-msg {
+                    type string;
+                }
+                leaf login-error-msg2 {
+                    type string;
+                }
+                container agreement {
+                    leaf enable {
+                        type boolean;
+                    }
+                    leaf agreement-text {
+                        type string;
+                    }
+                    leaf agreement-title {
+                        type string;
+                    }
+                    leaf acceptance-use-policy {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+}

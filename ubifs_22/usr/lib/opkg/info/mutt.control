@@ -1,0 +1,8 @@
+Package: mutt
+Version: 1.5.16-2
+Depends: libc, librt, libpthread, libopenssl, libncurses
+Source: package/mutt
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 288001
+Description:  Console mail client

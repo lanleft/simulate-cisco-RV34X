@@ -1,0 +1,9 @@
+Package: libwebsockets
+Version: 2016-05-05-5500643f3c4561b6fe46259109a558c1e4c05545
+Depends: libc, librt, libpthread, zlib, libopenssl
+Source: package/pegatron/libwebsockets
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 44720
+Description:  libwebsockets
+ This package contains libwebsocket libraries

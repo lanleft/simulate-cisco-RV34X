@@ -1,0 +1,8 @@
+Package: haserl
+Version: 0.9.32-1
+Depends: libc, librt, libpthread
+Source: package/openwrt/utils/haserl
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 10069
+Description:  A CGI wrapper to embed shell scripts in HTML documents

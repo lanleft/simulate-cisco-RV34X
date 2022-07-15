@@ -1,0 +1,111 @@
+module ciscosb-fw-port-forwarding {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-port-forwarding";
+  prefix "fw-port-forwarding-rules";
+  import ietf-inet-types {
+    prefix "inet";
+  }
+  import ciscosb-service {
+    prefix "fw-service";
+  }
+  import ietf-interfaces { prefix if; }
+  import ciscosb-common { prefix ciscosb-common; }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines a component that describes the Firewall Port Forwarding configuration.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-09 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall Port Forwarding module";
+    reference "RFC 6020";
+  }
+  container port-forwarding-rules {
+    description "This container contains list of port forwarding rules";
+    list port-forwarding-entry {
+      key "external-service interface";
+   ordered-by user;
+      description "Port-forwarding entry";
+      leaf external-service {
+        type leafref {
+            path "/fw-service:services/fw-service:service/fw-service:name";
+        }
+        description "Name of the external  service";
+      }
+      leaf internal-service {
+        type leafref {
+            path "/fw-service:services/fw-service:service/fw-service:name";
+        }
+        description "Name of the internal  service";
+      }
+      leaf interface {
+       type string;
+          description "Port forwarding interface name. all means all interface";
+      }
+      leaf ipaddress {
+       type inet:ip-address;
+       description "The address of the host that the packet needs to be forwarded";
+      }
+      leaf status {
+       type boolean;
+       description "Enable/disable port forwarding";
+      }
+    }
+  }
+  container upnp-port-forwarding-rules {
+    description "This container contains list of upnp port forwarding rules";
+     config false;
+    list upnp-port-forwarding-entry {
+      key external-service;
+      description "Upnp-Port-forwarding entry";
+      leaf upnp-source {
+          type boolean;
+          description "True if port forwarding source is UPnP";
+      }
+      leaf external-service {
+        type string;
+        description "Name of the external  service";
+      }
+      leaf internal-service {
+        type string;
+        description "Name of the internal  service";
+      }
+      leaf interface {
+          type if:interface-ref;
+       description "Port forwarding interface name";
+      }
+      leaf ipaddress {
+       type inet:ip-address;
+       description "The address of the host that the packet needs to be forwarded";
+      }
+      leaf status {
+       type boolean;
+       description "Enable/disable port forwarding";
+      }
+    }
+  }
+  rpc delete-upnp-rule {
+   input {
+    leaf external-service {
+          type string;
+          description "Name of the external  service, e.g HTTP(TCP/80)";
+    }
+       leaf internal-service {
+         type string;
+         description "Name of the internal  service, e.g HTTP(TCP/8080)";
+       }
+       leaf ipaddress {
+        type inet:ip-address;
+        description "The address of the host that the packet needs to be forwarded";
+       }
+   }
+  }
+}

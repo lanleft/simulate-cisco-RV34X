@@ -1,0 +1,8 @@
+Package: python-setuptools
+Version: 5.2-1
+Depends: libc, librt, libpthread
+Source: package/python-setuptools
+Section: language-python
+Architecture: comcerto2000
+Installed-Size: 201460
+Description:  Easily download, build, install, upgrade, and uninstall Python packages.

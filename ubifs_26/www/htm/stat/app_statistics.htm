@@ -1,0 +1,89 @@
+<div ng-controller="app_statistics_main" id="application-statistics">
+    <div ng-if="ui_data.data_ready">
+        <!--        Main Page  -->
+        <div ng-if="ui_data.page === 'main'">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Application_Statistics')"></div>
+            </div>
+            <div class="page-content-container">
+                <message-box ng-if="ui_data.no_license">
+                    <table>
+                        <tr>
+                            <td class="align-top">
+                                <i class="icon-warning message-icon"></i>
+                            </td>
+                            <td>
+                                <span pg-bind-html="ui_data.combineNote"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </message-box>
+                <div ng-class="{'nopHint': ui_data.no_license}">
+                    <div>
+                        <span ng-bind="DICT('Application_Statistics_Current_WAN_Traffic_Update')"></span>
+                        <select class="page-m-indent" ng-model="ui_data.update_timer" ng-options="m.id as m.displayName for m in schema.update_timers"></select>
+                        <span class="page-indent1" ng-bind="DICT('Application_Statistics_WAN_Interface')"></span>
+                        <select class="page-m-indent"
+                                ng-model="ui_data.sel_interface"
+                                ng-options="m.id as m.displayName for m in model.interfaces"
+                                ng-change="change_interface()"
+                        ></select>
+                    </div>
+                    <br/>
+                    <div class="chart-cntr">
+                        <div class="chart-title-cntr">
+                            <div class="chart-title" ng-bind="DICT('Application_Statistics_WAN_Traffic')"></div>
+                        </div>
+                        <div class="chart-content-cntr">
+                            <canvas chart-data="model.traffic_data[ui_data.sel_interface].chart_data"
+                                    chart-labels="model.traffic_labels"
+                                    chart-options="model.traffic_options"
+                                    chart-dataset-override="model.traffic_override"
+                                    class="chart chart-line chart-content"
+                            ></canvas>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <span ng-bind="DICT('Application_Statistics_Application_Since')"></span>
+                        <span ng-bind="model.application_reset_time_str" class="page-indent"></span>
+                        <button ng-click="funs.reset_state()" class="page-m-indent icon-btn-reset"></button>
+                    </div>
+                    <br/>
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Application_Statistics_Applications')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button" class="grid-btn-refresh" ng-click="funs.refresh()"></button>
+                            </div>
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridApplicationOptions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- End page-content-cntr -->
+        </div>
+        <!--        Clinet Page-->
+        <div ng-if="ui_data.page === 'sub'">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Application_Statistics_Application') + ':' + model.client_app_name"></div>
+                <div class="page-button-container">
+                    <button type="button" class="btn-apply" ng-click="funs.save()"><span ng-bind="DICT('Application_Statistics_Save')"></span></button>
+                    <button type="button" class="btn-cancel" ng-click="funs.cancel()"><span ng-bind="DICT('Application_Statistics_Cancel')"></span></button>
+                    <button type="button" class="btn-back" ng-click="funs.back()"><span ng-bind="DICT('Application_Statistics_Back')"></span></button>
+                </div>
+            </div>
+            <div class="page-content-container">
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="model.client_app_name"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridClientOptions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

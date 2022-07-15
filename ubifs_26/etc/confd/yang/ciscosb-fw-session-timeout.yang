@@ -1,0 +1,48 @@
+module ciscosb-fw-session-timeout {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-session-timeout";
+  prefix "fw-session-timeout";
+  import ciscosb-common { prefix ciscosb-common; }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines a component that describes the configuration of firewall session timeout related modules.";
+  revision 2016-01-04 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall session timeout module";
+    reference "RFC 6020";
+  }
+  container session-timeout-entry {
+    leaf tcp-session-timeout {
+      type uint32;
+      description "TCP Session Timeout value.";
+    }
+    leaf udp-session-timeout {
+      type uint32;
+      description "UDP Session Timeout value.";
+    }
+    leaf icmp-session-timeout {
+      type uint32;
+      description "ICMP Session Timeout value.";
+    }
+    leaf max-concurrent-connections {
+      type uint32;
+      description "Maximum concurrent connections value.";
+    }
+  }
+  container sessions-state {
+    description "This container contains the number of current connections present in the system";
+     config false;
+ leaf current-connections {
+   type uint32;
+   description "Current number of connections.";
+ }
+  }
+  rpc clear-connections {
+  }
+}

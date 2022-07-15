@@ -1,0 +1,28 @@
+<div ng-controller="networkAddressTranslationCtrl">
+	<form name="form" novalidate ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Network_Address_Translation_NAT')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" id="btn_networkaddresstranslation_save" ng-click="fun.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Network_Address_Translation_Apply')"></span>
+                </button>
+                <button class="btn-cancel" id="btn_networkaddresstranslation_cancel" ng-click="fun.cancel()">
+                    <span ng-bind="DICT('Network_Address_Translation_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Network_Address_Translation_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridNATOptions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>

@@ -1,0 +1,1159 @@
+module ciscosb-vpn-ipsec {
+    namespace "http://cisco.com/ns/ciscosb/vpn-ipsec";
+ prefix ciscosb-vpn-ipsec;
+    import iana-if-type { prefix ianaift; }
+ import ietf-inet-types { prefix inet; }
+ import ietf-interfaces { prefix if; }
+ import ciscosb-vlan { prefix ciscosb-vlan; }
+    import ciscosb-common { prefix ciscosb-common; }
+ import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    import ciscosb-tunnel {prefix ciscosb-tunnel; }
+    import ciscosb-types { prefix ciscosb-types; }
+ organization "Cisco Systems, Inc.";
+ contact
+  "Cisco Systems, Inc. 
+  Customer Service
+  E-mail: feiqiu@cisco.com";
+ description
+  "This module contains a collection of YANG definitions 
+  for Cisco IPSec VPN configuration.
+  Copyright (c) 2015 by Cisco Systems, Inc.
+  All rights reserved.";
+  revision 2016-10-20 {
+      description "merge from BBII
+                   delete default value for dpd-action-type";
+  }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-23 {
+      description "Add revision ";
+      reference "";
+  }
+ revision 2016-05-17 {
+  description
+   "Support manually input IP address as VPN Identifier type";
+  reference
+   "";
+ }
+ revision 2015-04-29 {
+  description
+   "Initial revision.";
+  reference
+   "Proposed IPSec VPN configuration";
+ }
+ grouping IPSEC-PROFILE {
+  leaf ipsec-profile {
+   type leafref {
+    path "/ciscosb-vpn-ipsec:ipsec-profiles/ciscosb-vpn-ipsec:ipsec-profile/ciscosb-vpn-ipsec:profile-name";
+   }
+   description "Profile";
+  }
+ }
+ grouping CERTIFICATE {
+  leaf certificate {
+   type string;
+   description "certificate reference";
+  }
+ }
+ identity dh-group {
+  description "DH group algorithm.";
+ }
+ identity dh-group-1 {
+  base dh-group;
+  description "DH group1 768bits.";
+ }
+ identity dh-group-2 {
+  base dh-group;
+  description "DH group2 1024bits.";
+ }
+ identity dh-group-5 {
+  base dh-group;
+  description "DH group5 1536bits.";
+ }
+ identity dh-group-14 {
+  base dh-group;
+  description "DH group14 2048bits.";
+ }
+ identity encryption-algorithm {
+  description "Encryption algorithm.";
+ }
+ identity esp-des {
+  base encryption-algorithm;
+  description "DES.";
+ }
+ identity esp-3des {
+  base encryption-algorithm;
+  description "3DES.";
+ }
+ identity esp-aes-128 {
+  base encryption-algorithm;
+  description "AES 128.";
+ }
+ identity esp-aes-192 {
+  base encryption-algorithm;
+  description "AES 192.";
+ }
+ identity esp-aes-256 {
+  base encryption-algorithm;
+  description "AES 256.";
+ }
+ identity authentication-algorithm {
+  description "Authentication algorithm.";
+ }
+ identity md5 {
+  base authentication-algorithm;
+  description "MD5.";
+ }
+ identity sha1 {
+  base authentication-algorithm;
+  description "SHA1.";
+ }
+ identity sha2-256 {
+  base authentication-algorithm;
+  description "SHA2.";
+ }
+ typedef Dh-group-type {
+  type identityref {
+   base "dh-group";
+  }
+  description "type define for dh-group.";
+ }
+ typedef Encryption-type {
+  type identityref {
+   base "encryption-algorithm";
+  }
+  description "type define for encryption-algorithm.";
+ }
+ typedef Authentication-type {
+  type identityref {
+   base "authentication-algorithm";
+  }
+  description "type define for authentication-algorithm.";
+ }
+ typedef Dpd-action-type {
+  type enumeration {
+   enum restart;
+   enum clear;
+   enum hold;
+   enum close;
+  }
+ }
+ grouping ENDPOINT {
+  choice type {
+   default static-ip;
+   case static-ip {
+    leaf static-ip {
+     type inet:ipv4-address;
+    }
+   }
+   case fqdn {
+    leaf fqdn {
+     type string;
+    }
+   }
+   case dynamic-ip {
+    leaf dynamic-ip {
+     type empty;
+    }
+   }
+  }
+ }
+ grouping SECURITY-IDENTIFIER {
+  choice type {
+   default interface;
+   case interface {
+          leaf interface {
+         type if:interface-ref;
+         description "Interface";
+          }
+    }
+   case ip {
+    leaf ip {
+     type inet:ipv4-address;
+    }
+   }
+   case fqdn {
+    leaf fqdn {
+     type string;
+    }
+   }
+   case user-fqdn {
+    leaf user-fqdn {
+     type string;
+    }
+   }
+   case der-asn1-dn {
+    leaf der-asn1-dn {
+     type string;
+    }
+   }
+  }
+ }
+ grouping SECURITY-GROUP {
+  choice type {
+   default subnet;
+   case subnet {
+    container subnet {
+     leaf ip {
+      type inet:ipv4-address;
+     }
+     leaf netmask {
+      type inet:ipv4-address;
+     }
+    }
+   }
+   case ip {
+    container ip {
+     leaf ip {
+      type inet:ipv4-address;
+     }
+    }
+   }
+   case ip-range {
+    container ip-range {
+     leaf begin-ip {
+      type inet:ipv4-address;
+     }
+     leaf end-ip {
+      type inet:ipv4-address;
+     }
+    }
+   }
+   case ip-group {
+    leaf-list ip-group {
+     type leafref {
+      path "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:name";
+     }
+    }
+   }
+            case tunnel {
+                leaf tunnel {
+                    type leafref {
+                        path "/if:interfaces/if:interface/if:name";
+                    }
+                    must "/if:interfaces/if:interface[if:name = current()]/if:type = 'ianaift:tunnel'";
+                }
+            }
+  }
+ }
+ grouping GROUP-SETUP {
+  container identifier {
+   uses SECURITY-IDENTIFIER;
+  }
+  container group {
+   uses SECURITY-GROUP;
+  }
+ }
+ grouping IKE-AUTHENTICATION {
+  choice method {
+     default preshared-key;
+    case preshared-key {
+     leaf password {
+      type ciscosb-types:aes-cfb-128-encrypted-string;
+      description "Preshared key.";
+     }
+     leaf strength-meter {
+      type uint8;
+      description "Strength meter.";
+     }
+     leaf minimum-complexity {
+      type boolean;
+      default true;
+      description "Minimum complexity.";
+     }
+    }
+    case certificate {
+     uses CERTIFICATE;
+    }
+   }
+ }
+ grouping IKEv1-AUTHENTICATION {
+  choice method {
+    default preshared-key;
+   case preshared-key {
+    leaf password {
+     type ciscosb-types:aes-cfb-128-encrypted-string;
+     description "Preshared key.";
+    }
+    leaf strength-meter {
+     type uint8;
+     description "Strength meter.";
+    }
+    leaf minimum-complexity {
+     type boolean;
+     default true;
+     description "Minimum complexity.";
+    }
+   }
+   case certificate {
+                container local-certificate {
+                    uses CERTIFICATE;
+                }
+                container remote-certificate {
+                    uses CERTIFICATE;
+                }
+   }
+  }
+ }
+ grouping IKEv1-AUTHENTICATION2 {
+  choice method {
+   default preshared-key;
+   case preshared-key {
+    leaf group-name {
+     type string;
+     description "Group name.";
+    }
+    leaf password {
+     type ciscosb-types:aes-cfb-128-encrypted-string;
+     description "Preshared key.";
+    }
+   }
+   case certificate {
+    uses CERTIFICATE;
+   }
+  }
+ }
+ grouping ADVANCE-ADDITIONAL {
+  leaf aggressive-mode {
+   type boolean;
+   description "Aggressive mode.";
+  }
+  leaf compress {
+   type boolean;
+   description "Compress.";
+  }
+  leaf netbios-broadcast {
+   type boolean;
+   default false;
+   description "Netbios broadcast.";
+  }
+  container keepalive {
+   leaf enable {
+    type boolean;
+    default false;
+    description "Enable Keep alive.";
+   }
+   leaf monitoring-interval {
+    type uint16 {
+     range "10 .. 999";
+    }
+    units "seconds";
+    description "Set monitoring interval.";
+   }
+  }
+  container dpd {
+   leaf enabled {
+    type boolean;
+    default false;
+    description "Enable DPD.";
+   }
+   leaf delay-time {
+    type uint16 {
+     range "10 .. 300";
+    }
+    default "10";
+    units "seconds";
+    description "Delay time.";
+   }
+   leaf detection-timeout {
+    type uint16 {
+     range "10 .. 1800";
+    }
+    default "10";
+    units "seconds";
+    description "Detection timeout.";
+   }
+   leaf action {
+    type Dpd-action-type;
+    description "DPD action.";
+   }
+  }
+  leaf non-rfc-compliant {
+   type boolean;
+   default false;
+   description "Non-RFC compliant.";
+  }
+ }
+ grouping PHASE-OPTIONS {
+  leaf dh-group {
+   type Dh-group-type;
+   description "DH group.";
+  }
+  leaf encryption {
+   type Encryption-type;
+   description "Encryption.";
+  }
+  leaf authentication {
+   type Authentication-type;
+   description "Authentication.";
+  }
+ }
+    grouping SPLIT-TUNNEL {
+        container split-tunnel {
+            leaf enable {
+                type boolean;
+                description "Enable split tunnel.";
+            }
+            list networks {
+                key ip;
+                leaf ip {
+                    type inet:ipv4-address;
+                    description "IP address.";
+                }
+                leaf netmask {
+                    type inet:ipv4-address;
+                    description "Netmask.";
+                }
+            }
+        }
+    }
+ container ipsec-profiles {
+  list ipsec-profile {
+   key profile-name;
+            ordered-by user;
+   description "Configuration of the IPSec Profile";
+   leaf profile-name {
+    type string;
+    mandatory true;
+    description "Profile name";
+   }
+   container keying-mode {
+    choice keying-mode {
+     default auto;
+     case auto {
+                        container ike-version {
+                            choice ike-version {
+                                case ikev1 {
+                                    leaf v1 {
+                                        type empty;
+                                    }
+                                }
+                                case ikev2 {
+                                    leaf v2 {
+                                        type empty;
+                                    }
+                                }
+                            }
+                        }
+      container phase1-options {
+       uses PHASE-OPTIONS;
+       leaf sa-lifetime {
+        type uint32 {
+         range "120 .. 86400";
+        }
+        default "28800";
+        units "seconds";
+        description "SA lifetime.";
+       }
+      }
+      container phase2-options {
+       choice protocol {
+        default esp;
+        case esp {
+         leaf encryption {
+          type Encryption-type;
+          description "Encryption.";
+         }
+        }
+        case ah {
+         leaf empty {
+          type empty;
+         }
+        }
+       }
+       leaf dh-group {
+        type Dh-group-type;
+        description "DH group.";
+       }
+       leaf authentication {
+        type Authentication-type;
+        description "Authentication.";
+       }
+       leaf sa-lifetime {
+        type uint32 {
+         range "120 .. 86400";
+        }
+        default "3600";
+        units "seconds";
+        description "SA lifetime.";
+       }
+       leaf perfect-forward-secrecy {
+        type boolean;
+        default true;
+        description "PFS.";
+       }
+      }
+     }
+     case manual {
+      leaf spi-incoming {
+       type uint32 {
+        range "256 .. 4294967294";
+       }
+       default "256";
+       description "SPI incoming.";
+      }
+      leaf spi-outgoing {
+       type uint32 {
+        range "256 .. 4294967294";
+       }
+       default "256";
+       description "SPI outgoing.";
+      }
+      leaf encryption {
+       type Encryption-type;
+       default "esp-3des";
+       description "Encryption.";
+      }
+      leaf encryption-key-in {
+       type string;
+       description "Encryption key in.";
+      }
+      leaf encryption-key-out {
+       type string;
+       description "Encryption key out.";
+      }
+      leaf authentication {
+       type Authentication-type;
+       default "md5";
+       description "Authentication.";
+      }
+      leaf authentication-key-in {
+       type string;
+       description "Authentication key in.";
+      }
+      leaf authentication-key-out {
+       type string;
+       description "Authentication key out.";
+      }
+     }
+    }
+   }
+  }
+ }
+ container site-to-sites {
+  leaf max-tunnel {
+   type uint16;
+   description "Max tunnel";
+  }
+  list site-to-site {
+   key connection-name;
+   description "Configuration of the S2S IPSec VPN";
+            ordered-by user;
+   leaf enable {
+    type boolean;
+    default true;
+    description "Activate/inactivate this connection.";
+   }
+   leaf connection-name {
+    type string;
+    mandatory true;
+    description "Connection name";
+   }
+   leaf interface {
+    type if:interface-ref;
+    description "Interface";
+   }
+   uses IPSEC-PROFILE;
+   container remote-endpoint {
+    uses ENDPOINT;
+   }
+   container local-group {
+    uses GROUP-SETUP;
+   }
+   container remote-group {
+    uses GROUP-SETUP;
+   }
+   choice ike-version {
+     case ikev2 {
+       container local-authentication{
+         uses IKE-AUTHENTICATION;
+       }
+       container remote-authentication{
+         uses IKE-AUTHENTICATION;
+       }
+      }
+      case ikev1 {
+       container symm-authentication{
+         uses IKEv1-AUTHENTICATION;
+       }
+      }
+   }
+   uses ADVANCE-ADDITIONAL;
+   container extended-authentication {
+    leaf enable {
+     type boolean;
+     default false;
+     description "Enable extended authentication.";
+    }
+    choice authentication-method {
+     default user;
+     case user {
+      leaf user-name {
+       type string;
+       description "User name.";
+      }
+      leaf password {
+       type ciscosb-types:aes-cfb-128-encrypted-string;
+       description "Password.";
+      }
+     }
+     case group {
+      leaf group {
+       type empty;
+       description "Group authentication.";
+      }
+     }
+    }
+   }
+   container split-dns {
+    leaf enable {
+     type boolean;
+     default false;
+     description "Enable split DNS.";
+    }
+    leaf primary-dns {
+     type string;
+     description "DNS server.";
+    }
+    leaf secondary-dns {
+     type string;
+     description "DNS server.";
+    }
+    list fqdn {
+     key domain-name;
+     max-elements 6;
+     leaf domain-name {
+      type string;
+      description "Domain name.";
+     }
+    }
+   }
+   container failover {
+    leaf enable {
+     type boolean;
+     description "Enable tunnel backup.";
+    }
+    leaf remote-backup-ip {
+     type inet:host;
+     description "Remote backup IP address.";
+    }
+    leaf interface {
+     type if:interface-ref;
+     description "Interface";
+    }
+   }
+  }
+ }
+ container site-to-site-state {
+        config false;
+  container connections {
+   list connection {
+    key name;
+    config false;
+    leaf number {
+     type uint8;
+     description "Connection number";
+    }
+    leaf name {
+     type string;
+     description "Name";
+    }
+    leaf enable {
+     type boolean;
+     description "Enable";
+    }
+    leaf status {
+     type string;
+     description "Status";
+    }
+    leaf auth {
+     type string;
+     description "Phase2 enc, authentication, group";
+    }
+    leaf local-group {
+     type string;
+     description "Local group";
+    }
+    leaf remote-group {
+     type string;
+     description "Remote group ";
+    }
+    leaf remote-gateway {
+     type string;
+     description "Remote gateway";
+    }
+    leaf ipsec-profile {
+     type string;
+     description "IPSec profile";
+    }
+    leaf wan-interface {
+     type string;
+     description "WAN interface";
+    }
+    leaf ike-sa-time {
+     type uint32;
+     description "IKE SA time";
+    }
+    leaf ipsec-sa-time {
+     type uint32;
+     description "IPSec SA time";
+    }
+    leaf tx-bytes {
+     type uint32;
+     units "bytes";
+     description "TX-bytes";
+    }
+    leaf rx-bytes {
+     type uint32;
+     units "bytes";
+     description "RX-bytes";
+    }
+    leaf tx-packets {
+     type uint32;
+     description "TX-packets";
+    }
+    leaf rx-packets {
+     type uint32;
+     description "RX-packets";
+    }
+   }
+  }
+ }
+ rpc s2s-connect {
+  input {
+   leaf connection-name {
+    type leafref {
+     path "/ciscosb-vpn-ipsec:site-to-sites/ciscosb-vpn-ipsec:site-to-site/ciscosb-vpn-ipsec:connection-name";
+    }
+    description "The connection name that should be connected";
+   }
+  }
+  description "Do connect the site to site vpn";
+ }
+ rpc s2s-disconnect {
+  input {
+   leaf connection-name {
+    type leafref {
+     path "/ciscosb-vpn-ipsec:site-to-sites/ciscosb-vpn-ipsec:site-to-site/ciscosb-vpn-ipsec:connection-name";
+    }
+    description "The connection name that should be disconnected";
+   }
+  }
+  description "Do disconnect the site to site vpn";
+ }
+ container client-to-sites {
+  leaf max-group {
+   type uint16;
+   description "Max group";
+  }
+  list client-to-site {
+   key "seq";
+   description "Configuration of the C2S IPSec VPN";
+   leaf seq {
+    type string;
+    description "number is used for ordering";
+   }
+   container local-identifier {
+    uses SECURITY-IDENTIFIER;
+   }
+   container remote-identifier {
+    uses SECURITY-IDENTIFIER;
+   }
+   choice type {
+    default cisco-vpn;
+    case cisco-vpn {
+     leaf group-name {
+      type string;
+      description "Group name";
+     }
+     container mode {
+      choice mode {
+       default client;
+       case client {
+        leaf start-ip {
+         type inet:ipv4-address;
+         description "Start IP.";
+        }
+        leaf end-ip {
+         type inet:ipv4-address;
+         description "End IP.";
+        }
+       }
+       case nem {
+        leaf nem {
+         type empty;
+        }
+       }
+      }
+     }
+     leaf backup-server-1 {
+      type inet:host;
+      description "Backup server.";
+     }
+     leaf backup-server-2 {
+      type inet:host;
+      description "Backup server.";
+     }
+     leaf backup-server-3 {
+      type inet:host;
+      description "Backup server.";
+     }
+    }
+    case third-party-vpn {
+     container extended-authentication {
+      leaf enable {
+       type boolean;
+       default false;
+       description "Enable extended authentication.";
+      }
+     }
+     container ip-pool {
+      leaf enable {
+       type boolean;
+       default false;
+       description "Enable IP pool for client LAN.";
+      }
+      leaf start-ip {
+       type inet:ipv4-address;
+       description "Start IP.";
+      }
+      leaf end-ip {
+       type inet:ipv4-address;
+       description "End IP.";
+      }
+     }
+     uses IPSEC-PROFILE;
+     container remote-endpoint {
+      uses ENDPOINT;
+     }
+     container local-group {
+      uses SECURITY-GROUP;
+     }
+     leaf aggressive-mode {
+      type boolean;
+      description "Aggressive mode.";
+     }
+     leaf compress {
+      type boolean;
+      description "Compress.";
+     }
+    }
+   }
+   leaf enable {
+    type boolean;
+    default true;
+    description "Activate/inactivate this connection.";
+   }
+   leaf interface {
+    type if:interface-ref;
+    description "Interface";
+   }
+   uses IKEv1-AUTHENTICATION;
+   leaf primary-dns {
+    type inet:host;
+    description "Primary DNS server.";
+   }
+   leaf secondary-dns {
+    type inet:host;
+    description "Secondary DNS server.";
+   }
+   leaf primary-wins {
+    type inet:host;
+    description "Primary WINS server.";
+   }
+   leaf secondary-wins {
+    type inet:host;
+    description "Secondary WINS server.";
+   }
+   leaf default-domain {
+    type inet:host;
+    description "Default domain name.";
+   }
+            uses SPLIT-TUNNEL;
+   container split-dns {
+    leaf enable {
+     type boolean;
+     description "Enable split DNS.";
+    }
+    list fqdn {
+     key fqdn;
+     leaf fqdn {
+      type string;
+      description "Domain name.";
+     }
+    }
+   }
+  }
+ }
+ container client-to-site-state {
+  list connection {
+   key group-name;
+   config false;
+   leaf group-name {
+    type string;
+    description "Group name";
+   }
+   leaf tunnels {
+    type uint16;
+    description "Connected tunnels number";
+   }
+   leaf auth {
+    type string;
+    description "Phase2 encryption, auth, group";
+   }
+   leaf local-group {
+    type string;
+    description "Local group";
+   }
+   leaf wan-interface {
+    type string;
+    description "WAN interface";
+   }
+   leaf authentication-method {
+    type string;
+    description "Authentication method";
+   }
+   leaf mode {
+    type string;
+    description "Client or NEM";
+   }
+   list client {
+    leaf ip {
+     type inet:ipv4-address;
+     description "IP address of Client";
+    }
+    leaf vip {
+     type inet:ipv4-address;
+     description "Virtual IP of Client";
+    }
+    leaf tx-bytes {
+     type uint32;
+     units "bytes";
+     description "TX-bytes";
+    }
+    leaf rx-bytes {
+     type uint32;
+     units "bytes";
+     description "RX-bytes";
+    }
+    leaf tx-packets {
+     type uint32;
+     description "TX-packets";
+    }
+    leaf rx-packets {
+     type uint32;
+     description "RX-packets";
+    }
+    leaf connect-time {
+     type uint32;
+     description "Connected time";
+    }
+   }
+  }
+ }
+ rpc c2s-disconnect {
+  input {
+   leaf group-name {
+    type leafref {
+     path "/ciscosb-vpn-ipsec:client-to-sites/ciscosb-vpn-ipsec:client-to-site/ciscosb-vpn-ipsec:seq";
+    }
+    description "The group name that should be disconnected";
+   }
+   leaf ip {
+    type inet:ipv4-address;
+    description "IP address of Client";
+            }
+            leaf vip {
+    type inet:ipv4-address;
+    description "Virtual IP of Client";
+            }
+  }
+  description "Do disconnect the client to site vpn";
+ }
+ container teleworker-vpn-clients {
+  leaf enable {
+   type boolean;
+   default false;
+  }
+  leaf auto-initiation-retry {
+   type boolean;
+   default false;
+  }
+  leaf retry-interval {
+   type uint16{
+    range "120 .. 1800";
+   }
+   default "120";
+   units "seconds";
+   description "Retry interval.";
+  }
+  leaf retry-limit {
+   type uint8{
+    range "0 .. 16";
+   }
+   default "2";
+   units "times";
+   description "Retry limit.";
+  }
+  list teleworker-vpn-client {
+   key name;
+   description "Configuration of the client to site IPSec VPN";
+   leaf name {
+     type string;
+     mandatory true;
+     description "Name";
+   }
+   leaf server {
+    type inet:host;
+    description "Remote address.";
+   }
+   leaf activate-connection-on-startup {
+    type boolean;
+   }
+   uses IKEv1-AUTHENTICATION2;
+   container local-identifier {
+    uses SECURITY-IDENTIFIER;
+   }
+   container remote-identifier {
+    uses SECURITY-IDENTIFIER;
+   }
+   choice mode {
+    case client {
+     leaf client {
+      type empty;
+     }
+    }
+    case nem {
+     leaf vlan {
+      type leafref {
+       path "/if:interfaces/if:interface/ciscosb-vlan:vlan-interface-settings/ciscosb-vlan:vlan-id";
+      }
+      description "VLAN.";
+     }
+    }
+   }
+   leaf user-name {
+    type string;
+    mandatory true;
+    description "User name.";
+   }
+   leaf user-password {
+    type ciscosb-types:aes-cfb-128-encrypted-string;
+    mandatory true;
+    description "User password.";
+   }
+   leaf confirm-user-password {
+    type ciscosb-types:aes-cfb-128-encrypted-string;
+    mandatory true;
+    description "Confirm user password.";
+   }
+   leaf backup-server-1 {
+    type string;
+    description "Backup server.";
+   }
+   leaf backup-server-2 {
+    type string;
+    description "Backup server.";
+   }
+   leaf backup-server-3 {
+    type string;
+    description "Backup server.";
+   }
+   leaf peer-timeout {
+    type uint16 {
+     range "30 .. 480";
+    }
+    default "120";
+    units "seconds";
+    description "Peer timeout.";
+   }
+  }
+ }
+ container teleworker-vpn-clients-state {
+  config false;
+  leaf status {
+   type string;
+  }
+  leaf name {
+   type string;
+   description "Name";
+  }
+  leaf primary-dns {
+   type inet:host;
+   description "Primary DNS server.";
+  }
+  leaf secondary-dns {
+   type inet:host;
+   description "Secondary DNS server.";
+  }
+  leaf primary-wins {
+   type inet:host;
+   description "Primary WINS server.";
+  }
+  leaf secondary-wins {
+   type inet:host;
+   description "Secondary WINS server.";
+  }
+  leaf default-domain {
+   type inet:host;
+   config false;
+   description "Default domain name.";
+  }
+  leaf backup-server-1 {
+   type inet:host;
+   description "Backup server.";
+  }
+  leaf backup-server-2 {
+   type inet:host;
+   description "Backup server.";
+  }
+  leaf backup-server-3 {
+   type inet:host;
+   description "Backup server.";
+  }
+  leaf split-tunnel {
+   type string;
+   description "Backup server.";
+  }
+  leaf split-dns {
+   type string;
+   description "Backup server.";
+  }
+ }
+ rpc teleworker-vpn-client-connect {
+  input {
+   leaf name {
+    type leafref {
+     path "/ciscosb-vpn-ipsec:teleworker-vpn-clients/ciscosb-vpn-ipsec:teleworker-vpn-client/ciscosb-vpn-ipsec:name";
+    }
+    description "The name that should be connected";
+   }
+  }
+        description "Do connect the ssl vpn";
+    }
+ rpc teleworker-vpn-client-disconnect {
+  input {
+   leaf name {
+    type leafref {
+     path "/ciscosb-vpn-ipsec:teleworker-vpn-clients/ciscosb-vpn-ipsec:teleworker-vpn-client/ciscosb-vpn-ipsec:name";
+    }
+    description "The name that should be disconnected";
+   }
+  }
+  description "Do disconnect the ssl vpn";
+ }
+ container ipsec-passthrough {
+  leaf enable {
+   type boolean;
+   description "Enable ipsec passthrough";
+  }
+ }
+  container ipsec {
+    leaf enable {
+      type boolean;
+      description "IPSec global enable/disable settings";
+    }
+  }
+}

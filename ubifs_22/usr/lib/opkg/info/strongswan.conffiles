@@ -1,0 +1,10 @@
+/etc/ipsec.conf
+/etc/ipsec.secrets
+/etc/ipsec.user
+/etc/strongswan.d/scepclient.conf
+/etc/strongswan.d/pki.conf
+/etc/strongswan.d/swanctl.conf
+/etc/strongswan.d/charon/ezvpn.conf
+/etc/strongswan.d/starter.conf
+/etc/strongswan.d/charon.conf
+/etc/strongswan.d/charon-logging.conf

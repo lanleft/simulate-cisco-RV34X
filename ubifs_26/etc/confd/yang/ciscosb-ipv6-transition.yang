@@ -1,0 +1,133 @@
+module ciscosb-ipv6-transition {
+    namespace "http://cisco.com/ns/ciscosb/ipv6-transition";
+    prefix ciscosb-ipv6-transition;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix inet; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "First revision , this module augments ietf-interfaces to add support for 6in4 and 6rd.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity ip6in4 {
+        base if:interface-type;
+        description
+                "IPv6 in IPv4Tunnel (IPv6). ";
+    }
+    identity ip6rd {
+        base if:interface-type;
+        description
+                "IPv6 Rapid Deployment (6rd) Tunnel (IPv6). ";
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ciscosb-ipv6-transition:ip6in4'";
+        container ipv6inipv4 {
+            description "6in4 uses tunneling to encapsulate IPv6 traffic over explicitly-configured
+                IPv4 links";
+            leaf enabled {
+                type boolean;
+            }
+            leaf local-interface {
+                type if:interface-ref;
+                description
+                                "Wan physical interface";
+            }
+            leaf localaddr {
+                type inet:ipv4-address;
+                config false;
+                description "This ipv4 address should display address of wan physical interface";
+            }
+            leaf peeraddr {
+                type inet:ipv4-address;
+                description
+                                "Remote IPv4 endpoint address.";
+            }
+            leaf localv6addr {
+                type inet:ipv6-address;
+            }
+            leaf localipv6prefix {
+                type inet:ipv6-prefix;
+                description
+                                "local ipv6 prefix.";
+            }
+            leaf remoteipv6prefix {
+                type inet:ipv6-prefix;
+                description
+                                "remote ipv6 prefix.";
+            }
+            leaf use-as-default-route{
+                type boolean;
+                description
+                                "use as default route";
+            }
+            leaf peer6addr {
+                type inet:ipv6-address;
+                description
+                                "Default gateway IPv6 addresses.";
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ciscosb-ipv6-transition:ip6rd'";
+        container ipv6rd {
+            description "In 6rd case each ISP use one of its own IPv6 prefixes instead
+                        of the special 2002::/16 prefix standardized for 6to4, so a provider
+                        is guaranteed that its 6rd hosts will be reachable from all native
+                        IPv6 hosts that can reach their IPv6 network.";
+            leaf enabled {
+                type boolean;
+            }
+            leaf local-interface {
+                type if:interface-ref;
+                description
+                                "Wan physical interface";
+            }
+            leaf localaddr {
+                type inet:ipv4-address;
+                config false;
+                description "This ipv4 address should display address of wan physical interface";
+            }
+            leaf replay-addr {
+                type inet:ipv4-address;
+                description "";
+            }
+            leaf ip6prefix {
+                type inet:ipv6-prefix;
+                description
+                                "v6 - prefix.";
+            }
+            leaf use-as-default-route{
+                type boolean;
+                description
+                                "use as default route";
+            }
+            leaf config-mode {
+                type enumeration{
+                 enum auto;
+                 enum manual;
+                }
+                description
+                                "config mode.";
+            }
+            leaf ip4prefixlen {
+                type string {
+                    pattern '(([0-9])|([1-2][0-9])|(3[0-2]))';
+                }
+                description
+                                " The prefix length must be less than or equal to 32.";
+            }
+        }
+    }
+}

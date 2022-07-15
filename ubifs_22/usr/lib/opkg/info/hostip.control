@@ -1,0 +1,11 @@
+Package: hostip
+Version: 1.9.5-8
+Depends: libc, librt, libpthread, libsodium
+Source: package/network/services/dnscrypt-proxy
+License: ISC
+Section: net
+Maintainer: Damiano Renfer <damiano.renfer@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 40199
+Description:  The DNSCrypt proxy ships with a simple tool named hostip that resolves a name
+ to IPv4 or IPv6 addresses.

@@ -1,0 +1,3 @@
+[ 
+	{"name": "User_Accounts", "visible": "yes", "link": "#/System_Config_User_Accounts", "templateUrl": "htm/system/user_account.htm", "scripts": ["js/system/user_account.js"], "children": []}
+]

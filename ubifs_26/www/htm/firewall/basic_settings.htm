@@ -1,0 +1,350 @@
+<form name="form" ng-controller="firewallBasicSettingsCtrl" ng-modification="dataReady" novalidate id="firewall-basic-setting">
+<div ng-if="dataReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Basic_Settings')"></div>
+        <div class="page-button-container">
+            <button id="btn_basicsettings_save" class="btn-apply" ng-click="funs.save('main')" ng-disabled="form.$invalid || userAccessFlag === 'RO'">
+                <span ng-bind="DICT('Basic_Settings_Apply')"></span>
+            </button>
+            <button id="btn_basicsettings_cancel" class="btn-cancel" ng-click="funs.cancel('main')" class="btn-cancel">
+                <span ng-bind="DICT('Basic_Settings_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+	<confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Basic_Settings_Firewall')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_fw_enable" ng-model="model.firewall.enable" ng-true-value="true" ng-false-value="false" ng-change="check_firewall_port()">
+                    <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Dos')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_dos_enable" ng-model="model.firewall.dos_attack" ng-true-value="true" ng-false-value="false">
+                    <span  ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Block_WAN_Request')"></td>
+                <td>
+                    <input type="checkbox"
+                           id="chk_basicsettings_blockwanrequest_enable"
+                           ng-model="model.firewall.block_wan_request"
+                           ng-true-value="true"
+                           ng-false-value="false">
+                    </input>
+                    <span  ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Restconf')"></td>
+                <td>
+                    <input type="checkbox" ng-model="model.restconf.enabled" ng-disabled="!model.firewall.enable" ng-change="check_firewall_port()">
+                        <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                    </input>
+                    <input type="checkbox" ng-model="model.restconf.restconf_zone['lan-vpn']" ng-disabled="true">
+                        <span ng-bind="DICT('Basic_Settings_LAN')"></span>
+                    </input>
+                    <input type="checkbox" ng-model="model.restconf.restconf_zone.wan" ng-disabled="!model.restconf.enabled || !model.firewall.enable" ng-change="check_firewall_port()">
+                        <span ng-bind="DICT('Basic_Settings_WAN')"></span>
+                    </input>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Restconf_Port')"></td>
+                <td>
+                    <input type="number"
+                           min="1"
+                           max="65535" 
+                           maxlength="5"
+                           name="restconf_port"
+                           ng-change="check_firewall_port()"
+                           ng-model="model.restconf.https.port"
+                           ng-disabled="!model.firewall.enable || !model.restconf.enabled"
+                           ng-required="model.firewall.enable && model.restconf.enabled"
+                           ng-pattern="model.httpsPortPattern"
+                    ></input>
+                    <span class="tip-info" ng-bind="DICT('Basic_Settings_HTTPS_Port_Range')"></span>
+                </td>
+            </tr>
+            <tr ng-if="form.restconf_port.$error.duplicate" class="validation-error-text">
+                <td></td>
+                <td ng-bind="errstr.restconf"></td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Netconf')"></td>
+                <td>
+                    <input type="checkbox" ng-model="model.netconf.enabled" ng-disabled="!model.firewall.enable" ng-change="check_firewall_port()">
+                        <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                    </input>
+                    <input type="checkbox" ng-model="model.netconf.netconf_zone['lan-vpn']" ng-disabled="true">
+                        <span ng-bind="DICT('Basic_Settings_LAN')"></span>
+                    </input>
+                    <input type="checkbox" ng-model="model.netconf.netconf_zone.wan" ng-disabled="!model.netconf.enabled || !model.firewall.enable" ng-change="check_firewall_port()">
+                        <span ng-bind="DICT('Basic_Settings_WAN')"></span>
+                    </input>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Netconf_Port')"></td>
+                <td>
+                    <input type="number"
+                           min="1"
+                           max="65535" 
+                           name="netconf_port"
+                           ng-change="check_firewall_port()"
+                           ng-model="model.netconf.ssh.port"
+                           ng-disabled="!model.firewall.enable || !model.netconf.enabled"
+                           ng-required="model.firewall.enable && model.netconf.enabled"
+                           ng-pattern="model.netconfPortPattern"
+                    ></input>
+                    <span class="tip-info" ng-bind="DICT('Basic_Settings_Netconf_Port_Range')"></span>
+                </td>
+            </tr>
+            <tr ng-if="form.netconf_port.$error.duplicate" class="validation-error-text">
+                <td></td>
+                <td ng-bind="errstr.netconf"></td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-if="ruFlag" ng-bind="DICT('Basic_Settings_LAN_Web_Management')"></td>
+                <td ng-if="!ruFlag" ng-bind="DICT('Basic_Settings_LAN_VPN_Web_Management')"></td>
+                <td>
+                    <input type="checkbox"
+                        id="chk_basicsettings_lanvpn_http"
+                        ng-model="model.firewall.lan_vpn_web_management.http"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                        ng-change="check_firewall_port()"
+                        ng-disabled="!model.firewall.enable"
+                    ></input>
+                    <span ng-bind="DICT('Basic_Settings_HTTP')"></span>
+                    <input type="number"
+                           style="margin-left: 10px"
+                           name="lvwm_http_port"
+                           ng-model="model.firewall.lan_vpn_web_management.http_port"
+                           ng-required="model.firewall.lan_vpn_web_management.http"
+                           ng-disabled="!model.firewall.lan_vpn_web_management.http"
+                           ng-pattern="model.httpPortPattern"
+                           min="0"
+                           max="65535"
+                           ng-change="check_firewall_port()"
+                   ></input>
+                    <span class="tip-info" ng-bind="DICT('Basic_Settings_HTTP_Port_Range')"></span>
+                </td>
+            </tr>
+            <tr ng-if="form.lvwm_http_port.$error.duplicate" class="validation-error-text">
+                <td></td>
+                <td ng-bind="errstr.lvwm_http"></td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox"
+                        id="chk_basicsettings_lanvpn_https"
+                        ng-model="model.firewall.lan_vpn_web_management.https"
+                        ng-true-value="true"
+                        ng-false-value="false"
+                        ng-change="check_firewall_port()"
+                        ng-disabled="true">
+                    <span ng-bind="DICT('Basic_Settings_HTTPS')"></span>
+                    <input type="number"
+                           name="lvwm_https_port"
+                           ng-model="model.firewall.lan_vpn_web_management.https_port"
+                           ng-pattern="model.httpsPortPattern"
+                           required
+                           min="0"
+                           max="65535"
+                           ng-change="check_firewall_port()"
+                    ></input>
+                    <span class="tip-info" ng-bind="DICT('Basic_Settings_HTTPS_Port_Range')"></span>
+                </td>
+            </tr>
+            <tr ng-if="form.lvwm_https_port.$error.duplicate" class="validation-error-text">
+                <td></td>
+                <td ng-bind="errstr.lvwm_https"></td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+				
+                <td ng-bind="DICT('Basic_Settings_Remote_Web_Management')"></td>
+                <td>
+                    <input type="checkbox"
+                           id="chk_basicsettings_remotewebmgmt_enable"
+                           ng-model="model.firewall.remote_management.enable"
+                           ng-change="funs.cleanInterPort()"
+                           ng-true-value="true"
+                           ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td></td>
+                <td>
+                    <input type="radio" id="chk_basicsettings_remotewebmgmt_http" ng-model="model.firewall.remote_management.selected" value="http" ng-change="funs.changeHttpHttps()">
+                    <span ng-bind="DICT('Basic_Settings_HTTP')"></span>
+                    <input type="radio" id="chk_basicsettings_remotewebmgmt_https" ng-model="model.firewall.remote_management.selected" value="https" ng-change="funs.changeHttpHttps()">
+                    <span ng-bind="DICT('Basic_Settings_HTTPS')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span ng-bind="DICT('Basic_Settings_Port')"></span>
+                    <input ng-if="model.firewall.remote_management.selected === 'http'"
+						type="number" number 
+						id="txt_basicsettings_remotewebmgmt_http_port"
+                        ng-model="model.firewall.remote_management.http_port"
+                        class="v4Port"
+                        ng-disabled="model.firewall.remote_management.enable === false || !model.firewall.enable"
+                        ng-required="model.firewall.remote_management.enable && model.firewall.enable"
+                        ng-pattern="model.httpPortPattern"
+                        ng-change="check_firewall_port()"
+						name="rmt_http_port"
+						checkinterport="{{ model.firewall.remote_management.enable === true && model.firewall.remote_management.selected === 'http' ? 'check' : 'uncheck' }}">
+                    </input>
+                    <input ng-if="model.firewall.remote_management.selected === 'https'"
+						type="number" number 
+						id="txt_basicsettings_remotewebmgmt_https_port"
+                        ng-model="model.firewall.remote_management.https_port"
+                        class="v4Port"
+                        ng-disabled="model.firewall.remote_management.enable === false || !model.firewall.enable"
+                        ng-required="model.firewall.remote_management.enable && model.firewall.enable"
+                        ng-pattern="model.httpsPortPattern"
+                        ng-change="check_firewall_port()"
+						name="rmt_https_port"
+						checkinterport="{{ model.firewall.remote_management.enable === true && model.firewall.remote_management.selected === 'https' ? 'check' : 'uncheck' }}">
+                    </input>
+                    <span class="tip-info" ng-show="model.firewall.remote_management.selected === 'http'" ng-bind="DICT('Basic_Settings_HTTP_Port_Range')"></span>
+                    <span class="tip-info" ng-show="model.firewall.remote_management.selected === 'https'" ng-bind="DICT('Basic_Settings_HTTPS_Port_Range')"></span>
+					<span class="validation-error-text-right" ng-if="form.rmt_http_port.$error.checkinterport || form.rmt_https_port.$error.checkinterport"
+						ng-bind="DICT('Basic_Settings_Port_Reserved')">
+                    </span>
+                </td>
+            </tr>
+            <tr ng-if="form.rmt_http_port.$error.duplicate || form.rmt_https_port.$error.duplicate" class="validation-error-text">
+                <td></td>
+                <td ng-bind="errstr.rmt"></td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_Allowed_Remote_IP_Addr')"></td>
+                <td>
+                    <input type="radio" id="rdo_basicsettings_allowremoteip_anyip" ng-model="model.firewall.allowed_remote_ip_addresses.selected" value="any">
+                    <span ng-bind="DICT('Basic_Settings_Any_IP_Addr')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td></td>
+                <td>
+                    <input type="radio" id="rdo_basicsettings_allowremoteip_range" ng-model="model.firewall.allowed_remote_ip_addresses.selected" value="range">
+                    <input type="text"
+                           name="start_ip"
+                           id="txt_basicsettings_allowremoteip_startip"
+                           ng-model="model.firewall.allowed_remote_ip_addresses.start_address"
+                           ng-disabled="model.firewall.allowed_remote_ip_addresses.selected === 'any'"
+                           ng-required="model.firewall.enable && model.firewall.allowed_remote_ip_addresses.selected === 'range'"
+                           ng-change="chk_range()">
+                    </input>
+                    <span ng-bind="DICT('Hardware_DMZ_To')"></span>
+                    <input type="text"
+                           name="end_ip"
+                           id="txt_basicsettings_allowremoteip_endip"
+                           ng-model="model.firewall.allowed_remote_ip_addresses.end_address"
+                           ng-disabled="model.firewall.allowed_remote_ip_addresses.selected === 'any'"
+                           ng-ip="model.firewall.enable && model.firewall.allowed_remote_ip_addresses.selected === 'range'"
+                           ng-required="model.firewall.enable && model.firewall.allowed_remote_ip_addresses.selected === 'range'"
+                           ng-change="chk_range()">
+                    </input>
+                    <span class="tip-info" ng-bind="DICT('Basic_Settings_Hint_Addr_Range')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_SIP_ALG')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_sipalg_enable" ng-model="model.firewall.sip_alg" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_FTP_ALG_Port')"></td>
+                <td>
+                    <input type="number" number id="txt_basicsettings_ftpalgport" ng-model="model.firewall.ftp_alg_port" min="1" max="65535">
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model.firewall.enable}">
+                <td ng-bind="DICT('Basic_Settings_UPnP')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_upnp_enable" ng-model="model.firewall.upnp" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+        </table> 
+        <hr class="page-content-seperator"></hr>
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('Basic_Settings_Restrict_Web_Feature')"></div>
+        </div>
+        <table ng-class="{nopHint: !model.firewall.enable}">
+            <tr>
+                <td style="padding-right: 166px;" ng-bind="DICT('Basic_Settings_Block')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_block_java" ng-change="chk_exception()" ng-model="model.firewall.block.java" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Java')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_block_cookies" ng-change="chk_exception()" ng-model="model.firewall.block.cookies" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Cookies')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_block_active" ng-change="chk_exception()" ng-model="model.firewall.block.activex" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_ActiveX')"></span>
+                </td>
+            </tr>
+            <tr style="height: 25px">
+                <td></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_block_accesstohttp" ng-change="chk_exception()" ng-model="model.firewall.block.access_http_proxy_servers" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Access_HTTP_Proxy_Servers')"></span>
+                </td>
+            </tr>
+        </table>
+        <hr class="page-content-seperator"></hr>
+        <table>
+			<tr style="height: 30px">
+                <td style="padding-right: 139px;" ng-bind="DICT('Basic_Settings_Exception')"></td>
+                <td>
+                    <input type="checkbox" id="chk_basicsettings_exception_enable" ng-disabled="disable_exception" ng-model="model.firewall.exception" ng-true-value="true" ng-false-value="false">
+                    <span ng-bind="DICT('Basic_Settings_Enable')"></span>
+                </td>
+            </tr>
+        </table>
+        <div class="grid-cntr" ng-class="{nopHint: !model.firewall.enable || disable_exception || !model.firewall.exception}">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Basic_Settings_Trusted_Domains_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <ng-form name="trusted_domain">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_basicsettings_table_add"
+                            class="grid-btn-add"
+                            ng-disabled="userAccessFlag === 'RO' || form.trusted_domain.$invalid"
+                            ng-click="funs.add()"
+                        ></button>
+                        <button id="btn_basicsettings_table_edit" class="grid-btn-edit" ng-disabled="selects.length === 0 || userAccessFlag === 'RO'" ng-click="funs.edit()"></button>
+                        <button id="btn_basicsettings_table_delete" class="grid-btn-delete" ng-disabled="selects.length === 0 || userAccessFlag === 'RO'" ng-click="funs.del()"></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridTrustedDomainOptions"/>
+                </ng-form>
+            </div>
+        </div>
+    </div>
+</div>
+</form>

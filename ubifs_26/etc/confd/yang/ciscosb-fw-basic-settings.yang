@@ -1,0 +1,178 @@
+module ciscosb-fw-basic-settings {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-basic-settings";
+  prefix "firewall-basic-settings";
+  import ietf-inet-types {
+    prefix "inet";
+  }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines the Firewall basic settings configuration.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-01-04 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall basic settings module";
+    reference "RFC 6020";
+  }
+  grouping RESTRICT-WEB-FEATURES-BLOCK {
+    leaf java {
+      type boolean;
+      description "Enable/disable Java";
+    }
+    leaf cookies {
+      type boolean;
+      description "Enable/disable Cookies";
+    }
+    leaf activex {
+      type boolean;
+      description "Enable/disable ActiveX";
+    }
+    leaf access-http-proxy-servers {
+      type boolean;
+      description "Enable/disable Access to HTTP Proxy Servers";
+    }
+  }
+  container firewall {
+    leaf enable {
+      type boolean;
+      description "Enable/disable firewall";
+    }
+    leaf spi {
+      type boolean;
+      description "Enable/disable statefull packet inspection";
+    }
+    leaf dos-attack {
+      type boolean;
+      description "Enable/disable Denail of Service - DoS type of attacks";
+    }
+    leaf block-wan-request {
+      type boolean;
+      description "Enable/disable block request to wan";
+    }
+    container lan-vpn-web-management {
+      leaf http {
+        type boolean;
+        description "Enable/disable HTTP";
+      }
+      leaf http-port {
+        type inet:port-number;
+        default 80;
+        description "HTTP management port.";
+      }
+      leaf https {
+        type boolean;
+        description "Enable/disable HTTPS";
+      }
+      leaf https-port {
+        type inet:port-number;
+        default 443;
+        description "HTTPS management port.";
+      }
+    }
+    container remote-web-management {
+      leaf enable {
+        type boolean;
+        description "Enable/disable Remote management";
+      }
+      leaf port {
+        type inet:port-number;
+        description "Remote management port.";
+      }
+      leaf http {
+        type boolean;
+        description "Enable/disable HTTP";
+      }
+      leaf https {
+        type boolean;
+        description "Enable/disable HTTPS";
+      }
+      leaf cert {
+        type string;
+      }
+    }
+    container allowed-remote-ip-addresses {
+        choice address {
+            case any {
+                leaf any {
+                    type empty;
+                    description "This indicates address as any";
+                }
+            }
+            case start-end-addresses {
+                list start-end-addresses {
+                    key start-address;
+                    leaf start-address {
+                        type inet:ip-address;
+                        description "This indicates start address of a range";
+                    }
+                    leaf end-address {
+                        type inet:ip-address;
+                        description "This indicates end address of a range";
+                    }
+                }
+            }
+            case ip-address-range {
+                leaf start-address {
+                    type inet:ip-address;
+                    description "This indicates start address of a range";
+                }
+                leaf end-address {
+                    type inet:ip-address;
+                    description "This indicates end address of a range";
+                }
+           }
+        }
+    }
+    leaf multicast-passthrough {
+      type boolean;
+      description "Enable/disable Multicast Passthrough";
+    }
+    leaf sip-alg {
+      type boolean;
+      description "Enable/disable sip alg";
+    }
+    leaf ftp-alg-port {
+      type inet:port-number;
+      default 21;
+      description "FTP ALG port";
+    }
+    leaf upnp {
+      type boolean;
+      description "Enable/disable upnp";
+    }
+    container block {
+      uses RESTRICT-WEB-FEATURES-BLOCK;
+    }
+    leaf exception {
+      type boolean;
+      description "Enable/disable Exception";
+    }
+    container trusted-domains {
+      description "Trusted Domain table.";
+      list trusted-domain-entry {
+        description "Trusted Domain entry.";
+        key domain-name;
+        leaf domain-name {
+          type string;
+          description "Trusted Domain Name.";
+        }
+      }
+    }
+  }
+  container firewall-state {
+ config false;
+ leaf current-connections {
+  type uint32;
+  description "For current connections status.";
+ }
+   }
+}

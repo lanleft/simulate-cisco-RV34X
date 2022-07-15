@@ -1,0 +1,10 @@
+Package: dropbearconvert
+Version: 2015.67-1
+Depends: libc, librt, libpthread
+Source: package/network/services/dropbear
+License: MIT
+LicenseFiles: LICENSE libtomcrypt/LICENSE libtommath/LICENSE
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 23201
+Description:  Utility for converting SSH keys

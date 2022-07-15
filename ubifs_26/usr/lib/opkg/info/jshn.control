@@ -1,0 +1,10 @@
+Package: jshn
+Version: 2015-06-14-d1c66ef1131d14f0ed197b368d03f71b964e45f8
+Depends: libc, librt, libpthread, libjson-c, libubox, libblobmsg-json
+Source: package/libs/libubox
+License: ISC
+Section: utils
+Maintainer: Felix Fietkau <nbd@openwrt.org>
+Architecture: comcerto2000
+Installed-Size: 5573
+Description:  Library for parsing and generating JSON from shell scripts

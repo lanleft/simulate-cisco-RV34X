@@ -1,0 +1,521 @@
+ module ciscosb-system {
+    namespace "http://cisco.com/ns/ciscosb/system";
+  prefix ciscosb-sys;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ciscosb-types {
+     prefix ciscosb-types;
+  }
+  import ietf-system {
+    prefix sys;
+  }
+  import ietf-inet-types {
+     prefix inet;
+  }
+  import ietf-netconf-acm{
+   prefix nacm;
+  }
+    import ciscosb-common { prefix ciscosb-common; }
+  organization
+    "Cisco Systems, Inc.";
+  contact
+    " Cisco Systems, Inc.
+    Customer Service
+    Postal: 170 W Tasman Drive
+    San Jose, CA 95134
+    Tel: +1 1800 553-NETS
+    E-mail: cs-yang@cisco.com";
+  description
+    "This module contains a collection of YANG definitions for
+     system configuration for Cisco Small Business devices.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-02-25 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-27 {
+    description "Proposed";
+    reference "TODO";
+  }
+  feature summertime-zone {
+    description
+      "Indicates that the device supports configuration
+       for summertime zone.";
+  }
+  feature clock-format {
+    description
+      "Indicates that the device supports configuration
+       for clock format";
+  }
+  feature hardware-calendar {
+    description
+      "Indicate that the device supports hardware clock.
+       Some platforms have a hardware clock that is separate
+       from the software clock. The hardware clock runs
+       continuously, even if the router is powered off or rebooted.
+       If no outside time source (such as NTP) is available on the
+       network, this feature can be used";
+  }
+  feature wireless-router-ap-mode {
+   description
+    "	Indicate that the decice is in wireless router/AP mode.";
+  }
+  feature gateway-router-mode {
+   description
+    "	Indicate that the decice is in gateway/router mode.";
+  }
+  grouping base-time-element {
+      leaf month {
+         type uint8 {
+            range "1..12";
+         }
+         description "Month";
+      }
+      leaf time {
+         type string {
+              pattern '\d{2}:\d{2}';
+         }
+         description "Clock time";
+      }
+  }
+  container asd {
+      leaf user-name {
+          type string;
+      }
+      leaf password {
+          type ciscosb-types:aes-cfb-128-encrypted-string;
+      }
+  }
+  container recurring-schedule-reboot {
+    description
+        "The Recurring Schedule Reboot at System or Wireless";
+    leaf enable {
+        description
+            "Enables or disables the Recurring Schedule Reboot";
+        type boolean;
+        default "false";
+    }
+    leaf action {
+        description
+            "Reboot Full Router System or Wireless Radio interfaces (2.4GHz+5GHz) ONLY - while LAN and WAN ports should stay operational and uninterrupted";
+        type enumeration {
+            enum system-reboot;
+            enum wireless-only;
+        }
+        default "system-reboot";
+    }
+    container frequency {
+        choice day {
+            case every-day {
+                leaf every-day {
+                    description "Every Day";
+                    type empty;
+                }
+            }
+            case month-day {
+                leaf month-day {
+                    description "Day of Month";
+                    type uint8 {
+                        range "1..31";
+                    }
+                    default 1;
+                }
+            }
+            case week-day {
+                leaf week-day {
+                    description "Day of Week";
+                    type enumeration {
+                        enum Sun;
+                        enum Mon;
+                        enum Tue;
+                        enum Wed;
+                        enum Thu;
+                        enum Fri;
+                        enum Sat;
+                    }
+                    default Sun;
+                }
+            }
+            default "month-day";
+        }
+        leaf hours {
+            description "Hours";
+            type uint8 {
+                range "0..23";
+            }
+            default 0;
+        }
+        leaf minutes {
+            description "Minutes";
+            type uint8 {
+                range "0..59";
+            }
+            default 0;
+        }
+    }
+  }
+  rpc asd-ping-request {
+      input {
+          leaf user-name {
+              type string;
+          }
+          leaf password {
+              type string;
+          }
+      }
+      output {
+          leaf job-id{
+              type string;
+          }
+      }
+  }
+  rpc asd-ping-response {
+      input{
+          leaf job-id{
+              type string;
+          }
+      }
+      output {
+          uses ciscosb-common:RPC-RESPONSE;
+      }
+  }
+  augment "/sys:system-state/sys:platform" {
+     leaf hw-version {
+         description "Hardware version";
+         type string;
+     }
+     leaf pid {
+     type string;
+     }
+     leaf vid {
+     type string;
+     }
+     leaf sn {
+      description "Serial number";
+     type string;
+     }
+        leaf mdf {
+            type string;
+        }
+        leaf swt {
+            type string;
+        }
+        leaf cpu-usage {
+            description "System CPU usage";
+            type ciscosb-types:percent;
+        }
+        container memory {
+            leaf total {
+                description "Total physical memory";
+                type uint64;
+            }
+            leaf physical-memory-usage {
+                description "System physical memory usage";
+                type ciscosb-types:percent;
+            }
+        }
+  }
+  augment "/sys:system" {
+     leaf domain-name {
+      type inet:domain-name;
+     }
+     container device-mode {
+      description "Select routing or AP mode";
+      leaf wireless {
+       if-feature wireless-router-ap-mode;
+             type enumeration {
+               enum wireless-router;
+               enum wireless-ap;
+          }
+             default wireless-router;
+             description
+               "Indicates that the device is in wireless router/ AP mode.";
+      }
+      leaf routing {
+       if-feature gateway-router-mode;
+             type enumeration {
+               enum gateway;
+               enum router;
+          }
+             default router;
+             description
+               "Indicates that the device is in gateway/router mode.";
+      }
+            leaf enable-pkt-capture {
+                type boolean;
+            }
+     }
+  }
+  augment "/sys:system/sys:clock" {
+    description "";
+    container timezone-summer-time {
+      if-feature summertime-zone;
+      description
+        "Configure the system to automatically switch 
+         to summer time (daylight saving time)";
+      leaf enabled {
+          type boolean;
+          default true;
+          description
+            "Indicates that the daylight time is on/off.";
+      }
+      container start-date {
+        uses base-time-element;
+        leaf day {
+            when "../../ciscosb-sys:recurring='false'";
+            type uint8 {
+                range "1..31";
+            }
+        }
+        leaf week {
+            when "../../ciscosb-sys:recurring='true'";
+            type enumeration {
+                enum 1;
+                enum 2;
+                enum 3;
+                enum 4;
+                enum 5;
+                enum 6;
+            }
+        }
+        leaf week-day {
+            when "../../ciscosb-sys:recurring='true'";
+            type enumeration {
+                enum Sun;
+                enum Mon;
+                enum Tue;
+                enum Wed;
+                enum Thu;
+                enum Fri;
+                enum Sat;
+            }
+        }
+        description "First specific date the summer time starts";
+      }
+      container end-date {
+        uses base-time-element;
+        leaf day {
+            when "../../ciscosb-sys:recurring='false'";
+            type uint8 {
+                range "1..31";
+            }
+        }
+        leaf week {
+            when "../../ciscosb-sys:recurring='true'";
+            type enumeration {
+                enum 1;
+                enum 2;
+                enum 3;
+                enum 4;
+                enum 5;
+                enum 6;
+            }
+        }
+        leaf week-day {
+            when "../../ciscosb-sys:recurring='true'";
+            type enumeration {
+                enum Sun;
+                enum Mon;
+                enum Tue;
+                enum Wed;
+                enum Thu;
+                enum Fri;
+                enum Sat;
+            }
+        }
+        description "The specific date the summer time ends";
+      }
+      leaf saving-offset {
+       type int32;
+       description "The daylight time offset";
+      }
+      leaf recurring {
+        type boolean;
+        default false;
+        description
+          "Indicates that summer time should start and 
+           end on the corresponding specified days every year
+           or not";
+      }
+    }
+    container clock-format {
+      if-feature clock-format;
+      description
+        "Configure format how the clock is displayed.";
+      leaf format-12hours {
+        type boolean;
+        description
+          "Indicate the format of clock is whether 12-hours 
+           or 24-hours format.";
+      }
+      leaf format-display-debug{
+        type empty;
+        description
+          "Indicate the display of the configured timezone in 
+           debug message is enabled.";
+      }
+      leaf format-display-syslog {
+        type empty;
+        description
+          "Indicate the display of the configured timezone in 
+           syslog message is enabled.";
+      }
+    }
+    leaf calendar-valid {
+      if-feature hardware-calendar;
+      type empty;
+      description
+        "Enable hardware clock (calendar) is the 
+         authoritative time source.";
+    }
+  }
+  rpc clock-read-calendar {
+    if-feature hardware-calendar;
+    description
+      "This operation manually copies from the hardware 
+       clock (read from calendar) settings into the software
+       clock";
+  }
+  rpc clock-check-dst {
+     if-feature summertime-zone;
+     description "This operation check the summer time(the daylight saveing time) which from the user input.";
+     input {
+        leaf recurring {
+            type boolean;
+            description
+                "DST mode: Indicates that summer time should start and 
+           end on the corresponding specified days every year
+           or not";
+        }
+        container start-date {
+            uses base-time-element;
+            leaf day {
+                when "../../recurring='false'";
+                type uint8 {
+                    range "1..31";
+                }
+            }
+            leaf week {
+                when "../../recurring='true'";
+                type enumeration {
+                    enum 1;
+                    enum 2;
+                    enum 3;
+                    enum 4;
+                    enum 5;
+                    enum 6;
+                }
+            }
+            leaf week-day {
+                when "../../recurring='true'";
+                type enumeration {
+                    enum Sun;
+                    enum Mon;
+                    enum Tue;
+                    enum Wed;
+                    enum Thu;
+                    enum Fri;
+                    enum Sat;
+                }
+            }
+            description "First specific date the summer time starts";
+       }
+       container end-date {
+            uses base-time-element;
+            leaf day {
+                when "../../recurring='false'";
+                type uint8 {
+                    range "1..31";
+                }
+            }
+            leaf week {
+                when "../../recurring='true'";
+                type enumeration {
+                    enum 1;
+                    enum 2;
+                    enum 3;
+                    enum 4;
+                    enum 5;
+                    enum 6;
+                }
+            }
+            leaf week-day {
+                when "../../recurring='true'";
+                type enumeration {
+                    enum Sun;
+                    enum Mon;
+                    enum Tue;
+                    enum Wed;
+                    enum Thu;
+                    enum Fri;
+                    enum Sat;
+                }
+            }
+            description "The specific date the summer time ends";
+       }
+       leaf saving-offset {
+            type int32;
+         description "The daylight time offset";
+       }
+       leaf year {
+            type uint32;
+            description "Used for the leap year";
+       }
+    }
+  }
+  rpc clock-update-calendar {
+    if-feature hardware-calendar;
+    description
+      "This operation copies the software clock settings to 
+       the hardware clock (update to calendar)";
+  }
+  rpc clock-set-calendar {
+    if-feature hardware-calendar;
+    description
+      "This operation manually sets the hardware 
+       clock (calendar) date and time";
+    input {
+      leaf current-datetime {
+        type yang:date-and-time;
+        mandatory true;
+        description
+          "The current system date and time set to hardware clock";
+      }
+    }
+  }
+  rpc system-reboot {
+   nacm:default-deny-all;
+   description
+         "This operation requests to reboot the device 
+      by choosing which firmware to boot up.";
+      input {
+       choice firmware-location {
+        case url {
+         leaf firmware-url {
+          type inet:uri;
+         }
+        }
+        case firmware-type {
+              leaf firmware-state {
+                    type ciscosb-types:firmware-state;
+              }
+        }
+       }
+       leaf option {
+                type ciscosb-types:reboot-option-type;
+           }
+      }
+  }
+  rpc system-factory-reset {
+   nacm:default-deny-all;
+      description
+          "This operation requests that the entire system 
+        be reset into factory default immediately.
+           A server SHOULD send an rpc reply to the client before
+           resetting the system.";
+  }
+}

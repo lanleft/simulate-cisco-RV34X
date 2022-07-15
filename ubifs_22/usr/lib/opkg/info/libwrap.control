@@ -1,0 +1,9 @@
+Package: libwrap
+Version: 7.6-1
+Depends: libc, librt, libpthread
+Source: package/libs/tcp_wrappers
+License: BSD
+Section: libs
+Architecture: comcerto2000
+Installed-Size: 10708
+Description:  Security wrapper library for TCP services

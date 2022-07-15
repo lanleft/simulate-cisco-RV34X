@@ -1,0 +1,59 @@
+module ciscosb-ports-mirror {
+    namespace "http://cisco.com/ns/ciscosb/ports-mirror";
+    prefix ciscosb-ports-mirror;
+    import ietf-interfaces { prefix if; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This YANG module describes the configuration of Virtual Local
+        Area Networks (VLANs). Terms and Acronyms FDDI (fddi): Fiber Distributed
+        Data Interface GVRP (gvrp): Generic VLAN Registration Protocol
+        MVRP (mvrp): Multiple VLAN Registration Protocol PVLAN (pvlan):
+        Private VLAN SVI (svi): Switch Virtual Interface VLAN (vlan):
+        Virtual Local Area Network ";
+    reference "TODO";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2014-05-14 {
+        description "Proposed";
+    }
+    container port-mirror {
+        description "Port Mirroring";
+        leaf enable {
+            type boolean ;
+            default false;
+            description "Enable Port Mirroring or not";
+        }
+        leaf tx-dst-port {
+            type if:interface-ref ;
+            description "Mirror  port for outgoing packet";
+        }
+        list tx-monitors-ports {
+            key tx-monitors-port ;
+            leaf tx-monitors-port {
+                type if:interface-ref ;
+                description " LAN ports which outgoing packets will be  copied";
+            }
+        }
+        leaf rx-dst-port {
+            type if:interface-ref;
+            description "Mirror  port for incomming packet";
+        }
+        list rx-monitors-ports {
+            key rx-monitors-port;
+            leaf rx-monitors-port {
+                type if:interface-ref ;
+                description "LAN ports which incomming packets will be  copied";
+            }
+        }
+    }
+}

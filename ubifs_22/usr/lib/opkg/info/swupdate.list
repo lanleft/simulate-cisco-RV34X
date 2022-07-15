@@ -1,0 +1,9 @@
+/usr/bin/sw_dwnlod_apply.sh
+/etc/config/swupdate
+/usr/bin/asdclient
+/usr/bin/swupdate_chk.sh
+/usr/bin/updateswinfo.sh
+/etc/init.d/swupdateinit
+/usr/bin/compswvers.sh
+/etc/verchk
+/usr/bin/sendAsdmail

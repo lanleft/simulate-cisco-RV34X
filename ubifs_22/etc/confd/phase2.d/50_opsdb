@@ -1,0 +1,5 @@
+OPSDB_STATUS="/tmp/opsdb_status"
+
+operdb_stats &
+echo 1 > $OPSDB_STATUS
+opsdb_cisco &

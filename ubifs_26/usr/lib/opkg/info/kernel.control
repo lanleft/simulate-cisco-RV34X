@@ -1,0 +1,10 @@
+Package: kernel
+Version: 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426
+Depends: libc, librt, libpthread
+Source: package/kernel/linux
+License: GPLv2
+Section: sys
+Status: unknown hold not-installed
+Architecture: comcerto2000
+Installed-Size: 104
+Description:  Virtual kernel package

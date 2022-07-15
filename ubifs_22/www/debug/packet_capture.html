@@ -1,0 +1,62 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <title>Cisco Packet Capture</title>
+    <link rel="stylesheet" href="../themes/css/main_1_0_1.css" />
+    <script src="/lib/angular/1-4-3/angular-min.js"></script>
+    <script src="/lib/jquery/1-11-3/jquery-1-11-3-min.js"></script>
+    <link rel="bookmark" type="image/x-icon" href="/themes/img/icon/favicon.ico"/>
+    <link rel="apple-touch-icon-precomposed" href="/themes/img/icon/favicon.ico">
+    <script src="/lib/lodash/4-16-4/lodash.js"></script>
+    <script src="/debug/app.js"></script>
+    <script src='/lib/download/download2.js'></script>
+    <META HTTP-EQUIV="EXPIRES" CONTENT="0">
+</head>
+<body ng-app="routerApp">
+    <div ng-controller="packetCaptureCtrl" id="packet-capturing">
+        <div class="panel-container">
+            <div>
+                <div class="page-title-cntr">
+                    <div class="page-title">WAN Packet Capture</div>
+                </div>
+                <div class="page-content-container">
+                    <div class="page-content">
+                        <div class="warning-container">
+                            <div>The packet capturing feature is designed for troubleshooting purposes only. For general usage, it is not recommended. Enabling Packet capturing may have adverse side effects. Please read below.</div>
+                            <div>
+                                <ul style="padding-left:15px">
+                                    <li>The network may be impacted and becomes slow.</li>
+                                    <li>The issue may change its behaviour or possibly disappear due to the changed internal data path.</li>
+                                    <li>In some cases the router may stop responding. Some times, it requires a reboot.</li>
+                                    <li>The packet capture file is limited to 100MB.  It is recommend that the file is cleared after download to save storage and router memory.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <table class="page-block-tb-list">
+                            <tr>
+                                <td>Interface:</td>
+                                <td style="text-align: left">
+                                    <select ng-model="model.interface_name" ng-options="m.id as m.displayName for m in model.ifs"></select>
+                                </td>
+                            </tr>
+                            <tr ng-show="model.duration >= 0 && model.state === 'capturing'">
+                                <td>Duration:</td>
+                                <td ng-bind="model.duration_str"></td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="button" ng-click="funs.start()" ng-disabled="model.state === 'capturing' || model.waiting">Start</button>
+                                    <button type="button" ng-click="funs.stop()" ng-disabled="model.state !== 'capturing' || model.waiting">Stop</button>
+                                    <button type="button" ng-click="funs.exportfile()" ng-disabled="!model.file_name || model.waiting">Export</button>
+                                    <button type="button" ng-click="funs.clear()" ng-disabled="model.state !== 'stopped' || model.waiting">Clear</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

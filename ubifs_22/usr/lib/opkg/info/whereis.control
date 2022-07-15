@@ -1,0 +1,10 @@
+Package: whereis
+Version: 2.25.2-4
+Depends: libc, librt, libpthread
+Source: package/utils/util-linux
+License: GPL-2.0
+LicenseFiles: COPYING getopt/COPYING libblkid/COPYING libmount/COPYING Documentation/licenses/COPYING.GPLv2 Documentation/licenses/COPYING.LGPLv2.1 libuuid/COPYING Documentation/licenses/COPYING.BSD-3
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 7475
+Description:  whereis locates source/binary and manuals sections for specified files

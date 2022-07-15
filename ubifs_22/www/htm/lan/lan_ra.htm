@@ -1,0 +1,185 @@
+<form name="form" ng-controller="lan_ra_main" novalidate ng-modification="loadReady">
+<div ng-if="loadReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Router_Advertisement')"></div>
+        <div class="page-button-container ng-hide" ng-show="true">
+            <button id="btn_save" class="btn-apply" ng-disabled="form.$invalid || noIpv6Vlan || userAccessFlag === 'RO'" ng-click="save()">
+                <span ng-bind="DICT('Router_Advertisement_Apply')"></span>
+            </button>
+            <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('Router_Advertisement_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+    <div class="page-content-container" ng-show="true">
+        <table class="page-block-tb-list control-input-200">
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_VLAN_ID')"></td>
+                <td>
+                    <select id="slct_vlan" ng-init="" ng-model="selected.vlanif" ng-change="update_ra_ref()"
+                        ng-options="(vlanif) as vlanif.name for vlanif in collect_vlan_v6_valid_ref()"
+                        ng-disabled="form.$invalid"
+                    >
+                    </select>
+                    <span ng-if="noIpv6Vlan" ng-bind="DICT('Router_Advertisement_None_VLAN_Interfaces_IPv6_Enabled')"></span>
+                </td>
+            </tr>
+            <tr ng-if="!noIpv6Vlan">
+                <td ng-bind="DICT('Router_Advertisement_RA')"></td>
+                <td>
+                    <input type="checkbox" id="chk_enable" ng-model="selected.vlanif_ra['send-advertisements']" />
+                    <span ng-bind="DICT('Router_Advertisement_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-if="!noIpv6Vlan">
+                <td ng-bind="DICT('Router_Advertisement_Mode')"></td>
+                <td>
+                    <input type="radio" ng-model="selected.vlanif_ra.mode" value="unsolicited-multicast"></input>
+                    <span ng-bind="DICT('Router_Advertisement_Unsolicited_Multicast')"></span>
+                    <input type="radio" ng-model="selected.vlanif_ra.mode" value="unicast"></input>
+                    <span ng-bind="DICT('Router_Advertisement_Unicast')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_Interval')"></td>
+                <td>
+                    <input type="number" number id="txt_adverinterval" ng-model="selected.vlanif_ra['max-rtr-adv-interval']" min="10" max="1800"
+                        ng-disabled="selected.vlanif_ra.mode === 'unicast' "
+                    />
+                    <span class="tip-info" ng-bind="DICT('Router_Advertisement_Interval_Range')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_RA_Flags')"></td>
+                <td>
+                    <input type="checkbox" id="chk_managed" ng-model="selected.vlanif_ra['managed-flag']" />
+                        <span ng-bind="DICT('Router_Advertisement_Managed')"></span>
+                    <input type="checkbox" id="chk_other" ng-model="selected.vlanif_ra['other-config-flag']" />
+                        <span ng-bind="DICT('Router_Advertisement_Other')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_Router_Preference')"></td>
+                <td>
+                    <select id="slct_router" ng-model="selected.vlanif_ra['router-preference']" style="margin-left:0px;"
+                        ng-options="item.id as item.displayName for item in schema.router_pref"
+                    >
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_MTU')"></td>
+                <td>
+                    <input type="number" number id="txt_mtu" ng-model="selected.vlanif_ra['link-mtu']" min="1280" max="1500" />
+                    <span class="tip-info" ng-bind="DICT('Router_Advertisement_MTU_Range')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Router_Advertisement_Router_Lifetime')"></td>
+                <td>
+                    <input type="number" number id="txt_routerlifetime" ng-model="selected.vlanif_ra['default-lifetime']" min="10" max="9000" />
+                    <span class="tip-info" ng-bind="DICT('Router_Advertisement_Router_Lifetime_Range')"></span>
+                </td>
+            </tr>
+        </table>
+                
+        <div class="grid-cntr" ng-if="gridShow">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Router_Advertisement_Prefix_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_add"
+                            class="grid-btn-add"
+                            ng-disabled="form.$invalid || userAccessFlag === 'RO'"
+                            ng-click="gridRA.add()">
+                    </button>
+                    <button id="btn_edit"
+                            class="grid-btn-edit"
+                            ng-disabled="gridRA.checkProtectCondition() || gridRA.Selections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="gridRA.edit()">
+                    </button>
+                    <button id="btn_delete"
+                            class="grid-btn-delete"
+                            ng-disabled="gridRA.checkProtectCondition() || gridRA.Selections.length === 0 || userAccessFlag === 'RO'"
+                            ng-click="gridRA.remove()">
+                    </button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridRA.Options"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+<script type="text/ng-template" id="UG_prefix_ref.html">
+<div class="ui-grid-custom-cntr">
+    <div ng-show="!row.entity[col.colDef.editRow]"
+        <span>{{MODEL_COL_FIELD['prx']}}</span>
+        <span ng-if="MODEL_COL_FIELD['auto_gen'] == true" ng-class="{_greyout: MODEL_COL_FIELD['auto_gen'] == true}" ng-bind="grid.appScope.DICT('Router_Advertisement_Auto_Generated')"></span>
+        <input type="hidden" required ng-model="MODEL_COL_FIELD" grid-invalid-cbk="{{col.colDef.validationCbk}}" style="margin-left:8px;" />
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <table>
+            <tr>
+                <td>
+                    <input type="radio" name="{{'prefix_src_'+row.rowIndex}}" ng-model="MODEL_COL_FIELD.type" value="STATIC"
+                        ng-change="grid.appScope.update_userdef_prx(MODEL_COL_FIELD, row)"
+                    ></input>
+                    <span ng-show="MODEL_COL_FIELD.type == 'STATIC'">
+                        <input type="text" ipv6-ip ng-model="MODEL_COL_FIELD.userdef_prx" size="30" style="width: 200px"
+                            name="ip6prefix_userdef_{{col.index + '_' + row.rowIndex}}"
+                            placeholder="2222::"
+                            ng-required="MODEL_COL_FIELD.type == 'STATIC'"
+                            ng-change="grid.appScope.update_userdef_prx(MODEL_COL_FIELD, row)"
+                            grid-invalid-field="{isDupIpv6raps: 'isDupIpv6raps'}"
+                        ></input>
+                    </span>
+                    <span ng-show="MODEL_COL_FIELD.type == 'ISP'" ng-bind="grid.appScope.DICT('Router_Advertisement_User_Defined')" style="padding-right: 20px"></span>
+                </td>
+                <td>
+                    <input type="radio"
+                        name="{{'prefix_src_' + grip.appScope.gridFuns.getColumnIndex(col, grid) + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+                        ng-model="MODEL_COL_FIELD.type"
+                        value="ISP"
+                        ng-change="grid.appScope.update_pdprx(MODEL_COL_FIELD, row)"
+                    ></input>
+                    <span ng-if="MODEL_COL_FIELD.type === 'STATIC'"
+                          ng-bind="grid.appScope.DICT('Router_Advertisement_From_DHCP_PD')"
+                    ></span>
+                    <span ng-if="MODEL_COL_FIELD.type === 'ISP'">
+                        <select ng-model="MODEL_COL_FIELD._ip_pd_obj"
+                                ng-change="grid.appScope.update_pdprx(MODEL_COL_FIELD, row)"
+                                required
+                                ng-options="wanif as wanif.display_name for wanif in grid.appScope.ctx.pd_list"
+                        ></select>
+                        +
+                        <input size="8" style="width: 200px"
+                            maxlength="4"
+                            required
+                            title="use Hex string(up to 'FFFF')"
+                            placeholder="use Hex string(up to 'FFFF')"
+                            name="ip6prefix2_{{grip.appScope.gridFuns.getColumnIndex(col, grid) + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+                            ng-model="MODEL_COL_FIELD.pd_prx2"
+                            pattern="^[0-9A-Fa-f]{1,4}$"
+                            ng-change="grid.appScope.update_pdprx(MODEL_COL_FIELD, row)"
+                            grid-invalid-cbk="{{col.colDef.validationCbk}}"
+                            grid-invalid-field="{isDupIpv6raps: 'isDupIpv6raps'}"
+                        ></input>
+                    </span>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.type == 'ISP'">
+                <td></td>
+                <td style="padding-top: 8px">
+                    <span>
+                        <span ng-bind="grid.appScope.DICT('Router_Advertisement_Preview', {'%s': (MODEL_COL_FIELD.prxPreview!==undefined ? MODEL_COL_FIELD.prxPreview : '') })"></span>
+                        <input type="hidden" required ng-model="MODEL_COL_FIELD.prxPreview" grid-invalid-cbk="{{col.colDef.validationCbk}}" /> <!-- H_prxPreview -->
+                    </span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</script>

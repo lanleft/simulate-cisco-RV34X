@@ -1,0 +1,11 @@
+/usr/bin/sendEmailAlert
+/etc/config/syslog
+/usr/bin/sendmailalert
+/etc/hotplug.d/iface/52-interface_logs
+/etc/syslog_config_template
+/usr/bin/sendEmailLogs
+/usr/sbin/syslog-ng
+/lib/upgrade/keep.d/syslog-ng3
+/usr/bin/sendmaillog
+/etc/init.d/syslog
+/usr/bin/logInterface

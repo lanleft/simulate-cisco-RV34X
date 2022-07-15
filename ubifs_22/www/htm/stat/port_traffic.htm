@@ -1,0 +1,45 @@
+<form name="form" ng-controller="port_traffic_main" class="ng-cloak">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Port_Traffic')"></div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Port_Traffic')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_refresh" class="grid-btn-refresh" ng-click="funs.refresh()" ng-disabled="ctx.btnDisabled || userAccessFlag === 'RO'" ></button>
+                        <button id="btn_reset" class="grid-btn-reset-counter" ng-click="funs.reset()" ng-disabled="ctx.btnDisabled || userAccessFlag === 'RO'" ></button>
+                    </div>
+                    <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridPortTrafficItems"></div>
+                </div>
+            </div>
+            <div ng-show="rv340w_flag === 1 ? true : false" ng-if="rv340w_flag === 1 ? true : false">
+                <div class="grid-seperator"></div>
+                <div class="grid-cntr">
+                    <div class="grid-title-cntr">
+                        <div class="grid-title" ng-bind="DICT('Port_Traffic_Wireless_Traffic')"></div>
+                    </div>
+                    <div class="grid-content-cntr">
+                        <div class="grid-btn-cntr">
+                            <button id="btn_wifi_refresh" class="grid-btn-refresh" ng-click="funs.wifiRefresh()" ng-disabled="ctx.btnDisabled || userAccessFlag === 'RO'"></button>
+                            <button id="btn_wifi_reset" class="grid-btn-reset" ng-click="funs.wifiReset()" ng-disabled="ctx.btnDisabled || userAccessFlag === 'RO'"></button>
+                        </div>
+                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridWifiTrafficItems"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-seperator"></div>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Port_Traffic_Port_Status')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridPortStatusItems"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

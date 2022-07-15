@@ -1,0 +1,329 @@
+<form name="form" ng-controller="log_main" novalidate ng-modification="loadReady" id="sys-log">
+    <div ng-if="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Log')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" ng-click="save()" ng-disabled="form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Log_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('Log_Cancel')"></span>
+                </button>
+                <button class="btn-back" ng-click="goback()" ng-if="backbtn">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container container-fluid">
+            <div class="page-block-title-cntr">
+                <div class="page-block-title " ng-bind="DICT('Log_Setting')"></div>
+            </div>
+            <table class="page-block-tb-list control-input-200">
+                <tr>
+                    <td ng-bind="DICT('Log_Log')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_logenable" ng-click="log_enable()" ng-model="ctx.log.enable">
+                        <span ng-bind="DICT('Log_Enable')"></span></input>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.log.enable !== true}">
+                    <td ng-bind="DICT('Log_Buffer')"></td>
+                    <td>
+                        <input type="number" number id="slct_logbuffer" min=1 max=4096 ng-model="model.syslog['file-logging-action']['file-size']"></input>
+                        <span class="tip-info" ng-bind="DICT('Log_KBytes')"></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.log.enable !== true}">
+                    <td ng-bind="DICT('Log_Severity')"></td>
+                    <td>
+                        <select style="margin-left:0px;"
+                                id="slct_severity"
+                                ng-model="ctx.log.severity"
+                                ng-change="severity_change()"
+                                ng-options="m.id as m.displayName for m in schema.severity"
+                                ></select>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.log.enable !== true}">
+                    <td ng-bind="DICT('Log_Category')" class="align-top"></td>
+                    <td>
+                        <table class="level-list">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="chk_all" ng-model="ctx.log.all" ng-click="log_all()" value="all">
+                                    <span ng-bind="DICT('Log_All')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_kernel" ng-model="ctx.facility['kern']" ng-click="updatefacility('kern')" value="kern">
+                                    <span ng-bind="DICT('Log_Kernel')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_system" ng-model="ctx.facility['system']" ng-click="updatefacility('system')" value="system">
+                                    <span ng-bind="DICT('Log_System')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_firewall" ng-model="ctx.facility['firewall']" ng-click="updatefacility('firewall')" value="firewall">
+                                    <span ng-bind="DICT('Log_Firewall')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_network" ng-model="ctx.facility['network']" ng-click="updatefacility('network')" value="network">
+                                    <span ng-bind="DICT('Log_Network')"></span></input>
+                                </td>
+                                <td ng-if="!ruFlag">
+                                    <input type="checkbox" id="chk_vpn" ng-model="ctx.facility['vpn']" ng-click="updatefacility('vpn')" value="vpn">
+                                    <span ng-bind="DICT('Log_VPN')"></span></input>
+                                </td>
+                                <td ng-if="!ruFlag">
+                                    <input type="checkbox" id="chk_sslvpn" ng-model="ctx.facility['ssl-vpn']" ng-click="updatefacility('ssl-vpn')" value="ssl-vpn">
+                                    <span ng-bind="DICT('Log_SSLVPN')"></span></input>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="checkbox" id="chk_license" ng-model="ctx.facility['license']" ng-click="updatefacility('license')" value="license">
+                                    <span ng-bind="DICT('Log_License')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_webfilter" ng-model="ctx.facility['web-filter']" ng-click="updatefacility('web-filter')" value="web-filter">
+                                    <span ng-bind="DICT('Log_Web_Filter')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_app" ng-model="ctx.facility['application-control']" ng-click="updatefacility('application-control')" value="application-control">
+                                    <span ng-bind="DICT('Log_Application_Control')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_users" ng-model="ctx.facility['user']" ng-click="updatefacility('user')" value="user">
+                                    <span ng-bind="DICT('Log_Users')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_3g4g" ng-model="ctx.facility['mobile']" ng-click="updatefacility('mobile')" value="mobile">
+                                    <span ng-bind="DICT('Log_3G_4G')"></span></input>
+                                </td>
+                                <td ng-show="rv340w_flag === 1 ? true : false">
+                                    <input type="checkbox" id="chk_wireless" ng-model="ctx.facility['wireless']" ng-click="updatefacility('wireless')" value="wireless">
+                                    <span ng-bind="DICT('Log_Wireless')"></span></input>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <input type="checkbox" id="chk_pnp" ng-model="ctx.facility['pnp']" ng-click="updatefacility('pnp')" value="pnp">
+                                    <span ng-bind="DICT('Log_PnP')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_pnp" ng-model="ctx.facility['anti-virus']" ng-click="updatefacility('anti-virus')" value="anti-virus">
+                                    <span ng-bind="DICT('Log_Anti_Virus')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_pnp" ng-model="ctx.facility['ips']" ng-click="updatefacility('ips')" value="ips">
+                                    <span ng-bind="DICT('Log_IPS')"></span></input>
+                                </td>
+                        </table>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.log.enable !== true}">
+                    <td ng-bind="DICT('Log_Save_USB_Auto')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_savetousbenable" ng-model="ctx.log.usb_enable" ng-click="usb()">
+                        <span ng-bind="DICT('Log_Enable')"></span></input>
+                        <span class="indent"></span>
+                        <span ng-class="{nopHint: ctx.log.usb_enable !== true}">
+                            <input type="radio" id="rdo_usb1" name="usb" value="1" ng-model="ctx.log.usb">
+                            <span ng-bind="DICT('Log_USB1')"></span></input>
+                            <input type="radio" id="rdo_usb2" name="usb" value="2" ng-model="ctx.log.usb">
+                            <span ng-bind="DICT('Log_USB2')"></span></input>
+                            <span ng-if="ctx.log.usb_enable === true && 
+                            model.output.usbs[0].attached !== true && model.output.usbs[0]['usbs-type'] !== 'mass-storage' &&
+                            model.output.usbs[1].attached !== true && model.output.usbs[1]['usbs-type'] !== 'mass-storage'">
+                                <span class="validation-error-text-right" ng-bind="DICT('Log_No_USB_Storage')"></span>
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+            <div class="page-content-seperator"></div>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title " ng-bind="DICT('Log_Email_Server')"></div>
+            </div>
+            <table class="page-block-tb-list control-input-200" ng-class="{nopHint: ctx.log.enable !== true}">
+                <tr>
+                    <td ng-bind="DICT('Log_Email_Syslogs')"></td>
+                    <td>
+                        <input name="email_enable" id="chk_emailsyslogsenable" type="checkbox" ng-model="ctx.email['enable']">
+                        <span ng-bind="DICT('Log_Enable')"></span></input>
+                        <span class="indent"></span>
+                        <span ng-if="ctx.email['enable'] === true && model['email-server']['smtp-server'] === NULL">
+                            <span class="validation-error-text-right" ng-bind="DICT('Log_Email_Not_Config')"></span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Log_Email_Settings')"></td>
+                    <td pg-bind-html="email_setting"></td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                    <td ng-bind="DICT('Log_Email_Subject')"></td>
+                    <td>
+                        <input type="text" id="txt_emailsubject" legal-char maxlength="64" ng-model="ctx.email['email-subject']"></input>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                    <td ng-bind="DICT('Log_Severity')"></td>
+                    <td>
+                        <select style="margin-left:0px;" id="slct_email_severity" ng-model="ctx.email.severity" ng-options="m.id as m.displayName for m in schema.email_severity"></select>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                    <td ng-bind="DICT('Log_Queue_Length')"></td>
+                    <td>
+                        <input type="number" number id="txt_logqueuelength" min="1" max="1000" ng-model="ctx.email['queue-length']"></input>
+                        <span class="tip-info" ng-bind="DICT('Log_Hint')"></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                    <td ng-bind="DICT('Log_Time_Threshold')"></td>
+                    <td>
+                        <select style="margin-left:0px;" id="slct_logthreshold" ng-model="ctx.email['time-threshold']" ng-options="m.id as m.displayName for m in schema.threshold"></select>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                    <td class="align-top" ng-bind="DICT('Log_Real_Time_Email_Alerts')"></td>
+                    <td>
+                        <table class="page-block-tb-list inside-a-tb level-list" ng-class="{nopHint: ctx.email['enable'] !== true || model['email-server']['smtp-server'] === NULL}">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="chk_emailall" ng-model="ctx.email.all" ng-click="email_all()" value="all">
+                                    <span ng-bind="DICT('Log_All')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailwanup" ng-model="ctx.alert['wan-up'].enable" ng-click="updatealert('wan-up')" value="wan-up">
+                                    <span ng-bind="DICT('Log_WAN_Up')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailwandown" ng-model="ctx.alert['wan-down'].enable" ng-click="updatealert('wan-down')" value="wan-down">
+                                    <span ng-bind="DICT('Log_WAN_Down')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailusblinkup" ng-model="ctx.alert['usb-link-up'].enable" ng-click="updatealert('usb-link-up')" value="usb-link-up">
+                                    <span ng-bind="DICT('Log_USB_Link_Up')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailusblinkdown" ng-model="ctx.alert['usb-link-down'].enable" ng-click="updatealert('usb-link-down')" value="usb-link-down">
+                                    <span ng-bind="DICT('Log_USB_Link_Down')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailfailover" ng-model="ctx.alert['failover-recovery'].enable" ng-click="updatealert('failover-recovery')" value="failover-recovery">
+                                    <span ng-bind="DICT('Log_Failover')"></span></input>
+                                </td>
+                            </tr>
+                            <tr ng-if="!ruFlag">
+                                <td>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailsystemstartup" ng-model="ctx.alert['system-startup'].enable" ng-click="updatealert('system-startup')" value="system-startup">
+                                    <span ng-bind="DICT('Log_System_Startup')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emails2svpnup" ng-model="ctx.alert['s2s-vpn-up'].enable" ng-click="updatealert('s2s-vpn-up')" value="s2s-vpn-up">
+                                    <span ng-bind="DICT('Log_S2S_VPN_Up')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emails2svpndown" ng-model="ctx.alert['s2s-vpn-down'].enable" ng-click="updatealert('s2s-vpn-down')" value="s2s-vpn-down">
+                                    <span ng-bind="DICT('Log_S2S_VPN_Down')"></span></input>
+                                </td>
+                                <td ng-show="rv345p_flag === 1 ? true : false">
+                                    <input type="checkbox" id="chk_emailpoe" ng-model="ctx.alert['poe-start-end-power-supply'].enable" ng-click="updatealert('poe-start-end-power-supply')" value="poe-start-end-power-supply">
+                                    <span ng-bind="DICT('Log_POE_Start_End_Power_Supply')"></span></input>
+                                </td>
+                            </tr>
+                            <tr ng-if="!ruFlag">
+                                <td>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailunauthorized" ng-model="ctx.alert['unauthorized-loging-attempt'].enable" ng-click="updatealert('unauthorized-loging-attempt')" value="unauthorized-loging-attempt">
+                                    <span ng-bind="DICT('Log_Unauthorized_Login_Attempt')"></span></input>
+                                </td>
+                            </tr>
+                            <tr ng-if="ruFlag">
+                                <td>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailsystemstartup" ng-model="ctx.alert['system-startup'].enable" ng-click="updatealert('system-startup')" value="system-startup">
+                                    <span ng-bind="DICT('Log_System_Startup')"></span></input>
+                                </td>
+                                <td ng-show="rv345p_flag === 1 ? true : false">
+                                    <input type="checkbox" id="chk_emailpoe" ng-model="ctx.alert['poe-start-end-power-supply'].enable" ng-click="updatealert('poe-start-end-power-supply')" value="poe-start-end-power-supply">
+                                    <span ng-bind="DICT('Log_POE_Start_End_Power_Supply')"></span></input>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="chk_emailunauthorized" ng-model="ctx.alert['unauthorized-loging-attempt'].enable" ng-click="updatealert('unauthorized-loging-attempt')" value="unauthorized-loging-attempt">
+                                    <span ng-bind="DICT('Log_Unauthorized_Login_Attempt')"></span></input>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <div class="page-content-seperator"></div>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title " ng-bind="DICT('Log_Remote_Syslog_Servers')"></div>
+            </div>
+            <table class="page-block-tb-list control-input-200" ng-class="{nopHint: ctx.log.enable !== true}">
+                <tr>
+                    <td ng-bind="DICT('Log_Syslog_Servers')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_syslogServers" ng-click="rserver()" ng-model="model.syslog['remote-logging-action'].enable">
+                        <span ng-bind="DICT('Log_Enable')"></span></input>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Server1')"></td>
+                    <td>
+                        <input type="text" id="txt_SyslogServer1" name="log_server1" ng-required="model.syslog['remote-logging-action'].enable == true" ng-fqdn-no-host-ip="model.syslog['remote-logging-action'].enable == true" ng-model="ctx.server1" ></input>
+                        <span class="tip-info" ng-bind="DICT('Log_Hint_Server')"></span>
+                        <span ng-messages="form['log_server1'].$error" 
+                              ng-if="form['log_server1'].$dirty && model.syslog['remote-logging-action'].enable == true"
+                              >
+                              <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                        </span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Transport')+':'"></td>
+                    <td>
+                        <select id="slct_SyslogTransport1" ng-model="ctx.transport1" ng-options="m.id as m.displayName for m in schema.transport"></select>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Port')+':'"></td>
+                    <td>
+                        <input type="number" id="num_SyslogPort1" ng-model="ctx.port1"></input>
+                    </td>
+                </tr>
+
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Server2')"></td>
+                    <td>
+                        <input type="text" id="txt_SyslogServer2" fqdn-no-host-ip="model.syslog['remote-logging-action'].enable == true" ng-model="ctx.server2" ></input>
+                        <span class="tip-info" ng-bind="DICT('Log_Hint_Optional')"></span>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Transport')+':'"></td>
+                    <td>
+                        <select id="slct_SyslogTransport2" ng-model="ctx.transport2" ng-options="m.id as m.displayName for m in schema.transport"></select>
+                    </td>
+                </tr>
+                <tr ng-class="{nopHint: model.syslog['remote-logging-action'].enable !== true}">
+                    <td ng-bind="DICT('Log_Syslog_Port')+':'"></td>
+                    <td>
+                        <input type="number" id="num_SyslogPort2" ng-model="ctx.port2"></input>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

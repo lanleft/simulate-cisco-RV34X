@@ -1,0 +1,176 @@
+module ciscosb-classifier {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/classifier";
+  prefix ciscosb-classifier;
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ciscosb-service {
+    prefix csco-svc;
+  }
+  import ciscosb-common { prefix ciscosb-common; }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-01 {
+    description
+      "First revision Classifier module";
+  }
+  container classifiers {
+    list classifier {
+      key "name";
+      ordered-by user;
+      leaf name {
+        type string;
+        description
+         "An arbitrary name describing the entry.";
+      }
+      leaf description {
+        type string;
+        description
+         "An arbitrary description for the entry.";
+      }
+      list rule {
+        key "name";
+        ordered-by user;
+        leaf name {
+          type string;
+          description
+           "An arbitrary name for the rule.";
+        }
+        choice interface {
+          case any-interface {
+                 leaf any-interface {
+                   type empty;
+                   description "This indicates receive interface as any";
+                 }
+             }
+          case receive-interface {
+           leaf receive-interface {
+                   type leafref {
+                     path "/if:interfaces/if:interface/if:name";
+                   }
+                   description
+                    "The interface the packet was received on";
+                 }
+          }
+        }
+        leaf ip-version {
+          type inet:ip-version;
+          default "unknown";
+          description
+           "The version of the IP protocol for this flow.  A version of 'unknown' matches
+            on either of ipv4 or ipv6.";
+        }
+ container address {
+          choice version {
+            case ipv4 {
+              container ipv4-source {
+               uses ciscosb-common:IPSUBNET_V4;
+              }
+              container ipv4-destination {
+               uses ciscosb-common:IPSUBNET_V4;
+              }
+            }
+            case ipv6 {
+              container ipv6-source {
+               uses ciscosb-common:IPSUBNET_V6;
+                description
+                 "Source IP address must match this prefix";
+              }
+              container ipv6-destination {
+               uses ciscosb-common:IPSUBNET_V6;
+                description
+                 "Destination IP address must match this prefix";
+              }
+            }
+          }
+        }
+  container service{
+   choice use-global-service{
+    case global{
+           leaf service-ref {
+             type leafref {
+               path "/csco-svc:services/csco-svc:service/csco-svc:name";
+             }
+           }
+    }
+   case local{
+     uses csco-svc:SERVICE;
+    }
+   }
+  }
+        container application {
+          leaf category {
+            type string;
+            default "any";
+            description
+             "A valid application category or the string 'any'.";
+          }
+          leaf name {
+            type string;
+            default "any";
+            description
+             "A valid application name or the string 'any'.";
+          }
+          leaf behaviour {
+            type string;
+            default "any";
+            description
+             "A valid application behaviour or the string 'any'.";
+          }
+        }
+        leaf device-type {
+          type string;
+          default "any";
+          description
+           "A valid device type or the string 'any'.";
+        }
+        leaf os-type {
+         type string;
+            default "any";
+            description
+             "A valid os type or the string 'any'.";
+          }
+        container dscp {
+          leaf match {
+            type union {
+              type inet:dscp;
+              type enumeration {
+                enum "any";
+              }
+            }
+            default "any";
+            description
+             "The dscp to match on.";
+          }
+          leaf set {
+            type union {
+              type inet:dscp;
+              type enumeration {
+                enum "none";
+              }
+            }
+            default "none";
+            description
+             "Rewrite the dscp to this value.";
+          }
+        }
+      }
+      leaf in-use {
+        config false;
+        type boolean;
+        description
+         "Set to true when the classifier is selected in a QoS policy.";
+      }
+    }
+  }
+}

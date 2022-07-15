@@ -1,0 +1,9 @@
+Package: kmod-epn1802-ocf
+Version: 4.1.8+1.00-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-ocf
+Source: package/freescale/epn1802-ocf
+Section: Freescale Packages
+Maintainer: Freescale Semiconductors
+Architecture: comcerto2000
+Installed-Size: 30970
+Description:  OCF driver for Mindspeed's Comcerto 2000 (m86xxx). Support for raw cryptography, public key acceleration and TRNG offload.

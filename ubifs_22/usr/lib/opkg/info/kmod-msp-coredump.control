@@ -1,0 +1,8 @@
+Package: kmod-msp-coredump
+Version: 4.1.8+1.00.0-comcerto2000-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Source: package/freescale/msp_coredump
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 2041
+Description:  Driver for MSP coredump utility

@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# This is called as "request get-attacks-per-client hours 0 days 1 weeks 0 months 0 client 00:14:D1:23:32:55"
+macclient=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "client") {print $(I+1)};}'`
+hrs=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "hours") {print $(I+1)};}'`
+da=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "days") {print $(I+1)};}'`
+wk=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "weeks") {print $(I+1)};}'`
+months=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "months") {print $(I+1)};}'`
+
+# confd_cli is returning/storing SMALL alphabet. Hence when calling this RPC converting any SMALL alphabet to CAP to avoid the issue now. 
+macclient=`echo $macclient | tr 'a-z' 'A-Z'`
+
+#event means signature id
+#days 1 means last 24 hours
+#weeks 1 means last 7 days
+#hours 1 days 1 weeks 1 months 1 means Since activated
+
+db="/tmp/stat.db"
+IPSFILE=/tmp/ipsapcfile
+
+if [ "$wk" = "1" -a "$da" = "1" -a "$hrs" = "1" -a "$months" = "1" ]; then
+  # All rows since begining.
+  sql="SELECT ts, ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, sig.impact, sig.classtype, sig.severity, sig.recommend, sig.description, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid WHERE ips.mac='$macclient' ORDER BY ts DESC;"
+elif [ "$wk" = "1" ]; then
+  sql="SELECT ts, ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, sig.impact, sig.classtype, sig.severity, sig.recommend, sig.description, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid WHERE ips.mac='$macclient' AND ts >= CAST(strftime('%s', 'now', '-7 days') AS INTEGER) ORDER BY ts DESC;"
+elif [ "$da" = "1" ]; then
+  sql="SELECT ts, ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, sig.impact, sig.classtype, sig.severity, sig.recommend, sig.description, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid WHERE ips.mac='$macclient' AND ts >= CAST(strftime('%s', 'now', '-24 hours') AS INTEGER) ORDER BY ts DESC;"
+else
+  # All rows since begining. (Default case)
+  sql="SELECT ts, ip, remote_ip, port, remote_port, ips.sid, sig.name AS attack, sig.impact, sig.classtype, sig.severity, sig.recommend, sig.description, actions FROM ips INNER JOIN sig ON sig.sid = ips.sid WHERE ips.mac='$macclient' ORDER BY ts DESC;"
+fi
+
+sqlite3 "$db" "$sql" >$IPSFILE
+
+while read -r line
+do
+  #echo $line
+  ts=`echo $line | awk -F'|' '{print $1}'`
+  ip=`echo $line | awk -F'|' '{print $2}'`
+  remote_ip=`echo $line | awk -F'|' '{print $3}'`
+  port=`echo $line | awk -F'|' '{print $4}'`
+  remote_port=`echo $line | awk -F'|' '{print $5}'`
+  sid=`echo $line | awk -F'|' '{print $6}'`
+  name=`echo $line | awk -F'|' '{print $7}'`
+  impact=`echo $line | awk -F'|' '{print $8}'`
+  classtype=`echo $line | awk -F'|' '{print $9}'`
+  sev=`echo $line | awk -F'|' '{print $10}'`
+  recommend=`echo $line | awk -F'|' '{print $11}'`
+  descr=`echo $line | awk -F'|' '{print $12}'`
+  action=`echo $line | awk -F'|' '{print $13}'`
+  # timestamp conversion as per yang format using below command
+  ts=`date -d @$ts +'%Y-%m-%dT%H:%M:%S'`;
+
+  echo "attacks __BEGIN"
+  #echo "ts \"$ts\" ip \"$ip\" remote_ip \"$remote_ip\"  port \"$port\" remote_port \"$remote_port\" sid \"$sid\" name \"$name\" "
+  echo "id $sid date $ts name \"$name\" remote-ip $remote_ip port $remote_port impact \"$impact\" description \"$descr\" recommendation \"$recommend\" category \"$classtype\" severity \"$sev\" "
+  echo "attacks __END"
+
+done < $IPSFILE

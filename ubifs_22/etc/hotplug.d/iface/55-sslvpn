@@ -1,0 +1,57 @@
+#!/bin/sh
+# This script is executed as part of the hotplug event with
+# HOTPLUG_TYPE=iface, triggered by various scripts when an interface
+# is configured (ACTION=ifup) or deconfigured (ACTION=ifdown).  The
+# interface is available as INTERFACE, the real device as DEVICE.
+
+. /lib/functions/network.sh
+
+[ "$DEVICE" == "lo" ] && exit 0
+local interface_for_vpn=0
+local sslvpn_config_file='/etc/sslvpn/sslvpnd.conf'
+local wan_status=`echo $INTERFACE`
+local sslvpn_interface=`uci get sslvpn.general.gwifname`
+local sslvpn_interface_virtual=''
+if [  -f "$sslvpn_config_file" ]
+then
+        sslvpn_interface_virtual=$(echo $sslvpn_interface | sed s/wan[1-9]*/\&p/g)
+else 
+        echo "$$ $sslvpn_config_file not exist"
+fi
+
+local physical_ifname=`uci get network.$sslvpn_interface.ifname`
+local virtual_ifname=`uci get network.$wan_status.ifname`
+
+echo "$$ hotplug script action:$ACTION, INTERFACE:$INTERFACE, wan_status:$wan_status, physical_ifname:$physical_ifname, virtual_ifname:$virtual_ifname" >> /tmp/vpn_test.txt
+echo "$$ sslvpn_interface:$sslvpn_interface, sslvpn_interface_virtual:$sslvpn_interface_virtual" >> /tmp/vpn_test.txt
+
+is_interface_for_sslvpn() {
+        if [ "$wan_status" = "$sslvpn_interface" ] || \
+           [ "$wan_status" = "$sslvpn_interface_virtual" ] || \
+           [ "$physical_ifname" = "$virtual_ifname" ]
+        then 
+                echo "$$ hotplug script interface for sslvpn" >> /tmp/vpn_test.txt
+                interface_for_vpn=1
+        fi
+}
+
+is_interface_for_sslvpn
+
+case "$ACTION" in
+        ifup)
+                
+                if [ "$interface_for_vpn" = "1" ]
+                then
+                        echo "$$ hotplug script reload sslvpn" >> /tmp/vpn_test.txt
+                        /etc/init.d/sslvpn reload
+                fi
+        ;;
+
+        ifdown)
+                if [ "$interface_for_vpn" = "1" ]
+                then
+                        echo "$$ hotplug script stop sslvpn" >> /tmp/vpn_test.txt
+                        /etc/init.d/sslvpn stop
+                fi
+        ;;
+esac

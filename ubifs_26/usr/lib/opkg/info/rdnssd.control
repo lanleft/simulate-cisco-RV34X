@@ -1,0 +1,9 @@
+Package: rdnssd
+Version: 1.0.2-1
+Depends: libc, librt, libpthread, libpthread, librt
+Source: package/openwrt/ipv6/ndisc
+Section: ipv6
+Architecture: comcerto2000
+Installed-Size: 8589
+Description:  A recursive DNS server discovery daemon gathering
+ information through stateless IPv6 autoconfiguration (RFC5006)

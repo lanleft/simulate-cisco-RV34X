@@ -1,0 +1,8 @@
+Package: smart_client
+Version: 2.3.0-7
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, call_home, libxml2, curl
+Source: package/cisco/smart_client
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 18677
+Description:  smart_client.

@@ -1,0 +1,7 @@
+{
+    "cur_lang": "English",
+    "list": [
+        {"lang": "English", "displayName": "English", "version": "1.0", "URL": "i18n/lang_en.js"},
+        {"lang": "Chinese", "displayName": "繁體中文", "version": "1.0", "URL": "i18n/lang_tw.js"}
+    ]
+}

@@ -1,0 +1,10 @@
+Package: ppp-mod-radius
+Version: 2.4.8-2
+Depends: libc, librt, libpthread
+Source: package/network/services/ppp
+Section: net
+Maintainer: Jo-Philipp Wich <xm@subsignal.org>
+Architecture: comcerto2000
+Installed-Size: 29610
+Description:  This package contains a RADIUS (Remote Authentication Dial-In User Service)
+ plugin for ppp.

@@ -1,0 +1,4 @@
+
+logger -t ucicfg "Smart Licensing operational database ..."
+ucicfg_license
+logger -t ucicfg "Smart Licensing operational database: end"

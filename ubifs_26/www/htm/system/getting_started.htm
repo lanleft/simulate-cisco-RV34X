@@ -1,0 +1,199 @@
+<div ng-controller="gettingStartedCtrl" id="getting-started"> 
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Getting_Started')"></div>
+    </div>
+    <div class="page-content-container">
+        <div id="gs-desc" ng-bind="DICT('Getting_Started_Desc')"></div>
+        <table id="gs-tb-list-cntr">
+            <tr>
+                <td class="gs-tb-list-right-cntr">
+                    <!--- getting_started.html... -->
+                    <table class="section-tb-list-cntr">
+                        <tr class="section-title-cntr"> 
+                            <td>
+                                <span class="gs icon-wizard"></span>
+                            </td>
+                            <td class="section-title" ng-bind="DICT('Getting_Started_Launch_Setup_Wizard')"></td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" ng-click="goto_setup_wizard()">
+                                    <span ng-bind="DICT('Getting_Started_Initial_Setup_Wizard')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr ng-if="!ruFlag"> 
+                            <td></td>
+                            <td>
+                                <a onClick="" ng-click="goto_vpn_wizard()">
+                                    <span ng-bind="DICT('Getting_Started_VPN_Setup_Wizard')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" ng-click="goto_application_wizard()">
+                                    <span ng-bind="DICT('Getting_Started_Application_Control_Wizard')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <table  class="section-tb-list-cntr">
+                        <tr class="section-title-cntr"> 
+                            <td >
+                                <span class="gs icon-cogs"></span>
+                            </td>
+                            <td class="section-title" ng-bind="DICT('Getting_Started_Initial_Configuration')"></td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/System_Config_User_Accounts">
+                                    <span ng-bind="DICT('Getting_Started_Change_Administrator_Password')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/WAN_Settings">
+                                    <span ng-bind="DICT('Getting_Started_Configure_WAN_Settings')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td >
+                                <a onClick="" href="#/WAN_Mobile_Network">
+                                    <span ng-bind="DICT('Getting_Started_Configure_USB_Settings')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/LAN_VLAN_Settings">
+                                    <span ng-bind="DICT('Getting_Started_Configure_VLAN_Settings')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td class="gs-tb-list-right-cntr">
+                    <table  class="section-tb-list-cntr">
+                        <tr class="section-title-cntr"> 
+                            <td>
+                                <span class="gs icon-star"></span>
+                            </td>
+                            <td class="section-title" ng-bind="DICT('Getting_Started_Quick_Access')"></td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Admin_File_Management">
+                                    <span ng-bind="DICT('Getting_Started_Upgrade_Router_Firmware')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Firewall_Basic_Settings">
+                                    <span ng-bind="DICT('Getting_Started_Configure_Remote_Management_Access')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Admin_Config_Management">
+                                    <span ng-bind="DICT('Getting_Started_Backup_Device_Configuration')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="section-tb-list-cntr">
+                        <tr class="section-title-cntr"> 
+                            <td>
+                                <span class="gs icon-bar-chart"></span>
+                            </td>
+                            <td class="section-title" ng-bind="DICT('Getting_Started_Device_Status')"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Status_System_Stats">
+                                    <span ng-bind="DICT('Getting_Started_System_Summary')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr ng-if="!ruFlag">
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Status_VPN">
+                                    <span ng-bind="DICT('Getting_Started_VPN_Status')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Status_Port_Traffic">
+                                    <span ng-bind="DICT('Getting_Started_Port_Statistics')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Status_TCP_IP">
+                                    <span ng-bind="DICT('Getting_Started_Traffic_Statistics')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <a onClick="" href="#/Status_View_Logs">
+                                    <span ng-bind="DICT('Getting_Started_View_System_Log')"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <div id="gs-other-resource">
+            <table>
+                <tr>
+                    <td ng-bind="DICT('Getting_Started_Other_Resources')"></td>										
+                    <td>
+                        <a href="http://www.cisco.com/c/en/us/support/routers/small-business-rv-series-routers/tsd-products-support-series-home.html"
+                           target="_blank">
+                            <span ng-bind="DICT('Getting_Started_Support')"></span>
+                        </a>
+                    </td>
+                    <td class="line-opacity"></td>
+                    <td>
+                        <a href="https://supportforums.cisco.com/community/netpro/small-business" target="_blank">
+                            <span ng-bind="DICT('Getting_Started_Forums')"></span>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="gs-start-up">
+            <table>
+                <tr>
+                    <td>
+                        <input type="checkbox" ng-model="disable_startup" ng-change="change_startup()" name="ckbShowStartPage" id="ckbShowStartPage">
+                            <span ng-bind="DICT('Getting_Started_Do_Not_Show_On_Startup')"></span>
+                        </input>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

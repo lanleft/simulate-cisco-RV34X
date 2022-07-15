@@ -1,0 +1,5 @@
+/etc/mcproxy.conf
+/etc/config/mcproxy
+/etc/hotplug.d/iface/40-mcproxy
+/etc/init.d/mcproxy
+/usr/sbin/mcproxy

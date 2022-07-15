@@ -1,0 +1,264 @@
+<style>
+    .page-block-tb-list tr td:first-child {
+        width: 110px;
+    }
+</style>
+
+<div ng-controller="ipGroupCtrl" id="sys-ip-address-group">
+    <form name="ipgroupfrom" ng-modification="loadReady" ng-show="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('IP_Address_Groups')"></div>
+            <div class="page-button-container">
+                <button type="button" class="btn-applay" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.save()">
+                    <span ng-bind="DICT('IP_Address_Group_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('IP_Address_Group_Cancel')"></span>
+                </button>
+                <button type="button" class="btn-back" ng-click="funs.goback()" ng-show="backbtn">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <message-box class="page-note-cntr" ng-if="ui_data.mac_repeat_note">
+                <table>
+                    <tr>
+                        <td class="align-top">
+                            <i class="icon-warning message-icon"></i>
+                        </td>
+                        <td>
+                            <span pg-bind-html="ui_data.mac_repeat_note"></span>
+                        </td>
+                    </tr>
+                </table>
+            </message-box>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('IP_Address_Group_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button type="button"
+                            id="btn_groupadd"
+                            class="grid-btn-add"
+                            ng-disabled="userAccessFlag === 'RO'"
+                            ng-click="funs.create()"
+                        ></button>
+                        <button type="button" class="grid-btn-edit" ng-disabled="sel_cnts !== 1" ng-click="funs.editGroup()"></button>
+                        <button type="button" class="grid-btn-delete" ng-disabled="sel_cnts === 0" ng-click="funs.delGroup()"></button>
+                    </div>
+                    <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridMainOptions"></div>
+                </div>
+            </div> 
+        </div>
+    </form>
+</div> 
+
+<script type="text/ng-template" id="ip_group_sub_detail_cell.html">
+<div class="ui-grid-custom-cntr ipag-sub-edit">
+    <div ng-hide="col.colDef.editRow !== undefined && row.entity[col.colDef.editRow]">
+        <span ng-bind="MODEL_COL_FIELD.detailStr" pgtitle></span>
+    </div>
+    <div ng-show="col.colDef.editRow !== undefined && row.entity[col.colDef.editRow]">
+        <div ng-if="row.entity.type.select === 'single'">
+            <input type="text" 
+                class="ipag-edit-data"
+                id="{{'txt_editIP' + col.colDef.id + '_' + row.entity.seq}}"
+                ng-model="MODEL_COL_FIELD[row.entity.proto.select].ip"
+                placeholder="{{grid.appScope.DICT('IP_Address_Group_IP')}}"
+                ng-required="row.entity.type.select === 'single'"
+                ng-ipv4-ip="row.entity.proto.select === 'ipv4'"
+                ng-ipv6-ip="row.entity.proto.select === 'ipv6'"
+                grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            ></input>
+        </div>
+        <div ng-if="row.entity.type.select === 'subnet'">
+            <div>
+                <span ng-if="row.entity.proto.select === 'ipv4'">
+                    <input class="ipag-edit-data first"
+                        type="text" 
+                        id="{{'txt_editIP' + col.colDef.id + '_' + row.entity.seq}}"
+                        placeholder="{{grid.appScope.DICT('IP_Address_Group_IP')}}"
+                        required
+                        ng-change="grid.appScope.ipv4.change_netmask(row)"
+                        ng-model="MODEL_COL_FIELD[row.entity.proto.select].subnet_ip"
+                        ng-ipv4-ip="row.entity.proto.select === 'ipv4'"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ></input>
+                    <span ng-bind="'/'"></span>
+                    <input type="number"
+                           ng-model="MODEL_COL_FIELD[row.entity.proto.select].subnet_prefix"
+                           required
+                           min="1"
+                           max="32"
+                           size="2"
+                           maxlength="2"
+                           style="width: auto"
+                           ng-change="grid.appScope.ipv4.change_prefix(row)"
+                    ></input>
+                </span>
+                <input ng-if="row.entity.proto.select === 'ipv6'"
+                    class="ipag-edit-data first"
+                    placeholder="{{grid.appScope.DICT('IP_Address_Group_IP')}}"
+                    type="text" 
+                    ng-required="row.entity.proto.select === 'ipv6'"
+                    id="{{'txt_editIP' + col.colDef.id + '_' + row.entity.seq}}"
+                    ng-model="MODEL_COL_FIELD[row.entity.proto.select].subnet_ip"
+                    ng-ipv6-ip="row.entity.proto.select === 'ipv6'"
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                ></input>
+            </div>
+            <div>
+                <input ng-if="row.entity.proto.select === 'ipv4'"
+                    class="ipag-edit-data"
+                    type="text"
+                    placeholder="{{grid.appScope.DICT('IP_Address_Group_Netmask')}}"
+                    ng-required="row.entity.proto.select === 'ipv4'"
+                    id="{{'txt_editNetmask' + col.colDef.id + '_' + row.entity.seq}}"
+                    ng-ipv4-netmask="row.entity.proto.select === 'ipv4'"
+                    ng-model="MODEL_COL_FIELD[row.entity.proto.select].subnet_netmask"
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                ></input>
+                <input ng-if="row.entity.proto.select === 'ipv6'"
+                    class="ipag-edit-data"
+                    ng-if="row.entity.proto.select === 'ipv6'"
+                    ng-if="row.entity.proto.select === 'ipv6'"
+                    ng-required="row.entity.proto.select === 'ipv6'"
+                    placeholder="{{grid.appScope.DICT('IP_Address_Group_Prefix_Length')}}"
+                    type="number" number min="0" max="128" 
+                    id="{{'txt_Prefix' + '_' + row.entity.seq}}"
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-model="MODEL_COL_FIELD[row.entity.proto.select].subnet_netmask"
+                ></input>
+            </div>
+        </div>
+        <div ng-if="row.entity.type.select === 'range'">
+            <div>
+                <input type="text" 
+                    class="ipag-edit-data first"
+                    required
+                    id="{{'txt_editStartIP' + col.colDef.id + '_' + row.entity.seq}}"
+                    required
+                    placeholder="{{grid.appScope.DICT('IP_Address_Group_Start')}}"
+                    ng-model="MODEL_COL_FIELD[row.entity.proto.select].start"
+                    ng-ipv4-ip="row.entity.proto.select === 'ipv4'"
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    ng-ipv6-ip="row.entity.proto.select === 'ipv6'"
+                ></input>
+                -
+            </div>
+            <div>
+                <input type="text" 
+                    class="ipag-edit-data"
+                    id="{{'txt_editEndIP' + col.colDef.id + '_' + row.entity.seq}}"
+                    required
+                    placeholder="{{grid.appScope.DICT('IP_Address_Group_End')}}"
+                    ng-model="MODEL_COL_FIELD[row.entity.proto.select].end"
+                    ng-ipv4-ip="row.entity.proto.select === 'ipv4'"
+                    ng-ipv6-ip="row.entity.proto.select === 'ipv6'"
+                    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                    compare-ip-range-bytype="row.entity.proto.select+'#'+MODEL_COL_FIELD[row.entity.proto.select].start"
+                ></input>
+            </div>
+        </span>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="ipgroup_edit.html">
+<form name="ipform" class="modal-container" id="sys-ip-address-group-edit">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('IP_Address_Group_Add_Edit_IP_Addr_Group')"></div>
+        </div>
+        <div class="modal-content-container">
+            <div>
+                <span ng-bind="DICT('IP_Address_Group_Group_Name')"></span>
+                <input type="text" ng-model="edit.name" name="groupname" ng-maxlength="64" uci-name custom-vld required custom-vld-cbk="ipGroupCbk" custom-vld-name="repeat"></input>
+                <span ng-show="ipform.groupname.$error.repeat" class="validation-error-text-right" ng-bind="DICT('IP_Address_Group_Name_Repeat')"></span>
+            </div>
+            <br/>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('IP_Address_Group_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button type="button" id="btn_addradd"
+                            class="grid-btn-add"
+                            ng-disabled="userAccessFlag === 'RO'"
+                            ng-click="funs.addIps()"
+                        ></button>
+                        <button type="button" class="grid-btn-edit" ng-disabled="sel_cnts === 0 || userAccessFlag === 'RO'" ng-click="funs.editIps()"></button>
+                        <button type="button" class="grid-btn-delete" ng-disabled="sel_cnts === 0 || userAccessFlag === 'RO'" ng-click="funs.delIps()"></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridIPSOptions"></div>
+                </div>
+            </div>
+            <div class='grid-seperator'></div>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('IP_Address_Group_Device_List_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn_deviceadd"
+                            class="grid-btn-add"
+                            ng-click="funs.addMac()"
+                            ng-disabled="userAccessFlag === 'RO'"
+                        ></button>
+                        <button id="btn_deviceedit"
+                            class="grid-btn-edit"
+                            ng-click="funs.editMac()"
+                            ng-disabled="userAccessFlag === 'RO' || sel_device_cnts === 0"
+                        ></button>
+                        <button id="btn_devicedelete"
+                            class="grid-btn-delete"
+                            ng-click="funs.deleteMac()"
+                            ng-disabled="userAccessFlag === 'RO' || sel_device_cnts === 0"
+                        ></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridMacOptions"></div>
+                    <div class="grid-note-cntr">
+                        <div pg-bind-html="note"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" class="btn-apply" ng-click="funs.save()" ng-disabled="ipform.$invalid || userAccessFlag === 'RO'">
+                <span ng-bind="DICT('IP_Address_Group_Apply')"></span>
+            </button>
+            <button type="button" class="btn-cancel" ng-click="funs.cancel()">
+                <span ng-bind="DICT('IP_Address_Group_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.cancel('close')"></button>
+    </form>
+</script>
+
+<script type="text/ng-template" id="IP_Address_text_with_inline_edit.html">
+<div class="ui-grid-custom-cntr">
+    <span class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="MODEL_COL_FIELD" pgtitle/> 
+    </span>
+    <span ng-show="row.entity[col.colDef.editRow]" ng-if="row.entity[col.colDef.editRow]">
+        <input type="text" 
+            id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            ng-change="col.colDef.change && col.colDef.change(row, col, grid)"
+            required
+            style="width: 140px"
+            ng-model="MODEL_COL_FIELD"
+            pgtitle
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            grid-invalid-field="col.colDef.invalidField"
+            data-ng-expansion
+        ></input>
+    </span>
+    <info-icon ng-if="row.entity.repeatedWithOtherGroup" class="validation-error-text" context="row.entity.errstr" open-and-close="3000" isopen="true"></info-icon>
+    <info-icon ng-if="!row.entity.repeatedWithOtherGroup && row.entity.repeatedWithOtherEntity"
+        class="validation-error-text" context="row.entity.errstr" open-and-close="3000" isopen="true"
+    ></info-icon>
+</div>
+</script>

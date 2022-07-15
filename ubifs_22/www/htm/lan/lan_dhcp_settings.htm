@@ -1,0 +1,584 @@
+<form name="form" ng-controller="lan_dhcp_settings_main" ng-modification="loadReady" id="lan-dhcp-settings">
+    <style>
+    .large-Modal .modal-dialog{
+        width: 850px;
+    }
+    </style>
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('LAN_DHCP_Settings')"></div>
+        <div class="page-button-container" ng-if="loadReady">
+            <button id="btn_save" class="btn-apply" ng-click="save()" ng-disabled="userAccessFlag === 'RO'">
+                <span ng-bind="DICT('LAN_DHCP_Settings_Apply')"></span>
+            </button>
+            <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('LAN_DHCP_Settings_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+    <div class="page-content-container" ng-show="true">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('LAN_DHCP_Settings_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr" ng-if="loadReady">
+                    <button id="btn_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="gridDHCP.add()"></button>
+                    <button id="btn_edit" class="grid-btn-edit" ng-disabled="gridDHCP.Selections.length !== 1 || userAccessFlag === 'RO'" ng-click="gridDHCP.edit()"></button>
+                    <button id="btn_delete"
+                        class="grid-btn-delete"
+                        ng-disabled="gridDHCP.Selections.length === 0 || userAccessFlag === 'RO'"
+                        ng-click="gridDHCP.remove()">
+                    </button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridDHCP.Options"></div>
+            </div>
+        </div>
+        <div ng-if="gridDHCP.Selections.length > 0" class="lan-dhcp-settings-detail">
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_IP_Version4')"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_DHCP_Mode')"></span>
+                    </td>
+                    <td>
+                        <span>{{ gridDHCP.Selections[0]._poolref.ipv4['dhcp-mode'] }}</span>
+                    </td>
+                </tr>
+                <tr ng-if="gridDHCP.Selections[0]._poolref.ipv4['dhcp-mode']=='relay'">
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Remote_DHCP_Server')"></span>
+                    </td>
+                    <td>
+                        <span>{{ gridDHCP.Selections[0]['relay-mode']['relay-ipv4-address'] }}</span>
+                    </td>
+                </tr>
+                <tr ng-if="gridDHCP.Selections[0]._poolref.ipv4['dhcp-mode']=='server'">
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Addr_Range')"></span>
+                    </td>
+                    <td>
+                        <span>{{ gridDHCP.Selections[0]._poolref.ipv4['range-start'] + '-' + gridDHCP.Selections[0]._poolref.ipv4['range-end'] }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Prefix_Length')"></span>
+                    </td>
+                    <td>
+                        <span>{{ displayPrefixLen(gridDHCP.Selections[0], 'ipv4') }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_DNS_Server')"></span>
+                    </td>
+                    <td>
+                        <span>{{ displayDNS(gridDHCP.Selections[0], 'ipv4') }}</span>
+                    </td>
+                </tr>
+            </table>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_IP_Version6')"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_DHCP_Mode')"></span>
+                    </td>
+                    <td>
+                        <span>{{ gridDHCP.Selections[0]._poolref.ipv6['dhcp-mode'] }}<span>
+                    </td>
+                </tr>
+                <tr ng-if="gridDHCP.Selections[0]._poolref.ipv6['dhcp-mode']=='server'">
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Addr_Range')"></span>
+                    </td>
+                    <td>
+                        <span>{{ gridDHCP.Selections[0]._poolref.ipv6['range-start'] + '-' + gridDHCP.Selections[0]._poolref.ipv6['range-end'] }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Prefix_Length')"></span>
+                    </td>
+                    <td>
+                        <span>{{ displayPrefixLen(gridDHCP.Selections[0], 'ipv6') }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span ng-bind="DICT('LAN_DHCP_Settings_DNS_Server')"></span>
+                    </td>
+                    <td>
+                        <span>{{ displayDNS(gridDHCP.Selections[0], 'ipv6') }}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div> 
+</form>
+
+<script type="text/ng-template" id="UG_Interface_CircuitID.htm" >
+    <div class="ui-grid-custom-cntr">
+        {{MODEL_COL_FIELD + row.entity['circuit-id'] }}
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_DHCP_mode.htm" >
+    <div class="ui-grid-custom-cntr">
+        <div>
+            IPv4:{{MODEL_COL_FIELD.ipv4['dhcp-mode']}}
+        </div>
+        <div>
+            IPv6:{{MODEL_COL_FIELD.ipv6['dhcp-mode']}}
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_IP_Range.htm" >
+    <div class="ui-grid-custom-cntr">
+        <div>
+            {{grid.appScope.showIPRange(MODEL_COL_FIELD, row, 0)}}
+        </div>
+        <div>
+            {{grid.appScope.showIPRange(MODEL_COL_FIELD, row, 1)}}
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="modal_dhcp_edit.htm" >
+    <div class="modal-container" ng-if="data_ready">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('LAN_DHCP_Settings_Add_Edit_New_DHCP_Configuration')"></div>
+        </div>
+        <div class="modal-content-container" >
+            <div ng-repeat="(key, tab) in tabs" ng-show="selected.tabid==key" style="min-height:200px;">
+                <ng-form name="tab.form">
+                    <span ng-include="tab.tmpl" ng-controller="lan_dhcp_settings_dialog"></span>
+                </ng-form>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button id="btn_editback" ng-click="selected.back()" class="btn-back" ng-show="selected.show_back_btn">
+                <span ng-bind="DICT('Back')"></span>
+            </button>
+            <button id="btn_editok" ng-click="selected.ok()" class="btn-apply" ng-disabled="!check_ok(tabs)" ng-show="selected.show_ok_btn">
+                <span ng-bind="DICT('LAN_DHCP_Settings_OK')"></span>
+            </button>
+            <button id="btn_editnext" 
+                    class="btn-next"
+                    ng-click="selected.next()" 
+                    ng-disabled="!check_ok(tabs) || userAccessFlag === 'RO'" 
+                    ng-hide="selected.show_ok_btn" >
+                <span ng-bind="DICT('LAN_DHCP_Settings_Next')"></span>
+            </button>
+            <button id="btn_editcancel" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('LAN_DHCP_Settings_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="dhcp_edit_step1.htm" >
+    <table class="page-block-tb-list">
+        <tr>
+            <td>
+                <input type="radio" id="rdo_interface" name="dhcp_iftype" ng-value="6" ng-model="selected.dhcp.iftype"
+                    ng-disabled="fns.reachDHCPmaxcount()">
+                </input>
+                <label ng-bind="DICT('LAN_DHCP_Settings_Interface')"></label>
+            </td>
+            <td ng-init="if_tmp = selected.dhcp['interface']">
+                <select id="slct_interface"
+                    ng-model="selected.dhcp['interface']"
+                    ng-options="item.name as item.name for item in fns.collect_unused_VLAN_list({sel_if: if_tmp })"
+                    ng-disabled="selected.dhcp.iftype !== 6"
+                    ng-class="{_greyout : selected.dhcp.iftype !== 6}"
+                    ng-required="selected.dhcp.iftype === 6"
+                    ng-hide="fns.collect_unused_VLAN_list().length < 1"
+                ></select>
+                <span ng-if="fns.collect_unused_VLAN_list().length < 1" ng-bind="DICT('LAN_DHCP_Settings_No_Unused_VLAN')"></span>
+                <span ng-if="selected.dhcp.iftype === 6">
+                    <input type="hidden"
+                        ng-model="fns.checkIfVLANExistFn"
+                        ng-model-options="{getterSetter: true}"
+                        required
+                    >
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="radio" id="rdo_option82" name="dhcp_iftype" ng-value="7"
+                    ng-model="selected.dhcp.iftype"
+                    ng-disabled="fns.reachOpt82maxcount()"
+                    ng-mark-init="fns.reachDHCPmaxcount() ? selected.dhcp.iftype = 7 : ''"
+                />
+                <label ng-bind="DICT('LAN_DHCP_Settings_Option82_Circuit')"></label>
+            </td>
+            <td>
+                <input type="text" style="width: 25em" id="txt_description" str-name 
+                    name="description"
+                    placeholder="Description"
+                    ng-model="selected.dhcp.description" maxlength="64"
+                    ng-disabled="selected.dhcp.iftype !== 7"
+                />
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <span ng-if="selected.cid_mode === 'ASCII'">
+                    <input type="text" style="width: 25em" id="txt_circuitid_ascii" name="circuit-id"
+                        placeholder="Circuit ID(ASCII)"
+                        ng-model="selected.dhcp['circuit-id']"
+                        ng-required="selected.dhcp.iftype === 7"
+                        ng-disabled="selected.dhcp.iftype !== 7"
+                        contains="{array: model['dhcp-pool']['dhcp-option82'], name: 'circuit-id'}" item-owner="selected.dhcp"
+                        legal-char maxlength="25"
+                        pattern="[^,]+"
+                    />
+                </span>
+                <span ng-if="selected.cid_mode === 'HEX'">
+                    <input type="text" style="width: 25em" id="txt_circuitid_hex" name="circuit-id"
+                        placeholder="Circuit ID(HEX) (e.g: 0xA1)"
+                        ng-model="selected.dhcp['circuit-id']"
+                        ng-required="selected.dhcp.iftype === 7"
+                        ng-disabled="selected.dhcp.iftype !== 7"
+                        ng-change="fill_up_bitmask(selected.dhcp['circuit-id'])"
+                        contains="{array: model['dhcp-pool']['dhcp-option82'], name: 'circuit-id'}" item-owner="selected.dhcp"
+                        legal-char maxlength="50"
+                        pattern="^0x[0-9A-Fa-f]+$"
+                    />
+                </span>
+                <span ng-messages="tabs[0].form['circuit-id'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+                <select id="slct_circuitmode"
+                    ng-model="selected.cid_mode"
+                    ng-disabled="selected.dhcp.iftype !== 7"
+                    ng-options="item.id as item.id for item in selected.t_cid_mode "
+                    ng-change="fill_up_bitmask(selected.dhcp['circuit-id'], true)"
+                ></select>
+            </td>
+        </tr>
+<!--        <tr>-->
+<!--            <td></td>-->
+<!--            <td>-->
+<!--                <input type="text" style="width: 25em" id="txt_bitmask" name="bitmask"-->
+<!--                    bit-mask placeholder="Bitmask"-->
+<!--                    ng-change="chk_bitmask_len()"-->
+<!--                    ng-model="selected.dhcp.bitmask"-->
+<!--                    ng-required="selected.dhcp.iftype === 7 && selected.cid_mode === 'HEX'"-->
+<!--                    ng-class="{'ng-invalid': bitmask_invalid}"-->
+<!--                    ng-disabled="selected.dhcp.iftype !== 7 || selected.cid_mode !== 'HEX'"-->
+<!--                />-->
+<!--                <span ng-messages="tabs[0].form['bitmask'].$error" >-->
+<!--                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>-->
+<!--                </span>-->
+<!--            </td>-->
+<!--        </tr>-->
+    </table>
+</script>
+
+<script type="text/ng-template" id="dhcp_edit_step2.htm" >
+    <div ng-switch="selected.dhcp.iftype">
+        <div ng-switch-when="6">
+            <h5><span ng-bind="DICT('LAN_DHCP_Settings_Select_DHCP_Type', {'%s': selected.iftype_desc()})"></span></h5>
+            <div>
+                <input type="radio" id="rdo_disabled" ng-model="selected.dhcp._poolref.ipv4['dhcp-mode']" name="dhcp_mode_v4" ng-value="'disable'" ng-click="selected.chk_page_operator_btn()" />
+                    <span ng-bind="DICT('LAN_DHCP_Settings_Disabled')"></span>
+                <br/>
+                <input type="radio" id="rdo_server" ng-model="selected.dhcp._poolref.ipv4['dhcp-mode']" name="dhcp_mode_v4" ng-value="'server'" ng-click="selected.chk_page_operator_btn()" />
+                    <span ng-bind="DICT('LAN_DHCP_Settings_Server')"></span>
+                <br/>
+                <span ng-hide="selected.dhcp.iftype == 7">
+                    <input type="radio" id="rdo_relay" ng-model="selected.dhcp._poolref.ipv4['dhcp-mode']" name="dhcp_mode_v4" ng-value="'relay'" ng-click="selected.chk_page_operator_btn()" />
+                        <span ng-bind="DICT('LAN_DHCP_Settings_Relay')"></span>
+                    <span class="indent"></span>
+                    <input type="text" id="txt_relayipaddress" name="relay-ipv4-address" ipv4-ip placeholder="IP Address(IPv4)" ng-model="selected.dhcp['relay-mode']['relay-ipv4-address']" 
+                            ng-required="selected.dhcp._poolref.ipv4['dhcp-mode'] === 'relay'"
+                    />
+                    <span ng-messages="tabs[1].form['relay-ipv4-address'].$error" >
+                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    </span>
+                    <br/>
+                </span>
+                
+            </div>
+        </div>
+        
+        <div ng-switch-when="7">
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_Configure_Device_IP_Addr', {'%s': selected.iftype_desc()})"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('LAN_DHCP_Settings_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_ipaddress" name="ip-address" required ipv4-ip ng-model="selected.dhcp['ip-address']" />
+                        <span ng-messages="tabs[1].form['ip-address'].$error" >
+                            <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('LAN_DHCP_Settings_Subnet_Mask')"></td>
+                    <td>
+                        <input type="text" id="txt_netmask" name="ctx_netmask" required ipv4-netmask ng-model="selected.dhcp['_ctx_netmask']" ng-change="update_subnet_mask()"/>
+                        <span ng-messages="tabs[1].form['ctx_netmask'].$error" >
+                            <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="dhcp_edit_step3.htm" >
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_Select_DHCP_Type_IPv6')"></div>
+    </div>
+    <div>
+        <input type="radio" id="rdo_disabled_sec" ng-model="selected.dhcp._poolref.ipv6['dhcp-mode']" name="dhcp_mode_v6" ng-value="'disable'" ng-click="selected.chk_page_operator_btn()" />
+            <span ng-bind="DICT('LAN_DHCP_Settings_Disabled')"></span><br/>
+        <input type="radio" id="rdo_server_sec" ng-model="selected.dhcp._poolref.ipv6['dhcp-mode']" name="dhcp_mode_v6" ng-value="'server'" ng-click="selected.chk_page_operator_btn()" />
+            <span ng-bind="DICT('LAN_DHCP_Settings_Server')"></span><br/>
+    </div>
+</script>
+
+<script type="text/ng-template" id="dhcp_edit_step2_1.htm" >
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_Select_DHCP_Server', {'%s': selected.iftype_desc()})"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Client_Lease_Time')"></td>
+            <td>
+                <input type="number" number id="txt_clientleasetime" name="lease-time" ng-model="selected.dhcp._poolref.ipv4['lease-time']" min="5" max="43200" ></input>
+                <span class="tip-info" ng-bind="DICT('LAN_DHCP_Settings_Min_Range')"></span>
+                <span ng-messages="tabs[2].form['lease-time'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Range_Start')"></td>
+            <td>
+                <input type="text" id="txt_rangestart" ipv4-ip-format name="range-start" ng-model="selected.dhcp._poolref.ipv4['range-start']" 
+                    custom-vld custom-vld-cbk="poolValidation" custom-vld-relationship="['range-start', 'range-end']" 
+                    ng-required="selected.dhcp._poolref.ipv4['dhcp-mode'] === 'server'"
+                ></input>
+                <span class="validation-error-text-right" ng-if="tabs[2].form['range-start'].$error.range" ng-bind="DICT('LAN_DHCP_Settings_IP_Range_Error')"></span>
+                <span class="validation-error-text-right" ng-if="tabs[2].form['range-start'].$error.subnet" ng-bind="DICT('LAN_DHCP_Settings_Vlan_Range_Not_Match')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Range_End')"></td>
+            <td>
+                <input type="text" id="txt_rangeend" ipv4-ip-format
+                    name="range-end" ng-model="selected.dhcp._poolref.ipv4['range-end']" 
+                    custom-vld custom-vld-cbk="poolValidation" custom-vld-relationship="['range-start', 'range-end']" 
+                    ng-required="selected.dhcp._poolref.ipv4['dhcp-mode'] === 'server'"
+                ></input>
+                <span class="validation-error-text-right" ng-if="tabs[2].form['range-end'].$error.range" ng-bind="DICT('LAN_DHCP_Settings_IP_Range_Error')"></span>
+                <span class="validation-error-text-right" ng-if="tabs[2].form['range-end'].$error.subnet" ng-bind="DICT('LAN_DHCP_Settings_Vlan_Range_Not_Match')"></span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_DNS_Server')"></td>
+            <td>
+                <span ng-if="!model.opendns.enabled">
+                    <select id="slct_ipv4dnsserver" ng-model="selected.dhcp._poolref.ipv4['dns-server-type']"
+                        ng-options="item.id as item.displayName for item in selected.t_dns_server_type "
+                    ></select>
+                </span>
+                <span ng-if="model.opendns.enabled">
+                    <select id="slct_ipv4dnsserver"
+                        disabled="disabled"
+                    >
+                        <option>{{selected.t_dns_server_type[2].id}}</option>
+                    </select>
+                    <span class="tip-info" ng-bind="DICT('LAN_DHCP_Settings_Umbrella_OpenDNS_Is_Enabled')"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Static_DNS1')"></td>
+            <td>
+                <input type="text" id="txt_staticdns1" ipv4-ip name="staticdns1"
+                    ng-model="selected.dhcp._poolref.ipv4.dns['static-dns-servers'][0]"
+                    ng-show="!hideByDNSType(selected, 'ipv4')"
+                />
+                <input type="text" value="" disabled="disabled" ng-show="hideByDNSType(selected, 'ipv4')" />
+                <span ng-messages="tabs[2].form['staticdns1'].$error" >
+                     <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Static_DNS2')"></td>
+            <td>
+                <input type="text" id="txt_staticdns2" ipv4-ip name="staticdns2"
+                    ng-model="selected.dhcp._poolref.ipv4.dns['static-dns-servers'][1]"
+                    ng-show="!hideByDNSType(selected, 'ipv4')"
+                />
+                <input type="text" value="" disabled="disabled" ng-show="hideByDNSType(selected, 'ipv4')" />
+                <span ng-messages="tabs[2].form['staticdns2'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_WINS_Server')"></td>
+            <td>
+                <input type="text" id="txt_winsserver" ipv4-ip name="wins-server" ng-model="selected.dhcp._poolref.ipv4['wins-server']" />
+                <span ng-messages="tabs[2].form['wins-server'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span ng-bind="DICT('LAN_DHCP_Settings_Network_Booting')"></span>
+                <help-icon context="DICT('LAN_DHCP_Settings_Network_Booting_Note')"></help-icon>
+            </td>
+            <td>
+                <input type="checkbox" ng-model="selected.dhcp._poolref.ipv4['network-boot']['enabled']"></input>
+                <span ng-bind="DICT('LAN_DHCP_Settings_Enabled')"></span>
+            </td>
+        </tr>
+        <tr ng-if="selected.dhcp._poolref.ipv4['network-boot']['enabled']">
+            <td>
+                <span ng-bind="DICT('LAN_DHCP_Settings_Next_Server')"></span>
+                <help-icon context="DICT('LAN_DHCP_Settings_Next_Server_Note')"></help-icon>
+            </td>
+            <td>
+                <input type="text" ng-model="selected.dhcp._poolref.ipv4['network-boot']['next-server']" ipv4-ip required></input>
+            </td>
+        </tr>
+        <tr ng-if="selected.dhcp._poolref.ipv4['network-boot']['enabled']">
+            <td ng-bind="DICT('LAN_DHCP_Settings_Boot_File')"></td>
+            <td>
+                <input type="text" ng-model="selected.dhcp._poolref.ipv4['network-boot']['boot-file']" required maxlength="256" ng-maxlength="256"></input>
+            </td>
+        </tr>
+    </table>
+    <div class="page-content-seperator"></div>
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_DHCP_Options')"></div>
+    </div>
+    <table class="page-block-tb-list">
+        <tr>
+            <td><span ng-bind="DICT('LAN_DHCP_Settings_Option66')"></span></td>
+            <td><input type="text" id="txt_option66tftpserver" name="option66_ip" fqdn-ipv4 maxlength="63" ng-model="selected.dhcp._poolref.ipv4['dhcp-options'].option66" />
+                <span ng-messages="tabs[2].form['option66_ip'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td><span ng-bind="DICT('LAN_DHCP_Settings_Option150')"></span></td>
+            <td>
+                <input type="text" id="txt_option150tftpserver" option150 name="option150tftpserver" ng-model="selected.dhcp._poolref.ipv4['dhcp-options'].option150" />
+                <span ng-messages="tabs[2].form['option150tftpserver'].$error" style="color:red;">
+                    <span ng-show="tabs[2].form['option150tftpserver'].$dirty">
+                        <span ng-message="option150" ng-bind="DICT('LAN_DHCP_Settings_Invalid_TFTP')"></span>
+                    </span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td><span ng-bind="DICT('LAN_DHCP_Settings_Option67')"></span></td>
+            <td>
+                <input type="text" id="txt_option67filename" legal-char maxlength="64" ng-model="selected.dhcp._poolref.ipv4['dhcp-options'].option67" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <span ng-bind="DICT('LAN_DHCP_Settings_Option43')"></span>
+                <info-icon context="DICT('LAN_DHCP_Settings_Option43_Note_Msg')"></info-icon>
+            </td>
+            <td>
+                <input type="text" id="txt_option43" legal-char maxlength="127" ng-model="selected.dhcp._poolref.ipv4['dhcp-options'].option43" />
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="dhcp_edit_step3_1.htm" >
+    <div class="page-block-title-cntr">
+        <div class="page-block-title" ng-bind="DICT('LAN_DHCP_Settings_Select_DHCP_Server_IPv6')"></div>
+    </div>
+    <table class="page-block-tb-list control-input-200">
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Client_Lease_Time')"></td>
+            <td>
+                <input type="number" number id="txt_ipv6clientleasetime" name="lease-time" ng-model="selected.dhcp._poolref.ipv6['lease-time']" min="5" max="43200" />
+                    <span class="tip-info" ng-bind="DICT('LAN_DHCP_Settings_Min_Range')"></span>
+                <span ng-messages="tabs[4].form['lease-time'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Range_Start')"></td>
+            <td>
+                <input type="text" id="txt_ipv6rangestart" ipv6-ip name="range-start" ng-model="selected.dhcp._poolref.ipv6['range-start']" 
+                    custom-vld custom-vld-cbk="poolValidationV6" custom-vld-relationship="['range-start', 'range-end']" 
+                />
+                <span class="validation-error-text-right" ng-if="tabs[4].form['range-start'].$error.range" ng-bind="DICT('LAN_DHCP_Settings_IP_Range_Error')"></span>
+                <span class="validation-error-text-right" ng-if="tabs[4].form['range-start'].$error.subnet" ng-bind="DICT('LAN_DHCP_Settings_Vlan_Range_Not_Match')"></span>
+                <span ng-messages="tabs[4].form['range-start'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Range_End')"></td>
+            <td>
+                <input type="text" id="txt_ipv6rangeend" ipv6-ip name="range-end" ng-model="selected.dhcp._poolref.ipv6['range-end']" 
+                    custom-vld custom-vld-cbk="poolValidationV6" custom-vld-relationship="['range-start', 'range-end']" 
+                />
+                <span class="validation-error-text-right" ng-if="tabs[4].form['range-end'].$error.range" ng-bind="DICT('LAN_DHCP_Settings_IP_Range_Error')"></span>
+                <span class="validation-error-text-right" ng-if="tabs[4].form['range-end'].$error.subnet" ng-bind="DICT('LAN_DHCP_Settings_Vlan_Range_Not_Match')"></span>
+                <span ng-messages="tabs[4].form['range-end'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_DNS_Server')"></td>
+            <td>
+                <select id="slct_ipv6dnsserver" ng-model="selected.dhcp._poolref.ipv6['dns-server-type']" 
+                    ng-options="item.id as item.displayName for item in selected.t_dns_server_type " style="margin-left:0px;"
+                ></select>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Static_DNS1')"></td>
+            <td>
+                <input type="text" id="txt_ipv6staticdns1" ipv6-ip name="staticdns1" ng-model="selected.dhcp._poolref.ipv6.dns['static-dns-servers'][0]" ng-show="!hideByDNSType(selected, 'ipv6')"/>
+                <input type="text" value="" disabled="disabled" ng-show="hideByDNSType(selected, 'ipv6')" />
+                <span ng-messages="tabs[4].form['staticdns1'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+        <tr>
+            <td ng-bind="DICT('LAN_DHCP_Settings_Static_DNS2')"></td>
+            <td>
+                <input type="text" id="txt_ipv6staticdns2" ipv6-ip name="staticdns2" ng-model="selected.dhcp._poolref.ipv6.dns['static-dns-servers'][1]" ng-show="!hideByDNSType(selected, 'ipv6')"/>
+                <input type="text" value="" disabled="disabled" ng-show="hideByDNSType(selected, 'ipv6')" />
+                <span ng-messages="tabs[4].form['staticdns2'].$error" >
+                    <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                </span>
+            </td>
+        </tr>
+    </table>
+</script>

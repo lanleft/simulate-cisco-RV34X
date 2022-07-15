@@ -1,0 +1,8 @@
+Package: smart_daemon
+Version: 2.3.0-8
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, libcurl, libevent, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, smart_agent, firmware
+Source: package/cisco/smart_daemon
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 13194
+Description:  smart_daemon.

@@ -1,0 +1,50 @@
+module ciscosb-igmp {
+    namespace "http://cisco.com/ns/ciscosb/igmp";
+    prefix ciscosb-igmp;
+    import ietf-interfaces { prefix "if"; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module  define IGMP proxy related.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-01-18 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    container igmp-proxy {
+        leaf enable {
+            type boolean;
+            description "Enable or not";
+            default true;
+        }
+        leaf upstream-interface {
+         type enumeration {
+          enum auto;
+          enum fix;
+         }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container igmp-proxy {
+            leaf enable {
+                type boolean;
+                description "Enable or not";
+            }
+            leaf type{
+             type enumeration{
+              enum downstream;
+              enum upstream;
+             }
+            }
+        }
+    }
+}

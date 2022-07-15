@@ -1,0 +1,64 @@
+#!/bin/sh
+
+. /lib/functions/network.sh
+
+SUBJECT="USB\ traffic\ limit\ up"
+BODYFILE="/tmp/bwmgmt.log"
+SENDMAIL="/usr/bin/sendmail"
+DISCONNECT="/usr/bin/disconnect"
+SAVEFILE="/tmp/bwmgmt/data"
+
+get_usage() {
+	if [ $1 -le 1024 ]; then
+		echo $1" Bytes"
+	elif [ $1 -le 1048576 ]; then
+		echo $(($1 / 1024))"KB"
+	elif [ $1 -le 1073741824 ]; then
+		echo $(($1 / 1048576))"MB"
+	else
+		echo $(($1 / 1073741824))"GB"
+	fi
+}
+
+create_file() {
+	local total=
+	now=$(date +"%Y-%m-%d %H:%M")
+	tx=$(awk -F "," '{printf $4}' "$SAVEFILE/$if")
+	rx=$(awk -F "," '{printf $5}' "$SAVEFILE/$if")
+	usage=$((tx + rx))
+	if [ -n $usage -a $usage -ne 0 ]; then
+		total="(Total usage: "$(get_usage $usage)")"
+	fi
+
+	if [ -n "$BODYFILE" ]; then
+		echo "$now $if 3G/4G USB traffic limit up $total" > $BODYFILE
+	fi
+}
+
+get_state() {
+	local if=`echo $1 | tr [A-Z] [a-z]`
+	network_is_up $if
+	echo "$?"
+}
+
+if=$1
+action=$2
+
+case $action in
+  "sendmail")
+		create_file
+		$SENDMAIL Subject:"$SUBJECT" File:$BODYFILE
+		logger -t bwmgmt -p local0.info "$@"
+	;;
+  "disconnect")
+		$DISCONNECT interface $if ip-version v4
+		logger -t bwmgmt -p local0.info "$@"
+	;;
+  "status")
+		get_state $if
+	;;
+  *)
+	exit 1
+	;;
+esac
+

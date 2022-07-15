@@ -1,0 +1,26 @@
+<form name="form" ng-controller="routing_status_main">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Routing_Table')"></div>
+        </div>
+        <div class="page-content-container container-fluid">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Routing_Status_IPv4_Routes')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridRoutes.Options1"></div>
+                </div>
+            </div>
+            <div class="grid-seperator"></div>
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Routing_Status_IPv6_Routes')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridRoutes.Options2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,974 @@
+<form name="form" ng-controller="wlan_adv_main" ng-modification="loadReady" id="wlan-adv">
+    <div ng-if="loadReady">
+        <div class="page-title-container">
+            <span class="page-title" ng-bind="DICT('Advance_Settings')"></span>
+            <span ng-include="'wlan_adv_save.htm'" ng-class="{nopHint: !model.wifi_button_state}"></span>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div ng-if="!model.wifi_button_state && loadReady" style="color: red">
+                <span ng-bind="DICT('Advance_Settings_WiFi_Push_Button_OFF')"></span>
+            </div>
+            <div ng-if="pageMap('main')" ng-include="'tmpl_wlan_main.htm'" ng-class="{nopHint: !model.wifi_button_state}"></div>
+        </div>
+    </div>
+</form>
+
+
+<script type="text/ng-template" id="tmpl_wlan_main.htm">
+	<div ng-include="'tmpl_tabset.htm'"></div>
+</script>
+
+<script type="text/ng-template" id="tmpl_tabset.htm">
+		<uib-tabset>
+			<uib-tab heading="{{DICT('Advance_Settings_2G')}}" active="" disabled="">
+                <div ng-if="loadReady" ng-include="'wlan_2G.htm'" ng-controller="wlan_radio" ></div>
+			</uib-tab>
+			<uib-tab heading="{{DICT('Advance_Settings_5G')}}" active="" disabled="">
+                <div ng-if="loadReady" ng-include="'wlan_5G.htm'" ng-controller="wlan_radio" ></div>
+			</uib-tab>
+		</uib-tabset>
+</script>
+
+
+
+<script type="text/ng-template" id="wlan_2G.htm">
+	<div class="page-content-container-commented">
+		<div>
+			<div>
+				<table class="page-block-tb-list control-input-200" data-x-tmp="{{radioref = collect_wlan_radio('WLAN1')[0] }}" >
+					<tr ng-if="false">
+						<td colspan="2">
+							{{radioref | json}}
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 14em" ng-bind="DICT('Advance_Settings_Frame_Burst')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w2g_fb_enable" ng-model="radioref.radio['frame-burst-enable']"/>
+								<span ng-bind="DICT('Advance_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_WMM_No_Acknowledgement')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w2g_wmm_noack_enable" ng-model="radioref.radio['wmm-no-acknowledgement-enable']"/>
+								<span ng-bind="DICT('Advance_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td COLSPAN="2">
+								<span ng-bind="DICT('Advance_Settings_Data_Rate')+':'"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button id="btn_w2g_datarate" ng-click="setToDefault24g()" ng-disabled="userAccessFlag === 'RO'">
+								<span ng-bind="DICT('Advance_Settings_Set_To_Default')"></span></button>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 2em;" COLSPAN="2" ng-bind="DICT('Advance_Settings_Basic_Rate')+':'">
+							
+						</td>
+					</tr>
+					</tr>
+						<td style="padding-left: 6em;" COLSPAN="2">
+							<div style="min-width:180px" ng-show="getBasicRate24G(radioref.radio['operating-standards'][0]) === 'b'">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>1</th>
+										<th>2</th>
+										<th>5.5</th>
+										<th>11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[5]">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<div style="min-width:420px" ng-show="getBasicRate24G(radioref.radio['operating-standards'][0]) === 'bgn'">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>1</th>
+										<th>2</th>
+										<th>5.5</th>
+										<th>6</th>
+										<th>9</th>
+										<th>11</th>
+										<th>12</th>
+										<th>18</th>
+										<th>24</th>
+										<th>36</th>
+										<th>48</th>
+										<th>54</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[7]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[8]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[9]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[10]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic24G[11]">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 2em;" COLSPAN="2" ng-bind="DICT('Advance_Settings_Transmission_Rate')+':'">
+							
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 6em;" COLSPAN="2">
+							<div style="min-width:180px" ng-show="getTrmRate24G(radioref.radio['operating-standards'][0]) === 'b'">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>1</th>
+										<th>2</th>
+										<th>5.5</th>
+										<th>11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[5]">
+										</td>
+										
+									</tr>
+								</table>
+							</div>
+							<div style="min-width:420px" ng-show="getTrmRate24G(radioref.radio['operating-standards'][0]) === 'bg' || 
+														getTrmRate24G(radioref.radio['operating-standards'][0]) === 'bgn'">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>1</th>
+										<th>2</th>
+										<th>5.5</th>
+										<th>6</th>
+										<th>9</th>
+										<th>11</th>
+										<th>12</th>
+										<th>18</th>
+										<th>24</th>
+										<th>36</th>
+										<th>48</th>
+										<th>54</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[7]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[8]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[9]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[10]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate24G[11]">
+										</td>
+									</tr>
+								</table>
+							</div>
+							<br>
+							<div style="min-width:870px" ng-show="getTrmRate24G(radioref.radio['operating-standards'][0]) === 'bgn'">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_HT_MCS_Index')"></th>
+										<th>0</th>
+										<th>1</th>
+										<th>2</th>
+										<th>3</th>
+										<th>4</th>
+										<th>5</th>
+										<th>6</th>
+										<th>7</th>
+										<th>8</th>
+										<th>9</th>
+										<th>10</th>
+										<th>11</th>
+										<th>12</th>
+										<th>13</th>
+										<th>14</th>
+										<th>15</th>
+										<th>16</th>
+										<th>17</th>
+										<th>18</th>
+										<th>19</th>
+										<th>20</th>
+										<th>21</th>
+										<th>22</th>
+										<th>23</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[7]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[8]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[9]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[10]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[11]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[12]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[13]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[14]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[15]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[16]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[17]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[18]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[19]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[20]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[21]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[22]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS24G[23]">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_CTS_Protection_Mode')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" id="rdo_w2g_ctsmode_disabled" name="w2g_ctsmode"
+								ng-model="radioref.radio['cts-protection-mode']"
+								value="disabled"
+							>
+								<span ng-bind="DICT('Advance_Settings_Disabled')"></span></input>
+							<span class="indent"></span>
+							<input type="radio" id="rdo_w2g_ctsmode_auto" name="w2g_ctsmode"
+								ng-model="radioref.radio['cts-protection-mode']"
+								value="auto"
+							>
+								<span ng-bind="DICT('Advance_Settings_Auto')"></span></input
+							>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Beacon_Interval')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="40" max="3500" id="txt_w2g_beacon_int" ng-model="radioref.radio['beacon-interval']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_Milliseconds_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_DTIM_Interval')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="1" max="255" id="txt_w2g_dtim_int" ng-model="radioref.radio['dtim-period']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_DTIM_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Fragmentation_Threshold')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="256" max="2346" id="txt_w2g_frag_th" ng-model="radioref.radio['fragmentation-threshold']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_Fragmentation_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_RTS_Threshold')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="0" max="2347" id="txt_w2g_rts_th" ng-model="radioref.radio['rts-threshold']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_RTS_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Tx_Power')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<select id="slct_w2g_txpower" ng-model="radioref.radio['transmit-power']"
+								ng-options="item.id as item.displayName for item in schema.txpower"
+								style="margin-left:0px;"
+							>
+							</select>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+
+<script type="text/ng-template" id="wlan_5G.htm">
+	<div class="page-content-container-commented">
+		<div>
+			<div>
+				<table class="page-block-tb-list control-input-200" data-x-tmp="{{radioref = collect_wlan_radio('WLAN2')[0] }}" >
+					<tr ng-if="false">
+						<td colspan="2">
+							{{radioref | json}}
+						</td>
+					</tr>
+					<tr>
+						<td style="width: 14em" ng-bind="DICT('Advance_Settings_Frame_Burst')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_fb_enable" ng-model="radioref.radio['frame-burst-enable']"/>
+								<span ng-bind="DICT('Advance_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_WMM_No_Acknowledgement')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_wmm_noack_enable" ng-model="radioref.radio['wmm-no-acknowledgement-enable']"/>
+								<span ng-bind="DICT('Advance_Settings_Enable')"></span>
+						</td>
+					</tr>
+					
+					
+					<tr>
+						<td COLSPAN="2">
+							<span ng-bind="DICT('Advance_Settings_Data_Rate')+':'"></span>
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<button id="btn_w5g_datarate" ng-click="setToDefault5g()" ng-disabled="userAccessFlag === 'RO'">
+								<span ng-bind="DICT('Advance_Settings_Set_To_Default')"></span></button>				
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 2em;" COLSPAN="2" ng-bind="DICT('Advance_Settings_Basic_Rate')+':'">
+							
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 6em;" COLSPAN="2">
+							<div style="min-width:300px">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>6</th>
+										<th>9</th>
+										<th>12</th>
+										<th>18</th>
+										<th>24</th>
+										<th>36</th>
+										<th>48</th>
+										<th>54</th>
+									</tr>
+									
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rateBasic5G[7]">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td style="padding-left: 2em;" COLSPAN="2" ng-bind="DICT('Advance_Settings_Transmission_Rate')+':'">
+							
+						</td>
+					</tr>
+					<tr>
+						<td style="padding-left: 6em;" COLSPAN="2">
+							<div style="min-width:300px">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_Rate')"></th>
+										<th>6</th>
+										<th>9</th>
+										<th>12</th>
+										<th>18</th>
+										<th>24</th>
+										<th>36</th>
+										<th>48</th>
+										<th>54</th>
+									</tr>
+									
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.rate5G[7]">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</td>
+						
+					</tr>
+					
+					<tr ng-show="!(radioref.radio['operating-standards'][0] === 'a')">
+						<td style="padding-left: 6em;" COLSPAN=2>
+							<div style="min-width:650px">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_HT_MCS_Index')"></th>
+										<th>0</th>
+										<th>1</th>
+										<th>2</th>
+										<th>3</th>
+										<th>4</th>
+										<th>5</th>
+										<th>6</th>
+										<th>7</th>
+										<th>8</th>
+										<th>9</th>
+										<th>10</th>
+										<th>11</th>
+										<th>12</th>
+										<th>13</th>
+										<th>14</th>
+										<th>15</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[0]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[1]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[2]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[3]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[4]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[5]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[6]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[7]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[8]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[9]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[10]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[11]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[12]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[13]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[14]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[15]">
+										</td>
+										
+									</tr>
+									<tr>
+										<th></th>
+										<th>16</th>
+										<th>17</th>
+										<th>18</th>
+										<th>19</th>
+										<th>20</th>
+										<th>21</th>
+										<th>22</th>
+										<th>23</th>
+										<th>24</th>
+										<th>25</th>
+										<th>26</th>
+										<th>27</th>
+										<th>28</th>
+										<th>29</th>
+										<th>30</th>
+										<th>31</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td>
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[16]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[17]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[18]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[19]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[20]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[21]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[22]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[23]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[24]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[25]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[26]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[27]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[28]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[29]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[30]">
+										</td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.htMCS5G[31]">
+										</td>
+									</tr>
+									
+								</table>
+							</div>
+						</td>
+					</tr>
+					
+					<tr ng-show="!(radioref.radio['operating-standards'][0] === 'a')">
+						<td style="padding-left: 6em;" COLSPAN=2>
+							<div style="min-width:380px">
+								<table class="rate-tb">
+									<tr class="prompt">
+										<th ng-bind="DICT('Advance_Settings_VHT_MCS_Index')"></th>
+										<th>1SS</th>
+										<th ng-bind="DICT('Advance_Settings_Enable')"></th>
+										<th>0-7</th>
+										<th>0-8</th>
+										<th>0-9</th>
+										<th>0-11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.trmAC1_enable" ng-true-value="true" ng-false-value="false" 
+												ng-click="pressGroup('antenna1')">
+										</td>
+										<td>
+											<input type="radio" name="s1val" ng-model="model.trmAC1_value" value="ff" ng-true-value="ff" ng-false-value="0"
+												ng-disabled="!model.trmAC1_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s1val" ng-model="model.trmAC1_value" value="1ff" ng-true-value="1ff" ng-false-value="0"
+												ng-disabled="!model.trmAC1_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s1val" ng-model="model.trmAC1_value" value="3ff" ng-true-value="3ff" ng-false-value="0"
+												ng-disabled="!model.trmAC1_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s1val" ng-model="model.trmAC1_value" value="fff" ng-true-value="fff" ng-false-value="0"
+												ng-disabled="!model.trmAC1_enable"></input>
+										</td>
+										
+									</tr>
+									<tr>
+										<th></th>
+										<th>2SS</th>
+										<th ng-bind="DICT('Advance_Settings_Enable')"></th>
+										<th>0-7</th>
+										<th>0-8</th>
+										<th>0-9</th>
+										<th>0-11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.trmAC2_enable" ng-true-value="true" ng-false-value="false" 
+												ng-click="pressGroup('antenna2')" ng-disabled="!model.trmAC1_enable">
+										</td>
+										<td>
+											<input type="radio" name="s2val" ng-model="model.trmAC2_value" value="ff" ng-true-value="ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s2val" ng-model="model.trmAC2_value" value="1ff" ng-true-value="1ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s2val" ng-model="model.trmAC2_value" value="3ff" ng-true-value="3ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s2val" ng-model="model.trmAC2_value" value="fff" ng-true-value="fff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable"></input>
+										</td>
+										
+									</tr>
+									
+									<tr>
+										<th></th>
+										<th>3SS</th>
+										<th ng-bind="DICT('Advance_Settings_Enable')"></th>
+										<th>0-7</th>
+										<th>0-8</th>
+										<th>0-9</th>
+										<th>0-11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td></td>
+										<td>
+											<input type="checkbox" id="" ng-model="model.trmAC3_enable" ng-true-value="true" ng-false-value="false" 
+												ng-click="pressGroup('antenna3')" ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable">
+										</td>
+										<td>
+											<input type="radio" name="s3val" ng-model="model.trmAC3_value" value="ff" ng-true-value="ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s3val" ng-model="model.trmAC3_value" value="1ff" ng-true-value="1ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s3val" ng-model="model.trmAC3_value" value="3ff" ng-true-value="3ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s3val" ng-model="model.trmAC3_value" value="fff" ng-true-value="fff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable"></input>
+										</td>
+									</tr>
+									
+									<tr>
+										<th></th>
+										<th>4SS</th>
+										<th ng-bind="DICT('Advance_Settings_Enable')"></th>
+										<th>0-7</th>
+										<th>0-8</th>
+										<th>0-9</th>
+										<th>0-11</th>
+									</tr>
+									<tr class="tbRow tbRowDivider">
+										<td></td>
+										<td></td>
+										<td>
+											<input type="checkbox" ng-model="model.trmAC4_enable" ng-true-value="true" ng-false-value="false" 
+												ng-click="pressGroup('antenna4')" ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable">
+										</td>
+										<td>
+											<input type="radio" name="s4val" ng-model="model.trmAC4_value" value="ff" ng-true-value="ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable || !model.trmAC4_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s4val" ng-model="model.trmAC4_value" value="1ff" ng-true-value="1ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable || !model.trmAC4_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s4val" ng-model="model.trmAC4_value" value="3ff" ng-true-value="3ff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable || !model.trmAC4_enable"></input>
+										</td>
+										<td>
+											<input type="radio" name="s4val" ng-model="model.trmAC4_value" value="fff" ng-true-value="fff" ng-false-value="0" 
+												ng-disabled="!model.trmAC1_enable || !model.trmAC2_enable || !model.trmAC3_enable || !model.trmAC4_enable"></input>
+										</td>
+									</tr>
+									
+								</table>
+							</div>
+						</td>
+					</tr>
+					
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_CTS_Protection_Mode')">
+							
+						</td>
+						<td>
+							<input type="radio" id="rdo_w5g_ctsmode_disabled" name="w5g_ctsmode"
+								ng-model="radioref.radio['cts-protection-mode']"
+								value="disabled"
+							>
+								<span ng-bind="DICT('Advance_Settings_Disabled')"></span></input>
+							<span class="indent"></span>
+							<input type="radio" id="rdo_w5g_ctsmode_auto" name="w5g_ctsmode"
+								ng-model="radioref.radio['cts-protection-mode']"
+								value="auto"
+							>
+								<span ng-bind="DICT('Advance_Settings_Auto')"></span></input
+							>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Beacon_Interval')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="40" max="3500" id="txt_w5g_beacon_int" ng-model="radioref.radio['beacon-interval']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_Milliseconds_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_DTIM_Interval')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="1" max="255" id="txt_w5g_dtim_int" ng-model="radioref.radio['dtim-period']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_DTIM_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Fragmentation_Threshold')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="256" max="2346" id="txt_w5g_frag_th" ng-model="radioref.radio['fragmentation-threshold']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_Fragmentation_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_RTS_Threshold')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min="0" max="2347" id="txt_w5g_rts_th" ng-model="radioref.radio['rts-threshold']" />
+							<span class="tip-info" ng-bind="DICT('Advance_Settings_RTS_Range')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Advance_Settings_Tx_Power')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<select id="slct_w5g_txpower" ng-model="radioref.radio['transmit-power']"
+								ng-options="item.id as item.displayName for item in schema.txpower"
+								style="margin-left:0px;"
+							>
+							</select>
+						</td>
+					</tr>
+					
+					
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+
+<script type="text/ng-template" id="wlan_adv_save.htm">
+		<div class="page-button-container">
+			<button id="btn_save" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="save()" class="btn-apply">
+				<span ng-bind="DICT('Advance_Settings_Apply')"></span>
+            </button>
+			<button id="btn_cancel" ng-click="cancel()" class="btn-cancel">
+				<span ng-bind="DICT('Advance_Settings_Cancel')"></span>
+            </button>
+			<button id="btn_back" ng-click="back()" class="btn-back"
+				ng-if="getCurrPage() == 'wps' || getCurrPage() == 'maclist'">
+				<span ng-bind="DICT('Advance_Settings_Back')"></span>
+            </button>
+		</div>
+</script>

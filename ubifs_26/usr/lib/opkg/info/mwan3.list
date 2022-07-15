@@ -1,0 +1,8 @@
+/usr/sbin/mwan3-default-rules
+/etc/hotplug.d/iface/15-mwan3
+/usr/sbin/mwan3
+/etc/init.d/mwan3
+/usr/sbin/mwan3-clear-connections
+/usr/sbin/mwan3track
+/etc/hotplug.d/iface/75-mwan3-primary-failover
+/etc/config/mwan3

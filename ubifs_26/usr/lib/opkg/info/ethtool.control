@@ -1,0 +1,9 @@
+Package: ethtool
+Version: 3.7-1
+Depends: libc, librt, libpthread
+Source: package/openwrt/net/ethtool
+Section: net
+Architecture: comcerto2000
+Installed-Size: 79751
+Description:  ethtool is a small utility for examining and tuning your ethernet-based
+ network interface

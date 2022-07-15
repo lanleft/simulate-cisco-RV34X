@@ -1,0 +1,8 @@
+Package: pnp_platform
+Version: 1.8.0.dev4-1
+Depends: libc, librt, libpthread, pnp, PKILL, NOHUP, UDHCPC
+Source: package/cisco/pnp_platform
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 23803
+Description:  Cisco Network Plug and Play Agent

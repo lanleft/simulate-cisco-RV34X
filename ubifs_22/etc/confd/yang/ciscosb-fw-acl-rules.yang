@@ -1,0 +1,134 @@
+module ciscosb-fw-acl-rules {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-acl-rules";
+    prefix "firewall-acl-rules";
+    import ietf-interfaces { prefix if; }
+    import ciscosb-service { prefix "fw-service"; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-schedule { prefix "ciscosb-schedule"; }
+    organization
+        "Freescale Semiconductors Pvt Ltd";
+    contact
+        "Freescale";
+    description
+        "This YANG module defines a component that describes the configuration
+        of firewall related modules.";
+    revision 2016-06-06 {
+        description "Firewall Init optimization";
+        reference "";
+    }
+   revision 2016-01-18 {
+       description "Add revision ";
+       reference "";
+   }
+    revision 2015-04-24 {
+        description "Initial version of yang model for firewall module";
+        reference "RFC 6020";
+    }
+    grouping FIREWALL-ACL-INTERFACE-FIELDS {
+     choice source {
+         case source-interface {
+             leaf source-interface {
+                 type if:interface-ref;
+                 description "This indicates the source interface to match the packet for filtering";
+             }
+         }
+         case source-name {
+             leaf source-name {
+                 type string;
+                 description "This indicates the source name to match the packet for filtering";
+             }
+         }
+        }
+        choice destination {
+         case destination-interface {
+             leaf destination-interface {
+                 type if:interface-ref;
+                 description "This indicates the destination interface to match the packet for filtering";
+             }
+         }
+         case destination-name {
+             leaf destination-name {
+                 type string;
+                 description "This indicates the destination name to match the packet for filtering";
+             }
+         }
+        }
+    }
+    grouping firewall-acl-rule-entry {
+        description "List of firewall v4 ACL rule entries";
+        leaf rule-id {
+            type uint16;
+            description "firewall rule id";
+        }
+        leaf priority {
+         type uint16;
+        }
+        leaf enable {
+            type boolean;
+            description "This indicates whether the ACL is enabled or disabled.";
+        }
+        container action {
+            choice target {
+                case deny {
+                    leaf deny {
+                        type empty;
+                        description "This indicates packet needs to be dropped";
+                    }
+                }
+                case allow {
+                    leaf allow {
+                        type empty;
+                        description "This indicates packet  needs to be accepted";
+                    }
+                }
+            }
+        }
+        leaf service {
+            description
+                            "Service selection to apply action";
+            type leafref {
+                path "/fw-service:services/fw-service:service/fw-service:name";
+            }
+        }
+        leaf log {
+            type boolean;
+            description "This indicates whether the filtered packets need to be logged
+                            or not";
+        }
+        container interface {
+            uses FIREWALL-ACL-INTERFACE-FIELDS;
+        }
+        container source-ip {
+            uses ciscosb-common:FIREWALL-ACL-SOURCE-FIELDS;
+        }
+        container destination-ip {
+            uses ciscosb-common:FIREWALL-ACL-DESTINATION-FIELDS;
+        }
+        leaf schedule {
+            type ciscosb-schedule:Schedule-ref;
+        }
+        leaf default {
+            type boolean;
+            default false;
+            description "This indicates whether the ACL is default rule.";
+        }
+    }
+    container firewall-acl-rules {
+        description "This container contains a list of firewall ACL entries";
+        container ipv4 {
+            list firewall-acl-rule {
+               key rule-id;
+               description "List of firewall v4 ACL rule entries";
+               uses firewall-acl-rule-entry;
+           }
+        }
+        container ipv6 {
+            list firewall-acl-rule {
+               key rule-id;
+               description "List of firewall v6 ACL rule entries";
+               uses firewall-acl-rule-entry;
+           }
+        }
+    }
+}

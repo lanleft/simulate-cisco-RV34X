@@ -1,0 +1,8 @@
+Package: xoslib
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Source: package/cisco/xoslib
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 757617
+Description:  xoslib.

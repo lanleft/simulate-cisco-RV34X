@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<call_home_nvconfig>
+	<call_home_service_enabled>True</call_home_service_enabled>
+	<http_proxy_addr></http_proxy_addr>
+	<http_proxy_port>0</http_proxy_port>
+	<contact_email>test@cisco.com</contact_email>
+	<sender_from_addr></sender_from_addr>
+	<reply_to_addr></reply_to_addr>
+	<phone_number></phone_number>
+	<street_addr></street_addr>
+	<customer_id></customer_id>
+	<contract_id></contract_id>
+	<site_id></site_id>
+	<rate_limit>20</rate_limit>
+	<data_privacy>0</data_privacy>
+	<event_throttle>True</event_throttle>
+	<profile>
+		<profile_name>CiscoTAC-1</profile_name>
+		<profile_enabled>True</profile_enabled>
+		<profile_anonymous>True</profile_anonymous>
+		<profile_report_data>3</profile_report_data>
+		<proifle_msg_format></proifle_msg_format>
+		<profile_msg_size_limt></profile_msg_size_limt>
+		<profile_transport_method>2</profile_transport_method>
+		<profile_email_addr_list>test@cisco.com,</profile_email_addr_list>
+		<profile_http_addr_list>https://tools.cisco.com/its/service/oddce/services/DDCEService,<profile_http_addr_list>
+	</profile>
+</call_home_nvconfig>

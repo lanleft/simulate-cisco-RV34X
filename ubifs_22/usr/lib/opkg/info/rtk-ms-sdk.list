@@ -1,0 +1,3 @@
+/usr/sbin/rtkssdk_diag
+/usr/sbin/rtk_ms_switch
+/etc/init.d/ms-switch

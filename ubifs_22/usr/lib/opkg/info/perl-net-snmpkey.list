@@ -1,0 +1,14 @@
+/usr/lib/perl5/5.22/Net/SNMP/Dispatcher.pm
+/usr/lib/perl5/5.22/Net/SNMP/Security.pm
+/usr/lib/perl5/5.22/Net/SNMP/Message.pm
+/usr/lib/perl5/5.22/Net/SNMP/PDU.pm
+/usr/lib/perl5/5.22/Net/SNMP/MessageProcessing.pm
+/usr/lib/perl5/5.22/Net/SNMP/Security/Community.pm
+/usr/lib/perl5/5.22/Net/SNMP/Transport/TCP6.pm
+/usr/lib/perl5/5.22/Net/SNMP/Transport.pm
+/usr/lib/perl5/5.22/Net/SNMP/Security/USM.pm
+/usr/lib/perl5/5.22/Net/SNMP/Transport/TCP.pm
+/usr/lib/perl5/5.22/Net/SNMP.pm
+/usr/lib/perl5/5.22/Net/SNMP/Transport/UDP6.pm
+/usr/bin/snmpkey
+/usr/lib/perl5/5.22/Net/SNMP/Transport/UDP.pm

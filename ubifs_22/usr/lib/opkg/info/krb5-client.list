@@ -1,0 +1,8 @@
+/usr/bin/kdestroy
+/usr/bin/kvno
+/usr/bin/klist
+/usr/bin/ksu
+/usr/bin/kpasswd
+/usr/bin/ktutil
+/usr/sbin/krb5-send-pr
+/usr/bin/kinit

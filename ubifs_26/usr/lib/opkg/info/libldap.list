@@ -1,0 +1,5 @@
+/lib/security/exports.solaris
+/etc/ldap.conf
+/lib/security/pam_ldap.so
+/etc/init.d/ldapclient
+/etc/config/ldap

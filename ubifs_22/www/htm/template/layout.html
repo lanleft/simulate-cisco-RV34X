@@ -1,0 +1,15 @@
+
+<div class="panel-container" ng-controller="layoutCtrl">
+    <div id="panel-header" ng-class="{'nav-is-off': collapsed}">
+        <div ng-include="'htm/template/header.html'"></div>
+    </div>
+    <div id="panel-nav" ng-class="{'nav-is-off': collapsed}">
+        <div ng-include="'htm/tree/tree.html'"></div>
+    </div>
+    <div id="panel-divide">
+    </div>
+    <div id="panel-content" ng-class="{'nav-is-off': collapsed}">
+        <div id="views" ng-view></div>
+    </div>
+    <div id="panel-footer"></div>
+</div>

@@ -1,0 +1,9 @@
+Package: glib2
+Version: 2.41.1-2
+Depends: libc, librt, libpthread, zlib, libpthread, libffi, libattr
+Source: package/openwrt/libs/glib2
+Section: libs
+Maintainer: Peter Wagner <tripolar@gmx.at>
+Architecture: comcerto2000
+Installed-Size: 814304
+Description:  The GLib library of C routines

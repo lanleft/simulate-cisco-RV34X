@@ -1,0 +1,228 @@
+module ciscosb-security {
+    namespace "http://cisco.com/ns/ciscosb/security";
+    prefix ciscosb-security;
+    import ietf-yang-types { prefix yang; }
+ import ietf-inet-types { prefix inet; }
+    import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    import ciscosb-common { prefix ciscosb-common; }
+    import ciscosb-security-common { prefix ciscosb-security-common; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define  application control  and webfilter";
+    revision 2017-08-10 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2016-08-10 {
+        description "change type of category, application and behavior in AVC-SETTING from leafref to string to ignore error if application removed from avc-meta-data";
+        reference "";
+    }
+    container signature {
+        container auto-update {
+            uses ciscosb-common:AUTO-UPDATE;
+        }
+    }
+    uses ciscosb-security-common:SIGNATURE-STATE;
+    container security-state {
+        config false;        
+        leaf last-reset-time {
+            type yang:date-and-time;
+        }
+        list summary {
+            key "hours days weeks months";
+            uses ciscosb-security-common:TIME-RANGE;
+            leaf scanned {
+                type uint32;
+            }
+            leaf detected {
+                type uint32;
+            }
+        }
+        list events {
+            key date;
+            leaf date {
+                type yang:date-and-time;
+            }
+            leaf event-num {
+                type uint32;
+            }
+        }
+    }
+     rpc reset-security-state{
+        description
+            " reset the counters .";
+    }
+    rpc get-ips-signatures {
+        input {
+            leaf query {
+                type string;
+            }
+            leaf page-size {
+                type uint32;
+            }
+            leaf page-num {
+                type uint32;
+            }
+        }
+        output {
+            leaf total-num {
+                type uint16;
+            }
+            list signatures {
+                key id;
+                uses ciscosb-security-common:IPS-SIGNATURE;
+            }
+        }
+    }
+    rpc get-top-clients {
+        input {
+            leaf num {
+                type uint8;
+            }
+            leaf type {
+                type enumeration {
+                  enum threat;
+                  enum ips;
+                }
+            }
+        }
+        output {
+            list clients {
+                key mac;
+                ordered-by user;
+		
+                uses ciscosb-security-common:CLIENT;
+		
+                choice type {
+                  case threat {
+                    leaf threats-count {
+                      type uint32;
+                    }
+		          }
+                  case ips {
+                    leaf attacks-count {
+                      type uint32;
+                    }
+                  }
+                }		
+            }
+        }
+    }
+  rpc get-top-attacks {
+      input {
+          leaf num {
+              type uint8;
+          }
+      }
+      output {
+          list attacks {
+              key id;
+              uses ciscosb-security-common:IPS-SIGNATURE;
+	      
+              leaf clients-count {
+                type uint32;
+              }
+          }
+      }
+  }
+  rpc get-top-threats {
+      input {
+          leaf num {
+              type uint8;
+          }
+      }
+      output {
+          list attacks {
+              key id;
+              uses ciscosb-security-common:THREAT-SIGNATURE;
+	      
+              leaf clients-count {
+                type uint32;
+              }
+          }
+      }
+  }
+  rpc get-clients-per-event {
+      input {
+          leaf event {
+              type string;
+          }
+          leaf type {
+              type enumeration {
+                  enum threat;
+                  enum ips;
+              }
+          }
+          uses ciscosb-security-common:TIME-RANGE;
+      }
+      output {
+          list clients {
+              key "mac id date";
+              leaf remote-ip {
+                  type inet:ip-address-no-zone;
+              }
+              leaf port {
+                  type uint16;
+              }
+              leaf date {
+                  type yang:date-and-time;
+              }
+              leaf id {
+                  type uint32;
+              }
+              leaf name {
+                  type string;
+              }
+              uses ciscosb-security-common:CLIENT;
+          }
+      }
+  }
+  rpc get-attacks-per-client {
+      input {
+          leaf client {
+              type yang:mac-address;
+          }
+          uses ciscosb-security-common:TIME-RANGE;
+      }
+      output {
+          list attacks {
+              key "id date";
+              leaf remote-ip {
+                  type inet:ip-address-no-zone;
+              }
+              leaf port {
+                  type uint16;
+              }
+              leaf date {
+                  type yang:date-and-time;
+              }
+              uses ciscosb-security-common:IPS-SIGNATURE;
+          }
+      }
+  }
+  rpc get-threats-per-client {
+      input {
+          leaf client {
+              type yang:mac-address;
+          }
+          uses ciscosb-security-common:TIME-RANGE;
+      }
+      output {
+          list threats {
+              key "id date";
+              leaf remote-ip {
+                  type inet:ip-address-no-zone;
+              }
+              leaf port {
+                  type uint16;
+              }
+              leaf date {
+                  type yang:date-and-time;
+              }
+              uses ciscosb-security-common:THREAT-SIGNATURE;
+          }
+      }
+  }
+}

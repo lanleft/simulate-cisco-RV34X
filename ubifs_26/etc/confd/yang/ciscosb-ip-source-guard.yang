@@ -1,0 +1,79 @@
+module ciscosb-ip-source-guard {
+    namespace "http://cisco.com/ns/ciscosb/ip-source-guard";
+    prefix ciscosb-ip-source-guard;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import iana-if-type { prefix ianaift; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "First revision  blocking unknown mac address and unknown ip binding module.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-21 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    container block-unknown-binding {
+        list static-bindings {
+            key "mac";
+            leaf name {
+                type string;
+                description "a descriptive label ";
+            }
+            leaf ip-address {
+                type inet:ip-address;
+            }
+            leaf mac {
+                type yang:mac-address;
+            }
+            leaf enable {
+                type boolean;
+                default true;
+            }
+        }
+  leaf include-dhcp-lease{
+   type boolean;
+   default false;
+  }
+        leaf block-unknown-mac-address{
+            type boolean;
+            default true;
+            description "Block MAC address not on the list";
+        }
+        leaf block-unknown-binding {
+            type boolean;
+            default true;
+            description "Block MAC addrss on the list with wrong IP address";
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+     when "if:type = 'ianaift:ethernetCsmacd' or if:type = 'ianaift:ieee80211'";
+        container mac-filter {
+            leaf enable {
+                type boolean;
+            }
+            list filtered-macs {
+                key mac-address;
+                leaf mac-address {
+                    type yang:mac-address;
+                }
+                leaf action {
+                    type enumeration {
+                        enum block;
+                        enum allow;
+                    }
+                }
+            }
+        }
+    }
+}

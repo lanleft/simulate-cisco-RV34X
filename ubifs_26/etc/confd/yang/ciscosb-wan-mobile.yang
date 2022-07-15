@@ -1,0 +1,347 @@
+module ciscosb-wan-mobile {
+    namespace "http://cisco.com/ns/ciscosb/wan-mobile";
+    prefix ciscosb-wan-mobile;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-wan-ip { prefix ciscosb-wan-ip; }
+    import iana-if-type { prefix ianaift; }
+    import ciscosb-types { prefix ciscosb-types; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module augments ietf-interfaces to add support for mobile
+        if:type='ianaift:wwanPP' or if:type='ianaift:wwanPP2'.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    typedef interface-ref {
+        type leafref {
+            path "/if:interfaces/if:interface/if:name";
+        }
+        description
+                "This type is used by data models that need to reference configured
+                interfaces.";
+    }
+    identity interface-protocol {
+        description
+                "The interface protocol. ";
+    }
+    identity interface-protocol-static {
+        base interface-protocol;
+        description
+                "Static configuration with fixed address and netmask. ";
+    }
+    identity interface-protocol-dhcp {
+        base interface-protocol;
+        description
+                "Interface protocol, by which it gets IP address. dhcp for IPv4
+                ";
+    }
+    identity interface-protocol-dhcpv6 {
+        base interface-protocol;
+        description
+                "Interface protocol, by which it gets IP address. dhcpv6 for IPv6
+                ";
+    }
+    identity interface-protocol-pppoe {
+        base interface-protocol;
+        description
+                "Point-to-Point Protocol over Ethernet ";
+    }
+    identity interface-protocol-pptp {
+        base interface-protocol;
+        description
+                "The Point-to-Point Tunneling Protocol (PPTP). ";
+    }
+    identity interface-protocol-l2tp {
+        base interface-protocol;
+        description
+                "Layer Two Tunneling Protocol (L2TP). ";
+    }
+    identity interface-protocol-slaac {
+        base interface-protocol;
+        description
+                "Stateless Auto Configuration. ";
+    }
+    identity interface-protocol-6in4 {
+        base interface-protocol;
+        description
+                "IPv6 in IPv4Tunnel (IPv6). ";
+    }
+    identity interface-protocol-6rd {
+        base interface-protocol;
+        description
+                "IPv6 Rapid Deployment (6rd) Tunnel (IPv6). ";
+    }
+    typedef Interface-protocol-type {
+        type identityref {
+            base "interface-protocol";
+        }
+        description "The interface protocol.";
+    }
+    identity interface-config-mode {
+        description
+                "Configuration Mode";
+    }
+    identity interface-config-mode-manual {
+        base interface-config-mode;
+        description
+                "Manually set";
+    }
+    identity interface-config-mode-dhcp {
+        base interface-config-mode;
+        description
+                "Use DHCP to config";
+    }
+    typedef Interface-config-mode-type {
+        type identityref {
+            base "interface-config-mode";
+        }
+        description "Indicate which mode are used to config interface";
+    }
+    grouping NAMING_SERVERS {
+        container name-servers {
+            description
+                        "Configure name servers to peroferm DNS resolution";
+            list servers {
+                key server-address;
+                ordered-by user;
+                description
+                                "Configure name server address to peroferm DNS resolution";
+                leaf server-address {
+                    type inet:ip-address;
+                    description
+                                        "Specifies host that can function as a name server to supply name
+                                        information for DNS.";
+                }
+            }
+        }
+    }
+    grouping GATEWAY {
+        leaf gateway {
+            type inet:ipv4-address;
+            description
+                        "Default gateway IP addresses.";
+        }
+        leaf ip6gw {
+            type inet:ipv6-address;
+            description
+                        "Default gateway IPv6 addresses.";
+        }
+    }
+    grouping MOBILE-SETUP {
+        leaf service-name {
+            type string;
+            description
+    "service name";
+        }
+        leaf authentication{
+         type ciscosb-wan-ip:Authenticate-type-type;
+        }
+        leaf maxwait {
+            type int32;
+            default 20;
+            description
+                        "No of seconds to wait for modem to become ready.";
+        }
+        leaf access-point-name {
+            type string;
+            description
+                        " Internet network that the mobile device is connecting to..";
+        }
+        leaf dial-number {
+            type string;
+            description "Mobile network service provider for the Internet connection";
+        }
+        leaf username {
+            type string;
+            description
+                        "Username for Authentication.";
+        }
+        leaf password {
+         type ciscosb-types:aes-cfb-128-encrypted-string;
+            description
+                        "Password for PAP/CHAP authentication.";
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type='ianaift:wwanPP' or if:type='ianaift:wwanPP2'"{
+        }
+        container mobile {
+            description "A mobile broadband modem, also known as connect card or data
+                        card, is a type of modem that allows a laptop, a personal computer
+                        or a router to receive internet access via a mobile broadband
+                        connection instead of using telephone or cable lines.";           
+            leaf device-name {
+                   type string;
+                   description "/usb-modems-state/usb-modem/device-name";
+            }
+            leaf network-mode-preferred {
+                type string;
+                default auto;
+                description
+                     "network-mode (service type): auto, 4G, 3G";
+            }
+            container network-setup {
+             presence "network-setup";
+                leaf configure-mode {
+                    type ciscosb-types:if-config-mode;
+                }
+                uses MOBILE-SETUP;
+                leaf sim-pin {
+                   type ciscosb-types:aes-cfb-128-encrypted-string;
+                   description
+                        "sim pin.";
+                }
+                choice connect-mode {
+                    case keepalive {
+                        leaf keepalive {
+                         type uint16;
+                         description
+                          "Number of connection failures before reconnect.";
+                          }
+                    }
+                    case connect-on-demand {
+                        leaf connect-on-demand {
+                        type uint16;
+                         description
+                                     "Number of seconds to wait before closing the connection due to
+                                     inactivity.";
+                        }
+                    }
+                 }
+            }
+            container bandwidth-cap {
+                leaf enable {
+                    type boolean;
+                }
+                leaf monthly-renew-date {
+                    type uint16 {
+                        range "1 .. 31";
+                    }
+                }
+                leaf monthly-bandwidth-cap {
+                    type uint32;
+                }
+                container trigger-email-exceed {
+                    presence " presense means  trigger email is checked";
+                    leaf bandwidth-threshhold {
+                        type uint8 {
+                            range "1..100";
+                        }
+                    }
+                }
+            }
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        when "/if:interfaces-state/if:interface/if:type='ianaift:wwanPP' or /if:interfaces-state/if:interface/if:type='ianaift:wwanPP2'";
+        container mobile-connection {
+             config false;
+                leaf connection-time {
+                    type yang:timestamp;
+                }
+                leaf current-network-mode {
+                    type string;
+                    default umts;
+                    description
+                                "service type: cdma/evdo,umts/umts_only/gprs_only";
+                }
+                leaf service-name {
+                    type string;
+                    description
+                                "service name";
+                }
+    leaf session-usage-tx-bytes {
+     type uint64;
+     units "bytes";
+     description
+     "Session usage TX bytes";
+    }
+    leaf session-usage-rx-bytes {
+     type uint64;
+     units "bytes";
+     description
+     "Session usage RX bytes";
+    }
+    leaf monthly-usage-tx-bytes {
+     type uint64;
+     units "bytes";
+     description
+     "Monthly usage TX bytes";
+    }
+    leaf monthly-usage-rx-bytes {
+     type uint64;
+     units "bytes";
+     description
+     "Monthly usage RX bytes";
+    }
+         }
+    }
+    container usb-modems-state {
+             config false;
+             list usb-modem {
+                    key device-name;
+        leaf device-name {
+                        type string;
+        }
+                    leaf card-model {
+                        type string;
+                    }
+                    leaf manufacture {
+                        type string;
+                    }
+                    leaf firmware-version {
+                        type string;
+                    }
+                    leaf sim-status {
+                        type string;
+                    }
+                    leaf imsi {
+                        type string;
+                    }
+                    leaf carrier {
+                        type string;
+                    }
+                    leaf-list network-mode {
+                        type string;
+                    }
+                    leaf signal-strength {
+                        config false;
+                        description "he strength of the radio signal emitting from neighbor AP.";
+                        type int16;
+                    }
+                    leaf card-status {
+                        type enumeration {
+                            enum connected;
+                            enum disconnected;
+                        }
+                    }
+                    container auto-setup {
+                     presence "auto-setup";
+                        uses MOBILE-SETUP;
+                    }
+                }
+      }
+     rpc reset-mobile-statistics {
+      description
+        "Clear the counters of mobile statistics";
+        input {
+         leaf interface-name {
+          type if:interface-ref;
+         }
+        }
+    }
+}

@@ -1,0 +1,153 @@
+module ciscosb-schedule {
+    namespace "http://cisco.com/ns/ciscosb/schedule";
+    prefix ciscosb-schedule;
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:jesse.wangg@cisco.com";
+    description
+        "This module define schedule ";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    typedef Schedule-ref {
+        type leafref {
+            path "/ciscosb-schedule:schedules/ciscosb-schedule:schedule/ciscosb-schedule:name";
+        }
+        description
+                "common schedule";
+    }
+    typedef HHMMSS {
+        type string {
+            pattern
+                        '\d{2}:\d{2}:\d{2}';
+        }
+        description
+                "hour miniutes seconds ";
+    }
+    grouping recur-on {
+        choice recur-patten {
+            case daily {
+                leaf daily {
+                    type empty;
+                }
+            }
+            case weekly {
+                leaf-list recur-on {
+                    type enumeration {
+                        enum sun {
+                        }
+                        enum mon {
+                        }
+                        enum tue {
+                        }
+                        enum wed {
+                        }
+                        enum thu {
+                        }
+                        enum fri {
+                        }
+                        enum sat {
+                        }
+                    }
+                }
+            }
+            case monthly {
+                leaf-list days {
+                    type uint8 {
+                        range 1..31;
+                    }
+                }
+            }
+            case yearly {
+                leaf-list date {
+                    type string {
+                        pattern '\d{2}-\d{2}';
+                    }
+                }
+            }
+        }
+    }
+    grouping recur-every {
+        choice recur-every {
+            case seconds {
+                leaf seconds {
+                    type int32;
+                    units "second";
+                }
+            }
+            case minutes {
+                leaf minutes {
+                    type int32;
+                    units "minute";
+                }
+            }
+            case hours {
+                leaf hours {
+                    type int32;
+                    units "hour";
+                }
+            }
+            case days {
+                leaf days {
+                    type int32;
+                }
+            }
+        }
+    }
+    container schedules {
+        list schedule {
+            key name;
+            leaf name {
+                type string;
+            }
+            leaf description {
+                type string;
+            }
+            choice schedule-type {
+                case duration {
+                    container duration {
+                        leaf start-time {
+                            type HHMMSS;
+                            mandatory true;
+                        }
+                        leaf end-time {
+                            type HHMMSS;
+                        }
+                        container recur-on {
+                            uses recur-on;
+                        }
+                    }
+                }
+                case trigger {
+                    container trigger {
+                        choice recur-type {
+                            case recur-on {
+                                container recur-on {
+                                    leaf trigger-time {
+                                        type HHMMSS;
+                                    }
+                                    uses recur-on;
+                                }
+                            }
+                            case recur-every {
+                                container recur-every {
+                                    uses recur-every;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

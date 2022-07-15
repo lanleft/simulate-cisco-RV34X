@@ -1,0 +1,114 @@
+#!/bin/sh
+
+RPC_DIR=/usr/bin
+
+rpc="$1"
+shift
+
+cmd=
+cmdargs=
+
+case $rpc in
+	usb-check-attached)
+		cmd="$RPC_DIR/usb"
+		cmdargs="check"
+	;;
+	utility-traceroute-response)
+		cmd="$RPC_DIR/utility-traceroute"
+	;;
+	generate-wps-pin)
+		cmd="$RPC_DIR/generate-pin"
+	;;
+	register-wps-device-pin)
+		cmd="$RPC_DIR/register-device-pin"
+	;;
+	ssl-disconnect)
+		cmd="$RPC_DIR/sslvpn"
+		cmdargs="clear session"
+	;;
+	pptp-disconnect)
+		cmd="$RPC_DIR/pptp_disconnect"
+	;;
+	l2tp-disconnect)
+		cmd="$RPC_DIR/l2tp_disconnect"
+	;;
+	s2s-connect)
+		cmd="$RPC_DIR/s2s-rpc"
+		cmdargs="up"
+	;;
+	s2s-disconnect)
+		cmd="$RPC_DIR/s2s-rpc"
+		cmdargs="down"
+	;;
+	c2s-disconnect)
+		cmd="$RPC_DIR/c2s-rpc"
+		cmdargs="down"
+	;;
+	teleworker-vpn-client-connect)
+		cmd="$RPC_DIR/tvpnc-rpc"
+		cmdargs="up"
+	;;
+	teleworker-vpn-client-disconnect)
+		cmd="$RPC_DIR/tvpnc-rpc"
+		cmdargs="down"
+	;;
+	refresh-counters)
+		cmd="$RPC_DIR/reset-counters"
+		cmdargs="refresh"
+	;;
+	clear-connections)
+		cmd="$RPC_DIR/clearconnection.sh"
+	;;
+	test-connectivity)
+		cmd="$RPC_DIR/email-server"
+		cmdargs="connectivity"
+	;;
+	license-enable)
+		cmd="$RPC_DIR/license"
+		cmdargs="enable"
+	;;
+	license-disable)
+		cmd="$RPC_DIR/license"
+		cmdargs="disable"
+	;;
+	license-register)
+		cmd="$RPC_DIR/license"
+		cmdargs="register"
+	;;
+	license-deregister)
+		cmd="$RPC_DIR/license"
+		cmdargs="deregister"
+	;;
+	license-renew-registeration-cert)
+		cmd="$RPC_DIR/license"
+		cmdargs="renewIdcert"
+	;;
+	license-authorize)
+		cmd="$RPC_DIR/license"
+		cmdargs="test requestEntitlement"
+	;;
+	license-deauthorize)
+		cmd="$RPC_DIR/license"
+		cmdargs="test releaseEntitlement"
+	;;
+	license-renew-authorization)
+		cmd="$RPC_DIR/license"
+		cmdargs="renewAuth"
+	;;
+	*)
+		cmd="$RPC_DIR/$rpc"
+	;;
+esac
+
+[ -f $cmd ] && {
+	local output
+	local ret
+	logger '$cmd $cmdargs "$@"'
+	out="`$cmd $cmdargs "$@"`"
+	ret=$?
+	echo $out
+	exit $ret
+} || {
+	logger '$rpc "$@" failed'
+	exit 1
+}

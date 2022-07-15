@@ -1,0 +1,10 @@
+Package: kmod-nls-iso8859-1
+Version: 4.1.8-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: comcerto2000
+Installed-Size: 2098
+Description:  Kernel module for NLS ISO 8859-1 (Latin 1)

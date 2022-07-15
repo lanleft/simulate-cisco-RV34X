@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/eap-md5.conf
+/usr/lib/ipsec/plugins/libstrongswan-eap-md5.so

@@ -1,0 +1,391 @@
+module ciscosb-qos-policy {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/qos-policy";
+  prefix ciscosb-qos-policy;
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import ietf-interfaces {
+    prefix if;
+  }
+  import ciscosb-classifier {
+    prefix sb-class;
+  }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-12-07 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-05-01 {
+    description
+      "First revision QoS Policy module";
+  }
+  grouping queue-statistics {
+    leaf packets {
+      type yang:counter64;
+      description
+       "The number of packets forwarded by this queue";
+    }
+    leaf discards {
+      type yang:counter64;
+      description
+       "The number of packets discarded by this queue";
+    }
+  }
+  container ciscosb-qos {
+    leaf queue-model {
+      type enumeration {
+        enum "priority";
+        enum "rate-control";
+        enum "low-latency";
+      }
+      default "priority";
+    }
+    leaf policer-enable {
+      type boolean;
+      default "true";
+    }
+    container queue-policies {
+      list queue-policy {
+        key "name";
+        leaf name {
+          type string;
+          description
+           "An arbitrary name describing the policy.";
+        }
+        leaf description {
+          type string;
+          description
+           "An arbitrary description for the policy.";
+        }
+        container queues {
+          choice type {
+            case priority {
+              container priority {
+                leaf highest {
+                  type leafref {
+                    path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                  }
+                  description
+                   "Match policy for this queue.";
+                }
+                leaf high {
+                  type leafref {
+                    path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                  }
+                  description
+                   "Match policy for this queue.";
+                }
+                leaf medium {
+                  type leafref {
+                    path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                  }
+                  description
+                   "Match policy for this queue.";
+                }
+                leaf low {
+                  type leafref {
+                    path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                  }
+                  description
+                   "Match policy for this queue.";
+                }
+              }
+            }
+            case rate-control {
+              container rate-control {
+                list queue {
+                  key id;
+                  leaf id {
+                    type uint8 {
+                      range "1..8";
+                    }
+                    description
+                     "The queue number for this queue.";
+                  }
+                  leaf match {
+                    type leafref {
+                      path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                    }
+                    description
+                     "Match policy for this queue.";
+                  }
+                  leaf min-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 0;
+                    description
+                     "The minimum data rate in percent for this queue.";
+                  }
+                  leaf max-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 100;
+                    description
+                     "The maximum data rate in percent for this queue.";
+                  }
+                }
+              }
+            }
+            case low-latency {
+              container low-latency {
+                container priority {
+                  leaf match {
+                    type leafref {
+                      path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                    }
+                    description
+                     "Match policy for this queue.";
+                  }
+                  leaf max-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 100;
+                    description
+                     "The maximum data rate in percent for this queue.";
+                  }
+                }
+                container queue1 {
+                  leaf match {
+                    type leafref {
+                      path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                    }
+                    description
+                     "Match policy for this queue.";
+                  }
+                  leaf min-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 0;
+                    description
+                     "The minimum data rate in percent for this queue.";
+                  }
+                }
+                container queue2 {
+                  leaf match {
+                    type leafref {
+                      path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                    }
+                    description
+                     "Match policy for this queue.";
+                  }
+                  leaf min-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 0;
+                    description
+                     "The minimum data rate in percent for this queue.";
+                  }
+                }
+                container queue3 {
+                  leaf match {
+                    type leafref {
+                      path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+                    }
+                    description
+                     "Match policy for this queue.";
+                  }
+                  leaf min-rate {
+                    type uint8 {
+                      range "0..100";
+                    }
+                    default 0;
+                    description
+                     "The minimum data rate in percent for this queue.";
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    container policer-policies {
+      list policer-policy {
+        key "name";
+        leaf name {
+          type string;
+          description
+           "An arbitrary name describing the policy.";
+        }
+        leaf description {
+          type string;
+          description
+           "An arbitrary description for the policy.";
+        }
+        container policer {
+          list class {
+            key id;
+            leaf id {
+              type uint8 {
+                range "1..8";
+              }
+              description
+               "The id for this class.";
+            }
+            leaf match {
+              type leafref {
+                path "/sb-class:classifiers/sb-class:classifier/sb-class:name";
+              }
+              description
+               "Match policy for this class.";
+            }
+            leaf max-rate {
+              type uint8 {
+                range "0..100";
+              }
+              default 100;
+              description
+               "The maximum data rate in percent for this class.";
+            }
+          }
+        }
+      }
+    }
+  }
+  augment "/if:interfaces/if:interface" {
+    container ciscosb-qos {
+      container qos-policy {
+        container outbound {
+         leaf queue-model {
+                type enumeration {
+                  enum "priority";
+                  enum "rate-control";
+                  enum "low-latency";
+                }
+                description
+                 "The queue model supported by this interface.";
+            }
+         leaf priority {
+                type leafref {
+                  path "/ciscosb-qos-policy:ciscosb-qos/ciscosb-qos-policy:queue-policies/ciscosb-qos-policy:queue-policy/ciscosb-qos-policy:name";
+                }
+            }
+            leaf rate-control {
+                type leafref {
+                  path "/ciscosb-qos-policy:ciscosb-qos/ciscosb-qos-policy:queue-policies/ciscosb-qos-policy:queue-policy/ciscosb-qos-policy:name";
+                }
+            }
+            leaf low-latency {
+                type leafref {
+                  path "/ciscosb-qos-policy:ciscosb-qos/ciscosb-qos-policy:queue-policies/ciscosb-qos-policy:queue-policy/ciscosb-qos-policy:name";
+                }
+            }
+        }
+        container inbound {
+         leaf rate-control {
+            type leafref {
+              path "/ciscosb-qos-policy:ciscosb-qos/ciscosb-qos-policy:policer-policies/ciscosb-qos-policy:policer-policy/ciscosb-qos-policy:name";
+            }
+            description
+              "The policer policy to apply intbound on this interface.";
+         }
+        }
+      }
+      container bandwidth {
+        leaf upstream {
+          type uint32;
+          description
+           "Upstream bandwidth in kb/s.  Outgoing traffic should be shaped to this rate.";
+        }
+        leaf downstream {
+          type uint32;
+          description
+           "Downstream bandwidth in kb/s.  Incoming traffic should be limited to this rate.";
+        }
+      }
+    }
+  }
+  augment "/if:interfaces-state/if:interface" {
+      container ciscosb-qos {
+          description
+              "WAN qos";
+              container queue-statistics {
+      leaf last-reset-time {
+       type yang:date-and-time;
+      }
+        container outbound {
+        choice type {
+          case priority {
+            container priority {
+              container highest {
+                uses queue-statistics;
+              }
+              container high {
+                uses queue-statistics;
+              }
+              container medium {
+                uses queue-statistics;
+              }
+              container low {
+                uses queue-statistics;
+              }
+            }
+          }
+          case rate-control {
+            container rate-control {
+              list queue {
+                key id;
+                leaf id {
+                  type uint8 {
+                    range "1..8";
+                  }
+                  description
+                   "The queue number for this queue.";
+                }
+                uses queue-statistics;
+              }
+            }
+          }
+          case low-latency {
+            container low-latency {
+              container priority {
+                uses queue-statistics;
+              }
+              container queue1 {
+                uses queue-statistics;
+              }
+              container queue2 {
+                uses queue-statistics;
+              }
+              container queue3 {
+                uses queue-statistics;
+              }
+            }
+          }
+        }
+      }
+        container inbound {
+          list queue {
+            key id;
+            leaf id {
+              type uint8 {
+                range "1..8";
+              }
+              description
+               "The queue number for this queue.";
+            }
+            uses queue-statistics;
+          }
+        }
+      }
+    }
+  }
+  rpc reset-qos-statistics {
+ description
+   "Clear the counters of qos statistics";
+   input {
+    leaf interface-name {
+     type if:interface-ref;
+    }
+   }
+  }
+}

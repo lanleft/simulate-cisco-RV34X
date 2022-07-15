@@ -1,0 +1,287 @@
+<div ng-controller="ipsecProfilesCtrl">
+    <form name="profile" ng-modification="dataReady" id="ipsec-profile">
+        <div ng-if="dataReady">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('IP_Sec_Profiles')"></div>
+                <div class="page-button-container">
+                    <button id="btn_save" class="btn-apply" ng-if="currPage === 'edit'" ng-disabled="profile.$invalid || userAccessFlag === 'RO' || edit.inUse" ng-click="funs.save()">
+                        <span ng-bind="DICT('IP_Sec_Profiles_Apply')"></span></button>
+                    <button id="btn_mainsave" class="btn-apply" ng-if="currPage === 'main'" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                        <span ng-bind="DICT('IP_Sec_Profiles_Apply')"></span></button>
+                    <button id="btn_maincancel" class="btn-cancel" ng-click="funs.cancel()">
+                        <span ng-bind="DICT('IP_Sec_Profiles_Cancel')"></span></button>
+                    <button id="btn_back" class="btn-back" ng-click="funs.go_back()" ng-show="backbtn">
+                        <span ng-bind="DICT('Back')"></span>
+                    </button>
+                </div>
+            </div>
+            <confirmsave ng-show="success"></confirmsave>
+            <div ng-include="pageMap[currPage]" ng-cloak></div>
+        </div>
+    </form>
+</div>
+
+<script type="text/ng-template" id="ipsec_profile_main.html">
+    <div class="page-content-container" ng-cloak>
+        <div>
+            <span ng-bind="DICT('IP_Sec_Profiles_Global_IPSec')"></span>
+            <input type="checkbox" ng-model="model.ipsec_enable"/><span ng-bind="DICT('IP_Sec_Profiles_Enable')"></span>
+        </div>
+        <div class="page-content-seperator"></div>
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('IP_Sec_Profiles_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button id="btn_add" class="grid-btn-add" ng-disabled="userAccessFlag === 'RO'" ng-click="funs.add()"></button>
+                    <button id="btn_edit" class="grid-btn-edit" ng-disabled="ui_data.selected.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.edit()"></button>
+                    <button id="btn_clone" class="grid-btn-copy" ng-disabled="ui_data.selected.length !== 1 || userAccessFlag === 'RO'" ng-click="funs.clone()"></button>
+                    <button id="btn_delete" class="grid-btn-delete" ng-disabled="ui_data.selected.length <= 0 || ui_data.disableDelBtn || userAccessFlag === 'RO'" ng-click="funs.del()"></button>
+                </div>
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridProfileOptions"></div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="ipsec_profile_edit.html">
+    <div class="page-content-container ng-cloak">
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="(edit.type === 'new' ? (DICT('IP_Sec_Profiles_Add')+DICT('IP_Sec_Profiles_New')) : (DICT('IP_Sec_Profiles_Edit')+DICT('IP_Sec_Profiles_New')))"></div>
+        </div>
+        <table class="page-block-tb-list ip-tb-list  control-input-200">
+            <tr>
+                <td ng-bind="DICT('IP_Sec_Profiles_Profile_Name')"></td>
+                <td>
+                    <input id="txt_profilename" name="profile_name"
+                        type="text" 
+                        ng-disabled="edit.inUse"
+                        ng-model="edit.profile_name"
+                        ng-change="checkProfileName()"
+                        ng-maxlength="64"
+                        required>
+                    </input>
+                </td>
+                <td>
+                    <span class="validation-error-text-right" ng-show="profile.profile_name.$error.repeat" ng-bind="DICT('IP_Sec_Profiles_Name_Repeat')">
+                        
+                    </span>
+                    <span class="validation-error-text-right" ng-show="profile.profile_name.$error.maxlength" ng-bind="DICT('IP_Sec_Profiles_Name_Too_Long')">
+                        
+                    </span>
+                    <span class="validation-error-text-right" ng-show="profile.profile_name.$error.special" ng-bind="DICT('IP_Sec_Profiles_Name_Support')">
+                        
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('IP_Sec_Profiles_Keying_Mode')"></td>
+                <td ng-class="{nopHint: edit.inUse}">
+                    <input type="radio" id="rdo_{{model.schema.key_mode[0].displayName}}" ng-disabled="edit.inUse" ng-model="edit.key_mode" ng-value="model.schema.key_mode[0].id"></input>
+                    <span ng-bind="model.schema.key_mode[0].displayName"></span>
+                    <input type="radio" id="rdo_{{model.schema.key_mode[1].displayName}}" ng-disabled="edit.inUse" ng-model="edit.key_mode" ng-value="model.schema.key_mode[1].id"></input>
+                    <span ng-bind="model.schema.key_mode[1].displayName"></span>
+                </td>
+            </tr>
+            <tr ng-show="edit.key_mode === model.schema.key_mode[0].id" ng-if="edit.key_mode === model.schema.key_mode[0].id">
+                <td ng-bind="DICT('IP_Sec_Profiles_IKE_Version')"></td>
+                <td>
+                    <input type="radio" id="rdo_v1" ng-model="edit.ike_version" ng-value="'v1'" ng-disabled="edit.inUse"></input>
+                    <span ng-bind="DICT('IP_Sec_Profiles_IKE1')"></span>
+                    <input type="radio" id="rdo_v2" ng-model="edit.ike_version" ng-value="'v2'" ng-disabled="edit.inUse"></input>
+                    <span ng-bind="DICT('IP_Sec_Profiles_IKE2')"></span>
+                </td>
+            </tr>
+        </table>
+        <hr class="page-content-seperator"></hr>
+        <div ng-show="edit.key_mode === model.schema.key_mode[0].id" ng-if="edit.key_mode === model.schema.key_mode[0].id" ng-cloak>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('IP_Sec_Profiles_PhaseI_Options')"></div>
+            </div>
+            <table class="page-block-tb-list ip-tb-list  control-input-200">
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_DH_Group')"></td>
+                    <td>
+                        <select id="slct_phase1dhgroup" ng-disabled="edit.inUse"
+                            ng-model="edit.phase1.dh_group" ng-options="m.id as m.displayName for m in model.schema.dh_group"
+                        ></select>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Encryption')"></td>
+                    <td>
+                        <select id="slct_phase1encryption" ng-disabled="edit.inUse"
+                            ng-model="edit.phase1.encryption" ng-options="m.id as m.displayName for m in model.schema.encryption"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Authentication')"></td>
+                    <td>
+                        <select id="slct_phase1authentication" ng-disabled="edit.inUse"
+                            ng-model="edit.phase1.authentication" ng-options="m.id as m.displayName for m in model.schema.authentication"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_SA_Lifetime')"></td>
+                    <td colspan="2">
+                        <input type="number" number id="txt_phase1salifetime" required min="120" max="86400" ng-disabled="edit.inUse" ng-model="edit.phase1.sa_lifetime" ></input>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Sec_Range')"></span>
+                    </td>
+                </tr>
+            </table>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('IP_Sec_Profiles_PhaseII_Options')"></div>
+            </div>
+            <table class="page-block-tb-list ip-tb-list  control-input-200">
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Protocol_Selection')"></td>
+                    <td>
+                        <select id="slct_phase2protocal" ng-disabled="edit.inUse" 
+                            ng-model="edit.phase2.protocal" ng-options="m.id as m.displayName for m in model.schema.protocals"
+                        ></select>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr ng-hide="edit.phase2.protocal === 'ah'">
+                    <td ng-bind="DICT('IP_Sec_Profiles_Encryption')"></td>
+                    <td>
+                        <select id="slct_phase2encryption" ng-disabled="edit.inUse"
+                            ng-model="edit.phase2.encryption" ng-options="m.id as m.displayName for m in model.schema.encryption"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Authentication')"></td>
+                    <td>
+                        <select id="slct_phase2authentication" ng-disabled="edit.inUse"
+                            ng-model="edit.phase2.authentication" ng-options="m.id as m.displayName for m in model.schema.authentication"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_SA_Lifetime')"></td>
+                    <td colspan="2">
+                        <input type="number"id="txt_phase2salifetime" required min="120" max="28800" ng-disabled="edit.inUse" ng-model="edit.phase2.sa_lifetime"></input>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_SA_Lifetime_Range')"></span>
+                    </td>
+                </tr>
+				<tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Perfect_Forward_Secrecy')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_phase2pfsenable" ng-disabled="edit.inUse" ng-model="edit.phase2.perfect_forward_secrecy"></input>
+                        <span ng-bind="DICT('IP_Sec_Profiles_Enable')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_DH_Group')"></td>
+                    <td ng-class="{nopHint: !edit.phase2.perfect_forward_secrecy}">
+                        <select id="slct_phase2dhgroup" ng-disabled="edit.inUse"
+                            ng-model="edit.phase2.dh_group" ng-options="m.id as m.displayName for m in model.schema.dh_group"
+                        ></select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div ng-show="edit.key_mode === model.schema.key_mode[1].id" ng-if="edit.key_mode === model.schema.key_mode[1].id" ng-cloak>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('IP_Sec_Profiles_IPsec_Configurations')"></div>
+            </div>
+            <table class="page-block-tb-list ip-tb-list  control-input-200">
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_SPI_Incoming')"></td>
+                    <td>
+                        <input type="text" id="txt_spiin" name="spi_in" type="text" ng-disabled="edit.inUse" ng-model="edit.spi_incoming" ng-change="checkSPI('spi_in')"></input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex_Range')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_SPI_Outgoing')"></td>
+                    <td>
+                        <input name="spi_out" id="txt_spiout" type="text" ng-disabled="edit.inUse" ng-model="edit.spi_outgoing" ng-change="checkSPI('spi_out')"></input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex_Range')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Encryption')"></td>
+                    <td>
+                        <select id="slct_encryption" ng-disabled="edit.inUse"
+                            ng-model="edit.encryption" ng-options="m.id as m.displayName for m in model.schema.encryption"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Key_In')"></td>
+                    <td>
+                        <input id="txt_phase1keyin" name="phase1_key_in" type="text" ng-disabled="edit.inUse" ng-model="edit.encryption_key_in"
+                            ng-minlength="{{model.schema.key_length[edit.encryption]}}"
+                            ng-maxlength="{{model.schema.key_length[edit.encryption]}}"
+                            ng-pattern="key_pattern"
+                            ng-required="edit.key_mode === model.schema.key_mode[1].id">
+                        </input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex', {'%s': model.schema.key_length[edit.encryption]})"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Key_Out')"></td>
+                    <td>
+                        <input id="txt_phase1keyout" name="phase1_key_out" type="text" ng-disabled="edit.inUse" ng-model="edit.encryption_key_out"
+                            ng-minlength="{{model.schema.key_length[edit.encryption]}}"
+                            ng-maxlength="{{model.schema.key_length[edit.encryption]}}"
+                            ng-pattern="key_pattern"
+                            ng-required="edit.key_mode === model.schema.key_mode[1].id">
+                        </input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex', {'%s': model.schema.key_length[edit.encryption]})"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Authentication')"></td>
+                    <td>
+                        <select id="slct_authentication" ng-disabled="edit.inUse"
+                            ng-model="edit.authentication" ng-options="m.id as m.displayName for m in model.schema.authentication"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Key_In')"></td>
+                    <td>
+                        <input type="text" id="txt_phase2keyin" name="phase2_key_in" ng-disabled="edit.inUse" ng-model="edit.authentication_key_in"
+                            ng-minlength="{{model.schema.key_length[edit.authentication]}}"
+                            ng-maxlength="{{model.schema.key_length[edit.authentication]}}"
+                            ng-pattern="key_pattern"
+                            ng-required="edit.key_mode === model.schema.key_mode[1].id">
+                        </input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex', {'%s': model.schema.key_length[edit.authentication]})"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('IP_Sec_Profiles_Key_Out')"></td>
+                    <td>
+                        <input type="text" id="txt_phase2keyout" name="phase2_key_out" ng-disabled="edit.inUse" ng-model="edit.authentication_key_out"
+                            ng-minlength="{{model.schema.key_length[edit.authentication]}}"
+                            ng-maxlength="{{model.schema.key_length[edit.authentication]}}"
+                            ng-pattern="key_pattern"
+                            ng-required="edit.key_mode === model.schema.key_mode[1].id">
+                        </input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('IP_Sec_Profiles_Hex', {'%s': model.schema.key_length[edit.authentication]})"></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</script>

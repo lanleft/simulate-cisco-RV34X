@@ -1,0 +1,9 @@
+Package: krb5-libs
+Version: 1.8-2
+Depends: libc, librt, libpthread, libncurses
+Source: package/krb5
+Section: net
+Maintainer: W. Michael Petullo <mike@flyn.org>
+Architecture: comcerto2000
+Installed-Size: 560752
+Description:  Kerberos 5 Shared Libraries

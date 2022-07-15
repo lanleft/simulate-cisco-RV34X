@@ -1,0 +1,2 @@
+/etc/modules.d/70-auto_bridge
+/lib/modules/4.1.8/auto_bridge.ko

@@ -1,0 +1,9 @@
+Package: ddns-scripts
+Version: 1.0.0-21
+Depends: libc, librt, libpthread
+Source: package/network/services/ddns-scripts
+Section: net
+Architecture: all
+Installed-Size: 8738
+Description:  A highly configurable set of scripts for doing
+ dynamic dns updates

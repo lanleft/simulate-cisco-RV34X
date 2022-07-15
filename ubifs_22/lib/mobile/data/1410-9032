@@ -1,0 +1,6 @@
+{
+    "desc": "Novatel USB730L",
+	"type": "ncm",
+	"control": 0,
+	"delay": 15
+}

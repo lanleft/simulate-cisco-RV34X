@@ -1,0 +1,9 @@
+Package: base-files
+Version: 157-r46692
+Depends: libc, librt, libpthread, netifd, procd, jsonfilter
+Source: package/base-files
+License: GPL-2.0
+Section: base
+Architecture: comcerto2000
+Installed-Size: 78235
+Description:  This package contains a base filesystem and system scripts for OpenWrt.

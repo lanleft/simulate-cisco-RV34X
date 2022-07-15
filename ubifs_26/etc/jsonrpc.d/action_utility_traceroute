@@ -1,0 +1,98 @@
+#!/bin/sh
+
+UTILITY_NAME="/tmp/utility-traceroute"
+TRACEROUTE_UTILITY=
+TYPE=$1
+
+#Parse params
+init_ttl=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "initial_ttl") {print $(I+1)};}'`
+max_ttl=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "max_ttl") {print $(I+1)};}'`
+target=`echo $@ | awk '{for (I=1;I<=NF;I++) if ($I == "target") {print $(I+1)};}'`
+
+start_traceroute() {
+	#Prepare ping command
+	value=`echo $target | egrep "(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))"`
+	if [ -n "$value" ];then
+		TRACEROUTE_UTILITY=traceroute6
+	else
+		TRACEROUTE_UTILITY=traceroute
+	fi
+
+	TRACEROUTE_COMMAND=$TRACEROUTE_UTILITY
+
+	if [ -n "$init_ttl" ];then
+		TRACEROUTE_COMMAND=$TRACEROUTE_COMMAND" -f "$init_ttl
+	fi
+
+
+	if [ -n "$max_ttl" ];then
+		TRACEROUTE_COMMAND=$TRACEROUTE_COMMAND" -m "$max_ttl
+	fi
+
+	# We are adding -q and -n option to match the rpc output format
+	TRACEROUTE_COMMAND=$TRACEROUTE_COMMAND" -n "
+
+	TRACEROUTE_COMMAND=$TRACEROUTE_COMMAND" "$target
+
+	# Prepare Output
+	`$TRACEROUTE_COMMAND > $UTILITY_NAME 2>&1 &`
+	errcode=$?
+
+	if [ "$errcode" -ne 0 ];then
+		errcode=1
+		errstring="Traceroute Failed"
+	else
+		errstring="Success"
+	fi
+
+	echo "code $errcode errstr $errstring"
+}
+
+stop_traceroute() {
+	exist_traceroute=`pgrep traceroute`
+	exist_traceroute6=`pgrep traceroute6`
+	
+	if [ -z "$exist_traceroute" ] && [ -z "$exist_traceroute6" ];then
+		errcode=1
+		errstring="Traceroute is not executing"
+	else
+		`killall -9 traceroute traceroute6 >/dev/null 2>&1`
+
+		errcode=0
+		errstring="Success"
+	fi
+
+	echo "code $errcode errstr $errstring"
+}
+
+get_traceroute_status() {
+	text=`cat $UTILITY_NAME 2>/dev/null`
+	errcode=$?
+	if [ "$errcode" -ne 0 ];then
+		errstring="Traceroute failed"
+	else
+		errstring="Success"
+	fi
+	
+	exist_traceroute=`pgrep traceroute`
+	exist_traceroute6=`pgrep traceroute6`
+	if [ -z "$exist_traceroute" ] && [ -z "$exist_traceroute6" ];then
+		is_final=true
+	else
+		is_final=false
+	fi
+
+	echo "code $errcode errstr $errstring text $text is_final $is_final"
+}
+
+case "$TYPE" in
+	start)
+		start_traceroute
+	;;
+	stop)
+		stop_traceroute
+	;;
+	status)
+		get_traceroute_status
+	;;
+esac

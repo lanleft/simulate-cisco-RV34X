@@ -1,0 +1,8 @@
+Package: perl-net-snmpkey
+Version: 5.2.0-1
+Depends: libc, librt, libpthread, perl, perl-crypt-des, perl-digest-sha1, perl-digest-hmac
+Source: package/perlextmod/net-snmp
+Section: lang
+Architecture: comcerto2000
+Installed-Size: 53439
+Description:  Perl NET-SNMP snmpkey module

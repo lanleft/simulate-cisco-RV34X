@@ -1,0 +1,2 @@
+/etc/strongswan.d/charon/constraints.conf
+/usr/lib/ipsec/plugins/libstrongswan-constraints.so

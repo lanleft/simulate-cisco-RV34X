@@ -1,0 +1,140 @@
+<form name="form" ng-controller="port_settings_main" ng-modification="loadReady" id="port-settings">
+<div ng-if="loadReady">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Port_Settings')"></div>
+        <div class="page-button-container ng-hide" ng-show="true">
+            <button id="btn_save" class="btn-apply" ng-click="save()" ng-disabled="userAccessFlag === 'RO'">
+                <span ng-bind="DICT('Port_Settings_Apply')"></span>
+            </button>
+            <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('Port_Settings_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+
+    <div class="page-content-container" ng-if="loadReady">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Port_Settings_Basic_Per_Port_Configuration')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridPort.Options"></div>
+            </div>
+        </div>
+        <div class="page-content-seperator"></div>
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('Port_Settings_Port_Mirror_Configuration')"></div>
+        </div>
+        <table class="page-block-tb-list port-mirror">
+            <tr>
+                <td colspan="2">
+                    <input type="checkbox" id="chk_pmcenable" ng-model="model['port-mirror'].enable" />
+                    <span ng-bind="DICT('Port_Settings_Enable')"></span>
+                </td>
+            </tr>
+            <tr ng-disabled="!model['port-mirror'].enable" ng-class="{nopHint: !model['port-mirror'].enable}">
+                <td ng-bind="DICT('Port_Settings_Destination_Port')"></td>
+                <td>
+                    <select id="slct_destport"
+                        ng-model="model['port-mirror']['tx-dst-port']"
+                        ng-click="update_txrx_port_routine(model['port-mirror']['tx-dst-port'])"
+                        ng-disabled="!model['port-mirror'].enable"
+                        ng-change="update_monitorDestTx(port.name)"
+                        ng-options="port.name as port.name for port in collect_destport_list() "
+                    ></select>
+                </td>
+            </tr>
+            <tr ng-class="{nopHint: !model['port-mirror'].enable}">
+                <td ng-bind="DICT('Port_Settings_Monitored_Port')" class="align-top"></td>
+                <td>
+                    <span ng-repeat="port in collect_port_list()" class="chk-entity">
+                        <input type="checkbox" id="{{'chk_monport' + showPortName(port)}}"
+                            ng-model="port._monitorVal"
+                            ng-change="update_port_mirror_status('tx'); update_port_mirror_status('rx')"
+                            ng-disabled="disablePort(port)"
+                        />
+                        <span ng-bind="showPortName(port)"></span>
+                    </span>
+                </td>
+            </tr>
+        </table>
+        <!-- LAG(Link Aggregation) - Begin -->
+        <div class="grid-cntr">
+            <div class="grid-tb-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Port_Settings_Link_Aggregation_Configuration_Table')"></div>
+            </div>
+            <div class="grid-tb-list-cntr">
+                <table ng-if="loadReady" data-tmp="{{ availPortList = collect_lag_port_list() }}" class="grid-tb-list">
+                    <tr class="grid-header-cntr">
+                        <td ng-bind="DICT('Port_Settings_Group_Name')">
+                            
+                        </td>
+                        <td ng-repeat="ifref in availPortList">
+                            {{ifref.name}}
+                        </td>
+                        <!--
+                        <td class="ngHeaderCell posRelative ngHeaderText" width="250px">
+                            Link State
+                        </td>
+                        -->
+                        <td></td>
+                    </tr>
+                    <tr >
+                        <td ng-bind="DICT('Port_Settings_Unassigned')"></td>
+                        <td ng-repeat="ifref in availPortList">
+                            <input type="radio" id="{{'rdo_unassigned_' + ifref.name}}" name="{{ifref.name + '_' + 'LAGREF'}}"
+                                ng-model="ifref['lag-ref']"
+                                ng-disabled="ifref.dmz.enable==true"
+                                ng-value="LAGUNASSIGN"
+                                ng-change="update_lag_enable(ifref, '{{ifref['lag-ref']}}', '{{ifref['port-mode']}}' )"
+                            />
+                        </td>
+                        <!--
+                        <td class="ngRow posRelative even" width="250px">
+                            
+                        </td>
+                        -->
+                        <td ></td>
+                    </tr>
+                    
+                    <!-- DYNAMIC LOAD LAG -->
+                    <tr ng-repeat="lag_ref in model['interfaces']['interface'] | filter:{type:'ieee8023adLag'}" ng-init="rowidx=$index">
+                        <td>
+                            {{lag_ref.name}}
+                        </td>
+                        <!--
+                        <td class="ngRow posRelative" ng-class="{true:'even', false:'odd'}[rowidx%2==1]" width="100px">
+                            <input type="checkbox" ng-model="lag_ref.enabled" />
+                        </td>
+                        -->
+                        <td ng-repeat="ifref in availPortList">
+                            <input type="radio" id="{{'rdo_' + lag_ref.name + '_' + ifref.name}}" 
+                                ng-model="ifref['lag-ref']"
+                                ng-disabled="ifref.dmz.enable==true || disableLagSelection(lag_ref, ifref)"
+                                ng-value="lag_ref.name"
+                                ng-change="update_lag_enable(ifref, '{{ifref['lag-ref']}}', '{{ifref['port-mode']}}' )"
+                                name="{{ifref.name + '_' + 'LAGREF'}}" 
+                            />
+                        </td>
+                        <!--
+                        <td class="ngRow posRelative" ng-class="{true:'even', false:'odd'}[rowidx%2==1]" width="250px">
+                            {{showStatus(lag_ref.enabled)}}
+                        </td>
+                        -->
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+            <!-- LAG(Link Aggregation) - End -->
+    </div>
+</div>
+</form>
+
+<script type="text/ng-template" id="T_Always_Enabled.html">
+<div class="ngCellText">
+    <input type="checkbox" checked="checked">
+</div>
+</script>
+

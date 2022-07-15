@@ -1,0 +1,8 @@
+Package: kmod-usb-modem
+Version: 4.1.8+1.0.00.03-P3
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), comgt, comgt-ncm, comgt-directip, uqmi, usb-modeswitch, libqmi, bwmgmt, usb-modem-mgmt
+Source: package/pegatron/usb-modem
+Section: Pegatron
+Architecture: comcerto2000
+Installed-Size: 601579
+Description:  Kernel support for 3G/4G USB Modem Driver

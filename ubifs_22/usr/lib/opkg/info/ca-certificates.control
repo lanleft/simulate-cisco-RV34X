@@ -1,0 +1,8 @@
+Package: ca-certificates
+Version: 20180409-3
+Depends: libc, librt, libpthread
+Source: package/system/ca-certificates
+Section: base
+Architecture: comcerto2000
+Installed-Size: 146098
+Description:  System CA certificates

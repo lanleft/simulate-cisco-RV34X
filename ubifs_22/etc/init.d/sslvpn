@@ -1,0 +1,348 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2015 cisco.com
+
+START=60
+STOP=90
+
+. /lib/functions.sh
+. /lib/functions/network.sh
+
+CERTFILE_USER_FOR_SSLVPN='SSLVPN'
+CERTFILE_OLD_VALUE=''
+
+NEED_CONFIG_POLICY=1
+
+SSLVPN_TMP_FILE_PATH='/etc/sslvpn/sslvpnd.conf.template'
+SSLVPN_FILE_PATH='/etc/sslvpn/sslvpnd.conf'
+CERTIFICATE_PUBLIC_PATH='/etc/ssl/certs/'
+CERTIFICATE_PRIVATE_PATH='/etc/ssl/private/'
+certificate_file_path=''
+DEFAULT_CERTIFICATE_FILE_PATH='/tmp/mycert.pem'
+SSLVPN_CERTIFICATE_PATH='/tmp/sslvpn_certfile_path'
+SSLVPN_USING_CERTNAME_PATH='/tmp/sslvpn_old_certname'
+
+IPTABLES="/usr/sbin/iptables -w"
+
+#Since we need to update the cert name for the Certificate user, so it should keep the old value
+#   when the cert was changed for deleting from the Certificate user.
+sslvpn_current_certname_update() {
+    echo "$1" > "$SSLVPN_USING_CERTNAME_PATH"
+}
+
+sslvpn_read_old_certname() {
+    CERTFILE_OLD_VALUE=`cat "$SSLVPN_USING_CERTNAME_PATH"`
+}
+
+sslvpn_certfile_path() {
+    echo "$1" > "$SSLVPN_CERTIFICATE_PATH"
+    certificate_file_path="$1"
+}
+
+sslvpn_read_certfile_path() {
+    if [ -f "$SSLVPN_CERTIFICATE_PATH" ]; then
+        certificate_file_path=`cat "$SSLVPN_CERTIFICATE_PATH"`
+    else
+        certificate_file_path=$DEFAULT_CERTIFICATE_FILE_PATH
+    fi
+    echo "$$ sslvpn_read_certfile_path $certificate_file_path" >> /tmp/vpn_test.txt
+}
+
+sslvpn_add_global() {
+        local certfile
+        local cnwaddr
+        local cnetmask
+        local gwifname
+        local gwport
+        local domain
+        local banner
+        local usecryptodev
+        local idletimeout
+        local sessiontimeout
+        local cdpdtimeout
+        local gwdpdtimeout
+        local keepalive
+        local leaseduration
+        local maxmtu
+        local rekeymethod
+        local rekeyinterval
+        local cmdname
+        local addopt
+        local delopt
+
+        local tmpIfname
+        local publicCert
+        local privateCert
+        local current_pem_md5
+
+        local cfg="$1"
+        sslvpn_read_old_certname
+        /usr/bin/updateCertUsage del $CERTFILE_OLD_VALUE $CERTFILE_USER_FOR_SSLVPN
+
+        config_get certfile $cfg certfile
+        config_get cnwaddr $cfg cnwaddr
+        config_get cnetmask $cfg cnetmask
+        config_get gwifname $cfg gwifname
+        config_get gwport $cfg gwport
+        config_get domain $cfg domain
+        config_get banner $cfg banner
+        config_get usecryptodev $cfg usecryptodev
+        config_get idletimeout $cfg idletimeout
+        config_get sessiontimeout $cfg sessiontimeout
+        config_get cdpdtimeout $cfg cdpdtimeout
+        config_get gwdpdtimeout $cfg gwdpdtimeout
+        config_get keepalive $cfg keepalive
+        config_get leaseduration $cfg leaseduration
+        config_get maxmtu $cfg maxmtu
+        config_get rekeymethod $cfg rekeymethod
+        config_get rekeyinterval $cfg rekeyinterval
+        config_get cmdname $cfg cmdname
+        config_get addopt $cfg addopt
+        config_get delopt $cfg delopt
+
+        echo "$$ init script before gwifname:$gwifname" >> /tmp/vpn_test.txt
+        network_get_waniface tmpIfname $gwifname
+        gwifname=$tmpIfname
+       if [ "X" = X"$gwifname" ]; then
+               echo "$$ init script gwifname empty: $gwifname" >> /tmp/vpn_test.txt
+               NEED_CONFIG_POLICY=0
+               return
+       fi
+        echo "$$ init script after ifname:$gwifname" >> /tmp/vpn_test.txt
+
+
+        #Escape the special characters for banner
+        banner_new=$(printf '%s\n' "$banner" | sed 's/[[,\.&*^$(){}?+|/]/\\&/g')
+
+        # Set that SSLVPN is using the certificate
+        cp -f $SSLVPN_TMP_FILE_PATH $SSLVPN_FILE_PATH
+        /usr/bin/updateCertUsage add $certfile $CERTFILE_USER_FOR_SSLVPN
+        sslvpn_current_certname_update $certfile
+
+        # Check whether the certificate content is changed
+        sslvpn_read_certfile_path
+        if [ -f "$certificate_file_path" ]; then
+            current_pem_md5=`md5sum "$certificate_file_path"|awk '{print $1}'`
+        fi
+        publicCert="$CERTIFICATE_PUBLIC_PATH""$certfile"".pem"
+        privateCert="$CERTIFICATE_PRIVATE_PATH""$certfile"".pem"
+        cat $publicCert > $DEFAULT_CERTIFICATE_FILE_PATH
+        cat $privateCert >> $DEFAULT_CERTIFICATE_FILE_PATH
+        new_pem_md5=`md5sum "$DEFAULT_CERTIFICATE_FILE_PATH"|awk '{print $1}'`
+        if [ ! "$current_pem_md5" = "$new_pem_md5" ]; then
+            timestamp=$(date +%s)
+            certfile="$DEFAULT_CERTIFICATE_FILE_PATH""$timestamp"
+            sslvpn_certfile_path "$certfile"
+            cp "$DEFAULT_CERTIFICATE_FILE_PATH" "$certificate_file_path"
+            echo "$$ certificate content changed and new cert path:$certfile" >> /tmp/vpn_test.txt
+        else
+            echo "$$ certificate content is not changed" >> /tmp/vpn_test.txt
+        fi
+		sslvpn_read_certfile_path
+        certfile=$certificate_file_path
+        certfile=` echo $certfile | sed 's#\/#\\\/#g'`
+        cmdname=` echo $cmdname | sed 's#\/#\\\/#g'`
+        sed -i "s/|CERTFILE|/$certfile/g" $SSLVPN_FILE_PATH
+        sed -i "s/|CNWADDR|/$cnwaddr/g" $SSLVPN_FILE_PATH
+        sed -i "s/|CNETMASK|/$cnetmask/g" $SSLVPN_FILE_PATH
+        sed -i "s/|GWIFNAME|/$gwifname/g" $SSLVPN_FILE_PATH
+        sed -i "s/|GWPORT|/$gwport/g" $SSLVPN_FILE_PATH
+        sed -i "s/|DOMAIN|/$domain/g" $SSLVPN_FILE_PATH
+        sed -i "s,|BANNER|,$banner_new,g" $SSLVPN_FILE_PATH
+        sed -i "s,|BANNER|,,g" $SSLVPN_FILE_PATH
+        sed -i "s/|USECRYPTODEV|/$usecryptodev/g" $SSLVPN_FILE_PATH
+        sed -i "s/|IDLETIMEOUT|/$idletimeout/g" $SSLVPN_FILE_PATH
+        sed -i "s/|SESSIONTIMEOUT|/$sessiontimeout/g" $SSLVPN_FILE_PATH
+        sed -i "s/|CDPDTIMEOUT|/$cdpdtimeout/g" $SSLVPN_FILE_PATH
+        sed -i "s/|GWDPDTIMEOUT|/$gwdpdtimeout/g" $SSLVPN_FILE_PATH
+        sed -i "s/|KEEPALIVE|/$keepalive/g" $SSLVPN_FILE_PATH
+        sed -i "s/|LEASEDURATION|/$leaseduration/g" $SSLVPN_FILE_PATH
+        sed -i "s/|MAXMTU|/$maxmtu/g" $SSLVPN_FILE_PATH
+        sed -i "s/|REKEYMETHOD|/$rekeymethod/g" $SSLVPN_FILE_PATH
+        sed -i "s/|REKEYINTERVAL|/$rekeyinterval/g" $SSLVPN_FILE_PATH
+        sed -i "s/|CMDNAME|/$cmdname/g" $SSLVPN_FILE_PATH
+        sed -i "s/|ADDOPT|/$addopt/g" $SSLVPN_FILE_PATH
+        sed -i "s/|DELOPT|/$delopt/g" $SSLVPN_FILE_PATH
+}
+
+handle_list() {
+        local value="$1"
+        local name="$2"
+        echo -e "$name\t\t$value" >> $SSLVPN_FILE_PATH
+}
+
+sslvpn_add_policy() {
+        local policyname
+        local dnsprimary
+        local dnssecondary
+        local winsprimary
+        local winssecondary
+        local ieproxypolicy
+        local ieproxyaddress
+        local ieproxyport
+        local ieproxyexception
+        local splitinclude
+        local splitexclude
+        local splitexcludelan
+        local splitdns
+
+        local cfg="$1"
+        config_get policyname $cfg policyname
+        config_get dnsprimary $cfg dnsprimary
+        config_get dnssecondary $cfg dnssecondary
+        config_get winsprimary $cfg winsprimary
+        config_get winssecondary $cfg winssecondary
+        config_get ieproxypolicy $cfg ieproxypolicy
+        config_get ieproxyaddress $cfg ieproxyaddress
+        config_get ieproxyport $cfg ieproxyport
+        config_get ieproxyexception $cfg ieproxyexception
+        config_get splitinclude $cfg splitinclude
+        config_get splitexclude $cfg splitexclude
+        config_get splitexcludelan $cfg splitexcludelan
+        config_get splitdns $cfg splitdns
+
+        [ -n "$policyname" ] && echo -e "policyname\t\t$policyname" >> $SSLVPN_FILE_PATH
+        [ -n "$dnsprimary" ] && echo -e "dnsprimary\t\t$dnsprimary" >> $SSLVPN_FILE_PATH
+        [ -n "$dnssecondary" ] && echo -e "dnssecondary\t\t$dnssecondary" >> $SSLVPN_FILE_PATH
+        [ -n "$winsprimary" ] && echo -e "winsprimary\t\t$winsprimary" >> $SSLVPN_FILE_PATH
+        [ -n "$winssecondary" ] && echo -e "winssecondary\t\t$winssecondary" >> $SSLVPN_FILE_PATH
+        [ -n "$ieproxypolicy" ] && echo -e "ieproxypolicy\t\t$ieproxypolicy" >> $SSLVPN_FILE_PATH
+        [ -n "$ieproxyaddress" ] && [ -n "$ieproxyport" ] && echo -e "ieproxyserver\t\t$ieproxyaddress:$ieproxyport" >> $SSLVPN_FILE_PATH
+        [ -n "$splitexcludelan" ] && echo -e "splitexcludelan\t\t$splitexcludelan" >> $SSLVPN_FILE_PATH
+
+        if [ -n "$ieproxyexception" ]; then
+                config_list_foreach $cfg ieproxyexception handle_list ieproxyexception
+        fi
+
+        if [ -n "$splitinclude" ]; then
+                config_list_foreach $cfg splitinclude handle_list splitinclude
+        fi
+
+        if [ -n "$splitexclude" ]; then
+                config_list_foreach $cfg splitexclude handle_list splitexclude
+        fi
+
+        if [ -n "$splitdns" ]; then
+                config_list_foreach $cfg splitdns handle_list splitdns
+        fi
+
+        echo -e "\n" >> $SSLVPN_FILE_PATH
+}
+
+update_acl_rules() {
+        local gwifname
+        local gwport
+        local cnwaddr
+        local cnetmask
+        local cfg="$1"
+        local is_add="$2"
+
+        config_get gwifname $cfg gwifname
+        config_get gwport $cfg gwport
+        config_get cnwaddr $cfg cnwaddr
+        config_get cnetmask $cfg cnetmask
+
+        $IPTABLES -F sslvpn_input
+        $IPTABLES -F sslvpn_forward
+
+        if [ "$is_add" = "1" ]; then
+                #sslvpn port
+                $IPTABLES --append sslvpn_input -p tcp --dport $gwport -j ACCEPT
+                $IPTABLES --append sslvpn_forward --in-interface tun0 -j ACCEPT
+        else
+                $IPTABLES --delete sslvpn_input -p tcp --dport $gwport -j ACCEPT
+                $IPTABLES --delete sslvpn_forward --in-interface tun0 -j ACCEPT
+        fi
+}
+
+
+start() {
+        echo "Starting AnyConnect Server"
+        enable=`uci get sslvpn.general.enable`
+        if [ $enable = "0" ]
+        then
+                exit 0
+        fi
+
+        config_load sslvpn
+
+        #global configuration
+        config_foreach sslvpn_add_global sslvpn
+
+        #every policy configuration
+		if [ "$NEED_CONFIG_POLICY" = "1" ]; then
+            config_foreach sslvpn_add_policy policy
+		fi
+
+        sslvpnd start
+
+        #apply acl rules
+        config_foreach update_acl_rules sslvpn 1
+
+        sleep 4
+        pidof_monitor=`pidof sslvpnd_monitor`
+        if [ ! -n "$pidof_monitor" ]
+        then
+            /usr/bin/sslvpnd_monitor &
+        fi
+        certfile_name=`uci get sslvpn.general.certfile`
+        /usr/bin/updateCertUsage add $certfile_name $CERTFILE_USER_FOR_SSLVPN
+}
+
+stop() {
+        echo "Stoping AnyConnect Server"
+        ps | grep -ie sslvpnd | grep -v grep | awk '{print $1}' | xargs kill -s 9
+
+        config_load sslvpn
+        #remove acl rules
+        config_foreach update_acl_rules sslvpn 0
+
+        killall sslvpnd_monitor > /dev/null 2>&1
+        certfile_name=`uci get sslvpn.general.certfile`
+        /usr/bin/updateCertUsage del $certfile_name $CERTFILE_USER_FOR_SSLVPN
+
+        #remove some tempory files
+		if [ -f "$SSLVPN_USING_CERTNAME_PATH" ]; then
+            rm "$SSLVPN_USING_CERTNAME_PATH"
+        fi
+        if [ -f "$SSLVPN_CERTIFICATE_PATH" ]; then
+            rm "$SSLVPN_CERTIFICATE_PATH"
+        fi
+}
+
+restart() {
+        stop
+        start
+}
+
+reconfig()
+{
+    config_load sslvpn
+    config_foreach sslvpn_add_global sslvpn
+	if [ "$NEED_CONFIG_POLICY" = "1" ]; then
+        config_foreach sslvpn_add_policy policy
+	fi
+    sslvpnd reconfig
+}
+
+reload() {
+    enable=`uci get sslvpn.general.enable`
+    pidof_sslvpn=`pidof sslvpnd`
+
+    if [ $enable = "1" ]
+    then
+        if [ -n "$pidof_sslvpn" ]
+        then
+            reconfig
+            exit 0
+        else
+            start
+            exit 0
+        fi
+    elif [ $enable = "0" ]
+    then
+        stop
+        exit 0
+    else
+        exit 1
+    fi
+}

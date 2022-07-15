@@ -1,0 +1,55 @@
+module ciscosb-ipgroup {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/ipgroup";
+    prefix "ciscosb-ipgroup";
+ import ietf-yang-types { prefix yang; }
+    import ciscosb-common { prefix ciscosb-common; }
+    organization
+        "Freescale Semiconductors Pvt Ltd";
+    contact
+        "nageshkoneti@freescale.com";
+    description
+        "This YANG module defines Service Management Configuration Parameters";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-27 {
+        description "Initial version of yang model for firewall module";
+        reference "RFC 6020";
+    }
+    container ip-groups {
+        description "IP address group on which the policy is based";
+        list ip-group {
+            key name ;
+            leaf name {
+                type string;
+            }
+   list ips {
+    max-elements 50;
+    key seq;
+    leaf seq{
+     type int32;
+    }
+    choice ip {
+     case v4 {
+      uses ciscosb-common:IPV4-GROUP;
+     }
+     case v6 {
+      uses ciscosb-common:IPV6-GROUP;
+     }
+    }
+   }
+            list macs {
+                key mac;
+                leaf mac {
+                    type yang:mac-address;
+                }
+            }
+        }
+    }
+}

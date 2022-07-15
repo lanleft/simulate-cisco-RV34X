@@ -1,0 +1,55 @@
+#!/bin/sh
+
+#Replace html board name and link menu tree
+
+board=`uci get systeminfo.sysinfo.pid 2>/dev/null | cut -d'=' -f2 | cut -d'-' -f1 | tr [a-z] [A-Z]`
+region=`uci get systeminfo.sysinfo.region 2>/dev/null`
+default=`cat /tmp/default_state 2>/dev/null`
+webdata="/etc/web_data/menu"
+mnt_downloadstatus="/mnt/configcert/config/downloadstatus"
+tmp_downloadstatus="/tmp/www/downloadstatus"
+
+check_default()
+{
+	if [ $board ]; then
+		[ -d /tmp/www ] || mkdir /tmp/www
+
+		for page in index login; do
+			sed "s/#MODEL#/$board/g" /www/${page}.html.default > /tmp/www/${page}.html
+			[ -L /www/${page}.html ] || (rm -rf /www/${page}.html && ln -s /tmp/www/${page}.html /www/${page}.html && sync)
+		done
+	fi
+}
+
+create_menu_tree()
+{
+	echo "`opkg list | grep sbr-gui | awk '{print $3}'`" > /tmp/www/version
+	if [ $board ]; then
+		[ -d /tmp/www ] || mkdir /tmp/www
+
+		cp ${webdata}/menu_default.json /tmp/www/menu_default.json
+
+		if [ "$region" ]; then
+			cp ${webdata}/${board}/${region}/menu.json /tmp/www/menu.json
+		else
+			cp ${webdata}/${board}/menu.json /tmp/www/menu.json
+		fi
+	fi
+}
+
+copy_template()
+{
+        cp -rf /etc/web_data/template /tmp/www
+}
+
+copy_downloadstatus()
+{
+	[ -f $mnt_downloadstatus ] && {
+		mv $mnt_downloadstatus $tmp_downloadstatus && chown www-data:www-data $tmp_downloadstatus
+	}
+}
+
+check_default
+create_menu_tree
+copy_template
+copy_downloadstatus

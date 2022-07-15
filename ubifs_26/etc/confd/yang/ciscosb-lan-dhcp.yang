@@ -1,0 +1,297 @@
+module ciscosb-lan-dhcp {
+    namespace "http://cisco.com/ns/ciscosb/lan-dhcp";
+    prefix ciscosb-lan-dhcp;
+    import ietf-interfaces { prefix if; }
+    import ietf-inet-types { prefix "inet"; }
+    import ietf-yang-types { prefix "yang"; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "First revision  DHCP server, Relay or Option 82 for LAN clients to obtain IP addresses";
+    revision 2016-08-16{
+        description "Add ordered-by user to static-dns-servers.";
+        reference "";
+    }
+    revision 2016-01-25 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    typedef Dhcp-pool-ref {
+        type leafref {
+            path "/ciscosb-lan-dhcp:dhcp-pools/ciscosb-lan-dhcp:pool/ciscosb-lan-dhcp:pool-id";
+        }
+        description
+                "";
+    }
+    identity server {
+        base dhcp-mode;
+    }
+    identity relay {
+        base dhcp-mode;
+    }
+    identity disable {
+        base dhcp-mode;
+    }
+    identity dhcp-mode {
+        description
+                "Base identity  of dhcp mode ";
+    }
+    typedef Dhcp-mode-type {
+        type identityref {
+            base "dhcp-mode";
+        }
+    }
+    identity dns-server-provided-isp {
+        base dns-server;
+    }
+    identity dns-server-proxy {
+        base dns-server;
+    }
+    identity dns-server-static {
+        base dns-server;
+    }
+    identity dns-server {
+        description
+                "Base identity  of Dns-sever ";
+    }
+    typedef Dns-server-type {
+        type identityref {
+            base "dns-server";
+        }
+    }
+    container dhcp-pools{
+     list pool{
+      key pool-id;
+      leaf pool-id{
+       type uint32;
+       description " sequence of pool";
+      }
+      uses DHCP-POOL-SETTING;
+     }
+    }
+
+    grouping NETWORK-BOOT {
+        container network-boot {
+            leaf enabled {
+                type boolean;
+                description "Enable or not";
+                default false;
+            }
+            leaf next-server {
+                type inet:ipv4-address;
+                description "Next Server (siaddr)";
+            }
+            leaf boot-file {
+                type string;
+                description "Boot File (file)";
+            }
+        }
+    }
+
+    grouping DHCP-POOL-SETTING {
+        container ipv4 {
+            description "";
+            leaf lease-time {
+             description "Specifies the lease time of addresses handed out to clients";
+                default 1440;
+                type uint32 {
+                    range 5..43200;
+                }
+            }
+            leaf dns-server-type {
+             description "dns server type isp, statical ,local";
+                type Dns-server-type;
+            }
+            container dns {
+                leaf-list static-dns-servers {
+                    max-elements 2;
+                    ordered-by user;
+                    type inet:ipv4-address;
+                    description
+                                        "Specifies host that can function as a name server to supply name
+                                        information for DNS.";
+                }
+            }
+            leaf dhcp-mode {
+                type Dhcp-mode-type;
+            }
+            leaf range-start {
+    description "Specifies the range start from the network address ";
+                type inet:ipv4-address;
+            }
+            leaf range-end {
+             description "Specifies the range end  from the network address ";
+                type inet:ipv4-address;
+            }
+            leaf wins-server {
+                type string;
+            }
+            container dhcp-options {
+    description "dhcp_option";
+                leaf option66 {
+                    type inet:host;
+                }
+                leaf option150 {
+                    type string;
+                }
+                leaf option67 {
+                    type string;
+                }
+                leaf option43 {
+                    type string;
+                }
+                leaf option3 {
+                    type inet:ipv4-address;
+                }
+            }
+            uses NETWORK-BOOT;
+        }
+        container ipv6 {
+            leaf lease-time {
+             description "Specifies the lease time of addresses handed out to clients";
+                default 1440;
+                type uint32 {
+                    range 5..43200;
+                }
+            }
+            leaf dns-server-type {
+             description "dns server type isp, statical ,local";
+                type Dns-server-type;
+            }
+            leaf dhcp-mode {
+                type Dhcp-mode-type;
+            }
+            leaf range-start {
+             description "Specifies the range start from the network address ";
+                type inet:ipv6-address;
+            }
+            leaf range-end {
+             description "Specifies the range end  from the network address ";
+                type inet:ipv6-address;
+            }
+            leaf prefix {
+             description "ipv6 prefix ";
+              type inet:ipv6-prefix;
+            }
+            container dns {
+                leaf-list static-dns-servers {
+                    max-elements 2;
+                    ordered-by user;
+                    type inet:ipv6-address;
+                    description "Specifies host that can function as a name server to supply name
+                                        information for DNS.";
+                }
+            }
+        }
+    }
+    container dhcp-pool {
+        list dhcp-interfaces {
+            description "";
+            key interface;
+            leaf interface {
+                type if:interface-ref;
+                mandatory true;
+            }
+          container server-mode{
+                    leaf dhcp-pool{
+                     type Dhcp-pool-ref;
+                    }
+            }
+          container relay-mode{
+                    leaf relay-ipv4-address {
+                        type inet:ipv4-address;
+                    }
+                    leaf relay-ipv6-address {
+                        type inet:ipv6-address;
+                    }
+            }
+        }
+        list dhcp-option82 {
+            description "";
+            key circuit-id;
+            leaf circuit-id {
+                type string;
+                mandatory true;
+            }
+            leaf bitmask {
+                type string;
+            }
+            leaf ip-address {
+                type inet:ip-address;
+            }
+            leaf subnet-mask {
+                type inet:ip-prefix;
+            }
+            leaf description {
+                type string;
+            }
+            leaf dhcp-pool{
+             type Dhcp-pool-ref;
+            }
+        }
+    }
+    container static-dhcp {
+        list entry {
+            key "name";
+            ordered-by user;
+            leaf ip-address {
+                type inet:ip-address;
+                description "Static ip address";
+            }
+            leaf mac {
+                type yang:mac-address;
+                description "Mac address";
+            }
+            leaf name {
+                type string;
+                description "Entry name";
+            }
+            leaf enable {
+                type boolean;
+                description "Enable or not";
+            }
+        }
+    }
+    container dhcp-binding-state {
+  config false;
+        list entry {
+            key "ip-address";
+            leaf ip-address {
+                type inet:ip-address;
+                description "Ip address";
+            }
+            leaf mac {
+                type yang:mac-address;
+                description "Mac address";
+            }
+            leaf lease-expire-time {
+                type yang:timeticks;
+                description "Lease expire time";
+            }
+            leaf type {
+                type enumeration{
+                 enum static;
+                 enum dynamic;
+                }
+                description "Indicate it is a static type or dynamic type";
+            }
+            leaf hostname {
+                type string;
+                description "Hostname";
+            }
+        }
+    }
+    rpc dhcp-release-binding {
+        input {
+            leaf mac {
+                type yang:mac-address;
+            }
+        }
+    }
+}

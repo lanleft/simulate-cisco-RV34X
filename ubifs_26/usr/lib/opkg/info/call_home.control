@@ -1,0 +1,8 @@
+Package: call_home
+Version: 2.3.0-9
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, libcurl, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, trustpool, firmware
+Source: package/cisco/call_home
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 295955
+Description:  call_home.

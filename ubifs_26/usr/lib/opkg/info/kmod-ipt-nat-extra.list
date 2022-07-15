@@ -1,0 +1,4 @@
+/lib/modules/4.1.8/xt_NETMAP.ko
+/etc/modules.d/ipt-nat-extra
+/lib/modules/4.1.8/ipt_TRIGGER.ko
+/lib/modules/4.1.8/ipt_webstr.ko

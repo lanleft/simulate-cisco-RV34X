@@ -1,0 +1,8 @@
+Package: mtd-utils-ubicrc32
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Source: package/openwrt/utils/mtd-utils
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 3634
+Description:  ubicrc32 package from mtd-utils

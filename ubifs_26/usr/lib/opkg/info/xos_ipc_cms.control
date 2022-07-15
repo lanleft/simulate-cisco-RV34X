@@ -1,0 +1,8 @@
+Package: xos_ipc_cms
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Source: package/cisco/xos_ipc_cms
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 52725
+Description:  xos_ipc_cms.

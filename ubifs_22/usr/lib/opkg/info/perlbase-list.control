@@ -1,0 +1,11 @@
+Package: perlbase-list
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-xsloader
+Source: package/perl
+License: GPL-1.0+ Artistic-1.0-Perl
+LicenseFiles: Copying Artistic README
+Section: lang
+Maintainer: Marcel Denia <naoir@gmx.net>
+Architecture: comcerto2000
+Installed-Size: 16763
+Description:  List perl module

@@ -1,0 +1,8 @@
+Package: perl-digest-hmac
+Version: 1.03-1
+Depends: libc, librt, libpthread, perl, perl-digest-sha1
+Source: package/perlextmod/digest-hmac
+Section: lang
+Architecture: comcerto2000
+Installed-Size: 973
+Description:  Perl Digest Digest HMAC encryption module

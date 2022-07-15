@@ -1,0 +1,56 @@
+module ciscosb-fw-nat {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-nat";
+    prefix "firewall-nat";
+  import ietf-inet-types { prefix "inet"; }
+    import ietf-interfaces { prefix if; }
+    organization
+        "Freescale Semiconductors Pvt Ltd";
+    contact
+        "Freescale";
+    description
+        "This YANG module defines a component that describes the configuration
+        of firewall nat related modules.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-17 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-24 {
+        description "Initial version of yang model for firewall nat module";
+        reference "RFC 6020";
+    }
+    augment "/if:interfaces/if:interface" {
+        container nat {
+            leaf enable {
+                type boolean;
+            }
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        list nat {
+            key "src-ip src-port protocol";
+            leaf src-ip {
+                type inet:ip-address-no-zone;
+            }
+            leaf dst-ip {
+                type inet:ip-address-no-zone;
+            }
+            leaf protocol {
+                type string;
+            }
+            leaf src-port {
+                type uint16;
+            }
+            leaf dst-port {
+                type uint16;
+            }
+            leaf translated-src-ip {
+                type inet:ip-address-no-zone;
+            }
+        }
+    }
+}

@@ -1,0 +1,361 @@
+module ciscosb-license {
+    namespace "http://cisco.com/ns/ciscosb/license";
+ prefix ciscosb-license;
+ import ietf-inet-types { prefix "inet"; }
+ import ietf-yang-types { prefix "yang"; }
+ import ciscosb-types { prefix ciscosb-types; }
+ import ciscosb-common { prefix ciscosb-common; }
+ organization "Cisco Systems, Inc.";
+ contact
+  " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:jesse.wangg@cisco.com";
+ description
+  "This module define smart license";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-11-18 {
+      description "Add revision ";
+      reference "";
+  }
+ revision 2015-04-15 {
+  description
+    "Initial revision.";
+  reference "TODO";
+ }
+ identity license-feature-status {
+ }
+ identity license-registration-status {
+ }
+ identity license-authorization-status {
+ }
+ identity license-feature-status-authorized {
+  base license-feature-status;
+ }
+ identity license-feature-status-evaluation {
+  base license-feature-status;
+ }
+ identity license-feature-status-evaluation-period-expired {
+  base license-feature-status;
+ }
+ identity license-feature-status-out-of-compliance {
+  base license-feature-status;
+ }
+ identity license-feature-status-authorization-expired {
+  base license-feature-status;
+ }
+ identity license-feature-status-invalid {
+  base license-feature-status;
+ }
+ identity license-feature-status-init {
+  base license-feature-status;
+ }
+ identity license-feature-status-waiting {
+  base license-feature-status;
+ }
+ identity license-feature-status-overage {
+  base license-feature-status;
+ }
+ identity license-feature-status-disabled {
+  base license-feature-status;
+ }
+ identity license-feature-status-invalidtag {
+  base license-feature-status;
+ }
+ identity license-authorization-status-authorized {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-evaluation {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-evaluation-period-expired {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-out-of-compliance {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-authorization-expired {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-invalid {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-init {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-waiting {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-overage {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-disabled {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-invalidtag {
+  base license-authorization-status;
+ }
+ identity license-authorization-status-no-in-use {
+                base license-authorization-status;
+        }
+ identity license-registration-registrated {
+  base license-registration-status;
+ }
+ identity license-registration-unregistrated {
+  base license-registration-status;
+ }
+ identity license-registration-inprogress {
+  base license-registration-status;
+ }
+ identity license-registration-failed {
+  base license-registration-status;
+ }
+ identity license-registration-retry-inprogress {
+  base license-registration-status;
+ }
+ typedef License-feature-status-type {
+  type identityref {
+   base "license-feature-status";
+  }
+  description "type define for license-feature-status.";
+ }
+ typedef License-registration-status-type {
+  type identityref {
+   base "license-registration-status";
+  }
+  description "type define for license registration status.";
+ }
+ typedef License-authorization-status-type {
+  type identityref {
+   base "license-authorization-status";
+  }
+  description "type define for license authorization status.";
+ }
+ grouping LICENSE-ATTEMPT {
+  leaf time {
+   type yang:date-and-time;
+  }
+  leaf status {
+   type boolean;
+  }
+ }
+ container call-home {
+  leaf server-url {
+   type inet:uri;
+            default "https://tools.cisco.com/its/service/oddce/services/DDCEService";
+   description
+      "Call Home address to use with Smart Licensing";
+  }
+  leaf user-email {
+   type ciscosb-types:email-address-type;
+   description
+      "Context email.";
+  }
+        choice how{
+            default direct;
+            case direct {
+            }
+            case transport-gateway {
+                leaf tg-url {
+                    type inet:uri;
+                }
+            }
+            case proxy {
+                leaf proxy-url {
+                    type inet:uri;
+                }
+            }
+        }
+ }
+ container license {
+  description
+    "System license management";
+  leaf token {
+   type string;
+   description
+      "token used to register with Csico Smart Licensing";
+  }
+  list features {
+   key "name";
+   leaf name {
+    type string;
+    description
+        "Feature name  requiring license ";
+   }
+   leaf description {
+    type string;
+    description
+        "Feature description";
+   }
+   leaf count-based {
+                type boolean;
+                description
+                    "Indicate if count based";
+            }
+   leaf count {
+    type int32;
+    description
+        "License # for this feature";
+   }
+   leaf enable {
+    type boolean;
+   }
+        }
+ }
+ container license-state {
+  config false;
+  description
+    "System license management";
+  leaf enable {
+   type boolean;
+   description
+      "Indicate if the license feature is enabled";
+  }
+  container registration {
+   leaf status {
+    type License-registration-status-type;
+   }
+   container initial-registration {
+    uses LICENSE-ATTEMPT;
+   }
+   container last-renewal-attempt {
+    uses LICENSE-ATTEMPT;
+   }
+   leaf next-renewal-attempt {
+    type yang:date-and-time;
+   }
+   leaf registration-expires {
+    type yang:date-and-time;
+   }
+   leaf next-registration-attempt {
+    type yang:date-and-time;
+   }
+  }
+  container authorization {
+   container authorization-status {
+                    leaf time {
+                        type yang:date-and-time;
+                }
+                leaf status {
+                        type License-authorization-status-type;
+                }
+            }
+            container last-communication-attempt {
+             uses LICENSE-ATTEMPT;
+            }
+            leaf next-communication-attempt {
+             type yang:date-and-time;
+            }
+            leaf communication-deadline {
+             type yang:date-and-time;
+            }
+            leaf eval-period-remaining {
+             type string;
+            }
+  }
+  leaf smart-account {
+   type string;
+  }
+  leaf virtual-account {
+   type string;
+  }
+  leaf pid {
+   type string;
+  }
+  leaf export-controlled {
+   type boolean;
+  }
+  list features {
+   key "name";
+   leaf name {
+    type string;
+    description
+        "Feature name  requiring license ";
+   }
+   leaf description {
+    type string;
+    description
+        "Feature description";
+   }
+   leaf count {
+    type int32;
+    description
+        "License # for this feature";
+   }
+   leaf status {
+    type License-feature-status-type;
+   }
+   leaf enable {
+                                type boolean;
+                        }
+   leaf count-based {
+                                type boolean;
+                                description
+                                                                "Indicate if count based";
+                        }
+  }
+ }
+ rpc license-enable {
+        output {uses ciscosb-common:RPC-RESPONSE;}
+ }
+ rpc license-disable {
+        output {uses ciscosb-common:RPC-RESPONSE;}
+ }
+    rpc license-register {
+        description
+            "Do registration with licenseserver";
+        input {
+            leaf token {
+                type string;
+                description
+                    "Token used to register with Cisco Smart Licensing";
+            }
+        }
+        output {uses ciscosb-common:RPC-RESPONSE;}
+    }
+    rpc license-deregister {
+        description
+            "Do registration with licenseserver";
+        output {uses ciscosb-common:RPC-RESPONSE;}
+    }
+    rpc license-renew-registeration-cert {
+        description
+            "Renew registration with licenseserver";
+        output {uses ciscosb-common:RPC-RESPONSE;}
+    }
+    rpc license-authorize {
+        description
+            "Activiate specified feature";
+        input {
+            leaf name {
+                type string;
+                description
+                    "Represents  a feature requiring license ";
+            }
+            leaf count {
+                type int32;
+                default 1;
+                description
+                    "license # for this feature  ";
+            }
+        }
+        output {uses ciscosb-common:RPC-RESPONSE;}
+    }
+    rpc license-deauthorize {
+        description
+            "Release lincese based on specified featurer";
+        input {
+            leaf name {
+                type string;
+                description
+                    "Represents  a feature requiring license ";
+            }
+        }
+        output {uses ciscosb-common:RPC-RESPONSE;}
+    }
+ rpc license-renew-authorization {
+  description
+    "Release lincese based on specified featurer";
+        output {uses ciscosb-common:RPC-RESPONSE;}
+ }
+}

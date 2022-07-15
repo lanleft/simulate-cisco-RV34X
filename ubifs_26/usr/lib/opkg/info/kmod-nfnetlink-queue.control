@@ -1,0 +1,12 @@
+Package: kmod-nfnetlink-queue
+Version: 4.1.8-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nfnetlink
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: comcerto2000
+Installed-Size: 7130
+Description:  Kernel modules support for queueing packets via NFNETLINK
+ Includes:
+ - NFQUEUE

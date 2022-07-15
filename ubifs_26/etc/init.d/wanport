@@ -1,0 +1,197 @@
+#!/bin/sh /etc/rc.common
+
+. /lib/functions/network.sh
+. /lib/functions.sh
+
+EXTRA_COMMANDS="start_setstatus start_setwanport toggle_wanport"
+EXTRA_HELP="	start_setstatus  Set status enable/disable for WAN ports. Usually called during bootup
+	start_setwanport	Set port parameters for WAN ports. Usually called during bootup.
+	toggle_wanport	Disable and Enable(Toggle) the WAN port."
+
+start() {
+
+	wanport_diff=$(uci show wanport | awk -F '.' '{print $2}' | awk -F '=' '{print $1}' | uniq)
+	config_load wanport
+	for section in $wanport_diff
+	do
+		config_setwanport $section
+		ifacename=$(uci get network.$section.ifname)
+		ifacename=${ifacename%%.*}
+		status=$(uci get wanport.$section.status)
+		mii-reg $ifacename 0 | awk -F '=' '{print $4}' > /tmp/$section"reg"
+		regval=$(cat /tmp/$section"reg")
+		if [ "$status" == "0" ];then
+			mask=$(( $regval | 0x800 ))	
+			mii-reg $ifacename 0 $mask 2>&- >&-
+		fi
+	done
+}
+
+config_eee_set() {
+	local ifacename=$1
+	local enable=$2
+  ## To further review below commands as per RV34X WAN PHY
+	# Function to set EEE settings on/off on a given interface 
+	logger -t system -p local0.notice "wanport eee setting:$ifacename,$enable"
+	#mii-reg $ifacename 0xd 0x7 2>&- >&-
+	#mii-reg $ifacename 0xe 0x803d 2>&- >&-
+	#mii-reg $ifacename 0xd 0x4007 2>&- >&-
+	#mii-reg $ifacename 0xe | awk -F '=' '{print $4}' > /tmp/$ifacename"_eee_dbg"
+
+	regval=$(cat /tmp/$ifacename"_eee_dbg")
+	#value=$(( $regval & 0xc000 ))
+	#value=$(dec2hex $value)
+	value=$( printf "%x" $value)
+	logger -t system -p local0.notice " eee:regval=$regval,value=$value"
+	if [ "$enable" == "0" ]; then
+		if [ "0x$value" != "0x0" ]; then
+			mask=$(( $regval & 0x3fff ))
+			logger -t system -p local0.notice " disabling eee (0x$mask) for $ifacename"
+			#mii-reg $ifacename 0xd 0x7 2>&- >&-
+			#mii-reg $ifacename 0xe 0x803d 2>&- >&-
+			#mii-reg $ifacename 0xd 0x4007 2>&- >&-
+			#mii-reg $ifacename 0xe $mask 2>&- >&-
+		fi
+	elif [ "$enable" == "1" ]; then
+		if [ "0x$value" != "0xc000" ]; then
+			mask=$(( $regval | 0xc0000 ))
+			logger -t system -p local0.notice " enableing eee (0x$mask) for $ifacename"
+			#mii-reg $ifacename 0xd 0x7 2>&- >&-
+			#mii-reg $ifacename 0xe 0x803d 2>&- >&-
+			#mii-reg $ifacename 0xd 0x4007 2>&- >&-
+			#mii-reg $ifacename 0xe $mask 2>&- >&-
+		fi
+	fi
+}
+
+toggle_wanport() {
+	#$1 is like wan1/wan2 etc
+	local wanport=$1
+	local ifacename
+
+	config_load wanport
+	network_get_physdev ifacename $wanport
+
+	#1.Turn down WAN port
+	#config_setwanport $wanport
+	mii-reg $ifacename 0 | awk -F '=' '{print $4}' > /tmp/$wanport"reg"
+	regval=$(cat /tmp/$wanport"reg")
+	sleep 2
+	mask=$(( $regval | 0x0800 ))
+	mii-reg $ifacename 0 $mask 2>&- >&-
+
+	#2.Turn UP WAN port
+	sleep 2
+	config_setwanport $wanport
+	mii-reg $ifacename 0 | awk -F '=' '{print $4}' > /tmp/$wanport"reg"
+	regval=$(cat /tmp/$wanport"reg")
+	mask=$(( $regval & 0xf7ff ))
+	mii-reg $ifacename 0 $mask 2>&- >&-
+}
+
+reload() {
+	
+	wanport_diff=$(cat /tmp/.uci/wanport | awk -F '.' '{print $2}' | awk -F '=' '{print $1}' | uniq)
+	uci commit wanport
+	config_load wanport
+	
+	for section in $wanport_diff
+	do
+		config_setwanport $section
+		network_get_physdev ifacename $section
+		mii-reg $ifacename 0 | awk -F '=' '{print $4}' > /tmp/$section"reg"
+		status=$(uci get wanport.$section.status)
+		regval=$(cat /tmp/$section"reg")
+		if [ "$status" == "0" ];then
+			sleep 2
+			mask=$(( $regval | 0x0800 ))	
+			mii-reg $ifacename 0 $mask 2>&- >&-
+		else
+			mask=$(( $regval & 0xf7ff ))	
+			mii-reg $ifacename 0 $mask 2>&- >&-
+		fi
+	
+	done
+}
+
+config_setwanport() {
+	local cfg=$1
+	local mode name flow_control ifacename
+	config_get mode "$cfg" mode
+	config_get name "$cfg" name
+	config_get flow_control "$cfg" flow_control "on"
+	network_get_physdev ifacename $name
+
+	case $mode in
+		half10)
+			ethtool -s $ifacename autoneg off
+			ethtool -s $ifacename speed 10 duplex half
+			ethtool -A $ifacename rx off 2>&- >&-
+			ethtool -A $ifacename rx $flow_control 2>&- >&-
+			logger -t system -p local0.info "$cfg set to 10Mbps half duplex mode"
+			;;
+	
+		half100)
+			ethtool -s $ifacename autoneg off
+			ethtool -s $ifacename speed 100 duplex half
+			ethtool -A $ifacename rx off 2>&- >&-
+			ethtool -A $ifacename rx $flow_control 2>&- >&-
+			logger -t system -p local0.info "$cfg set to 100Mbps half duplex mode"
+			;;
+		full10)
+			ethtool -s $ifacename autoneg off
+			ethtool -s $ifacename speed 10 duplex full
+			ethtool -A $ifacename rx off 2>&- >&-
+			ethtool -A $ifacename rx $flow_control 2>&- >&-
+			logger -t system -p local0.info "$cfg set to 10Mbps full duplex mode"
+			;;
+		full100)
+			ethtool -s $ifacename autoneg off
+			ethtool -s $ifacename speed 100 duplex full
+			ethtool -A $ifacename rx off 2>&- >&-
+			ethtool -A $ifacename rx $flow_control 2>&- >&-
+			logger -t system -p local0.info "$cfg set to 100Mbps full duplex mode"
+			;;
+		*)
+			ethtool -s $ifacename autoneg on
+			ethtool -A $ifacename rx off 2>&- >&-
+			ethtool -A $ifacename rx $flow_control 2>&- >&-
+			logger -t system -p local0.info "$cfg set to $mode mode"
+			;;
+	esac
+}
+
+start_setstatus() {
+
+	uci commit wanport #may not be needed. Check onceagain
+
+	wanport_diff=$(uci show wanport | awk -F '.' '{print $2}' | awk -F '=' '{print $1}' | uniq)
+	config_load wanport
+	for section in $wanport_diff
+	do
+		ifacename=$(uci get network.$section.ifname)
+		ifacename=${ifacename%%.*}
+		status=$(uci get wanport.$section.status)
+		mii-reg $ifacename 0 | awk -F '=' '{print $4}' > /tmp/$section"reg"
+		regval=$(cat /tmp/$section"reg")
+		if [ "$status" == "0" ];then
+			mask=$(( $regval | 0x800 ))	
+			mii-reg $ifacename 0 $mask 2>&- >&-
+		fi
+		#config_eee_set $ifacename 0
+	done
+}
+
+start_setwanport() {
+	wanport_diff=$(uci show wanport | awk -F '.' '{print $2}' | awk -F '=' '{print $1}' | uniq)
+	config_load wanport
+	for section in $wanport_diff
+	do
+		#Bypass configuring the default values because interface already comes up with those values.
+		mode=$(uci get wanport.$section.mode)
+		flow_control=$(uci get wanport.$section.flow_control)
+		[ "$mode" != 'auto' ] && {
+			config_setwanport $section
+		}
+	done
+}

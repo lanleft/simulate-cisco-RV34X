@@ -1,0 +1,344 @@
+module ciscosb-security-common {
+    namespace "http://cisco.com/ns/ciscosb/security-common";
+    prefix ciscosb-security-common;
+ import ietf-inet-types { prefix inet; }
+ import ietf-yang-types { prefix yang; }
+    import ciscosb-common { prefix ciscosb-common; }
+ import ciscosb-ipgroup { prefix ciscosb-ipgroup; }
+    import ciscosb-schedule { prefix ciscosb-schedule; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define  application control  and webfilter";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-04-29 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    grouping USER-EXCLUSION-LIST {
+  choice address-type {
+   case ip-address {
+    list user-exclusion-ip {
+     key "seq";
+     leaf seq {
+      type uint8;
+      description
+          "number is used for ordering";
+     }
+     choice ip {
+      case v4 {
+       uses ciscosb-common:IPV4-GROUP;
+      }
+      case v6 {
+       uses ciscosb-common:IPV6-GROUP;
+      }
+     }
+    }
+   }
+   case mac {
+    leaf mac {
+     type yang:mac-address;
+    }
+   }
+   case ip-group {
+    leaf ip-group {
+     type leafref{
+                   path "/ciscosb-ipgroup:ip-groups/ciscosb-ipgroup:ip-group/ciscosb-ipgroup:name";
+                 }
+    }
+   }
+  }
+    }
+    grouping GROUPS {
+        list group {
+            key id;
+            leaf name {
+                type string;
+                description "Group name";
+            }
+            container categories {
+                presence " Indicate there are some children categores";
+                leaf-list categores {
+                    type leafref {
+                     path "../../../../categories/category/id";
+                    }
+                }
+            }
+            leaf id {
+                type string;
+                description "group  id";
+            }
+        }
+    }
+    grouping CATEGORY {
+        list category {
+            key id;
+            container applications {
+                presence " Indicate there are some children categores";
+                leaf-list application {
+                    type leafref {
+                     path "/avc-meta-data/applications/application/id";
+                    }
+                }
+            }
+            leaf parent {
+                type leafref {
+                    path "../../../groups/group/id";
+                }
+                description "Parent Group id";
+            }
+            leaf name {
+                type string;
+                description "category name";
+            }
+            leaf id {
+                type string;
+                description "category  id";
+            }
+            leaf description {
+                type string;
+                description "Category description";
+            }
+        }
+    }
+    grouping APPLICATION {
+        list application {
+            key id;
+            leaf name {
+                type string;
+                description "application name";
+            }
+            leaf id {
+                type string;
+                description "application id";
+            }
+            leaf parent {
+                type leafref {
+                    path "../../../categories/category/id";
+                }
+                description "Parent category name";
+            }
+            leaf-list behaviors {
+                type leafref {
+                    path "/avc-meta-data/behaviours/behaviour/id";
+                }
+            }
+            leaf description {
+                type string;
+                description "application description";
+            }
+        }
+    }
+    grouping FILTER-LEVEL {
+        list filter-level {
+            key level;
+            leaf level {
+    type string;
+     description "Filter level, high, med, low or custom ";
+            }
+            leaf-list categories {
+                type leafref {
+                    path "../../../categories/category/id";
+                }
+            }
+            leaf-list groups {
+                type leafref {
+                    path "../../../groups/group/id";
+                }
+            }
+            leaf description {
+                type string;
+                description "Filter level description ";
+            }
+        }
+    }
+    grouping BEHAVIOUR {
+        list behaviour {
+            key id;
+            leaf name {
+                type string;
+                description "behavior name";
+            }
+            leaf id {
+                type string;
+                description "behavior id";
+            }
+            leaf description {
+                type string;
+                description "behavior description";
+            }
+        }
+    }
+    container webfilter-meta-data {
+        container categories {
+            uses CATEGORY;
+        }
+        container groups {
+            uses GROUPS;
+        }
+        container filter-levels {
+            uses FILTER-LEVEL;
+        }
+    }
+ grouping DEVICE-OS-TYPE {
+  leaf device-type {
+            type leafref {
+    path "/ciscosb-security-common:device-os-types/ciscosb-security-common:device-os-type/ciscosb-security-common:device-type";
+   }
+        }
+        leaf os-type {
+            type leafref {
+    path "/ciscosb-security-common:device-os-types/ciscosb-security-common:device-os-type[ciscosb-security-common:device-type = current()/../device-type]/ciscosb-security-common:os-type";
+   }
+        }
+ }
+   container device-os-types {
+    list device-os-type {
+     key device-type;
+   leaf device-type {
+    type string;
+   }
+   leaf-list os-type {
+    type string;
+   }
+  }
+   }
+    container avc-meta-data {
+        container categories {
+            uses CATEGORY;
+        }
+        container groups {
+            uses GROUPS;
+        }
+        container applications {
+            uses APPLICATION;
+        }
+        container filter-level {
+            uses FILTER-LEVEL;
+        }
+        container behaviours {
+            uses BEHAVIOUR;
+        }
+    }
+ grouping CLIENT {
+  leaf mac {
+   type yang:mac-address;
+  }
+  leaf ipv4-address {
+   type inet:ipv4-address;
+  }
+  leaf ipv6-address {
+   type inet:ipv6-address;
+  }
+  leaf hostname {
+   type string;
+  }
+  leaf device-type {
+   type string;
+  }
+  leaf os-type {
+   type string;
+  }
+ }
+    grouping SIGNATURE-STATE {
+        container signature-state {
+            config false;
+            leaf version {
+                description "The signature version applied in current image";
+                type string;
+            }
+            leaf latest-update-time {
+                description "The time when we performed signature update last time";
+                type yang:date-and-time;
+            }
+            leaf available-version {
+                description "This is latest version available on cisco.com";
+                type string;
+            }
+            leaf last-check-time {
+                type yang:date-and-time;
+                description "The last time for ASD client to check against cisco.com";
+            }
+        }
+    }
+    grouping SCHEDULE {
+        choice schedule-type {
+            case always {
+                leaf always-on {
+                    type empty;
+                }
+            }
+            case schedule {
+                leaf schedule {
+                    type ciscosb-schedule:Schedule-ref;
+                }
+            }
+        }
+    }
+    grouping IPS-SIGNATURE {
+        leaf id {
+            type uint32;
+        }
+        leaf name {
+            type string;
+        }
+        leaf impact {
+            type string;
+        }
+        leaf description {
+            type string;
+        }
+        leaf recommendation {
+            type string;
+        }
+        leaf reference {
+            type string;
+        }
+        leaf issue-date {
+            type string;
+        }
+        leaf updated-date {
+            type string;
+        }
+        leaf category {
+            type string;
+        }
+        leaf severity {
+            type string;
+        }
+    }
+    grouping THREAT-SIGNATURE {
+        leaf id {
+            type string;
+        }
+        leaf category {
+            type string;
+        }
+        leaf name {
+            type string;
+        }
+    }
+    grouping TIME-RANGE {
+        leaf hours {
+            type uint8;
+        }
+        leaf days {
+            type uint8;
+        }
+        leaf weeks {
+            type uint8;
+        }
+        leaf months {
+            type uint8;
+        }
+    }
+}

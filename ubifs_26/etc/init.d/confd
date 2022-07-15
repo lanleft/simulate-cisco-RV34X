@@ -1,0 +1,213 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+START=21
+
+SYS_SSH_DIR="/mnt/configcert/ssh"
+CONFD_SSH_DIR="/var/confd/ssh"
+DSA_KEY="ssh_host_dsa_key"
+RSA_KEY="ssh_host_rsa_key"
+SSL_CERT_DIR="/etc/ssl/certs"
+SSL_PRIVATE_DIR="/etc/ssl/private"
+DEFAULT_CERT="Default"
+
+extra_help() {
+        cat <<EOF
+        remove_sshkey To remove the generated sshkey
+        gen_sshkey To generate sshkey
+EOF
+}
+
+EXTRA_COMMANDS="remove_sshkey gen_sshkey"
+EXTRA_HELP="$(extra_help)"
+
+export CONFIG_UPGRADE_MODE=0
+# 0: none
+# 1: upgrade
+export METADATA_UPGRADE_MODE=0
+export STARTUP_UPDATED=0
+
+wait_meta_data_done() {
+	METADATA_GEN_STATE_FILE="/tmp/meta_data_gen_state"
+	tot=1
+	while [ $tot -le 20 ]; do
+		local sta=`cat $METADATA_GEN_STATE_FILE`
+		echo " checking $METADATA_GEN_STATE_FILE ($sta)"
+		if [ $sta = "1" ]; then
+			break;
+		fi
+		sleep 1
+		tot=`expr $tot + 1`
+	done
+}
+
+confd_exec() {
+	[ \! -z "$1" -a -d /etc/confd/$1.d ] && {
+		for script in $(ls /etc/confd/$1.d/* 2>&-); do (
+				[ -f $script ] && . $script
+		); done
+	}
+}
+
+confd_start() {
+	confd_exec init
+
+	cd /var/confd
+	confd -c confd.conf --start-phase0 \
+		--ignore-initial-validation \
+		--addloadpath /etc/confd/yang
+	status="$?"
+	[ "$status" = "0" ] || {
+		logger -t ConfD "ConfD start-phase0 failed. status=$status."
+		[ $config_upgrade_mode -eq 1 ] && {
+			logger -t ConfD "ConfD start-phase0 with default configuration."
+			
+			rm cdb && ln -sf cdb_active cdb
+			confd -c confd.conf --start-phase0 \
+				--ignore-initial-validation \
+				--addloadpath /etc/confd/yang
+		}
+	}
+	
+	confd --wait-phase0	
+	confd_exec phase0	
+	
+	confd --start-phase1
+	status="$?"
+	[ "$status" = "0" ] || {
+		logger -t ConfD "ConfD start-phase1 failed. status=$status."
+	} && {
+		confd_exec phase1
+	}
+	
+	confd --start-phase2
+	status="$?"
+	[ "$status" = "0" ] || {
+		logger -t ConfD "ConfD start-phase2 failed. status=$status."
+	} && {	
+		confd_exec phase2
+	}
+
+	return $?
+}
+
+check_dev_null() {
+	if [ ! -c /dev/null ]; then
+		logger -t ConfD "/dev/null is not available, re-create it"
+		mknod /dev/newnull c 1 3 && chmod 666 /dev/newnull && mv -f /dev/newnull /dev/null
+	fi
+}
+
+check_ssh_dir() {
+	[ ! -d $SYS_SSH_DIR ] && {
+		logger -t ConfD "Creating $SYS_SSH_DIR"
+		mkdir $SYS_SSH_DIR
+	}
+
+	[ -d $CONFD_SSH_DIR ] && {
+		logger -t ConfD "Removing $CONFD_SSH_DIR"
+		rm -rf $CONFD_SSH_DIR
+	}
+
+	logger -t ConfD "Creating soft link $CONFD_SSH_DIR to $SYS_SSH_DIR"
+	ln -s $SYS_SSH_DIR $CONFD_SSH_DIR
+
+#	[ -d $SYS_SSH_DIR ] && {
+#		logger -t ConfD "Removing $CONFD_SSH_DIR and creating soft link to $SYS_SSH_DIR"
+#		#rm -rf $CONFD_SSH_DIR && ln -s $SYS_SSH_DIR $CONFD_SSH_DIR
+#	}
+}
+
+dropbear_genkey() {         
+	## Generate key, if not there
+	local type="$1"
+	local privkey="$2"
+	local pubkey="$privkey.pub"                               
+	local tmpkey="/tmp/dropbear_host_key"                 
+	local dir="`dirname $privkey`"
+	local keytype="ssh-$type"
+	
+	[ -f $privkey -a -n "`cat $privkey | grep "BEGIN"`" ] || {
+		logger -t ConfD "Creating default SSH Key ($keytype) ..."
+		mkdir -p $dir
+		/usr/bin/dropbearkey -t $type -f $tmpkey 2>&- >&-
+		/usr/bin/dropbearkey -y -f $tmpkey | grep "$keytype" > $pubkey
+		/usr/bin/dropbearconvert dropbear openssh $tmpkey $privkey 2>&- >&-
+		rm -f $tmpkey
+	}                                           
+}                                                                                                                  
+
+gen_sshkey() {
+	dropbear_genkey dss "$CONFD_SSH_DIR/$DSA_KEY"
+	dropbear_genkey rsa "$CONFD_SSH_DIR/$RSA_KEY"
+}
+
+remove_sshkey() {
+	# This function can be called in below cases
+	# 1. when hostname changes (from config_update.sh under systemconfig() function  followed with gen_sshkey()
+	# 2. when factory-reset config issued
+	# 3. When doing sevice stop & start (confd- Is this occur ? in usual scenario ? to review )
+	logger -t ConfD "Removing the key's $CONFD_SSH_DIR/$DSA_KEY $CONFD_SSH_DIR/$DSA_KEY.pub ..."
+	rm $CONFD_SSH_DIR/$DSA_KEY
+	rm $CONFD_SSH_DIR/$DSA_KEY.pub
+	logger -t ConfD "Removing the key's $CONFD_SSH_DIR/$RSA_KEY $CONFD_SSH_DIR/$RSA_KEY.pub ..."
+	rm $CONFD_SSH_DIR/$RSA_KEY
+	rm $CONFD_SSH_DIR/$RSA_KEY.pub
+}
+
+gen_sshkey_from_default_cert() {
+        /usr/bin/generate_ssh_key $DEFAULT_CERT "$CONFD_SSH_DIR/$RSA_KEY"
+}
+
+boot() {
+	if [ -f "$SSL_PRIVATE_DIR/$DEFAULT_CERT.pem" -a -f "$SSL_CERT_DIR/$DEFAULT_CERT.pem" ]; then
+		logger -t ConfD "Default certificate: $DEFAULT_CERT found"
+	else
+		logger -t ConfD "Default certificate: $DEFAULT_CERT not found .. re-generating"
+		/usr/bin/generate_default_cert
+	fi
+
+	
+	confd_exec boot
+
+	start
+}
+
+start () {
+	mkdir -p /var/confd
+
+	check_dev_null
+
+	# Check and wait for avc,wf metadata completion, if any
+	# wait_meta_data_done
+
+	#check_ssh_dir
+	#gen_sshkey
+	gen_sshkey_from_default_cert
+	
+	confd_start
+
+	if [ "$?" = "0" ]; then
+		logger -t ConfD "Running configuration TXID: `confd_cmd -c txid`"
+	else
+		logger -t ConfD "Start ConfD failed, Restore to previous Startup configuration."
+		stop
+
+		#config_mgmt.sh reset
+		rm -rf /var/confd
+		[ -f /mnt/configcert/confd/startup/config.xml ] && {
+			# Remove incompatible Startup XML configuration file
+			rm /mnt/configcert/confd/startup/config.xml
+		}
+		
+		start
+	fi
+    #Run the confd on the second cpu to improve the CR performance
+    #taskset -p 2  $(pgrep confd) 2>&- >&-
+}
+
+stop() {
+	confd_exec stop
+	confd --stop
+	
+	rm -rf /var/confd
+}

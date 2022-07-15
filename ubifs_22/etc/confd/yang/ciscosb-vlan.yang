@@ -1,0 +1,126 @@
+module ciscosb-vlan {
+    namespace "http://cisco.com/ns/ciscosb/vlan";
+    prefix ciscosb-vlan;
+    import ietf-interfaces { prefix if; }
+    import iana-if-type { prefix ianaift; }
+    import ietf-ip { prefix ip; }
+    import ciscosb-common { prefix common; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This YANG module describes the configuration of Virtual Local
+        Area Networks (VLANs).:
+        Virtual Local Area Network ";
+    reference "TODO";
+    revision 2016-10-20 {
+        description "Merge from BBII
+                    Add name to vlan augment";
+    }
+    revision 2016-02-23 {
+        description "Add revision ";
+        reference "";
+    }
+    revision 2014-05-14 {
+        description "Proposed";
+    }
+    typedef vlanId {
+        type uint16;
+    }
+    grouping vlan-ids {
+        description
+                "This grouping is used when there is a need to define a set of
+                VLAN Ids AND/OR a VLAN Id range";
+        list vlan-id-ranges {
+            key "start-vlan-id stop-vlan-id";
+            leaf start-vlan-id {
+                type vlanId;
+            }
+            leaf stop-vlan-id {
+                type vlanId;
+            }
+        }
+        leaf-list vlan-id {
+            type vlanId;
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+	when "if:type = 'ianaift:l2vlan' or 
+              if:type = 'ianaift:l3ipvlan'";
+        container vlan-interface-settings {
+            description
+                        "This entity represents a VLAN interface (ifType is any of
+                        l2vlan, l3ipvlan) contains a settings for sub-interface
+                        on an ethernet port.";
+            leaf base-interface {
+                description
+                                "This is the reference to the ethernet port containing this subinterface.";
+                type if:interface-ref;
+                mandatory false;
+            }
+            leaf vlan-id {
+                description
+                                "VLAN Id assigned to this sub-interface ";
+                type vlanId;
+                mandatory false;
+            }
+            leaf name {
+                type string {
+                    length "1..100";
+                }
+                description
+                    "Vlan name.";
+            }
+            leaf inter-vlan-routing {
+                description
+                                "inter vlan routing ";
+                type boolean;
+            }
+            leaf enable-management {
+                type boolean;
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface/ip:ipv6/ip:address" {
+        when "/if:interfaces/if:interface/if:type = 'ianaift:l2vlan' or 
+              /if:interfaces/if:interface/if:type = 'ianaift:l3ipvlan'";
+        uses common:IPV6-PREFIX-ORIGIN;
+        choice identifier {
+            case eui-64{
+                leaf eui-64{
+                    type empty;
+                }
+            }
+            case user-define{
+                leaf user-define{
+                    type string;
+                }
+            }
+        }
+    }
+    grouping GROUP-VLAN-SETTING {
+        container vlan-settings {
+            description
+                        "This entity contains settings for an interface on device which is assigned to a given VLAN or accepts traffic
+                        from one or more VLANs.";
+            leaf untagged-vlan-id {
+                description
+                                "The untagged VLAN id . ";
+                type vlanId;
+            }
+            container tagged-vlans {
+                description
+                                "VLANs in this list Should be tagged.";
+                uses vlan-ids;
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd' or 
+              if:type = 'ianaift:channel' or
+              if:type = 'ianaift:ieee8023adLag'";
+        uses GROUP-VLAN-SETTING;
+    }
+}

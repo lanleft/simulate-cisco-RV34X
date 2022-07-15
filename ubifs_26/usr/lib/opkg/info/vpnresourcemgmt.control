@@ -1,0 +1,8 @@
+Package: vpnresourcemgmt
+Version: fsl-1
+Depends: libc, librt, libpthread, strongswan, pptpd
+Source: package/freescale/vpnmgmt
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 867
+Description:  vpnresourcemgmt is for managing number of connections per VPN module.

@@ -1,0 +1,8 @@
+Package: epavis-dpi
+Version: ysmir-20180130
+Depends: libc, librt, libpthread, libuci, libcurl, libncurses, libreadline, libxml2, kmod-ipt-conntrack, smart_client
+Source: package/freescale/epavis
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 8613785
+Description:  Lionic DPI modules for RV34X

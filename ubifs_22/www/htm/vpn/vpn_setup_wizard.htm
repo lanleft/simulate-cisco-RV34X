@@ -1,0 +1,640 @@
+<style>
+    .wizard_step tr td {
+        padding-left: 10px;
+    }
+
+    .wizard_step tr td:first-child {
+        padding-left: 0px;
+    }
+
+    .wizard_step span {
+        display: inline-block;
+    }
+
+    .page-block-tb-list .Ttitle {
+        width: 170px;
+    }
+
+    .vpn_wizard_4 select,
+    .vpn_wizard_4 input[type='number'],
+    .vpn_wizard_4 input[type='password'],
+    .vpn_wizard_2 select {
+        width: 100%
+    }
+    .wizard_step > span:first-child {
+        left: 0px;
+    }
+
+    .vpn_indent1 tr > td:first-child {
+        padding-left: 22px;
+    }
+
+    .vpn_indent2 tr > td:first-child {
+        padding-left: 44px;
+    }
+
+    .vpn_wizard_5_left tr td:first-child {
+        width: 250px;
+    }
+    .vpn_wizard_5_left tr td {
+        white-space: nowrap;
+    }
+
+	.mainWarningBox {
+		background-color: #FFE694;
+		padding:5px;border:1px red solid;
+		margin:5px 0px;
+		border-radius: 5px;
+	}
+</style>
+
+<script  type="text/ng-template" id="wizard_steps.html">
+    <!-- Wizard Step-->
+    <table class="wizard_step">
+        <tr>
+            <td>
+                <img ng-show="currPage <= 1" src="themes/img/speciel/_blank.gif" width="10"></img>
+                <img ng-show="currPage > 1" src="themes/img/speciel/wizard_check.gif" width="10"></img>
+                <span style="width: 120px" ng-class="{bold: currPage === 1}" ng-bind="'1. ' + DICT('VPN_Setup_Wizard_Getting_Started')"></span>
+            </td>
+            <td>
+                <img ng-show="currPage <= 2" src="themes/img/speciel/_blank.gif" width="10"></img>
+                <img ng-show="currPage > 2" src="themes/img/speciel/wizard_check.gif" width="10"></img>
+                <span style="width: 155px" ng-class="{bold: currPage === 2}" ng-bind="'2. ' + DICT('VPN_Setup_Wizard_Remote_Router_Settings')"></span>
+            </td>
+            <td>
+                <img ng-show="currPage <= 3" src="themes/img/speciel/_blank.gif" width="10"></img>
+                <img ng-show="currPage > 3" src="themes/img/speciel/wizard_check.gif" width="10"></img>
+                <span style="width: 185px" ng-class="{bold: currPage === 3}" ng-bind="'3. ' + DICT('VPN_Setup_Wizard_Local_Remote_Networks')"></span>
+            </td>
+            <td>
+                <img ng-show="currPage <= 4" src="themes/img/speciel/_blank.gif" width="10"></img>
+                <img ng-show="currPage > 4" src="themes/img/speciel/wizard_check.gif" width="10"></img>
+                <span style="width: 70px" ng-class="{bold: currPage === 4}" ng-bind="'4. ' + DICT('VPN_Setup_Wizard_Profile')"></span>
+            </td>
+            <td>
+                <img ng-show="currPage <= 5" src="themes/img/speciel/_blank.gif" width="10"></img>
+                <img ng-show="currPage > 5" src="themes/img/speciel/wizard_check.gif" width="10"></img>
+                <span style="width: 85px" ng-class="{bold: currPage === 5}" ng-bind="'5. ' + DICT('VPN_Setup_Wizard_Summary')"></span>
+            </td>
+        </tr>
+    </table>
+    <br></br>
+    <!-- End Wizard Step-->
+</script>
+
+<script  type="text/ng-template" id="step1.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list control-input-200">
+            <tr>
+                <td colspan="2" ng-bind="DICT('VPN_Setup_Wizard_Help')">
+                    
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" ng-bind="DICT('VPN_Setup_Wizard_Before_Begin')">
+                    
+                </td>
+            </tr>
+            <tr>
+                <td class="Ttitle" ng-bind="DICT('VPN_Setup_Wizard_Give_Name')"></td>
+                <td>
+                    <input type="text" id="txt_connectname" uci-name ng-model="model.d.connect_name" maxlength="64" required></input>
+                    <span class="tip-info" ng-bind="DICT('VPN_Setup_Wizard_Homeoffice')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="Ttitle" ng-bind="DICT('VPN_Setup_Wizard_Interface')"></td>
+                <td>
+                    <select id="slct_interface" ng-model="model.d.intf" ng-options="m.id as m.displayName for m in model.intfs"
+                        ng-change="checkCombineUnique()" style="margin-left:0px;"></select>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+
+<script  type="text/ng-template" id="step2.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list vpn_wizard_2 control-input-200">
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Connection_Type')"></td>
+                <td>
+                    <select id="slct_remoteconnectype" ng-model="model.d.remote_conn_type" 
+                    ng-options="m.id as m.displayName for m in model.conn_type_list" style="margin-left:0px;"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Connection')"></td>
+                <td>
+                    <input type="text"
+                        name="remote_ip"
+                        ng-show="model.d.remote_conn_type === 'static-ip'"
+                        id="txt_remote_ip"
+                        ng-model="model.d.remote_ip"
+                        ng-ipv4-ip="model.d.remote_conn_type === 'static-ip'"
+                        ng-required="model.d.remote_conn_type === 'static-ip'"
+                        ng-change="validation.checkCombineUnique()"
+                    ></input>
+                    <input type="text"
+                        name="remote_fqdn"
+                        ng-show="model.d.remote_conn_type === 'fqdn'"
+                        ng-fqdn="model.d.remote_conn_type === 'fqdn'"
+                        id="txt_remote_fqdn"
+                        ng-model="model.d.remote_fqdn"
+                        ng-required="model.d.remote_conn_type === 'fqdn'"
+                        ng-change="validation.checkCombineUnique()"
+                    ></input>
+                </td>
+                <td>
+                    <span class="tip-info"
+                        ng-show="model.d.remote_conn_type === 'static-ip'"
+                        ng-bind="DICT('VPN_Setup_Wizard_Enter_WAN_IP_Addr')"
+                    ></span>
+                    <span class="tip-info"
+                        ng-show="model.d.remote_conn_type === 'fqdn'"
+                        ng-bind="DICT('VPN_Setup_Wizard_Enter_FQDN')"
+                    ></span>
+                </td>
+            </tr>
+        </table>
+        <div ng-if="validation.isErr" class="mainWarningBox">
+            <li>
+                <span ng-bind="DICT('VPN_Setup_Wizard_WAN_Interface_Repeat') + validation.repeat_conn"></span></li>
+            <li>
+                <span ng-bind="DICT('VPN_Setup_Wizard_Warning_Unique')"></span></li>
+        </div>
+    </div>
+</script>
+
+
+<script  type="text/ng-template" id="step3.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list control-input-200">
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Local_Traffic_Selection')"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Local_IP')"></td>
+                <td>
+                    <select id="slct_localip" style="margin-left:0px;"
+                        ng-change="model.change_ip_type()"
+                        ng-model="model.d.local.type"
+                        ng-options="m.id as m.displayName for m in model.local_group"
+                    ></select>
+                </td>
+            </tr>
+            <tbody ng-show="model.d.local.type === 'subnet'">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_localsubnetip"
+                            
+                            ng-model="model.d.local.subnet_ip"
+                            ng-ipv4-ip="model.d.local.type === 'subnet'"
+                            ng-required="model.d.local.type === 'subnet'"
+                        ></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Subnet_Mask')"></td>
+                    <td>
+                        <input type="text" id="txt_localsubnetmask"
+                            ng-model="model.d.local.subnet_netmask"
+                            ng-ipv4-netmask="model.d.local.type === 'subnet'"
+                            ng-required="model.d.local.type === 'subnet'"
+                        ></input>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody ng-show="model.d.local.type === 'ip'">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_localipaddr"
+                            ng-model="model.d.local.ip"
+                            ng-ipv4-ip="model.d.local.type === 'ip'"
+                            ng-required="model.d.local.type === 'ip'"
+                        ></input>
+                    </td>
+                </tr>
+            </tbody>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Traffic_Selection')"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_IP')"></td>
+                <td>
+                    <select id="slct_remoteip" style="margin-left:0px;"
+                        ng-change="model.change_ip_type()"
+                        ng-model="model.d.remote.type"
+                        ng-options="m.id as m.displayName for m in model.remote_group"
+                    ></select>
+                </td>
+            </tr>
+            <tbody ng-show="model.d.remote.type === 'subnet'">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_remotesubnetip"
+                            
+                            ng-model="model.d.remote.subnet_ip"
+                            ng-ipv4-ip="model.d.remote.type === 'subnet'"
+                            ng-required="model.d.remote.type === 'subnet'"
+                        ></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Subnet_Mask')"></td>
+                    <td>
+                        <input type="text" id="txt_remotesubnetmask"
+                            ng-model="model.d.remote.subnet_netmask"
+                            ng-ipv4-netmask="model.d.remote.type === 'subnet'"
+                            ng-required="model.d.remote.type === 'subnet'"
+                        ></input>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody ng-show="model.d.remote.type === 'ip'">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td>
+                        <input type="text" id="txt_remoteipaddr"
+                            ng-model="model.d.remote.ip"
+                            ng-ipv4-ip="model.d.remote.type === 'ip'"
+                            ng-required="model.d.remote.type === 'ip'"
+                        ></input>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+
+<script  type="text/ng-template" id="step4.html">
+    <div class="page-content-container" ng-cloak>
+        <table class="page-block-tb-list vpn_wizard_4 control-input-200">
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_IPSec_Profile')"></td>
+                <td>
+                    <select id="slct_ipsecprofile" ng-model="model.d.ipsec_profile"
+                        ng-change="model.changeProfle()" style="margin-left:0px;"
+                        ng-options="m.id as m.displayName for m in model.profiles"
+                    ></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_IKE_Version')"></td>
+                <td>
+                    <input type="radio" ng-model="model.d.ike_mode" value="v1" ng-disabled="model.d.ipsec_profile !== '@new'">
+                        <span ng-bind="DICT('VPN_Setup_Wizard_IKEV1')"></span>
+                    </input>
+                    <input type="radio" ng-model="model.d.ike_mode" value="v2" ng-disabled="model.d.ipsec_profile !== '@new'">
+                        <span ng-bind="DICT('VPN_Setup_Wizard_IKEV2')"></span>
+                    </input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td class="groupTitle" ng-bind="DICT('VPN_Setup_Wizard_Phase_I_Options')"></td>
+                <td></td>
+            </tr>
+            <tbody class="indent1" ng-class="{nopHint: model.d.ipsec_profile !== '@new'}">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_DH_Group')"></td>
+                    <td>
+                        <select id="slct_phase1dhgroup" ng-model="model.d.phase1.dh_group" style="margin-left:0px;"
+                            ng-options="m.id as m.displayName for m in model.dh_group"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Encryption')"></td>
+                    <td>
+                        <select id="slct_phase1encryption" ng-model="model.d.phase1.encryption" 
+                        ng-options="m.id as m.displayName for m in model.encryption" style="margin-left:0px;"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Authentication')"></td>
+                    <td>
+                        <select id="slct_phase1authentication" ng-model="model.d.phase1.authentication" 
+                        ng-options="m.id as m.displayName for m in model.authentication" style="margin-left:0px;"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_SA_Lifetime')"></td>
+                    <td>
+                        <input type="number" number id="txt_phase1salifetime" min="120" max="86400" ng-model="model.d.phase1.lifetime"></input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('VPN_Setup_Wizard_Sec_Range1')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Perfect_Forward_Secrecy')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_phase2pfsenable" ng-model="model.d.phase2.pfs">
+                            <span ng-bind="DICT('VPN_Setup_Wizard_Enable')"></span></input>
+                    </td>
+                </tr>
+            </tbody>
+            <!-- IKEv1 PreshareKey-->
+            <tr ng-if="model.d.ike_mode === 'v1'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Pre_Shared_Key')"></td>
+                <td>
+                    <pg-pwd 
+                        ng-is-plain="model.d.symm_authentication.show_key_in_plain"
+                        id="txt_ikev1_presharekey"
+                        legal-char
+                        ng-model="model.d.symm_authentication.presharekey"
+                        need-complexity
+                        maxlength="64"
+                        ng-required="true"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v1'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-model="model.d.symm_authentication.presharekey"></password-strength-meter>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v1'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_ikv1_plaintext" ng-model="model.d.symm_authentication.show_key_in_plain">
+                        <span ng-bind="DICT('VPN_Setup_Wizard_Enable')"></span></input>
+                </td>
+            </tr>
+            <!-- IKEv2 Local PreshareKey-->
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Local_Pre_Shared_Key')"></td>
+                <td>
+                    <pg-pwd 
+                        ng-is-plain="model.d.local_authentication.show_key_in_plain"
+                        id="txt_ikev2_1_presharekey"
+                        legal-char
+                        ng-model="model.d.local_authentication.presharekey"
+                        need-complexity
+                        maxlength="64"
+                        ng-required="true"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-model="model.d.local_authentication.presharekey"></password-strength-meter>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_ikv2_plaintext" ng-model="model.d.local_authentication.show_key_in_plain">
+                        <span ng-bind="DICT('VPN_Setup_Wizard_Enable')"></span></input>
+                </td>
+            </tr>
+            <!-- IKEv2 Remote PreshareKey-->
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Pre_Shared_Key')"></td>
+                <td>
+                    <pg-pwd 
+                        ng-is-plain="model.d.remote_authentication.show_key_in_plain"
+                        id="txt_ikev2_2_presharekey"
+                        legal-char
+                        ng-model="model.d.remote_authentication.presharekey"
+                        need-complexity
+                        maxlength="64"
+                        ng-required="true"
+                    ></pg-pwd>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Preshared_Key_Strength_Meter')"></td>
+                <td>
+                    <password-strength-meter ng-model="model.d.remote_authentication.presharekey"></password-strength-meter>
+                </td>
+            </tr>
+            <tr ng-if="model.d.ike_mode === 'v2'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Show_Plain')"></td>
+                <td>
+                    <input type="checkbox" id="chk_ikev2_1_plaintext" ng-model="model.d.remote_authentication.show_key_in_plain">
+                        <span ng-bind="DICT('VPN_Setup_Wizard_Enable')"></span></input>
+                </td>
+            </tr>
+            <tr>
+                <td class="groupTitle" ng-bind="DICT('VPN_Setup_Wizard_Phase_II_Options')"></td>
+                <td></td>
+            </tr>
+            <tbody class="indent1" ng-class="{nopHint: model.d.ipsec_profile !== '@new'}">
+                <tr ng-show="model.d.phase2.pfs">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_DH_Group')"></td>
+                    <td>
+                        <select id="slct_phase2dhgroup" ng-model="model.d.phase2.dh_group" style="margin-left:0px;"
+                            ng-options="m.id as m.displayName for m in model.dh_group"
+                        ></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Protocol_Selection')"></td>
+                    <td>
+                        <select id="slct_phase2protocal" ng-model="model.d.phase2.protocal" style="margin-left:0px;"
+                        ng-options="m.id as m.displayName for m in model.protocals"></select>
+                    </td>
+                </tr>
+                <tr ng-show="model.d.phase2.protocal === 'esp'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Encryption')"></td>
+                    <td>
+                        <select id="slct_phase2encryption" ng-model="model.d.phase2.encryption" style="margin-left:0px;"
+                        ng-options="m.id as m.displayName for m in model.encryption"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Authentication')"></td>
+                    <td>
+                        <select id="slct_phase2authentication" ng-model="model.d.phase2.authentication" style="margin-left:0px;"
+                        ng-options="m.id as m.displayName for m in model.authentication"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_SA_Lifetime')"></td>
+                    <td>
+                        <input type="number" number id="txt_phase2lifetime" min="120" max="28800" ng-model="model.d.phase2.lifetime"></input>
+                    </td>
+                    <td>
+                        <span class="tip-info" ng-bind="DICT('VPN_Setup_Wizard_Sec_Range2')"></span>
+                    </td>
+                </tr>
+            </tbody>
+            <tr ng-show="model.d.ipsec_profile === '@new'">
+                <td ng-bind="DICT('VPN_Setup_Wizard_Save_New_Profile')"></td>
+                <td colspan="2">
+                    <input type="text"
+                        id="txt_profilename"
+                        uci-name
+                        ng-model="model.d.profile_name"
+                        ng-required="model.d.ipsec_profile === '@new'"
+                        ng-change="validation.check_profile_name()" maxlength="64"
+                    ></input>
+                    <span ng-show="validation.profile_name_repeat" class="validation-error-text-right" ng-bind="validation.profile_name_repeat_err_str"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script  type="text/ng-template" id="step5.html">
+    <div class="page-content-container" ng-cloak style="overflow-y: auto">
+        <table class="page-block-tb-list vpn_wizard_5_left" style="float: left; width: 50%">
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Connection_Name')"></td>
+                <td>{{model.d.connect_name}}</td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Local_Interface')"></td>
+                <td>{{model.d.intf}}</td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_IPSec_Profile')"></td>
+                <td ng-show="model.d.ipsec_profile !== '@new'">{{model.d.ipsec_profile}}</td>
+                <td ng-show="model.d.ipsec_profile === '@new'">{{model.d.profile_name}}</td>
+            </tr>
+            <tbody class="vpn_indent1">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Phase_I_Options')"></td>
+                </tr>
+            </tbody>
+            <tbody class="vpn_indent2">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_DH_Group')"></td>
+                    <td>{{model.getDHGroupName(model.d.phase1.dh_group)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Encryption')"></td>
+                    <td>{{model.getEncryptionName(model.d.phase1.encryption)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Authentication')"></td>
+                    <td>{{model.getAuthenticationName(model.d.phase1.authentication)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Lifetime')"></td>
+                    <td>{{model.d.phase1.lifetime}}</td>
+                </tr>
+                <tr ng-if="model.d.ike_mode === 'v1'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Pre_Shared_Key')"></td>
+                    <td>{{model.d.symm_authentication.presharekey}}</td>
+                </tr>
+                <tr ng-if="model.d.ike_mode === 'v2'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Local_Pre_Shared_Key')"></td>
+                    <td>{{model.d.local_authentication.presharekey}}</td>
+                </tr>
+                <tr ng-if="model.d.ike_mode === 'v2'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Pre_Shared_Key')"></td>
+                    <td>{{model.d.remote_authentication.presharekey}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Perfect_Forward_Secrecy')"></td>
+                    <td>{{model.d.phase2.pfs ? 'Enable' : 'Disable'}}</td>
+                </tr>
+            </tbody>
+            <tbody class="vpn_indent1">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Phase_II_Options')"></td>
+                </tr>
+            </tbody>
+            <tbody class="vpn_indent2">
+                <tr ng-show="model.d.phase2.pfs">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_DH_Group')"></td>
+                    <td>{{model.getDHGroupName(model.d.phase2.dh_group)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Protocol_Selection')"></td>
+                    <td ng-show="model.d.phase2.protocal === 'esp'" ng-bind="DICT('VPN_Setup_Wizard_ESP')"></td>
+                    <td ng-show="model.d.phase2.protocal === 'ah'" ng-bind="DICT('VPN_Setup_Wizard_AH')"></td>
+                </tr>
+                <tr ng-show="model.d.phase2.protocal === 'esp'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Encryption')"></td>
+                    <td>{{model.getEncryptionName(model.d.phase2.encryption)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Authentication')"></td>
+                    <td>{{model.getAuthenticationName(model.d.phase2.authentication)}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Lifetime')"></td>
+                    <td>{{model.d.phase2.lifetime}}</td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="page-block-tb-list vpn_wizard_5_left" style="float: left; width: 50%">
+            <tr><td></td></tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Endpoint')"></td>
+                <td>{{model.d.remote_ip}}</td>
+            </tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Local_Group')"></td>
+            </tr>
+            <tbody class="vpn_indent1">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Local_IP_Type')"></td>
+                    <td>{{model.getGroupName(model.d.local.type, 'local')}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td ng-show="model.d.local.type==='ip'">{{model.d.local.ip}}</td>
+                    <td ng-show="model.d.local.type==='subnet'">{{model.d.local.subnet_ip}}</td>
+                    <td ng-show="model.d.local.type==='any'">0.0.0.0</td>
+                </tr>
+                <tr ng-show="model.d.local.type==='subnet' || model.d.local.type==='any'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Subnet')"></td>
+                    <td ng-show="model.d.local.type==='subnet'">{{model.d.local.subnet_netmask}}</td>
+                    <td ng-show="model.d.local.type==='any'">0.0.0.0</td>
+                </tr>
+            </tbody>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr>
+                <td ng-bind="DICT('VPN_Setup_Wizard_Remote_Group')"></td>
+            </tr>
+            <tbody class="vpn_indent1">
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Remote_IP_Type')"></td>
+                    <td>{{model.getGroupName(model.d.remote.type, 'remote')}}</td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Setup_Wizard_IP_Addr')"></td>
+                    <td ng-show="model.d.remote.type==='ip'">{{model.d.remote.ip}}</td>
+                    <td ng-show="model.d.remote.type==='subnet'">{{model.d.remote.subnet_ip}}</td>
+                    <td ng-show="model.d.remote.type==='any'">0.0.0.0</td>
+                </tr>
+                <tr ng-show="model.d.remote.type==='subnet' || model.d.remote.type==='any'">
+                    <td ng-bind="DICT('VPN_Setup_Wizard_Subnet')"></td>
+                    <td ng-show="model.d.remote.type==='subnet'">{{model.d.remote.subnet_netmask}}</td>
+                    <td ng-show="model.d.remote.type==='any'">0.0.0.0</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<form ng-controller="VPNSetupWizardCtrl" name="vpn_wizard_form" ng-modification="dataReady">
+
+</form>

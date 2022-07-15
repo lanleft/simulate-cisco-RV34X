@@ -1,0 +1,10 @@
+Package: strongswan-mod-eap-mschapv2
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, strongswan-mod-md4, strongswan-mod-des
+Source: package/openwrt/net/strongswan
+License: GPL-2.0+
+Section: net
+Maintainer: Stijn Tintel <stijn@linux-ipv6.be>
+Architecture: comcerto2000
+Installed-Size: 8612
+Description:  StrongSwan EAP MS-CHAPv2 EAP auth plugin

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/netifd/netifd-proto.sh
+
+interface="$1"
+
+USBCONN="/tmp/usb_conn_$interface"
+
+[ -f $USBCONN ] && rm $USBCONN
+
+pid_ifup=$(pgrep -f "mobile_ifup $interface")
+
+[ $pid_ifup ] && {
+         kill -9 $pid_ifup
+} || {
+        proto_set_available "$interface" 0
+        ifdown $interface
+}

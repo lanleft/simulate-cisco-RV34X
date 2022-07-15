@@ -1,0 +1,80 @@
+module ciscosb-email {
+    namespace "http://cisco.com/ns/ciscosb/email";
+    prefix cisco-email;
+    import ietf-inet-types { prefix inet; }
+    import ietf-netconf-acm { prefix nacm; }
+    import ciscosb-types { prefix ciscosb-types; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions for email
+        server settings for Cisco Small Business devices.";
+    revision 2016-10-20 {
+        description "merge from BBII
+            Add default value for email-server/auth and email-server/encryption";
+    }
+    revision 2016-05-30 {
+        description "Add ordered-by user to /email-server/to-email-addresses";
+        reference "";
+    }
+    revision 2015-11-09 {
+      description "Add revision ";
+      reference "";
+    }
+    revision 2015-05-20 {
+        description "Proposed";
+        reference "TODO";
+    }
+    container email-server {
+        description "image install status on device";
+        leaf smtp-server {
+            type inet:host;
+            description "Host name";
+        }
+        leaf smtp-port {
+            type inet:port-number;
+        }
+        leaf encryption {
+            type enumeration {
+                enum NONE;
+                enum TLS;
+                enum SSL;
+            }
+            default NONE;
+        }
+        leaf authentication {
+            type enumeration {
+                enum NONE;
+                enum PLAINTEXT;
+                enum MD5;
+                enum LOGIN;
+            }
+            default NONE;
+        }
+        leaf user-name {
+            description "SMTP Server user account name";
+            type nacm:user-name-type;
+        }
+        leaf password {
+            description "SMTP Server user account password";
+            type ciscosb-types:aes-cfb-128-encrypted-string;
+        }
+        list to-email-addresses {
+            ordered-by user;
+            key email-address;
+            leaf email-address {
+                type ciscosb-types:email-address-type;
+            }
+        }
+        leaf from-email-address {
+            type ciscosb-types:email-address-type;
+        }
+    }
+    rpc test-connectivity {
+        description
+            "Test connectivity to email server";
+    }
+}

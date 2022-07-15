@@ -1,0 +1,8 @@
+Package: pfe
+Version: 0.0-1
+Depends: libc, librt, libpthread
+Source: package/freescale/pfe
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 72361
+Description:  PFE firmware.

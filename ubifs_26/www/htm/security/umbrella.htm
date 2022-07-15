@@ -1,0 +1,528 @@
+<form ng-controller="UmbrellaCtrl" name="umbrella_form" ng-modification="ui_data.data_ready" id="umbrella">
+    <div ng-if="ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Umbrella')"></div>
+            <div class="page-button-container">
+                <button type="button" ng-click="funs.save()" ng-disabled="umbrella_form.$invalid || ui_data.disable_apply" class="btn-apply">
+                    <span ng-bind="DICT('Umbrella_Apply')"></span>
+                </button>
+                <button type="button" ng-click="funs.cancel()" class="btn-cancel">
+                    <span ng-bind="DICT('Umbrella_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <div class="page-content-container">
+            <div ng-bind="DICT('Umbrella_Intro_Msg1')"></div>
+            <div pg-bind-html="ui_data.html_intro_msg2"></div>
+            <br></br>
+            <div>
+                <input type="checkbox" ng-model="model.enabled" ng-change="check_apply_btn()"></input>
+                <span ng-bind="DICT('Umbrella_Enable')"></span>
+            </div>
+            <div>
+                <input type="checkbox" ng-disabled="!model.enabled" ng-model="model.block_lan_dns_query"></input>
+                <span ng-bind="DICT('Umbrella_Block_Lan_Dns_Query')"></span>
+            </div>
+            <div class="page-m-top-10" pg-bind-html="ui_data.html_intro_msg3"></div>
+            <div>
+                <input type="radio" ng-model="model.policies" value="network-device" ng-change="change_policy_mode()" ng-disabled="!model.enabled"></input>
+                <span ng-bind="DICT('Umbrella_Intro_Msg5')"></span>
+            </div>
+            <div ng-show="model.policies === 'network-device'">
+                <div ng-show="!ui_data.dp_registered" class="page-indent27">
+                    <button type="button" ng-click="funs.get_start()" ng-disabled="!model.enabled">
+                        <span ng-bind="DICT('Umbrella_Getting_Start')"></span>
+                    </button>
+                </div>
+                <div ng-if="ui_data.dp_registered" class="page-indent27" ng-class="{nopHint: !model.enabled}">
+                    <div>
+                        <fieldset>
+                            <legend>
+                                <span ng-bind="DICT('Umbrella_Device_Status')"></span>
+                            </legend>
+                            <table class="page-block-tb-list">
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Status')"></td>
+                                    <td ng-bind="model.opendns_state_str"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <button type="button" ng-click="funs.change_credentials()" ng-disabled="!model.enabled">
+                                            <span ng-bind="DICT('Umbrella_Change_Credentials')"></span>
+                                        </button>
+                                        <button type="button" ng-click="funs.change_device_info()" ng-disabled="!model.enabled">
+                                            <span ng-bind="DICT('Umbrella_Change_Device_Info')"></span>
+                                        </button>
+                                        <button type="button" ng-click="funs.de_register()" ng-disabled="!model.enabled">
+                                            <span ng-bind="DICT('Umbrella_De_Register')"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Associated_Policies')"></td>
+                                    <td ng-bind="model.organizations.policies_str"></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <button type="button" ng-click="funs.change_policies()" ng-disabled="!model.enabled">
+                                            <span ng-bind="DICT('Umbrella_Change')"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <div ng-include="'umbrella_advanced_configure.htm'"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input type="radio" ng-model="model.policies" value="network" ng-change="change_policy_mode()" ng-disabled="!model.enabled"></input>
+                <span ng-bind="DICT('Umbrella_Intro_Msg4')"></span>
+            </div>
+            <div ng-show="model.policies === 'network'">
+                <ul>
+                    <li pg-bind-html="ui_data.html_network_msg1"></li>
+                    <li style="list-style: none;" ng-bind="DICT('Or')"></li>
+                    <li pg-bind-html="ui_data.html_network_msg2"></li>
+                </ul>
+            </div>
+            <div ng-if="model.policies === 'network'">
+                <div class="page-indent27">
+                    <div ng-include="'umbrella_advanced_configure.htm'"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="umbrella_apply_warning.htm">
+    <div class="modal-container">
+        <div class="modal-content-container">
+            <div ng-bind="DICT('Umbrella_Enabled_Msg1')"></div>
+            <table class="page-block-tb-list align-top">
+                <tr>
+                    <td>1.</td>
+                    <td>
+                        <div pg-bind-html="warning_msg1"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.</td>
+                    <td>
+                        <div pg-bind-html="warning_msg2"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3.</td>
+                    <td>
+                        <div pg-bind-html="warning_msg3"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply">
+                <span ng-bind="DICT('Umbrella_Continue')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umbrella_de_register_warning.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Umbrella_De_Register')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table class="page-block-tb-list align-top">
+                <tr>
+                    <td>
+                        <div ng-bind-html="DICT('Umbrella_De_Register_Warning_Msg1', {'%s0': model.organizations.id})"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div ng-bind-html="DICT('Umbrella_De_Register_Warning_Msg2')"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply">
+                <span ng-bind="DICT('Umbrella_Yes')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_No')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umbrella_success.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Umbrella_Success')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table class="page-block-tb-list" ng-show="type === 'de_register_success'">
+                <tr>
+                    <td>
+                        <div ng-bind-html="DICT('Umbrella_De_Register_Success', {'%s0': model.organizations.id})"></div>
+                    </td>
+                </tr>
+            </table>
+            <table class="page-block-tb-list" ng-show="type === 'setup_success'">
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Register_Success')"></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Assorciating_policies_Success')"></td>
+                </tr>
+            </table>
+            <table class="page-block-tb-list" ng-show="type === 'update_device_info_success'">
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Update_Device_Info_Success')"></td>
+                </tr>
+            </table>
+<!--            <table class="page-block-tb-list" ng-show="type === 'update_credentials_success'">-->
+<!--                <tr>-->
+<!--                    <td ng-bind="DICT('Umbrella_Register_Success')"></td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td ng-bind="DICT('Umbrella_Assorciating_policies_Success')"></td>-->
+<!--                </tr>-->
+<!--            </table>-->
+            <table class="page-block-tb-list" ng-show="type === 'update_device_policy_success'">
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Update_Policy_Association_Success')"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="modal-button-container">
+            <button type="button" ng-click="cancel()" class="btn-apply">
+                <span ng-bind="DICT('Umbrella_Ok')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umbrella_error.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Umbrella_Error')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table>
+                <tr>
+                    <td class="align-top">
+                        <i class="fa modal-icon icon-critical" aria-hidden="true"></i>
+                    </td>
+                    <td>
+                        <div class="modal-context">
+                            <table class="page-block-tb-list" ng-if="type === 'de_register_error'">
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_De_Register_Error_Msg')"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'get_organization_error'">
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_Get_Credentials_Error_Msg')"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'get_policies_error'">
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_Get_Policies_Error_Msg')"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'new_register_error'">
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Register_Error')"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'new_policy_associating_error'">
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Register_Success')"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Assorciating_Policies_Fail')"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'update_device_policy_error'">
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Update_Policy_Association_Fail')"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></td>
+                                </tr>
+                            </table>
+                            <table class="page-block-tb-list" ng-if="type === 'update_device_info_error'">
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Update_Device_Info_Fail')"></td>
+                                </tr>
+                                <tr>
+                                    <td ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></td>
+                                </tr>
+                            </table>
+                <!--            <table class="page-block-tb-list" ng-if="type === 'update_credentials_error'">-->
+                <!--                <tr>-->
+                <!--                    <td ng-bind="DICT('Umbrella_Update_Device_Info_Fail')"></td>-->
+                <!--                </tr>-->
+                <!--                <tr>-->
+                <!--                    <td ng-bind="DICT('Umbrella_Error_Check_Credential_Input')"></td>-->
+                <!--                </tr>-->
+                <!--            </table>-->
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="cancel()" class="btn-apply">
+                <span ng-bind="DICT('Umbrella_Ok')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+
+<script type="text/ng-template" id="umbrella_credentials.htm">
+<ng-form name="umbrella_credentials_form">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-show="type === 'new_credentials'" ng-bind="DICT('Umbrella_Enter_Credentials')"></div>
+            <div class="modal-title" ng-show="type === 'edit_credentials'" ng-bind="DICT('Umbrella_Change_Credentials')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Key')"></td>
+                    <td>
+                        <input type="password"
+                            ng-model="model.key"
+                            placeholder="{{DICT('Umbrella_Current_Key')}}"
+                            required
+                            select-when-focus
+                            ng-change="model.key_modified = true"
+                        ></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Secret')"></td>
+                    <td>
+                        <input type="password"
+                            ng-model="model.secret"
+                            placeholder="{{DICT('Umbrella_Current_Secret')}}"
+                            required
+                            select-when-focus
+                            ng-change="model.secret_modified = true"
+                        ></input>
+                    </td>
+                </tr>
+            </table>
+            <br/>
+            <div>
+                <div class="tip-info-top" pg-bind-html="ui_data.html_credential_msg"></div>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="umbrella_credentials_form.$invalid" ng-if="type ==='new_credentials'">
+                <span ng-bind="DICT('Umbrella_Next')"></span>
+            </button>
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="umbrella_credentials_form.$invalid" ng-if="type === 'edit_credentials'">
+                <span ng-bind="DICT('Umbrella_Apply')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</ng-form>
+</script>
+
+<script type="text/ng-template" id="umbrella_organization.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Umbrella_Select_An_Organization')"></div>
+        </div>
+        <div class="modal-content-container">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Umbrella_Organizations_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridOrganizationOptions"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="policy_cnt === 0">
+                <span ng-bind="DICT('Umbrella_Next')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umbrella_policies.htm">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Umbrella_Select_Policies')"></div>
+        </div>
+        <div class="modal-content-container">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('Umbrella_Policies_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridPoliciesOptions"></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="cnt === 0">
+                <span ng-show="type === 'new_policies'" ng-bind="DICT('Umbrella_Next')"></span>
+                <span ng-show="type === 'edit_policies'" ng-bind="DICT('Umbrella_Apply')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="umbrella_device_info.htm">
+<ng-form name="umbrella_device_form">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-show="type === 'new_device_info'" ng-bind="DICT('Umbrella_Enter_Device_Info')"></div>
+            <div class="modal-title" ng-show="type === 'edit_device_info'" ng-bind="DICT('Umbrella_Change_Device_Info')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Umbrella_Device_Name')"></td>
+                    <td>
+                        <input type="text" ng-model="model.organizations.device_name" placeholder="{{DICT('Umbrella_Current_Name')}}" required></input>
+                    </td>
+                </tr>
+<!--                <tr>-->
+<!--                    <td ng-bind="DICT('Umbrella_Device_Tag_Optional')"></td>-->
+<!--                    <td>-->
+<!--                        <input type="text" ng-model="model.organizations.tag" placeholder="{{DICT('Umbrella_Current_Tag')}}" required></input>-->
+<!--                    </td>-->
+<!--                </tr>-->
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="umbrella_device_form.$invalid" ng-if="type ==='new_device_info'">
+                <span ng-bind="DICT('Umbrella_Next')"></span>
+            </button>
+            <button type="button" ng-click="ok()" class="btn-apply" ng-disabled="umbrella_device_form.$invalid" ng-if="type === 'edit_device_info'">
+                <span ng-bind="DICT('Umbrella_Apply')"></span>
+            </button>
+            <button type="button" ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('Umbrella_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</ng-form>
+</script>
+
+
+<script type="text/ng-template" id="umbrella_advanced_configure.htm">
+    <fieldset ng-class="{nopHint: !model.enabled}">
+        <legend>
+            <span ng-bind="DICT('Umbrella_Advanced_Configuration')"></span>
+        </legend>
+        <table class="page-block-tb-list">
+            <tr ng-repeat="m in model.local_domain_bypass">
+                <td>
+                    <span ng-show="$first" ng-bind="DICT('Umbrella_Local_Domain_Bypass_Optional')"></span>
+                </td>
+                <td>
+                    <input type="text"
+                           id="domain-bypass"
+                           ng-disabled="!model.enabled"
+                           ng-model="m.domain"
+                    ></input>
+                    <button type="button"
+                        ng-show="$last && model.local_domain_bypass.length < ui_data.max_domain_bypass"
+                        class="icon-add"
+                        ng-click="funs.add_domain_bypass()"
+                    ></button>
+                    <button type="button"
+                        ng-show="model.local_domain_bypass.length > 1"
+                        class="icon-delete"
+                        ng-click="funs.delete_domain_bypass($index)"
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Umbrella_DNS_Crypt')"></td>
+                <td>
+                    <input type="checkbox" ng-model="model.dns_crypt.enabled" ng-disabled="!model.enabled || model.policies === 'network-device'">
+                        <span ng-bind="DICT('Umbrella_Enable')"></span>
+                    </input>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <span ng-bind="DICT('Umbrella_Public_Key')"></span>
+                    <input placeholder="{{ui_data.placeholder_publickey}}"
+                        name="public_key"
+                        id="public-key"
+                        ng-disabled="!model.dns_crypt.enabled || !model.enabled"
+                        type="text"
+                        ng-model="model.dns_crypt.public_key"
+                    ></input>
+                </td>
+            </tr>
+        </table>
+    </fieldset>
+</script>

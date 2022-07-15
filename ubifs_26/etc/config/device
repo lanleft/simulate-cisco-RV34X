@@ -1,0 +1,82 @@
+config type 'ANY'
+list os 'ANY'
+
+config type 'Mobile'
+list os 'ANY'
+list os 'Android'
+list os 'Windows'
+list os 'BlackBerry'
+list os 'Windows_Phone'
+list os 'Symbian'
+list os 'Tizen'
+list os 'iOS'
+list os 'Fire_OS'
+list os 'iPadOS'
+list os 'Other'
+
+config type 'Game_Console'
+list os 'ANY'
+list os 'Windows'
+list os 'Other'
+
+config type 'Media_Player'
+list os 'ANY'
+list os 'Android'
+list os 'iOS'
+list os 'Other'
+
+config type 'Computer'
+list os 'ANY'
+list os 'Windows'
+list os 'Mac_OS_X'
+list os 'Chrome_OS'
+list os 'Linux'
+list os 'Android'
+
+config type 'Watch'
+list os 'ANY'
+list os 'Android'
+list os 'WatchOS'
+list os 'Other'
+
+config type 'Car'
+list os 'ANY'
+list os 'Android'
+
+config type 'IoT_Device'
+list os 'ANY'
+list os 'Android'
+list os 'Other'
+
+config type 'Camera'
+list os 'ANY'
+list os 'Other'
+
+config type 'VoIP'
+list os 'ANY'
+list os 'Other'
+
+config type 'Printer'
+list os 'ANY'
+list os 'Other'
+
+config type 'Doorbell'
+list os 'ANY'
+list os 'Other'
+
+config type 'IoT_Hub'
+list os 'ANY'
+list os 'Other'
+
+config type 'Thermostat'
+list os 'ANY'
+list os 'Other'
+
+config type 'NAS'
+list os 'ANY'
+list os 'Other'
+
+config type 'Network'
+list os 'ANY'
+list os 'Other'
+

@@ -1,0 +1,10 @@
+Package: kmod-mppe
+Version: 4.1.8-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp, kmod-crypto-core, kmod-crypto-arc4, kmod-crypto-sha1, kmod-crypto-ecb
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: comcerto2000
+Installed-Size: 4388
+Description:  Kernel modules for Microsoft PPP compression/encryption

@@ -1,0 +1,6 @@
+{
+	"desc": "Sierra Wireless AC313U/320U/330U Direct IP",
+	"type": "directip",
+	"control": 2,
+	"data": 3
+}

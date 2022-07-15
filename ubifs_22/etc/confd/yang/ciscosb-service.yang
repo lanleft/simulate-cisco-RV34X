@@ -1,0 +1,77 @@
+module ciscosb-service {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/service";
+    prefix "services";
+    organization
+        "Freescale Semiconductors Pvt Ltd";
+    contact
+        "nageshkoneti@freescale.com";
+    description
+        "This YANG module defines Service Management Configuration Parameters";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-16 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-27 {
+        description "Initial version of yang model for firewall module";
+        reference "RFC 6020";
+    }
+    container services {
+        list service {
+            key name;
+            leaf name {
+                type string;
+                description "This indicates name of the service";
+            }
+            uses SERVICE;
+        }
+    }
+    grouping SERVICE {
+        leaf protocol {
+            type enumeration {
+                enum TCP;
+                enum UDP;
+                enum IP;
+                enum ICMP;
+                enum TCP_UDP;
+                enum ALL;
+            }
+            description "This indicates service protocol";
+        }
+        choice protocol-type {
+            case tcp-udp {
+                container port-range {
+                    presence "TCP or UDP enabled";
+                    leaf start {
+                        mandatory true;
+                        type uint16;
+                        description "This indicates port start range";
+                    }
+                    leaf end {
+                        mandatory true;
+                        type uint16;
+                        description "This indicates port end range";
+                    }
+                }
+            }
+            case ip {
+                leaf ip-type {
+                    type uint8 {
+                        range 1..255;
+                    }
+                }
+            }
+            case icmp {
+                leaf icmp-type {
+                    type uint8 {
+                        range 0..255;
+                    }
+                }
+            }
+        }
+    }
+}

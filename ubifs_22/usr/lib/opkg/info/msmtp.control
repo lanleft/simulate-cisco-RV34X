@@ -1,0 +1,16 @@
+Package: msmtp
+Version: 1.6.1-3
+Depends: libc, librt, libpthread, libopenssl
+Source: package/msmtp
+License: GPL-3.0+
+LicenseFiles: COPYING
+Section: mail
+Maintainer: Nicolas Thill <nico@openwrt.org>
+Architecture: comcerto2000
+Installed-Size: 42586
+Description:  msmtp is an SMTP client. In the default mode, it transmits a mail to
+ an SMTP server (for example at a free mail provider) which does the
+ delivery. To use this program with your mail user agent (MUA), create
+ a configuration file with your mail account(s) and tell your MUA to
+ call msmtp instead of /usr/sbin/sendmail.
+ This package is built with SSL support.

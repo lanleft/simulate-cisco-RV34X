@@ -1,0 +1,15 @@
+Package: dnscrypt-proxy
+Version: 1.9.5-8
+Depends: libc, librt, libpthread, libsodium, dnscrypt-proxy-resolvers, libltdl, libldns
+Source: package/network/services/dnscrypt-proxy
+License: ISC
+Section: net
+Maintainer: Damiano Renfer <damiano.renfer@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 83981
+Description:  dnscrypt-proxy provides local service which can be used directly as your
+ local resolver or as a DNS forwarder, encrypting and authenticating requests
+ using the DNSCrypt protocol and passing them to an upstream server.
+ The DNSCrypt protocol uses high-speed high-security elliptic-curve cryptography
+ and is very similar to DNSCurve, but focuses on securing communications between
+ a client and its first-level resolver.

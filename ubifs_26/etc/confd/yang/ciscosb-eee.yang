@@ -1,0 +1,31 @@
+module ciscosb-eee {
+    namespace "http://cisco.com/ns/ciscosb/eee";
+    prefix ciscosb-eee;
+    import ietf-interfaces { prefix if; }
+    import iana-if-type { prefix ianaift; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module enhance ietf-interfaces to add eee feature";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-21 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    augment "/if:interfaces/if:interface" {
+        when "if:type = 'ianaift:ethernetCsmacd' or 'ianaift:channel'" {
+        }
+        leaf eee {
+            type boolean;
+        }
+    }
+}

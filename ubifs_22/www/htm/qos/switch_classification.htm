@@ -1,0 +1,89 @@
+<div ng-controller="switchClassificationCtrl">
+	<form name="form" ng-modification="loadReady" id="switch-classification">
+        <div ng-if="dataReady.qos && dataReady.intf">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Switch_Classification')"></div>
+                <div class="page-button-container">
+                    <button ng-click="funs.save()" class="btn-apply" ng-disabled="userAccessFlag === 'RO'">
+                        <span ng-bind="DICT('Switch_Classification_Apply')"></span>
+                    </button>
+                    <button ng-click="funs.cancel()" class="btn-cancel">
+                        <span ng-bind="DICT('Switch_Classification_Cancel')"></span>
+                    </button>
+                    <button ng-show="model.qos_model === 'dscp'" ng-click="funs.restore_def()" ng-disabled="userAccessFlag === 'RO'">
+                        <span ng-bind="DICT('Switch_Classification_Restore_Defaults')"></span>
+                    </button>
+                </div>
+            </div>
+            <confirmsave ng-show="success"></confirmsave>
+            <div class="page-content-container">
+                <table class="page-block-tb-list qos_mode" style="margin-bottom: 10px">
+                    <tr>
+                        <td ng-bind="DICT('Switch_Classification_Mode')"></td>
+                        <td>
+                            <input type="radio" ng-model="model.qos_model" value="port">
+                                <span ng-bind="DICT('Switch_Classification_Port_Based')"></span>
+                            </input>
+                        </td>
+                        <td>
+                            <input type="radio" ng-model="model.qos_model" value="dscp">
+                                <span ng-bind="DICT('Switch_Classification_DSCP_Based')"></span>
+                            </input>
+                        </td>
+                        <td>
+                            <input type="radio" ng-model="model.qos_model" value="cos">
+                                <span ng-bind="DICT('Switch_Classification_CoS_Based')"></span>
+                            </input>
+                        </td>
+                    </tr>
+                </table>
+                <div ng-if="model.qos_model === 'port' && !model.resize_event">
+                    <table class="page-block-tb-split2">
+                        <tr>
+                            <td>
+                                <div class="grid-cntr" style="margin-right: 10px;">
+                                    <div class="grid-title-cntr">
+                                        <div class="grid-title" ng-bind="DICT('Switch_Classification_LAN_Port_Queue')"></div>
+                                    </div>
+                                    <div class="grid-content-cntr">
+                                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridLanPortOptions"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="grid-cntr" style="margin-left: 10px;">
+                                    <div class="grid-title-cntr">
+                                        <div class="grid-title" ng-bind="DICT('Switch_Classification_LAG_Port_Queue')"></div>
+                                    </div>
+                                    <div class="grid-content-cntr">
+                                        <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridLagPortOptions"></div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div> <!-- End Port-->
+                <div ng-if="model.qos_model === 'dscp' && !model.resize_event">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Switch_Classification_DSCP_Queue')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridDSCPOptions"></div>
+                        </div>
+                    </div>
+                </div> <!-- End DSCP -->
+                <div ng-if="model.qos_model === 'cos' && !model.resize_event">
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Switch_Classification_CoS_Queue')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridCosOptions"></div>
+                        </div>
+                    </div>
+                </div> <!-- End COS -->
+            </div>
+        </div>
+    </form>
+</div>

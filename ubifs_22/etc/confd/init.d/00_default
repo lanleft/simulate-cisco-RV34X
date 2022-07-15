@@ -1,0 +1,22 @@
+init_default_config() {
+	local region="`uci get systeminfo.sysinfo.region 2> /dev/null`"
+
+	[ "$region" = "RU" ] && {
+		local exclude_modules="site-to-sites_init\|client-to-sites_init\|gre-tunnels_init\|teleworker-vpn-clients_init\|ipsec-profiles_init\|ipsec-passthrough_init\|l2tp_init\|l2tp-passthrough_init\|pptp_init\|pptp-passthrough_init\|sslvpn_init"
+		local modules="`cd /etc/confd/cdb && for m in *; do find "$m" -name "*.xml"; done | grep -v $exclude_modules`"
+
+		for m in $modules; do
+			cp -rf /etc/confd/cdb/$m /var/confd/cdb/
+		done
+	} || {
+		cp -rf /etc/confd/cdb/*.xml /var/confd/cdb/
+	}
+}
+	
+#Initialize confd related resources
+mkdir -p /var/confd
+cp -rf /etc/confd/confd.conf /var/confd
+cp -rf /etc/confd/fxs /var/confd
+
+mkdir -p /var/confd/cdb
+init_default_config

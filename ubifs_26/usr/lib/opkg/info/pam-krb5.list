@@ -1,0 +1,4 @@
+/etc/config/ad
+/lib/security/pam_krb5.so
+/etc/krb5keytab
+/etc/init.d/ad

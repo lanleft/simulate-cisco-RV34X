@@ -1,0 +1,21 @@
+#!/bin/sh
+
+SSL_PRIVATE_DIR="/etc/ssl/private"
+                                  
+cert_name=$1                      
+privkey=$2                        
+            
+x509_key="$SSL_PRIVATE_DIR/$cert_name.pem"
+dir="`dirname $privkey`"                  
+pubkey="$privkey.pub"                     
+tmpkey="/tmp/dropbear_host_key"           
+keytype="ssh-rsa"              
+                               
+mkdir -p $dir                  
+                 
+cp $x509_key $privkey
+/usr/bin/dropbearconvert openssh dropbear $privkey $tmpkey 2>&- >&-
+/usr/bin/dropbearkey -y -f $tmpkey | grep "$keytype" > $pubkey     
+rm -f $tmpkey                                                      
+                                                                   
+exit 0

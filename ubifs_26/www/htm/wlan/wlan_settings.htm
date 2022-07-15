@@ -1,0 +1,948 @@
+<div>
+<form name="form" ng-controller="wlan_settings_main" ng-modification="loadReady" id="wlan-setting">
+	
+	<div ng-if="pageMap('maclist')" ng-include="'wlan_ssid_maclist.htm'" ng-controller="wlan_ssid_edit"></div>
+	<div ng-if="pageMap('ssidedit')" ng-include="'wlan_ssid_edit.htm'" ng-controller="wlan_ssid_edit"></div>
+	<div ng-if="pageMap('main')" ng-include="'tmpl_wlan_main.htm'"></div>
+	
+</form>
+<style>
+.wps-modal {
+    top: 100px;
+}
+</style>
+</div>
+<script type="text/ng-template" id="tmpl_wlan_main.htm">
+	<div ng-controller="wlan_ssid">
+         <div class="page-title-container" ng-if="loadReady">
+		    <span class="page-title" ng-bind="DICT('Wlan_Basic_Settings')"></span>
+	        <span ng-include="'wireless_save.htm'"></span>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <div ng-if="!model.wifi_button_state && loadReady" style="color: red">
+                <span ng-bind="DICT('Wlan_Basic_Settings_WiFi_Push_Button_OFF')"></span>
+            </div>
+            <div ng-class="{nopHint: !model.wifi_button_state}" ng-if="loadReady">
+                <div>
+                    <div style="min-width:1200px" class="grid-cntr" ng-if="loadReady">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Wlan_Basic_Settings_Wireless_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button id="btn_groupssladd" class="grid-btn-add"
+                                    ng-disabled="form.$invalid || (gridWLANSSID._tbl_ref.length >= 8) || isAddMaxExceed() || userAccessFlag === 'RO'"
+                                    ng-click="gridWLANSSID.add()">
+                                </button>
+                                <button id="btn_groupssledit" class="grid-btn-edit"
+                                    ng-disabled="!(gridWLANSSID.Selections.length === 1) || form.$invalid || userAccessFlag === 'RO'"
+                                    ng-click="gridWLANSSID.editItem()">
+                                </button>
+                                <button id="btn_groupssldelete" class="grid-btn-delete"
+                                    ng-disabled="gridWLANSSID.Selections.length === 0 || userAccessFlag === 'RO' || gridWLANSSID.Selections.length === model['wlans']['ssid'].length"
+                                    ng-click="gridWLANSSID.remove()">
+                                </button>
+                            </div>
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridWLANSSID.Options"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+			<!--
+			<div class="btn-container">
+				<button ng-click="save()" ng-disabled="userAccessFlag === 'RO'">{{DICT("apply")}}</button>
+				<button ng-click="cancel()">{{DICT("cancel")}}</button>
+			</div>
+			-->
+            <br/>
+            <uib-tabset ng-if="loadReady" ng-class="{nopHint: !model.wifi_button_state}">
+                <uib-tab heading="{{DICT('Wlan_Basic_Settings_24G')}}" active="" disabled="">
+                    <div style="min-height:20px">
+                        <div ng-include="'wlan_2G.htm'" ng-controller="wlan_radio" ></div>
+                    </div>
+                </uib-tab>
+                <uib-tab heading="{{DICT('Wlan_Basic_Settings_5G')}}" active="" disabled="">
+                    <div style="min-height:20px">
+                        <div ng-include="'wlan_5G.htm'" ng-controller="wlan_radio" ></div>
+                    </div>
+                </uib-tab>
+            </uib-tabset>
+        </div>   
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_ssid_edit.htm">
+    <div class="page-title-container">
+        <span class="page-title" ng-bind="DICT('Wlan_Basic_Settings_Add_Edit_Wireless_SSID_Settings')"></span>
+        <span ng-include="'wireless_save.htm'"></span>
+    </div>
+	<div class="page-content-container">
+		<div>
+			<div data-x-tmp="{{ssidref = gridWLANSSID.Selections[0]}}"
+			     data-x-tmp2="{{secu_mode = ssidref.security['mode-enabled'] }}"
+			>
+				<table class="page-block-tb-list control-input-200">
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_SSID_Name')+':'">
+							
+						</td>
+						<td>
+							<input type="text" required maxlength="32"
+								ng-model="ssidref['ssid']"
+							/>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Enable')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" ng-model="ssidref['enable']" ng-change="vld.check_ssid_wmm()"/>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Actively_Applied_Radio')+':'">
+							
+						</td>
+						<td>
+							<select id="radio_owner" name="radio_owner"
+								ng-model="ssid_radio_owner"
+								ng-model-options=" {getterSetter: true}"
+								required
+								style="margin-left:0px;"
+							>
+								<option value="2g" ng-if="radioApplyRule(ssidref, '2g')" ng-bind="DICT('Wlan_Basic_Settings_24G')"></option>
+								<option value="5g" ng-if="radioApplyRule(ssidref, '5g')" ng-bind="DICT('Wlan_Basic_Settings_5G')"></option>
+								<option value="both" ng-if="radioApplyRule(ssidref, 'both')" ng-bind="DICT('Wlan_Basic_Settings_Both')"></option>
+							</select>
+							<input type="hidden" name="radio_owner_check" ng-pattern="'true'" data-tmp="{{ ctx.radio_owner_check = radioApplyRule(ssidref, radioGetterRule(ssidref) ) }}" ng-model="ctx.radio_owner_check"></input>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_SSID_Broadcast')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="ssidref['ssid-advertisment-enable']"
+							/>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Security_Mode')+':'">
+							
+						</td>
+						<td>
+							<select
+								ng-model="ssidref.security['mode-enabled']"
+								ng-options="item.id as item.displayName for item in schema.ssid_secumode"
+								ng-change="securityWarning()"
+								style="margin-left:0px;"
+							>
+							</select>
+						</td>
+					</tr>
+					<tr ng-if="showSecuMode(secu_mode, 'wpa-psk')">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Passphrase')+':'">
+							
+						</td>
+						<td>
+							<input type="{{input_type}}" style="width: 13em" required minlength="8" maxlength="64" psk
+								ng-trim="false" ng-model="ssidref.security[secu_mode]['key-passphrase']"
+							/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_Passphrase_Hint')"></span>
+						</td>
+					</tr>
+					<tr ng-if="showSecuMode(secu_mode, 'wep')">
+						<td ng-bind="DICT('Wlan_Basic_Settings_WEP_Key')+':'">
+							
+						</td>
+						<td>
+							<input type="{{input_type}}" required style="width: 13em"
+								bit-mask minlength="{{secu_mode === 'WEP-64' ? 10 : 26}}"
+								maxlength="{{secu_mode === 'WEP-64' ? 10 : 26}}"
+								ng-trim="false"
+								ng-model="ssidref.security[secu_mode]['wep-key']"
+							/>
+							<span class="tip-info" ng-if="secu_mode === 'WEP-64'" ng-bind="DICT('Wlan_Basic_Settings_WEP64_Hint')"></span>
+							<span class="tip-info" ng-if="secu_mode === 'WEP-128'" ng-bind="DICT('Wlan_Basic_Settings_WEP128_Hint')"></span>
+						</td>
+					</tr>
+					<tr ng-if="showSecuMode(secu_mode, 'wpa')">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Radius_Server_IP_Addr')+':'">
+							
+						</td>
+						<td>
+							<input type="text" required ipv4-ip style="width: 13em"
+								ng-model="ssidref.security[secu_mode]['radius-server-ip-addr']"
+							/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_IP_Tip_Info')"></span>
+						</td>
+					</tr>
+					<tr ng-if="showSecuMode(secu_mode, 'wpa')">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Radius_Server_Port')+':'">
+							
+						</td>
+						<td>
+							<input type="number" number required min=1 max=65535 style="width: 13em"
+								ng-model="ssidref.security[secu_mode]['radius-server-port']"
+							/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_Port_Range')"></span>
+						</td>
+					</tr>
+					<tr ng-if="showSecuMode(secu_mode, 'wpa')">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Radius_Secret')+':'">
+							
+						</td>
+						<td>
+							<input type="{{input_type}}" required minlength=1 maxlength="64" legal-char style="width: 13em"
+								ng-trim="false" ng-model="ssidref.security[secu_mode]['radius-secret']"
+							/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_Radius_Secret_Range')"></span>
+						</td>
+					</tr>
+					<tr ng-if="secu_mode !== 'None'">
+						<td>
+						</td>
+						<td>
+							<input type="checkbox" ng-model="model.show_pwd"
+							ng-click="show_pwd()"/>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Show_Password')"></span>
+						</td>
+					</tr>
+					<tr ng-class="{nopHint: !showSecuMode(secu_mode, 'wpa-psk') && !showSecuMode(secu_mode, 'wpa')}">
+						<td ng-bind="DICT('Wlan_Basic_Settings_PMF')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" ng-model="ssidref.pmf" value="not-required">
+								<span ng-bind="DICT('Wlan_Basic_Settings_Not_Required')"></span></input>
+							<span class="indent"></span>
+							<input type="radio" ng-model="ssidref.pmf" value="capable">
+								<span ng-bind="DICT('Wlan_Basic_Settings_Capable')"></span></input>
+							<span class="indent"></span>
+							<input type="radio" ng-model="ssidref.pmf" value="required">
+								<span ng-bind="DICT('Wlan_Basic_Settings_Required')"></span></input>
+						</td>
+					</tr>
+
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Isolation_Within_SSID')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="ssidref['isolation-with-ssid']"
+							/>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_WMM')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+                                ng-disabled="!ssidref.editableWMM"
+                                ng-change="vld.check_ssid_wmm()"
+								ng-model="ssidref['wmm-enable']"
+							/>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_WPS')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="ssidref.wps['enable']"
+							/>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+							<button
+								ng-click="openWPS()"
+							>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Configure')"></span></button>
+						</td>
+					</tr>
+					<!---------------------------------------->
+					<tr>
+						<td colspan="2">
+							<hr/>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_VLAN')">
+							
+						</td>
+						<td>
+							<select
+								ng-model="ssidref['vlan_id']"
+								ng-options="item for item in schema.vlanids"
+								style="margin-left:0px;"
+							>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Time_Of_Day_Access')+':'">
+
+						</td>
+						<td>
+							
+							<select
+								ng-model="scheduleChoice"
+								ng-model-options=" {getterSetter: true }"
+								ng-options="item.name as item.name for item in model.schedules.schedule"
+								style="margin-left:0px;"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_MAC_Filtering')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="ssidref['mac-filter']['enable']"
+							/>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+							<button
+								ng-click="changeCurrPageTo('maclist')"
+							>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Configure')"></span></button>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Captive_Portal')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox"
+								ng-model="ssidref['captive-portal-enable']"
+                                ng-change="captive_portal_chk(ssidref)"
+                            ></input>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+							<select ng-model="ssidref['captive-portal']"
+								ng-options="item.name as item.name for item in model['portal-profiles']['portal-profile']"
+								ng-disabled="!ssidref['captive-portal-enable']"
+								ng-class="{_greyout: !ssidref['captive-portal-enable']}"
+								required style="margin-left:0px;"
+								ng-change="chkJump(ssidref,'{{ssidref['captive-portal']}}')";
+							>
+							</select>
+						</td>
+					</tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <div class="grid-cntr" ng-class="{'nopHint': !ssidref['captive-portal-enable']}">
+                                <div class="grid-content-cntr">
+                                    <div class="grid-btn-cntr">
+                                        <button type="button" class="grid-btn-add"
+                                            ng-disabled="disableNacmGroupAddBtn || !ssidref['captive-portal-enable']"
+                                            ng-click="addNacmGroup()">
+                                        </button>
+                                        <button type="button" class="grid-btn-edit"
+                                            ng-disabled="nacmGroupSelectedCnt === 0 || !ssidref['captive-portal-enable']"
+                                            ng-click="editNacmGroup()">
+                                        </button>
+                                        <button type="button" class="grid-btn-delete"
+                                            ng-disabled="nacmGroupSelectedCnt === 0 || !ssidref['captive-portal-enable']"
+                                            ng-click="deleteNacmGroup()">
+                                        </button>
+                                    </div>
+                                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridNacmGroupOptions"></div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="wlan_ssid_maclist.htm">
+    <div class="page-title-container">
+	    <div class="page-title" ng-bind="DICT('Wlan_Basic_Settings_MAC_List')"></div>
+        <span ng-include="'wireless_save.htm'"></span>
+    </div>
+	<div class="page-content-container">
+		<div ng-class="{nopHint: !ssidref['mac-filter']['enable']}">
+			<div
+				ng-mark-init="ctx.editing_mac_radio = ssid_radio_owner()"
+				data-ssidref="{{ssidref = gridWLANSSID.Selections[0]}}"
+			>
+				<table class="page-block-tb-list">
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_SSID_Str', {'%s': ssidref['ssid']})">
+						</td>
+						<td ng-if="false">
+							<span ng-bind="DICT('Wlan_Basic_Settings_Radio')+':'"></span>
+							
+							<select id="editing_mac_radio" name="editing_mac_radio"
+								ng-model="ctx.editing_mac_radio"
+								style="margin-left:0px;"
+							>
+								<option value="2g" ng-if="owner == '2g' || owner == 'both'" >
+									<span ng-bind="DICT('Wlan_Basic_Settings_24G')"></span></option>
+								<option value="5g" ng-if="owner == '5g' || owner == 'both'" >
+									<span ng-bind="DICT('Wlan_Basic_Settings_5G')"></span></option>
+								<option value="both" ng-if="owner == 'both' ">
+									<span ng-bind="DICT('Wlan_Basic_Settings_Both')"></span></option>
+							</select>
+						</td>
+						<!--
+						<td width="33%">
+							1:{{vapmap = ssidref._vapmap | json}} <br />
+							2:{{ vapref  }} <br />
+						</td>
+						-->
+					</tr>
+					<tr
+						data-maclist="{{macList = collect_mac_list(0, 3) }}"
+					>
+						<td style="vertical-align:top;" ng-bind="DICT('Wlan_Basic_Settings_Connection_Control')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" id="rdo_conn_policy_prevent" name="conn_policy"
+								ng-model="macList[0].action"
+								value="block"
+							>
+							</input>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Prevent')"></span>
+							<span ng-bind="DICT('Wlan_Basic_Settings_PC_Listed_From_Accessing')"></span>
+							<br/>
+							<input type="radio" id="rdo_conn_policy_permit" name="conn_policy"
+								ng-model="macList[0].action"
+								value="allow"
+							>
+							</input>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Permit')"></span>
+							<span ng-bind="DICT('Wlan_Basic_Settings_PC_Listed_To_Access')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							
+						</td>
+						<td>
+							
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<button id="btn_show_client_list"
+								ng-click="showClientList()"
+							>
+								<span ng-bind="DICT('Wlan_Basic_Settings_Show_Client_List')"></span></button>
+						</td>
+						<td>
+							
+						</td>
+					</tr>
+				</table>
+<style>
+.gridContainer td {
+	/* width:100px; */
+	/* border:1px solid; */
+	padding: 5px;
+	height: 22px;
+}
+
+.posRelative {
+	position: relative;
+}
+
+.indent {
+	padding-left: 20px;
+}
+</style>
+				
+				<br>
+				<div class="grid-cntr">
+                    <div class="grid-tb-title-cntr">
+					    <div class="grid-title" ng-bind="DICT('Wlan_Basic_Settings_MAC_Address_Table')"></div>
+                    </div>
+					<div class="grid-tb-list-cntr">
+                        <table style="width:100%" class="grid-tb-list">
+							<tr class="grid-header-cntr">
+								<td style="display:none" ng-repeat-start="colidx in [0,1,2] "
+									data-x-tmp="{{ macList = collect_mac_list(colidx, 3) }}"
+								>
+								</td>
+								<td width="30px" ng-bind="DICT('Wlan_Basic_Settings_No')">
+									
+								</td>
+								<td width="150px" ng-bind="DICT('Wlan_Basic_Settings_MAC_Addr')">
+									
+								</td>
+								<td ng-repeat-end></td>
+							</tr>
+							<tr ng-repeat="maccol in collect_mac_list(0, 3)"
+								data-x-tmp2="{{ (rowidx=$index) }}"
+								data-x-tmp3="{{ colLen = getColLen(3) }}"
+							>
+								<td style="display:none"
+									ng-repeat-start="colidx in [0,1,2] "
+									data-x-tmp="{{ maclist = collect_mac_list(colidx, 3) }}"
+								>
+								</td>
+								<td class="ngRow posRelative" ng-class="{true:'even', false:'odd'}[rowidx%2==0]" width="30px">
+									{{ (colidx*colLen) + rowidx + 1 }}
+								</td>
+								<td class="ngRow posRelative" ng-class="{true:'even', false:'odd'}[rowidx%2==0]" width="150px">
+									<input type="text" mac-address maxlength="17" placeholder="{{(rowidx === 0 && colidx === 0) ? 'xx:xx:xx:xx:xx:xx' : ''}}"
+										ng-model="maclist[rowidx]['mac-address']"
+									></input>
+								</td>
+								<td class="ngRow posRelative" 
+									ng-repeat-end
+									ng-class="{true:'even', false:'odd'}[rowidx%2==0]"
+								></td>
+				
+			</div>
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="wlan_2G.htm">
+	<div>
+		<div>
+			<div>
+				<table class="page-block-tb-list" data-x-tmp="{{radioref = collect_wlan_radio('WLAN1')[0] }}" >
+					<tr ng-if="false">
+						<td colspan="2">
+							{{radioref | json}}
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Radio')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w2g_enable" ng-model="radioref.radio.enable" ng-change="vld.check_radio_mode()"/>
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Network_Mode')+':'">
+							
+						</td>
+						<td>
+							<select id="slct_w2g_mode" ng-model="radioref.radio['operating-standards'][0]"
+								ng-options="item.name as item.displayName for item in schema.wlan2g_mode"
+								ng-change="set_2g_bandwidth(radioref)" style="margin-left:0px;"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Channel_Bandwidth')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" id="rdo_w2g_band20" name="w2g_band"
+								ng-model="radioref.radio['operating-channel-bandwidth']"
+								value="20MHz"
+							>
+								<span ng-bind="DICT('Wlan_Basic_Settings_20MHz')"></span></input>
+							<span class="indent"></span>
+							<input type="radio" id="rdo_w2g_band2040" name="w2g_band"
+								ng-model="radioref.radio['operating-channel-bandwidth']"
+								value="20/40MHz"
+								ng-disabled="radioref.radio['operating-standards'][0] === 'b' ||
+											 radioref.radio['operating-standards'][0] === 'g' ||
+											 radioref.radio['operating-standards'][0] === 'b g'"
+							>
+								<span ng-bind="DICT('Wlan_Basic_Settings_20_40MHz')"></span></input
+							>
+						</td>
+					</tr>
+					<tr ng-if="false">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Auto_Channel')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w2g_auto_ch" ng-model="radioref.radio['autoChannel-enable']" />
+						</td>
+					</tr>
+					<tr 
+						ng-show="radioref.radio['operating-channel-bandwidth'].match('40') != null "
+						ng-if="ctx.wlanOpt.showExtCh"
+					>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Extension_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<select id="slct_w2g_extch" ng-model="radioref.radio['extension-channel']"
+								ng-options="item.id as item.displayName for item in getExtChannelList('w2g')"
+								ng-change="radioref.radio['autoChannel-enable'] = false" style="margin-left:0px;"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr 
+						ng-mark-show="isChannelBandWidthEquals('40' ,radioref) "
+						ng-if="ctx.wlanOpt.showPriCh"
+					>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Primary_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<!--
+							<select id="slct_w2g_extch" ng-model="radioref.radio['extension-channel']"
+								ng-options="item.id as item.displayName for item in getPriChannelList('w2g')"
+								ng-change="radioref.radio['autoChannel-enable'] = false"
+							>
+							</select>
+							-->
+							<span ng-repeat="item in schema.priChannel">
+								<input type="radio" id="w2g_priChannel_{{$index}}" name="w2g_priChannel"
+									ng-model="radioref.radio['extension-channel']"
+									ng-value="item.id"
+									ng-disabled="w2gChannelGetterSetter() == 'auto' || !isChannelBandWidthEquals('40' ,radioref)"
+								/>{{item.displayName}}
+								<span class="indent"></span>
+							</span>
+							<!-- {{ w2gChannelGetterSetter() }} -->
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<!--
+							<select id="slct_w2g_ch" ng-model="radioref.radio['channel']"
+								data-x-tmp="{{ currChList = getCurrChannelList(radioref, 'w2g') }}"
+								ng-options="item.ch as item.displayName for item in currChList"
+								ng22-change="updateChannel(radioref, currChList, '{{ radioref.radio['channel'] }}' )"
+							>
+							</select>
+							-->
+							<select id="slct_w2g_ch" ng-model="w2gChannelGetterSetter"
+								ng-model-options=" {getterSetter: true }" style="margin-left:0px;"
+								data-x-tmp="{{ currChList = getCurrChannelList(radioref, 'w2g') }}"
+								ng-options="item.ch as item.displayName for item in currChList"
+								ng-change="updateChannel(radioref, currChList, '{{ radioref.radio['channel'] }}' )"
+							>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_U_APSD')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w2g_uapsd_enable" ng-model="radioref.radio['uapsd-enable']" />
+							
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_MAX_Associated_Clients')+':'">
+							
+						</td>
+						<td>
+							<input type="number" style="width: 5em" number required min="0" max="50" ng-model="radioref.radio['max-associated-clients']"/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_MAX_Associated_Clients_Range')"></span>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="wlan_5G.htm">
+	<div>
+		<div>
+			<div>
+				<table class="page-block-tb-list" data-x-tmp="{{radioref = collect_wlan_radio('WLAN2')[0] }}" >
+					<tr ng-if="false">
+						<td colspan="2">
+							{{radioref | json}}
+						</td>
+					</tr>
+					<tr>
+						<td style ng-bind="DICT('Wlan_Basic_Settings_Radio')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_enable" ng-model="radioref.radio.enable" ng-change="vld.check_radio_mode()"/>
+							
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Network_Mode')+':'">
+							
+						</td>
+						<td>
+							<select id="slct_w5g_mode" ng-model="radioref.radio['operating-standards'][0]"
+								ng-options="item.name as item.displayName for item in schema.wlan5g_mode"
+								ng-change="set_5g_bandwidth(radioref)" style="margin-left:0px;"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr>
+						<td valign="top" ng-bind="DICT('Wlan_Basic_Settings_Channel_Bandwidth')+':'">
+							
+						</td>
+						<td>
+							<input type="radio" id="rdo_w5g_band20" name="w5g_band" ng-model="radioref.radio['operating-channel-bandwidth']" ng-value="'20MHz'">
+								<span ng-bind="DICT('Wlan_Basic_Settings_20MHz')"></span></input>
+							<br />
+							<input type="radio" id="rdo_w5g_band40" name="w5g_band" ng-model="radioref.radio['operating-channel-bandwidth']"
+								ng-disabled="radioref.radio['operating-standards'][0] === 'a'" ng-value="'40MHz'">
+								<span ng-bind="DICT('Wlan_Basic_Settings_40MHz')"></span></input>
+							<br />
+							<input type="radio" id="rdo_w5g_band80" name="w5g_band" ng-model="radioref.radio['operating-channel-bandwidth']"
+								ng-disabled="radioref.radio['operating-standards'][0] === 'a'" ng-value="'80MHz'">
+									<span ng-bind="DICT('Wlan_Basic_Settings_80MHz')"></span></input>
+							<br />
+							<!--<input type="radio" id="rdo_w5g_band8080" name="w5g_band" ng-model="radioref.radio['operating-channel-bandwidth']" ng-value="'80+80MHz'">80+80MHz</input>
+							<br />
+							<input type="radio" id="rdo_w5g_band160" name="w5g_band" ng-model="radioref.radio['operating-channel-bandwidth']" ng-value="'160MHz'">160MHz</input>-->
+						</td>
+					</tr>
+					<tr ng-if="false">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Auto_Channel')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_auto_ch" ng-model="radioref.radio['autoChannel-enable']" />
+						</td>
+					</tr>
+					<tr
+						ng-show="radioref.radio['operating-channel-bandwidth'].match('40') != null "
+						ng-if="ctx.wlanOpt.showExtCh"
+					>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Extension_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<select id="slct_w5g_extch" ng-model="radioref.radio['extension-channel']"
+								ng-options="item.id as item.displayName for item in getExtChannelList('w5g')"
+								ng-22-change="radioref.radio['autoChannel-enable'] = false"
+								ng-disabled="true" style="margin-left:0px;"
+								class="_greyout"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr 
+						ng-mark-show="isChannelBandWidthEquals('40' ,radioref) "
+						ng-if="ctx.wlanOpt.showPriCh"
+					>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Primary_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<!--
+							<select id="slct_w5g_extch" ng-model="radioref.radio['extension-channel']"
+								ng-options="item.id as item.displayName for item in getPriChannelList('w5g')"
+								ng-change="radioref.radio['autoChannel-enable'] = false"
+							>
+							</select>
+							-->
+							<span ng-repeat="item in schema.priChannel">
+								<input type="radio" id="w5g_priChannel_{{$index}}" name="w5g_priChannel"
+									ng-model="radioref.radio['extension-channel']"
+									ng-value="item.id"
+									ng-disabled="w5gChannelGetterSetter() == 'auto' || !isChannelBandWidthEquals('40' ,radioref)"
+								/>{{item.displayName}}<span class="indent"></span>
+							</span>
+							<!-- {{ w5gChannelGetterSetter() }} -->
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Channel')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<!--
+							<select id="slct_w5g_ch" ng-model="radioref.radio['channel']"
+								ng-options="item.ch as item.displayName for item in getCurrChannelList(radioref, 'w5g')"
+								ng-change="radioref.radio['autoChannel-enable'] = false"
+							>
+							</select>
+							-->
+							<select id="slct_w5g_ch" ng-model="w5gChannelGetterSetter"
+								ng-model-options=" {getterSetter: true }" style="margin-left:0px;"
+								data-x-tmp="{{ currChList = getCurrChannelList(radioref, 'w5g') }}"
+								ng-options="item.ch as item.displayName for item in currChList"
+								ng-change="updateChannel(radioref, currChList, '{{ radioref.radio['channel'] }}' )"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr ng-show="radioref.radio['operating-channel-bandwidth'] == '80+80MHz' ">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Wireless_Channel2')+':'">
+							
+						</td>
+						<td ng-if="loadReady">
+							<select id="slct_w5g_ch2" ng-model="radioref.radio['channel2']" style="margin-left:0px;"
+								ng-options="item.ch as item.displayName for item in getCurrChannelList(radioref, 'w5g')"
+								ng-change="radioref.radio['autoChannel-enable'] = false"
+							>
+							</select>
+							
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_U_APSD')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_uapsd_enable" ng-model="radioref.radio['uapsd-enable']" />
+							
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_Multi_User_MIMO')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_mimo" ng-model="radioref.radio['mimo']" ng-click="updateBeamforming(radioref)" />
+							
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr ng-if="false" ng-class="{nopHint: radioref.radio['mimo']}">
+						<td ng-bind="DICT('Wlan_Basic_Settings_Beamforming')+':'">
+							
+						</td>
+						<td>
+							<input type="checkbox" id="chk_w5g_beamforming" ng-model="radioref.radio['beamforming-enable']" />
+							
+							<span ng-bind="DICT('Wlan_Basic_Settings_Enable')"></span>
+						</td>
+					</tr>
+					<tr>
+						<td ng-bind="DICT('Wlan_Basic_Settings_MAX_Associated_Clients')+':'">
+							
+						</td>
+						<td>
+							<input type="number" style="width: 5em" number required min="0" max="{{radioref.radio['mimo'] ? 128 : 124}}" ng-model="radioref.radio['max-associated-clients']"/>
+							<span class="tip-info" ng-bind="DICT('Wlan_Basic_Settings_MIMO_Range', {'%d': (radioref.radio['mimo'] ? 128 : 124)})"></span>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			
+		</div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="wireless_save.htm">
+    <div class="page-button-container" ng-if="loadReady" ng-class="{nopHint: !model.wifi_button_state}">
+        <button id="btn_save" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="chkSave()" class="btn-apply"
+            ng-if="loadReady && (!(getCurrPage() == 'wps' || getCurrPage() == 'maclist'))">
+            <span ng-bind="DICT('Wlan_Basic_Settings_Apply')"></span>
+        </button>
+        
+        <button id="btn_back" ng-disabled="form.$invalid" ng-click="back()" class="btn-apply"
+            ng-if="loadReady && (getCurrPage() == 'wps' || getCurrPage() == 'maclist')">
+            <span ng-bind="DICT('Wlan_Basic_Settings_Apply')"></span>
+        </button>
+        
+        <button id="btn_cancel" ng-click="cancel()" class="btn-cancel"
+            ng-if="loadReady && (!(getCurrPage() == 'wps' || getCurrPage() == 'maclist'))">
+            <span ng-bind="DICT('Wlan_Basic_Settings_Cancel')"></span>
+        </button>
+        <button id="btn_macfilter_cancel" ng-click="macfilter_cancel()" class="btn-cancel"
+            ng-if="loadReady && (getCurrPage() == 'wps' || getCurrPage() == 'maclist')">
+            <span ng-bind="DICT('Wlan_Basic_Settings_Cancel')"></span>
+        </button>
+        <button id="btn_back" ng-click="goback()" class="btn-back" ng-show="backbtn">
+            <span ng-bind="DICT('Back')"></span>
+        </button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_CellText_WL_radio_state.html">
+<div class="ui-grid-custom-cntr">
+	{{ grid.appScope.showRadioState(row.entity) }}
+	</div>
+</script>
+
+<script type="text/ng-template" id="UG_WL_CaptivePortal.html">
+<div class="ui-grid-custom-cntr" data-ref="{{ ssidref = row.entity }}">
+	<input type="checkbox"
+		style="margin-right:0px"
+		ng-model="ssidref['captive-portal-enable']"
+	>
+	<select ng-model="ssidref['captive-portal']"
+		ng-options="item.name as item.name for item in grid.appScope.model['portal-profiles']['portal-profile']"
+		style="max-width: 175px"
+		ng-disabled="!ssidref['captive-portal-enable']"
+		ng-class="{_greyout: !ssidref['captive-portal-enable']}"
+		ng-change="grid.appScope.chkJump(ssidref,'{{ssidref['captive-portal']}}')";
+		required
+	>
+	</select>
+</div>
+</script>
+<script type="text/ng-template" id="show_client_list.html">
+    <div class="modal-container" style="min-width:1000px">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Wlan_Basic_Settings_Wireless_Client_List')"></div>
+        </div>
+		<div class="modal-content-container" ng-if="loadReady">
+        <div class="grid-cntr">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('Wlan_Basic_Settings_Connected_Clients')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridClientList"></div>
+            </div>
+        </div>
+		</div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()">
+				<span ng-bind="DICT('Wlan_Basic_Settings_Close')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title">
+				<span ng-bind="DICT('Wlan_Basic_Settings_WiFi_Protected_Setup')"></span>
+				<span>&trade;</span>
+            </div>
+        </div>
+        <div class="modal-content-container">
+		    <div ng-include="'tmpl_wlan_wps.htm'" ng-controller="wlan_wps_main"></div>
+        </div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()">
+				<span ng-bind="DICT('Wlan_Basic_Settings_Close')"></span></button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+

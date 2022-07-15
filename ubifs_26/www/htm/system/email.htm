@@ -1,0 +1,112 @@
+<form ng-controller="emailCtrl" name="emailform" ng-modification="loadReady" id="sys-email">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Email')"></div>
+        <div class="page-button-container">
+            <button type="button" class="btn-apply" ng-click="funs.save()" ng-disabled="emailform.$invalid || userAccessFlag === 'RO'">
+                <span ng-bind="DICT('Email_Apply')"></span>
+            </button>
+            <button type="button" class="btn-cancel" ng-click="funs.cancel()">
+                <span ng-bind="DICT('Email_Cancel')"></span>
+            </button>
+            <button type="button" class="btn-back" ng-show="model.back_btn" ng-click="funs.go_back()">
+                <span ng-bind="DICT('Back')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container">
+        <div class="page-block-title-cntr">
+            <div class="page-block-title" ng-bind="DICT('Email_Server')"></div>
+        </div>
+        <table class="page-block-tb-list fill-up">
+            <tr>
+                <td ng-bind="DICT('Email_SMTP_Server')"></div>
+                <td>
+                    <input type='text' id="txt_smtpserver" name="smtpserver" fqdn-ip ng-model='model.smtp_server'></input>
+                </td>
+                <td>
+                    <span class="tip-info" ng-bind="DICT('Email_Hint')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_SMTP_Port')"></td>
+                <td>
+                    <input type="number" number id="slct_smtpport" name="smtpport" min="1" max="65535" ng-model='model.smtp_port' ng-required="model.smtp_server"></input>
+                </td>
+                <td>
+                    <span class="tip-info" ng-bind="DICT('Email_Port_Range')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_Email_Encryption')"></span>
+                <td>
+                    <select id="slct_emailencry" name="emailencry" ng-model="model.encryption" ng-options="m.id as m.displayName for m in model.schema.encryption"></select>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_Authentication')"></span>
+                <td>
+                    <select id="slct_auth" name="auth" ng-model="model.authentication" ng-options="m.id as m.displayName for m in model.schema.authentication"></select>
+                </td>
+            </tr>
+            <tr ng-if="model.authentication !== 'NONE'">
+                <td ng-bind="DICT('Email_Username')"></td>
+                <td>
+                    <input type='text' id="txt_username" name="username" legal-char maxlength="512" ng-model="model.user_name" ng-required="model.smtp_server"></input>
+                </td>
+            </tr>
+            <tr ng-if="model.authentication !== 'NONE'">
+                <td ng-bind="DICT('Email_Pwd')"></td>
+                <td>
+                    <input  type='password'
+                            id="txt_pwd"
+                            name="pwd"
+                            select-when-focus
+                            legal-char
+                            ng-model="model.password"
+                            ng-change="change_pwd()"
+                            ng-required="model.smtp_server"
+                            maxlength="64"
+                        ></input>
+                </td>
+                <td>
+                    <span ng-show="emailform.pwd.$invalid && emailform.pwd.$dirty" class="validation-error-text-right" ng-bind="DICT('Email_Pls_Input_Pwd')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_Send_Email1')"></td>
+                <td>
+                    <input type='text' id="txt_sendmail1" name="sendmail1" email ng-model="model.to_email_addresses[0]" ng-required="model.smtp_server"></input>
+                </td>
+                <td>
+                    <span class="tip-info" ng-bind="DICT('Email_Email_Addr')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_Send_Email2')"></td>
+                <td>
+                    <input type='text' id="txt_sendmail2" name="sendmail2" email ng-model="model.to_email_addresses[1]"></input>
+                </td>
+                <td>
+                    <span class="tip-info" ng-bind="DICT('Email_Email_Addr_Optional')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('Email_From_Email_Addr')"></td>
+                <td>
+                    <input type='text' id="txt_frommail" name="fromamil" email ng-model="model.from_email_address" ng-required="model.smtp_server"></input>
+                </td>
+            </tr>
+        </table>
+        <button type="button" id="btn_testconn" class="test-email-btn"
+            ng-click="funs.test()"
+            ng-disabled="emailform.$invalid || !model.smtp_server">
+			<span ng-bind="DICT('Email_Test_Connect')"></span>
+        </button>
+        <button type="button" id="btn_resetconn" class="test-email-btn"
+            ng-click="funs.reset()"
+            ng-disabled="!model.orig_smtp_server">
+			<span ng-bind="DICT('Email_Clear')"></span>
+        </button>
+    </div>
+</form>

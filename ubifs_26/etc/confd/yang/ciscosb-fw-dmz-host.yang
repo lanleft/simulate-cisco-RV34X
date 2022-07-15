@@ -1,0 +1,36 @@
+module ciscosb-fw-dmz-host {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-dmz-host";
+  prefix "fw-dmz-host";
+  import ietf-inet-types {
+    prefix "inet";
+  }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines a component that describes the configuration of firewall DMZ Host related module.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall DMZ Host module";
+    reference "RFC 6020";
+  }
+  container dmz-host-entry {
+    leaf enable {
+     type boolean;
+     description "Enable/Disable DMZ Host";
+    }
+    leaf dmz-host-ip-address {
+      type inet:ipv4-address;
+      description "DMZ Host ipv4 address";
+    }
+  }
+}

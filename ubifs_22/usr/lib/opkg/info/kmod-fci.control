@@ -1,0 +1,9 @@
+Package: kmod-fci
+Version: 4.1.8+2.00-3
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), fci
+Source: package/freescale/fci
+Section: kernel
+Maintainer: Freescale Semiconductors
+Architecture: comcerto2000
+Installed-Size: 3207
+Description:  Fast Control Interface kernel

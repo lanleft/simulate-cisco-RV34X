@@ -1,0 +1,273 @@
+<form name="form" ng-controller="qos_queuing_main" ng-modification="dataReady">
+    <div class="page-title-container" ng-if="dataReady">
+        <div class="page-title" ng-bind="DICT('WAN_Queuing')"></div>
+        <div class="page-button-container ng-hide" ng-show="true">
+            <button ng-click="save()" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO' ">
+                <span ng-bind="DICT('WAN_Bandwidth_Management_Apply')"></span>
+            </button>
+            <button ng-click="cancel()" class="btn-cancel">
+                <span ng-bind="DICT('WAN_Bandwidth_Management_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+    <confirmsave ng-show="success"></confirmsave>
+    <div class="page-content-container ng-hide" ng-show="dataReady">
+        <span ng-bind="DICT('WAN_Queuing_Queuing_Engine')"></span>
+        <span class="indent-mini"></span>
+        <span ng-repeat="rule_name in schema.qos_queuing_type_choice"
+              class="rdo-entity"
+              ng-class="{nopHint: gridQOS_LAN2WAN.edit}"
+        >
+            <input type="radio" ng-model="model['ciscosb-qos']['queue-model']" value="{{rule_name}}" 
+                ng-change="update_rule_choice_type( model['ciscosb-qos']['queue-model'] )">
+                <span ng-bind="schema.dispStr(rule_name)"></span>
+            </input>
+        </span>
+        
+        <div class="grid-cntr" ng-class="{nopHint: gridQOS_LAN2WAN.edit}">
+            <div class="grid-title-cntr">
+                <div class="grid-title" ng-bind="DICT('WAN_Queuing_Table')"></div>
+            </div>
+            <div class="grid-content-cntr">
+                <div class="grid-btn-cntr">
+                    <button ng-disabled="gridQOS_LAN2WAN.edit || userAccessFlag === 'RO'"
+                        class="grid-btn-add"
+                        ng-click="gridQOS_LAN2WAN.add()">
+                    </button>
+                    <button ng-disabled="isDefaultRule || (gridQOS_LAN2WAN.Selections.length !== 1 && !gridQOS_LAN2WAN.edit) || userAccessFlag === 'RO'"
+                        class="grid-btn-edit"
+                        ng-click="gridQOS_LAN2WAN.editFun()">
+                    </button>
+                    <button ng-disabled="(gridQOS_LAN2WAN.Selections.length === 0 || selectionRefExists() || isDefaultRule ) || gridQOS_LAN2WAN.edit || userAccessFlag === 'RO'"
+                        class="grid-btn-delete"
+                        ng-click="gridQOS_LAN2WAN.remove()">
+                    </button>
+                </div>
+                <div class="grid-content" ui-grid-resize-columns ui-grid-auto-resize ui-grid="gridQOS_LAN2WAN.Options"></div>
+            </div>
+        </div>
+        <div class="page-note-cntr">
+            <span pg-bind-html="combineNote"></span>
+        </div>
+
+        <style>
+            .indent {
+                padding-left: 20px;
+            }
+            ._greyout {
+                color: #888;
+            }
+        </style>
+
+        <div ng-if="gridQOS_LAN2WAN.Selections.length > 0" data-ctx='{{(selref = gridQOS_LAN2WAN.Selections[0]) }}'>
+            <hr class="page-content-seperator"></hr>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('WAN_Queuing_Policy_Name')"></td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ selref.name }}</span>
+                        <input type="text" ng-if="gridQOS_LAN2WAN.edit" ng-model="selref.name" uci-name maxlength="64" ng-disabled="selectionRefExists()"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('WAN_Queuing_Description')"></td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ selref.description }}</span>
+                        <input type="text" ng-if="gridQOS_LAN2WAN.edit" ng-model="selref.description" maxlength="64" str-name ng-disabled="selectionRefExists()"></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('WAN_Queuing_Applied_To')"></td>
+                    <td>
+                        <span>{{ findOutboundWAN(selref.name ).join(", ") }}</span>
+                    </td>
+                </tr>
+            </table>
+            <div ng-include="queuing_type_page_name(selref.type)" ></div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="Queuing-priority.htm" >
+    <div class="grid-cntr">
+        <div class="grid-tb-title-cntr">
+            <div class="grid-title" ng-bind="DICT('WAN_Queuing_Queuing_Priority_Table')"></div>
+        </div>
+        <div class="grid-tb-list-cntr">
+            <table class="grid-tb-list">
+                <tr class="grid-header-cntr">
+                    <td style="min-width: 120px" ng-bind="DICT('WAN_Queuing_Queue')"></td>
+                    <td style="min-width: 320px" ng-bind="DICT('WAN_Queuing_Traffic_Class')"></td>
+                </tr>
+                <tr ng-repeat="node_name in ['highest', 'high', 'medium', 'low']"
+                    data-tmp="{{noderef = gridQOS_LAN2WAN.Selections[0].queues.priority}}"
+                >
+                    <td>
+                        {{schema.dispStr(node_name)}}
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ (noderef[node_name] == undefined || noderef[node_name] == '' ) ? schema.unmatchStr : noderef[node_name] }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <select ng-model="noderef[node_name]"
+                                ng-options="item.name as (item.name) disable when (item.name == 'Default' && !$last) for item in collect_classifiers()"
+                                ng-change="renew_objects_class(noderef, node_name)"
+                                ng-class="{_greyout : $last }"
+                                ng-disabled="$last"
+                            >
+                                <option value="" ng-bind="DICT('WAN_Queuing_Unspecified')"></option>
+                            </select>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="Queuing-rate-control.htm" >
+<ng-form name="rate_form">
+    <div class="grid-cntr">
+        <div class="grid-tb-title-cntr">
+            <div class="grid-title" ng-bind="DICT('WAN_Queuing_Queuing_Rate_Control_Table')"></div>
+        </div>
+        <div class="grid-tb-list-cntr">
+            <table class="grid-tb-list">
+                <tr class="grid-header-cntr">
+                    <td style="min-width: 70px" ng-bind="DICT('WAN_Queuing_Queue')"></td>
+                    <td style="min-width: 320px" ng-bind="DICT('WAN_Queuing_Traffic_Class')"></td>
+                    <td style="min-width: 120px" ng-bind="DICT('WAN_Queuing_Minimum_Rate')"></td>
+                    <td style="min-width: 120px" ng-bind="DICT('WAN_Queuing_Maximum_Rate')"></td>
+                </tr>
+                <tr ng-repeat="node_idx in gen_rate_id_seq( gridQOS_LAN2WAN.Selections[0].queues['rate-control'].queue )"
+                    data-tmp="{{noderef = gridQOS_LAN2WAN.Selections[0].queues['rate-control'].queue}}"
+                >
+                    <td>
+                        {{$index+1}}
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ (noderef[node_idx].match==undefined || noderef[node_idx].match=='') ? schema.unmatchStr : noderef[node_idx].match }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <select ng-model="noderef[node_idx].match"
+                                ng-options="item.name as (item.name) disable when (item.name == 'Default' && !$last) for item in collect_classifiers()"
+                                ng-change="update_rate_control_item($index, noderef, node_idx)"
+                                ng-class="{_greyout : $last }"
+                                ng-disabled="$last"
+                                style="margin-left: 0px;"
+                            >
+                            <option value="" ng-bind="DICT('WAN_Queuing_Unspecified')"></option>
+                            </select>
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ noderef[node_idx]['min-rate'] }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <input type="number" number ng-model="noderef[node_idx]['min-rate']" min="1" max="99" style="width:60px;" 
+                                   name="RC_txt_minrate_{{$index}}"
+                                   ng-change="update_rate_control_item($index, noderef, node_idx)"
+                                   required
+                                   ng-disabled="$last"
+                            /> &nbsp;%
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ noderef[node_idx]['max-rate']? noderef[node_idx]['max-rate']+'%' : '' }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <input type="number" number ng-model="noderef[node_idx]['max-rate']" min="1" max="100" style="width:60px;" 
+                                   name="RC_txt_maxrate_{{$index}}"
+                                   ng-change="update_rate_control_id($index, noderef[node_idx])"
+                                   required
+                                   ng-disabled="$last"
+                            /> &nbsp;%
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</ng-form>
+</script>
+
+
+<script type="text/ng-template" id="Queuing-low-latency.htm" >
+    <div class="grid-cntr">
+        <div class="grid-tb-title-cntr">
+            <div class="grid-title" ng-bind="DICT('WAN_Queuing_Queuing_Low_Latency_Table')"></div>
+        </div>
+        <div class="grid-tb-list-cntr">
+            <table class="grid-tb-list">
+                <tr class="grid-header-cntr">
+                    <td style="min-width: 70px"ng-bind="DICT('WAN_Queuing_Queue')"></td>
+                    <td style="min-width: 320px"ng-bind="DICT('WAN_Queuing_Traffic_Class')"></td>
+                    <td style="min-width: 200px"ng-bind="DICT('WAN_Queuing_Bandwidth_Share')"></td>
+                </tr>
+                <tr ng-repeat="node_idx in ['priority']"
+                    data-tmp="{{llref = gridQOS_LAN2WAN.Selections[0].queues['low-latency']}}"
+                    data-tmp2="{{noderef = llref[node_idx]}}">
+                    <td>
+                        {{schema.dispStr(node_idx)}}
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ (noderef.match==undefined || noderef.match== '' ) ? schema.unmatchStr : noderef.match }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <select ng-model="noderef.match"
+                                ng-options="item.name as (item.name) disable when (item.name == 'Default') for item in collect_classifiers()"
+                                ng-change="renew_ll_class(llref, node_idx)"
+                            >
+                            <option value="" ng-bind="DICT('WAN_Queuing_Unspecified')"></option>
+                            </select>
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ noderef['max-rate'] }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <input type="number" number style="width:60px;" min="0" max="100" required
+                                ng-model="noderef['max-rate']"
+                            ></input>
+                        </span>
+                        %(<span ng-bind="DICT('WAN_Queuing_Max_Rate')"></span>) *
+                    </td>
+                </tr>
+                <tr ng-repeat="node_idx in ['queue1','queue2','queue3']"
+                    data-tmp="{{llref = gridQOS_LAN2WAN.Selections[0].queues['low-latency']}}"
+                    data-tmp2="{{noderef = llref[node_idx]}}">
+                    <td>
+                        {{schema.dispStr(node_idx)}}
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ (noderef.match == undefined || noderef.match == '') ? schema.unmatchStr : noderef.match }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <select ng-model="noderef.match"
+                                ng-options="item.name as (item.name) disable when (item.name == 'Default' && !$last) for item in collect_classifiers()"
+                                ng-change="renew_ll_class(llref, node_idx)"
+                                ng-class="{_greyout : $last }"
+                                ng-disabled="$last"
+                            >
+                            <option value="" ng-bind="DICT('WAN_Queuing_Unspecified')"></option>
+                            </select>
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_LAN2WAN.edit">{{ noderef['min-rate'] }}</span>
+                        <span ng-if="gridQOS_LAN2WAN.edit">
+                            <input type="number" number style="width:60px;" min="1" max="99"
+                                name="LL_txt_minrate_{{$index}}"
+                                ng-model="noderef['min-rate']"
+                                ng-change="update_ll_min_rate_accu(llref)"
+                                ng-disabled="$last"
+                            ></input>
+                        </span>%
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <span style="color: red;" ng-bind="DICT('WAN_Queuing_Msg')">
+    </span>
+</script>
+
+<script type="text/ng-template" id="UG_applied_to.htm" >
+    <div class="ui-grid-custom-cntr">
+        {{ (grid.appScope.findOutboundWAN(MODEL_COL_FIELD, row).join(", ") ) }}
+    </div>
+</script>
+

@@ -1,0 +1,9 @@
+Package: confd
+Version: 6.5.2
+Depends: libc, librt, libpthread, libopenssl, libpam, libncurses
+Source: package/cisco/confd
+Section: confd
+Maintainer: Ackman Liang <Ackman_Liang@pegatroncorp.com>
+Architecture: comcerto2000
+Installed-Size: 11445727
+Description:  ConfD

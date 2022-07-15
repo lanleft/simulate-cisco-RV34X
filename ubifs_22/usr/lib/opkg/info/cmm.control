@@ -1,0 +1,8 @@
+Package: cmm
+Version: 2.01-8
+Depends: libc, librt, libpthread, kmod-fci, libnetfilter-conntrack, ip-full, libcli, kmod-nfnetlink, kmod-nf-conntrack-netlink, libpcap
+Source: package/freescale/cmm
+Section: opt
+Architecture: comcerto2000
+Installed-Size: 233063
+Description:  This package is the Conntrack Monitor Application, that manages the Forward Engine tables throught the FCI module.

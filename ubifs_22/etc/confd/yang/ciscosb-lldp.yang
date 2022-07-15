@@ -1,0 +1,188 @@
+module ciscosb-lldp {
+    namespace "http://cisco.com/ns/ciscosb/lldp";
+    prefix ciscosb-lldp;
+    import ietf-interfaces { prefix if; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This management module is an instrumentation to manage the 'Link
+        Layer Discovery Protocol (LLDP)'. LLDP is a data-link layer protocol,
+        operating above the MAC service layer, that performs basic neighbor
+        discovery. The discovering process involves advertising of network
+        device identity, capabilities, and interconnections on a IEEE
+        802 LAN network.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-04 {
+        description "Proposed";
+        reference "TODO";
+    }
+    grouping LLDP-NEIGHBOR {
+        description "LLDP neighbor info";
+        list neighbor {
+            description "LLDP neighbor";
+            leaf receiving-interface-ref {
+                type if:interface-ref;
+                description "Interface the neighbor entry was received on ";
+            }
+            leaf receiving-port-ref {
+                type if:interface-ref;
+                description "Port the neighbor entry was received on ";
+            }
+            leaf end-of-lldppdu {
+                type string;
+                description "End of LLDPDU TLV";
+            }
+            leaf chasis-id-subtype {
+                type string;
+                description "Chasis subtype";
+            }
+            leaf chasis-id {
+                type string;
+                description "Chasis ID TLV";
+            }
+            leaf port-id-subtype {
+                type string;
+                description "Port id subtype";
+            }
+            leaf port-id {
+                type string;
+                description "Port ID TLV";
+            }
+            leaf port-vlan-id {
+                type string;
+                description "Port VLAN ID TLV (802.1 OUI)";
+            }
+            leaf ttl {
+                type string;
+                description "Time to live TLV";
+            }
+            leaf port-desc {
+                type string;
+                description "Port description TLV";
+            }
+            leaf system-name {
+                type string;
+                description "System name TLV";
+            }
+            leaf system-desc {
+                type string;
+                description "System description TLV";
+            }
+            leaf system-capabilities {
+                type string;
+                description "Capabilities TLV";
+            }
+            leaf enabled-capabilities {
+                type string;
+                description "Capabilities TLV";
+            }
+            leaf management-address {
+                type string;
+                description "Capabilities TLV";
+            }
+        }
+    }
+    container lldp {
+        description "Global LLDP configuration data";
+        leaf enable {
+            type boolean;
+            default true;
+            description "Enable or disable LLDP";
+        }
+        leaf hold-time {
+            type uint32 {
+                range "10..255";
+            }
+            default "120";
+            description
+                        "(Optional) Specifies the amount of time in seconds that a receiving
+                        device should hold the information sent by your device before
+                        discarding it. The range is 10 to 255 seconds; the default is
+                        120 seconds.";
+        }
+        leaf reinit {
+            type uint32 {
+                range "1..10";
+            }
+            default "2";
+            description
+                        "(Optional) This is the number of seconds that must elapse after
+                        LLDP is disabled on a port before it can be reinitialized. The
+                        range is 1 to 10 seconds; the default is 2 seconds.";
+        }
+        leaf timer {
+            type uint32 {
+                range "5..254";
+            }
+            default "30";
+            description "(Optional) Specifies the transmission frequency of LLDP updates
+                        in seconds. The range is 5 to 254 seconds; the default is 30 seconds";
+        }
+    }
+    augment "/if:interfaces-state/if:interface" {
+        container lldp {
+            description "Interface specific LLDP configuration";
+            leaf enable {
+                type boolean;
+                default true;
+                description "Enable or disable LLDP on an interface";
+            }
+            leaf transmit {
+                type boolean;
+                default true;
+                description "Enables or disables the transmission of LLDP packets on an interface.
+                                After you globally enable LLDP, it is enabled on all supported
+                                interfaces by default.";
+            }
+            leaf receive {
+                type boolean;
+                default true;
+                description "Enables or disables the reception of LLDP packets on an interface.
+                                After you globally enable LLDP, it is enabled on all supported
+                                interfaces by default.";
+            }
+            container neighbors {
+                config false;
+                uses LLDP-NEIGHBOR;
+            }
+        }
+    }
+    augment "/if:interfaces/if:interface" {
+        container lldp {
+            description "Interface specific LLDP configuration";
+            leaf enable {
+                type boolean;
+                default true;
+                description "Enable or disable LLDP on an interface";
+            }
+            leaf transmit {
+                type boolean;
+                default true;
+                description "Enables or disables the transmission of LLDP packets on an interface.
+                                After you globally enable LLDP, it is enabled on all supported
+                                interfaces by default.";
+            }
+            leaf receive {
+                type boolean;
+                default true;
+                description "Enables or disables the reception of LLDP packets on an interface.
+                                After you globally enable LLDP, it is enabled on all supported
+                                interfaces by default.";
+            }
+        }
+    }
+    container lldp-neighbors {
+     config false;
+        uses LLDP-NEIGHBOR;
+    }
+}

@@ -1,0 +1,5 @@
+/usr/sbin/mii-reg
+/sbin/route_update.sh
+/usr/sbin/ip
+/usr/sbin/formv6suffix
+/usr/sbin/rtupd

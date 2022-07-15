@@ -1,0 +1,153 @@
+<form ng-controller="antiThreatCtrl" name="at_form" ng-modification="ui_data.data_ready" id="anti-threat">
+    <div ng-if="ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-button-container">
+                <button type="button" class="btn-apply" id="btn_save" ng-click="funs.save()" ng-disabled="at_form.$invalid || userAccessFlag === 'RO' || model.no_license">
+                    <span ng-bind="DICT('Anti_Threat_Apply')"></span>
+                </button>
+                <button type="button" class="btn-cancel" id="btn_cancel" ng-click="funs.cancel()" ng-disabled="model.no_license">
+                    <span ng-bind="DICT('Anti_Threat_Cancel')"></span>
+                </button>
+            </div>
+            <div class="page-title" ng-bind="DICT('Anti_Threat')"></div>
+        </div>
+
+        <confirmsave ng-show="success"></confirmsave>
+
+        <div class="page-content-container">
+            <message-box ng-if="model.no_license">
+                <table>
+                    <tr>
+                        <td class="align-top">
+                            <i class="icon-warning message-icon"></i>
+                        </td>
+                        <td>
+                            <span pg-bind-html="ui_data.combineNote"></span>
+                        </td>
+                    </tr>
+                </table>
+            </message-box>
+            <div ng-class="{'nopHint': model.no_license}">
+                <table class="page-block-tb-list av-scan no-warp">
+                    <tr>
+                        <td ng-bind="DICT('Anti_Threat_Enable')"></td>
+                        <td colspan="3">
+                            <input type="radio" ng-model="model.av.enabled" ng-value="true"></input>
+                            <span ng-bind="DICT('Anti_Threat_On')"></span>
+                            <input class="page-indent" type="radio" ng-model="model.av.enabled" ng-value="false"></input>
+                            <span ng-bind="DICT('Anti_Threat_Off')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Anti_Threat_Applications_To_Scan')"></td>
+                        <td ng-bind="DICT('Anti_Threat_Protocol')"></td>
+                        <td ng-bind="DICT('Anti_Threat_Enable')"></td>
+                        <td ng-bind="DICT('Anti_Threat_Action')"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-bind="DICT('Anti_Threat_HTTP')"></td>
+                        <td>
+                            <input type="checkbox" ng-model="model.av.proto.HTTP.enable" ng-change="funs.check_protocol()"></input>
+                        </td>
+                        <td>
+                            <select ng-model="model.av.proto.HTTP.action" ng-options="m.id as m.displayName for m in model.av.proto.HTTP.list"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-bind="DICT('Anti_Threat_FTP')"></td>
+                        <td>
+                            <input type="checkbox" ng-model="model.av.proto.FTP.enable" ng-change="funs.check_protocol()"></input>
+                        </td>
+                        <td>
+                            <select ng-model="model.av.proto.FTP.action" ng-options="m.id as m.displayName for m in model.av.proto.FTP.list"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-bind="DICT('Anti_Threat_SMTP')"></td>
+                        <td>
+                            <input type="checkbox" ng-model="model.av.proto.SMTP.enable" ng-change="funs.check_protocol()"></input>
+                        </td>
+                        <td>
+                            <select ng-model="model.av.proto.SMTP.action" ng-options="m.id as m.displayName for m in model.av.proto.SMTP.list"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-bind="DICT('Anti_Threat_POP3')"></td>
+                        <td>
+                            <input type="checkbox" ng-model="model.av.proto.POP3.enable" ng-change="funs.check_protocol()"></input>
+                        </td>
+                        <td>
+                            <select ng-model="model.av.proto.POP3.action" ng-options="m.id as m.displayName for m in model.av.proto.POP3.list"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td ng-bind="DICT('Anti_Threat_IMAP')"></td>
+                        <td>
+                            <input type="checkbox" ng-model="model.av.proto.IMAP.enable" ng-change="funs.check_protocol()"></input>
+                        </td>
+                        <td>
+                            <select ng-model="model.av.proto.IMAP.action" ng-options="m.id as m.displayName for m in  model.av.proto.IMAP.list"></select>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="3">
+                            <input type="checkbox" ng-model="model.av.threshold_enabled" ng-change="funs.chk_threshold()"></input>
+                            <span ng-bind="DICT('Anti_Threat_Enable_File_Size_Threshold')"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="3">
+                            <span ng-bind="DICT('Anti_Threat_AV_Scan')"></span>
+                            <input class="av-threshold" type="number" ng-if="model.av.threshold_enabled" number required min="1" max="100" ng-model="model.av.threshold"></input>
+                            <input class="av-threshold" type="number" ng-if="!model.av.threshold_enabled" disabled ng-model="model.av.threshold"></input>
+                            <span class="tip-info" ng-bind="DICT('Anti_Threat_MB_1_100')"></span>
+                        </td>
+                    </tr>
+                </table>
+                <hr class="page-content-seperator"></hr>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Anti_Threat_Virus_Database')"></div>
+                </div>
+                <table class="page-block-tb-list">
+                    <tr>
+                        <td ng-bind="DICT('Anti_Threat_Last_Update')"></td>
+                        <td ng-bind="model.signature_state.last_update_time"></td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Anti_Threat_File_Version')"></td>
+                        <td ng-bind="model.signature_state.version"></td>
+                    </tr>
+    <!--                <tr>-->
+    <!--                    <td ng-bind="DICT('Anti_Threat_Check_For_Update')"></td>-->
+    <!--                    <td>-->
+    <!--                        <button type="button" ng-click="funs.check_update()"><span ng-bind="DICT('Anti_Threat_Check_Update')"></span></button>-->
+    <!--                    </td>-->
+    <!--                </tr>-->
+    <!--                <tr>-->
+    <!--                    <td ng-bind="DICT('Anti_Threat_Upload_New_AntiVirus_Definitions')"></td>-->
+    <!--                    <td>-->
+    <!--                        <pg-upload ngchange="funs.pcFileFormatCheck" style="width: 500px;" ng-disabled="userAccessFlag === 'RO'" ignore-dirty></pg-upload>-->
+    <!--                    </td>-->
+    <!--                </tr>-->
+    <!--                <tr>-->
+    <!--                    <td></td>-->
+    <!--                    <td>-->
+    <!--                        <button type="button" ng-click="funs.update()" ng-disabled="ui_data.disable_upgradeBtn">-->
+    <!--                            <span ng-bind="DICT('Anti_Threat_Update')"></span>-->
+    <!--                        </button>-->
+    <!--                    </td>-->
+    <!--                </tr>-->
+                </table>
+            </div> <!-- End no_license -->
+        </div>
+    </div>
+</form>

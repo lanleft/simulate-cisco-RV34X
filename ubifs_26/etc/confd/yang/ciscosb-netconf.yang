@@ -1,0 +1,51 @@
+module ciscosb-netconf {
+    namespace "http://cisco.com/ns/ciscosb/netconf";
+  prefix ciscosb-netconf;
+  import ietf-inet-types { prefix inet; }
+  organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. 
+        Customer Service
+        E-mail: xinsfang@cisco.com";
+  description
+    "This module contains a collection of YANG definitions 
+     for Cisco NETCONF package configuration.
+     Copyright (c) 2017 by Cisco Systems, Inc.
+     All rights reserved.";
+  revision 2017-07-05 {
+      description "Add revision ";
+      reference "";
+  }
+  typedef netconf-zone-type {
+      type enumeration {
+          enum lan-vpn;
+          enum wan;
+      }
+  }
+  container ciscosb-netconf {
+      description
+              "Cisco-specific NETCONF engine configuration elements.";
+   leaf enabled {
+        type boolean;
+      }
+      leaf-list netconf-zone {
+        type netconf-zone-type;
+      }
+   container transport {
+  container ssh {
+    leaf enabled {
+            type boolean;
+          }
+    leaf ip {
+            type inet:ip-address;
+          }
+          leaf port {
+            type inet:port-number;
+          }
+          leaf cert {
+            type string;
+          }
+  }
+   }
+ }
+}

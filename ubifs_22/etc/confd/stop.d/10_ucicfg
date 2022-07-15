@@ -1,0 +1,4 @@
+killall -9 ucicfg
+killall -9 webcache
+rm -r /tmp/ucicfg.d
+rm -r /tmp/webcache

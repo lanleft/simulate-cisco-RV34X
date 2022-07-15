@@ -1,0 +1,9 @@
+Package: ip6tables
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, kmod-ip6tables, iptables
+Source: package/network/utils/iptables
+License: GPL-2.0
+Section: net
+Architecture: comcerto2000
+Installed-Size: 215
+Description:  IPv6 firewall administration tool

@@ -1,0 +1,40 @@
+module ciscosb-dns {
+    namespace "http://cisco.com/ns/ciscosb/dns";
+    prefix ciscosb-dns;
+    import ietf-inet-types { prefix inet; }
+    organization "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Tel: +86 2124073170 E-mail:ciscosb-yang@cisco.com";
+    description
+        "This module define local dns entry.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-15 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    container dns {
+  description " Local DNS db To accelerate the DNS service response";
+        leaf enable {
+            type boolean;
+        }
+        list dns {
+            key host;
+            leaf host {
+                type inet:host;
+                description "Host name";
+            }
+            leaf ip {
+                type inet:ip-address;
+                description "IP address";
+            }
+        }
+    }
+}

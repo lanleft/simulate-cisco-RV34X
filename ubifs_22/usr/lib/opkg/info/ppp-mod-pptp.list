@@ -1,0 +1,3 @@
+/lib/network/pptp.sh
+/etc/ppp/options.pptp
+/usr/lib/pppd/2.4.8/pptp.so

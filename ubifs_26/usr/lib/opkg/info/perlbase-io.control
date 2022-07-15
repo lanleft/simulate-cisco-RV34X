@@ -1,0 +1,11 @@
+Package: perlbase-io
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-base, perlbase-bytes, perlbase-config, perlbase-errno, perlbase-essential, perlbase-fcntl, perlbase-list, perlbase-posix, perlbase-scalar, perlbase-selectsaver, perlbase-socket, perlbase-symbol, perlbase-tie, perlbase-xsloader
+Source: package/perl
+License: GPL-1.0+ Artistic-1.0-Perl
+LicenseFiles: Copying Artistic README
+Section: lang
+Maintainer: Marcel Denia <naoir@gmx.net>
+Architecture: comcerto2000
+Installed-Size: 67879
+Description:  IO perl module

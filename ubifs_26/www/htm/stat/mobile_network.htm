@@ -1,0 +1,117 @@
+<form name="form" ng-controller="stat_mobile_network_main" id="status-mobile-network">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Mobile_Network')"></div>
+        </div>
+        <div class="page-content-container container-fluid" ng-class="{nopHint: model.usb_list.length === 0}">
+            <div>
+                <span ng-bind="DICT('Mobile_Network_Interfaces')"></span>
+                <select ng-model="model.sel"
+                     class="if-list"
+                     ng-options="m.id as m.name for m in model.usb_list"
+                     ng-change="change_usb()"
+                 ></select>
+                <button type="button" class="icon-btn-refresh" ng-click="funs.update()"></button>
+            </div>
+            <div>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Mobile_Network_Connection')"></div>
+                </div>
+                <table class="page-block-tb-list mobile-network-content">
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Internet_IP_Addr')"></td>
+                        <td>
+                            <span ng-bind="d.v4_ip"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Subnet_Mask')"></td>
+                        <td>
+                            <span ng-bind="d.v4_netmask"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Default_Gateway')"></td>
+                        <td>
+                            <span ng-bind="d.gateway"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Connection_Up_Time')"></td>
+                        <td>
+                            <span ng-bind="d.connection_time"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Current_Dialup')"></td>
+                        <td>
+                            <span ng-bind="d.session_usage"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Monthly')"></td>
+                        <td>
+                            <span ng-bind="d.monthly_usage"></span>
+                            <button type="button" id="btn_clear" class="icon-btn-reset" ng-click="funs.clear()" ng-disabled="userAccessFlag === 'RO'"></button>
+                        </td>
+                    </tr>
+                </table>
+                <hr class="page-content-seperator"></hr>
+                <div class="page-block-title-cntr">
+                    <div class="page-block-title" ng-bind="DICT('Mobile_Network_Data_Card_Status')"></div>
+                </div>
+                <table class="page-block-tb-list mobile-network-content" >
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Manufacturer')"></td>
+                        <td>
+                            <span ng-bind="d.manufacture"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Card_Firmware')"></td>
+                        <td>
+                            <span ng-bind="d.firmware_version"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_SIM_Status')"></td>
+                        <td>
+                            <span ng-bind="d.sim_status"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_IMSI')"></td>
+                        <td>
+                            <span ng-bind="d.imsi"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Carrier')"></td>
+                        <td>
+                            <span ng-bind="d.carrier"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Service_Type')"></td>
+                        <td>
+                            <span ng-bind="d.service_type"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Signal_Strength')"></td>
+                        <td>
+                            <span ng-bind="d.signal_strength"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('Mobile_Network_Card_Status')"></td>
+                        <td>
+                            <span class="icon-btn-connected" ng-show="d.card_status"></span>
+                            <span class="icon-btn-disconnected" ng-show="!d.card_status"></span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>

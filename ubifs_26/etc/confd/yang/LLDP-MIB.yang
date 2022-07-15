@@ -1,0 +1,879 @@
+module LLDP-MIB {
+  namespace "http://tail-f.com/ns/mibs/LLDP-MIB/200411220000Z";
+  prefix LLDP_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "LLDP-MIB";
+  import ietf-yang-types {
+    prefix yang;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import SNMPv2-TC {
+    prefix SNMPv2-TC;
+  }
+  import RMON2-MIB {
+    prefix RMON2-MIB;
+  }
+  import IANA-ADDRESS-FAMILY-NUMBERS-MIB {
+    prefix IANA-ADDRESS-FAMILY-NUMBERS-MIB;
+  }
+  revision 2004-11-22 {
+    description
+      "";
+  }
+  container LLDP-MIB {
+    container lldpConfiguration {
+      tailf:snmp-oid "1.0.8802.1.1.2.1.1";
+      leaf lldpMessageTxInterval {
+        type lldpMessageTxIntervalType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.1";
+        default "30";
+      }
+      leaf lldpMessageTxHoldMultiplier {
+        type lldpMessageTxHoldMultiplierType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.2";
+        default "4";
+      }
+      leaf lldpReinitDelay {
+        type lldpReinitDelayType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.3";
+        default "2";
+      }
+      leaf lldpTxDelay {
+        type lldpTxDelayType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.4";
+        default "2";
+      }
+      leaf lldpNotificationInterval {
+        type lldpNotificationIntervalType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.5";
+        default "5";
+      }
+    }
+    container lldpStatistics {
+      tailf:snmp-oid "1.0.8802.1.1.2.1.2";
+      config false;
+      leaf lldpStatsRemTablesLastChangeTime {
+        type yang:timestamp;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.1";
+        config false;
+      }
+      leaf lldpStatsRemTablesInserts {
+        type RMON2-MIB:ZeroBasedCounter32;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.2";
+        config false;
+      }
+      leaf lldpStatsRemTablesDeletes {
+        type RMON2-MIB:ZeroBasedCounter32;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.3";
+        config false;
+      }
+      leaf lldpStatsRemTablesDrops {
+        type RMON2-MIB:ZeroBasedCounter32;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.4";
+        config false;
+      }
+      leaf lldpStatsRemTablesAgeouts {
+        type RMON2-MIB:ZeroBasedCounter32;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.5";
+        config false;
+      }
+    }
+    container lldpLocalSystemData {
+      tailf:snmp-oid "1.0.8802.1.1.2.1.3";
+      config false;
+      leaf lldpLocChassisIdSubtype {
+        type LldpChassisIdSubtype;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.1";
+        config false;
+      }
+      leaf lldpLocChassisId {
+        type LldpChassisId;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.2";
+        config false;
+      }
+      leaf lldpLocSysName {
+        type lldpLocSysNameType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.3";
+        config false;
+      }
+      leaf lldpLocSysDesc {
+        type lldpLocSysDescType;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.4";
+        config false;
+      }
+      leaf lldpLocSysCapSupported {
+        type LldpSystemCapabilitiesMap;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.5";
+        config false;
+      }
+      leaf lldpLocSysCapEnabled {
+        type LldpSystemCapabilitiesMap;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.6";
+        config false;
+      }
+    }
+    container lldpPortConfigTable {
+      list lldpPortConfigEntry {
+        key "lldpPortConfigPortNum";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.6";
+        leaf lldpPortConfigPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.1.6.1.1";
+        }
+        leaf lldpPortConfigAdminStatus {
+          type lldpPortConfigAdminStatusType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.1.6.1.2";
+          default "txAndRx";
+        }
+        leaf lldpPortConfigNotificationEnable {
+          type SNMPv2-TC:TruthValue;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.1.6.1.3";
+          default "false";
+        }
+        leaf lldpPortConfigTLVsTxEnable {
+          type lldpPortConfigTLVsTxEnableType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.1.6.1.4";
+          default "";
+        }
+      }
+    }
+    container lldpConfigManAddrTable {
+      list lldpConfigManAddrEntry {
+        key "lldpLocManAddrSubtype lldpLocManAddr";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.0.8802.1.1.2.1.1.7";
+        leaf lldpLocManAddrSubtype {
+          type IANA-ADDRESS-FAMILY-NUMBERS-MIB:AddressFamilyNumbers;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.1";
+        }
+        leaf lldpLocManAddr {
+          type LldpManAddress;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.2";
+        }
+        leaf lldpConfigManAddrPortsTxEnable {
+          type LldpPortList;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.1.7.1.1";
+          default "";
+        }
+      }
+    }
+    container lldpStatsTxPortTable {
+      config false;
+      list lldpStatsTxPortEntry {
+        key "lldpStatsTxPortNum";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.6";
+        leaf lldpStatsTxPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.6.1.1";
+        }
+        leaf lldpStatsTxPortFramesTotal {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.6.1.2";
+          config false;
+        }
+      }
+    }
+    container lldpStatsRxPortTable {
+      config false;
+      list lldpStatsRxPortEntry {
+        key "lldpStatsRxPortNum";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.2.7";
+        leaf lldpStatsRxPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.1";
+        }
+        leaf lldpStatsRxPortFramesDiscardedTotal {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.2";
+          config false;
+        }
+        leaf lldpStatsRxPortFramesErrors {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.3";
+          config false;
+        }
+        leaf lldpStatsRxPortFramesTotal {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.4";
+          config false;
+        }
+        leaf lldpStatsRxPortTLVsDiscardedTotal {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.5";
+          config false;
+        }
+        leaf lldpStatsRxPortTLVsUnrecognizedTotal {
+          type yang:counter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.6";
+          config false;
+        }
+        leaf lldpStatsRxPortAgeoutsTotal {
+          type RMON2-MIB:ZeroBasedCounter32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.2.7.1.7";
+          config false;
+        }
+      }
+    }
+    container lldpLocPortTable {
+      config false;
+      list lldpLocPortEntry {
+        key "lldpLocPortNum";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.7";
+        leaf lldpLocPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.7.1.1";
+        }
+        leaf lldpLocPortIdSubtype {
+          type LldpPortIdSubtype;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.7.1.2";
+          config false;
+        }
+        leaf lldpLocPortId {
+          type LldpPortId;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.7.1.3";
+          config false;
+        }
+        leaf lldpLocPortDesc {
+          type lldpLocPortDescType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.7.1.4";
+          config false;
+        }
+      }
+    }
+    container lldpLocManAddrTable {
+      config false;
+      list lldpLocManAddrEntry {
+        key "lldpLocManAddrSubtype lldpLocManAddr";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.3.8";
+        leaf lldpLocManAddrSubtype {
+          type IANA-ADDRESS-FAMILY-NUMBERS-MIB:AddressFamilyNumbers;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.1";
+        }
+        leaf lldpLocManAddr {
+          type LldpManAddress;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.2";
+        }
+        leaf lldpLocManAddrLen {
+          type int32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.3";
+          config false;
+        }
+        leaf lldpLocManAddrIfSubtype {
+          type LldpManAddrIfSubtype;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.4";
+          config false;
+        }
+        leaf lldpLocManAddrIfId {
+          type int32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.5";
+          config false;
+        }
+        leaf lldpLocManAddrOID {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.3.8.1.6";
+          config false;
+        }
+      }
+    }
+    container lldpRemTable {
+      config false;
+      list lldpRemEntry {
+        key "lldpRemTimeMark lldpRemLocalPortNum lldpRemIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.4.1";
+        leaf lldpRemTimeMark {
+          type RMON2-MIB:TimeFilter;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.1";
+        }
+        leaf lldpRemLocalPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.2";
+        }
+        leaf lldpRemIndex {
+          type lldpRemIndexType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.3";
+        }
+        leaf lldpRemChassisIdSubtype {
+          type LldpChassisIdSubtype;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.4";
+          config false;
+        }
+        leaf lldpRemChassisId {
+          type LldpChassisId;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.5";
+          config false;
+        }
+        leaf lldpRemPortIdSubtype {
+          type LldpPortIdSubtype;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.6";
+          config false;
+        }
+        leaf lldpRemPortId {
+          type LldpPortId;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.7";
+          config false;
+        }
+        leaf lldpRemPortDesc {
+          type lldpRemPortDescType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.8";
+          config false;
+        }
+        leaf lldpRemSysName {
+          type lldpRemSysNameType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.9";
+          config false;
+        }
+        leaf lldpRemSysDesc {
+          type lldpRemSysDescType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.10";
+          config false;
+        }
+        leaf lldpRemSysCapSupported {
+          type LldpSystemCapabilitiesMap;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.11";
+          config false;
+        }
+        leaf lldpRemSysCapEnabled {
+          type LldpSystemCapabilitiesMap;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.12";
+          config false;
+        }
+      }
+    }
+    container lldpRemManAddrTable {
+      config false;
+      list lldpRemManAddrEntry {
+        key "lldpRemTimeMark lldpRemLocalPortNum lldpRemIndex lldpRemManAddrSubtype lldpRemManAddr";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.4.2";
+        leaf lldpRemTimeMark {
+          type RMON2-MIB:TimeFilter;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.1";
+        }
+        leaf lldpRemLocalPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.2";
+        }
+        leaf lldpRemIndex {
+          type lldpRemIndexType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.3";
+        }
+        leaf lldpRemManAddrSubtype {
+          type IANA-ADDRESS-FAMILY-NUMBERS-MIB:AddressFamilyNumbers;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.2.1.1";
+        }
+        leaf lldpRemManAddr {
+          type LldpManAddress;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.2.1.2";
+        }
+        leaf lldpRemManAddrIfSubtype {
+          type LldpManAddrIfSubtype;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.2.1.3";
+          config false;
+        }
+        leaf lldpRemManAddrIfId {
+          type int32;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.2.1.4";
+          config false;
+        }
+        leaf lldpRemManAddrOID {
+          type yang:object-identifier;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.2.1.5";
+          config false;
+        }
+      }
+    }
+    container lldpRemUnknownTLVTable {
+      config false;
+      list lldpRemUnknownTLVEntry {
+        key "lldpRemTimeMark lldpRemLocalPortNum lldpRemIndex lldpRemUnknownTLVType";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.4.3";
+        leaf lldpRemTimeMark {
+          type RMON2-MIB:TimeFilter;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.1";
+        }
+        leaf lldpRemLocalPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.2";
+        }
+        leaf lldpRemIndex {
+          type lldpRemIndexType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.3";
+        }
+        leaf lldpRemUnknownTLVType {
+          type lldpRemUnknownTLVTypeType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.3.1.1";
+        }
+        leaf lldpRemUnknownTLVInfo {
+          type lldpRemUnknownTLVInfoType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.3.1.2";
+          config false;
+        }
+      }
+    }
+    container lldpRemOrgDefInfoTable {
+      config false;
+      list lldpRemOrgDefInfoEntry {
+        key "lldpRemTimeMark lldpRemLocalPortNum lldpRemIndex lldpRemOrgDefInfoOUI lldpRemOrgDefInfoSubtype lldpRemOrgDefInfoIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.0.8802.1.1.2.1.4.4";
+        leaf lldpRemTimeMark {
+          type RMON2-MIB:TimeFilter;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.1";
+        }
+        leaf lldpRemLocalPortNum {
+          type LldpPortNumber;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.2";
+        }
+        leaf lldpRemIndex {
+          type lldpRemIndexType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.1.1.3";
+        }
+        leaf lldpRemOrgDefInfoOUI {
+          type lldpRemOrgDefInfoOUIType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.4.1.1";
+        }
+        leaf lldpRemOrgDefInfoSubtype {
+          type lldpRemOrgDefInfoSubtypeType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.4.1.2";
+        }
+        leaf lldpRemOrgDefInfoIndex {
+          type lldpRemOrgDefInfoIndexType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.4.1.3";
+        }
+        leaf lldpRemOrgDefInfo {
+          type lldpRemOrgDefInfoType;
+          tailf:snmp-oid "1.0.8802.1.1.2.1.4.4.1.4";
+          config false;
+        }
+      }
+    }
+  }
+  typedef lldpPortConfigTLVsTxEnable {
+    type bits {
+      bit portDesc {
+        position 0;
+      }
+      bit sysName {
+        position 1;
+      }
+      bit sysDesc {
+        position 2;
+      }
+      bit sysCap {
+        position 3;
+      }
+    }
+  }
+  typedef lldpLocSysCapSupported {
+    type bits {
+      bit other {
+        position 0;
+      }
+      bit repeater {
+        position 1;
+      }
+      bit bridge {
+        position 2;
+      }
+      bit wlanAccessPoint {
+        position 3;
+      }
+      bit router {
+        position 4;
+      }
+      bit telephone {
+        position 5;
+      }
+      bit docsisCableDevice {
+        position 6;
+      }
+      bit stationOnly {
+        position 7;
+      }
+      bit cVLANComponent {
+        position 8;
+      }
+      bit sVLANComponent {
+        position 9;
+      }
+      bit twoPortMACRelay {
+        position 10;
+      }
+    }
+  }
+  typedef lldpLocSysCapEnabled {
+    type bits {
+      bit other {
+        position 0;
+      }
+      bit repeater {
+        position 1;
+      }
+      bit bridge {
+        position 2;
+      }
+      bit wlanAccessPoint {
+        position 3;
+      }
+      bit router {
+        position 4;
+      }
+      bit telephone {
+        position 5;
+      }
+      bit docsisCableDevice {
+        position 6;
+      }
+      bit stationOnly {
+        position 7;
+      }
+      bit cVLANComponent {
+        position 8;
+      }
+      bit sVLANComponent {
+        position 9;
+      }
+      bit twoPortMACRelay {
+        position 10;
+      }
+    }
+  }
+  typedef lldpRemSysCapSupported {
+    type bits {
+      bit other {
+        position 0;
+      }
+      bit repeater {
+        position 1;
+      }
+      bit bridge {
+        position 2;
+      }
+      bit wlanAccessPoint {
+        position 3;
+      }
+      bit router {
+        position 4;
+      }
+      bit telephone {
+        position 5;
+      }
+      bit docsisCableDevice {
+        position 6;
+      }
+      bit stationOnly {
+        position 7;
+      }
+      bit cVLANComponent {
+        position 8;
+      }
+      bit sVLANComponent {
+        position 9;
+      }
+      bit twoPortMACRelay {
+        position 10;
+      }
+    }
+  }
+  typedef lldpRemSysCapEnabled {
+    type bits {
+      bit other {
+        position 0;
+      }
+      bit repeater {
+        position 1;
+      }
+      bit bridge {
+        position 2;
+      }
+      bit wlanAccessPoint {
+        position 3;
+      }
+      bit router {
+        position 4;
+      }
+      bit telephone {
+        position 5;
+      }
+      bit docsisCableDevice {
+        position 6;
+      }
+      bit stationOnly {
+        position 7;
+      }
+      bit cVLANComponent {
+        position 8;
+      }
+      bit sVLANComponent {
+        position 9;
+      }
+      bit twoPortMACRelay {
+        position 10;
+      }
+    }
+  }
+  typedef LldpChassisIdSubtype {
+    type enumeration {
+      enum "chassisComponent" {
+        value 1;
+      }
+      enum "interfaceAlias" {
+        value 2;
+      }
+      enum "portComponent" {
+        value 3;
+      }
+      enum "macAddress" {
+        value 4;
+      }
+      enum "networkAddress" {
+        value 5;
+      }
+      enum "interfaceName" {
+        value 6;
+      }
+      enum "local" {
+        value 7;
+      }
+    }
+  }
+  typedef LldpChassisId {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef LldpPortIdSubtype {
+    type enumeration {
+      enum "interfaceAlias" {
+        value 1;
+      }
+      enum "portComponent" {
+        value 2;
+      }
+      enum "macAddress" {
+        value 3;
+      }
+      enum "networkAddress" {
+        value 4;
+      }
+      enum "interfaceName" {
+        value 5;
+      }
+      enum "agentCircuitId" {
+        value 6;
+      }
+      enum "local" {
+        value 7;
+      }
+    }
+  }
+  typedef LldpPortId {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 255";
+    }
+  }
+  typedef LldpManAddrIfSubtype {
+    type enumeration {
+      enum "unknown" {
+        value 1;
+      }
+      enum "ifIndex" {
+        value 2;
+      }
+      enum "systemPortNumber" {
+        value 3;
+      }
+    }
+  }
+  typedef LldpManAddress {
+    type tailf:hex-list {
+      tailf:value-length "1 .. 31";
+    }
+  }
+  typedef LldpSystemCapabilitiesMap {
+    type bits {
+      bit other {
+        position 0;
+      }
+      bit repeater {
+        position 1;
+      }
+      bit bridge {
+        position 2;
+      }
+      bit wlanAccessPoint {
+        position 3;
+      }
+      bit router {
+        position 4;
+      }
+      bit telephone {
+        position 5;
+      }
+      bit docsisCableDevice {
+        position 6;
+      }
+      bit stationOnly {
+        position 7;
+      }
+      bit cVLANComponent {
+        position 8;
+      }
+      bit sVLANComponent {
+        position 9;
+      }
+      bit twoPortMACRelay {
+        position 10;
+      }
+    }
+  }
+  typedef LldpPortNumber {
+    type int32 {
+      range "1 .. 4096";
+    }
+  }
+  typedef LldpPortList {
+    type tailf:hex-list {
+      tailf:value-length "min .. 512";
+    }
+  }
+  typedef lldpMessageTxIntervalType {
+    type int32 {
+      range "5 .. 32768";
+    }
+  }
+  typedef lldpMessageTxHoldMultiplierType {
+    type int32 {
+      range "2 .. 10";
+    }
+  }
+  typedef lldpReinitDelayType {
+    type int32 {
+      range "1 .. 10";
+    }
+  }
+  typedef lldpTxDelayType {
+    type int32 {
+      range "1 .. 8192";
+    }
+  }
+  typedef lldpNotificationIntervalType {
+    type int32 {
+      range "5 .. 3600";
+    }
+  }
+  typedef lldpLocSysNameType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpLocSysDescType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpPortConfigAdminStatusType {
+    type enumeration {
+      enum "txOnly" {
+        value 1;
+      }
+      enum "rxOnly" {
+        value 2;
+      }
+      enum "txAndRx" {
+        value 3;
+      }
+      enum "disabled" {
+        value 4;
+      }
+    }
+  }
+  typedef lldpPortConfigTLVsTxEnableType {
+    type bits {
+      bit portDesc {
+        position 0;
+      }
+      bit sysName {
+        position 1;
+      }
+      bit sysDesc {
+        position 2;
+      }
+      bit sysCap {
+        position 3;
+      }
+    }
+  }
+  typedef lldpLocPortDescType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpRemIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef lldpRemPortDescType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpRemSysNameType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpRemSysDescType {
+    type string {
+      length "min .. 255";
+    }
+  }
+  typedef lldpRemUnknownTLVTypeType {
+    type int32 {
+      range "9 .. 126";
+    }
+  }
+  typedef lldpRemUnknownTLVInfoType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 511";
+    }
+  }
+  typedef lldpRemOrgDefInfoOUIType {
+    type tailf:hex-list {
+      tailf:value-length "3";
+    }
+  }
+  typedef lldpRemOrgDefInfoSubtypeType {
+    type int32 {
+      range "1 .. 255";
+    }
+  }
+  typedef lldpRemOrgDefInfoIndexType {
+    type int32 {
+      range "1 .. 2147483647";
+    }
+  }
+  typedef lldpRemOrgDefInfoType {
+    type tailf:hex-list {
+      tailf:value-length "min .. 507";
+    }
+  }
+}

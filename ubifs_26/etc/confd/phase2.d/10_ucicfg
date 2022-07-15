@@ -1,0 +1,2 @@
+. /etc/ucicfg.d/upgrade.sh phase2
+. /etc/ucicfg.d/phase2.sh

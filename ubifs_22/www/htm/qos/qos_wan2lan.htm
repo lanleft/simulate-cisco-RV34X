@@ -1,0 +1,146 @@
+    <style>
+.gridContainer td {
+    /* width:100px; */
+    /* border:1px solid; */
+    padding: 5px;
+    height: 22px;
+}
+
+.posRelative {
+    position: relative;
+}
+
+.indent {
+    padding-left: 20px;
+}
+.gridContainer tr:nth-child(even) {
+    background: #F1F5FA;
+}
+.gridContainer tr:nth-child(odd) {
+    background: #E5EBF3;
+}
+            </style>
+<style>
+.fixed_height_section div {
+    padding-right: 8px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+</style>
+
+<form name="form" ng-controller="qos_wan_policing_main" ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('WAN_Policing')"></div>
+            <div class="page-button-container ng-hide" ng-show="true">
+                <button ng-click="save()" class="btn-apply" ng-disabled="userAccessFlag === 'RO' || form.$invalid">
+                    <span ng-bind="DICT('apply')"></span>
+                </button>
+                <button ng-click="cancel()" class="btn-cancel">
+                    <span ng-bind="DICT('cancel')"></span>
+                </button>
+                <button ng-click="goback()" ng-if="backbtn" class="btn-back">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            
+            <input type="checkbox" ng-model="model['ciscosb-qos']['policer-enable']" ></input>
+            <span ng-bind="DICT('WAN_Policing_Msg')"></span>
+            <br/><br/>
+            
+            <div class="gridContainer gridContainerStyle3" ng-show="false" >
+                <div class="gridTitle" ng-bind="DICT('WAN_Policing_Table')"></div>
+                <div class="gridBody200" ng-grid="gridQOS_WAN2LAN.Options"/>
+            </div>
+                
+            <div ng-if="gridQOS_WAN2LAN.Selections.length > 0" data-ctx='{{(selref = gridQOS_WAN2LAN.Selections[0]) }}' >
+                <div ng-if="false">
+                <br/>
+                <div ploption title="Policy Name"
+                    tipinfo=""
+                    forname=""
+                >
+                    <span ng-if="!gridQOS_WAN2LAN.edit">{{ selref.name }}</span>
+                    <input ng-if="gridQOS_WAN2LAN.edit" ng-model="selref.name" size="50"  />
+                </div>
+                <div ploption title="Description"
+                    tipinfo=""
+                    forname=""
+                >
+                    <span ng-if="!gridQOS_WAN2LAN.edit">{{ selref.description }}</span>
+                    <input ng-if="gridQOS_WAN2LAN.edit" ng-model="selref.description" size="50" />
+                </div>
+                <div ploption title="Applied to"
+                    tipinfo=""
+                    forname=""
+                >
+                    <span>{{ findInboundWAN(selref.name ).join(", ") }}</span>
+                </div>
+                </div>
+                <div ng-include="'Policing-'+ 'class' +'.htm'" ></div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="Policing-class.htm" >
+    <div class="grid-cntr" style="max-width: 700px;">
+        <div class="grid-tb-title-cntr">
+            <div class="grid-title" ng-bind="DICT('WAN_Policing_Class_Table')"></div>
+        </div>
+        <div class="grid-tb-list-cntr">
+            <table class="grid-tb-list">
+                <tr class="grid-header-cntr">
+                    <td style="min-width: 70px" ng-bind="DICT('WAN_Queuing_Queue')"></td>
+                    <td style="min-width: 320px" ng-bind="DICT('WAN_Queuing_Traffic_Class')"></td>
+                    <td style="min-width: 120px;" ng-bind="DICT('WAN_Queuing_Maximum_Rate')"></td>
+                </tr>
+                <tr ng-repeat="node_idx in gen_class_id_seq( selref.policer.class )"
+                    data-tmp="{{noderef = selref.policer.class}}"
+                >
+                    <td>
+                        {{$index+1}}
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_WAN2LAN.edit">{{ noderef[node_idx].match }}</span>
+                        <span ng-if="gridQOS_WAN2LAN.edit && !$last">
+                            <select ng-model="noderef[node_idx].match"
+                                ng-options="item.name as (item.name) disable when (item.name == 'Default' && !$last) for item in collect_classifiers()"
+                                ng-change="update_class_id($index, noderef[node_idx]); renew_array_class($index, noderef, node_idx)"
+                                ng-class="{_greyout : $last }"
+                                ng-disabled="$last"
+                                style="margin-left: 0px;"
+                            >
+                            <option value="" ng-bind="DICT('WAN_Queuing_Unspecified')"></option>
+                            </select>
+                        </span>
+                        <span ng-if="gridQOS_WAN2LAN.edit && $last">{{ noderef[node_idx].match }}</span>
+                    </td>
+                    <td>
+                        <span ng-if="!gridQOS_WAN2LAN.edit">{{ noderef[node_idx]['max-rate']? noderef[node_idx]['max-rate']+'%' : '' }}</span>
+                        <span ng-if="gridQOS_WAN2LAN.edit">
+                            <input type="number" number min="1" max="100" style="width:60px;" 
+                                   ng-model="noderef[node_idx]['max-rate']"
+                                   ng-change="update_class_id($index, noderef[node_idx])"
+                                   required
+                                   ng-disabled="$last"
+                            /> &nbsp;%
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_applied_to.htm" ><div class="ngCellText">
+    {{ (findInboundWAN(COL_FIELD, row).join(", ") ) }}
+    <span ng-if="row.ctx.arrWAN.length == 0" style="color:#888888;">
+    --None--
+    </span>
+</div>
+</script>
+

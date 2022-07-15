@@ -1,0 +1,480 @@
+module CISCOSB-MODEL-MIB {
+  namespace "http://tail-f.com/ns/mibs/CISCOSB-MODEL-MIB/201305230000Z";
+  prefix CISCOSB_MODEL_MIB;
+  tailf:id "";
+  tailf:snmp-mib-module-name "CISCOSB-MODEL-MIB";
+  import ietf-inet-types {
+    prefix inet;
+  }
+  import tailf-common {
+    prefix tailf;
+  }
+  import RFC1213-MIB {
+    prefix RFC1213-MIB;
+  }
+  revision 2013-05-23 {
+    description
+      "";
+  }
+  container CISCOSB-MODEL-MIB {
+    container common {
+      tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1";
+      config false;
+      leaf commonFirmwareVer {
+        type string {
+          length "0 .. 255";
+        }
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1.1";
+        config false;
+      }
+      leaf commonModelId {
+        type string {
+          length "0 .. 255";
+        }
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1.4";
+        config false;
+      }
+      leaf commonSystemTime {
+        type string {
+          length "0 .. 255";
+        }
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1.11";
+        config false;
+      }
+      leaf commonConfLastChange {
+        type string {
+          length "0 .. 255";
+        }
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1.12";
+        config false;
+      }
+      leaf commonRebootReason {
+        type commonRebootReasonType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.1.21";
+        config false;
+      }
+    }
+    container basicMgt {
+      tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1";
+      leaf mgtSystemReset {
+        type mgtSystemResetType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.1";
+      }
+      leaf mgtFactoryReset {
+        type mgtFactoryResetType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.2";
+      }
+      leaf mgtAdministrator {
+        type mgtAdministratorType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.3";
+        config false;
+      }
+      leaf mgtAdminUsername {
+        type mgtAdminUsernameType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.4";
+        config false;
+      }
+      leaf mgtHostName {
+        type mgtHostNameType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.6";
+      }
+      leaf mgtDomainName {
+        type mgtDomainNameType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.7";
+      }
+      leaf mgtNodeNetAddress {
+        type inet:ipv4-address;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.8";
+      }
+      leaf mgtNodeSubnetMask {
+        type inet:ipv4-address;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.9";
+      }
+      leaf mgtDhcpStatus {
+        type mgtDhcpStatusType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.10";
+      }
+      leaf mgtDhcpStartNetAddr {
+        type inet:ipv4-address;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.11";
+      }
+      leaf mgtDhcpNumberUsers {
+        type int32;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.12";
+      }
+    }
+    container advanceMgt {
+      tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2";
+      leaf advMgtSNMPStatus {
+        type advMgtSNMPStatusType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.8";
+        config false;
+      }
+      leaf advMgtSNMPv3Status {
+        type advMgtSNMPv3StatusType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.9";
+        config false;
+      }
+      leaf advMgtUPnPStatus {
+        type advMgtUPnPStatusType;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.17";
+      }
+    }
+    container mgtCommunityTable {
+      config false;
+      list mgtCommunityEntry {
+        key "mgtCommunityIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.13";
+        leaf mgtCommunityIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.13.1.1";
+        }
+        leaf mgtCommunityName {
+          type mgtCommunityNameType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.13.1.2";
+          config false;
+        }
+        leaf mgtCommunityType {
+          type mgtCommunityTypeType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.1.13.1.3";
+          config false;
+        }
+      }
+    }
+    container trapManagerTable {
+      config false;
+      list trapManagerEntry {
+        key "trapManagerIndex";
+        tailf:sort-order "snmp";
+        config false;
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.16";
+        leaf trapManagerIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.16.1.1";
+        }
+        leaf trapMgrNetAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.16.1.2";
+          config false;
+        }
+        leaf trapMgrCommunityName {
+          type trapMgrCommunityNameType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.2.16.1.3";
+          config false;
+        }
+      }
+    }
+    container wanConnectionTable {
+      list wanConnectionEntry {
+        key "wanIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1";
+        leaf wanIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.1";
+        }
+        leaf wanIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.2";
+          config false;
+        }
+        leaf wanConnectionType {
+          type wanConnectionTypeType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.3";
+          config false;
+        }
+        leaf wanNetAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.4";
+          config false;
+        }
+        leaf wanPhysicalAddr {
+          type RFC1213-MIB:PhysAddress;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.5";
+          config false;
+        }
+        leaf wanSubnetMask {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.6";
+          config false;
+        }
+        leaf wanDefaultGateway {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.7";
+          config false;
+        }
+        leaf wanDHCPStatus {
+          type wanDHCPStatusType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.8";
+          config false;
+        }
+        leaf wanLoginStatus {
+          type wanLoginStatusType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.9";
+          config false;
+        }
+        leaf wanLoginUserName {
+          type wanLoginUserNameType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.10";
+          config false;
+        }
+        leaf wanLoginPassword {
+          type wanLoginPasswordType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.11";
+        }
+        leaf wanWorkingMode {
+          type wanWorkingModeType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.13";
+          config false;
+        }
+        leaf wanConnectedState {
+          type wanConnectedStateType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.14";
+          config false;
+        }
+        leaf wanConnectedIdleTime {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.15";
+          config false;
+        }
+        leaf wanConnectedRedialPeriod {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.16";
+          config false;
+        }
+        leaf wanDnsAutoNegoStatus {
+          type wanDnsAutoNegoStatusType;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.17";
+          config false;
+        }
+      }
+    }
+    container wanDnsNetAddressTable {
+      list wanDnsNetAddressEntry {
+        key "wanIndex wanDnsNetAddressIndex";
+        tailf:sort-order "snmp";
+        tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.2";
+        leaf wanIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.1.1.1";
+        }
+        leaf wanDnsNetAddressIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.2.1.1";
+        }
+        leaf wanDnsIfIndex {
+          type int32;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.2.1.2";
+          config false;
+        }
+        leaf wanDnsNetAddress {
+          type inet:ipv4-address;
+          tailf:snmp-oid "1.3.6.1.4.1.9.6.1.110.2.3.2.1.3";
+        }
+      }
+    }
+  }
+  typedef commonRebootReasonType {
+    type enumeration {
+      enum "unknown" {
+        value 0;
+      }
+      enum "configurationChanged" {
+        value 1;
+      }
+      enum "userRestart" {
+        value 2;
+      }
+      enum "firmwareUpgrade" {
+        value 3;
+      }
+      enum "factoryDefault" {
+        value 4;
+      }
+    }
+  }
+  typedef mgtSystemResetType {
+    type enumeration {
+      enum "warmStart" {
+        value 1;
+      }
+      enum "coldStart" {
+        value 2;
+      }
+    }
+  }
+  typedef mgtFactoryResetType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+  typedef mgtAdministratorType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef mgtAdminUsernameType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef mgtHostNameType {
+    type string {
+      length "min .. 32";
+    }
+  }
+  typedef mgtDomainNameType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef mgtDhcpStatusType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+  typedef advMgtSNMPStatusType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+  typedef advMgtSNMPv3StatusType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+  typedef advMgtUPnPStatusType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+  typedef mgtCommunityNameType {
+    type string {
+      length "min .. 32";
+    }
+  }
+  typedef mgtCommunityTypeType {
+    type enumeration {
+      enum "readOnly" {
+        value 1;
+      }
+      enum "readWrite" {
+        value 2;
+      }
+    }
+  }
+  typedef trapMgrCommunityNameType {
+    type string {
+      length "min .. 32";
+    }
+  }
+  typedef wanConnectionTypeType {
+    type enumeration {
+      enum "dynamic" {
+        value 1;
+      }
+      enum "static" {
+        value 2;
+      }
+      enum "pppoe" {
+        value 3;
+      }
+      enum "ras" {
+        value 4;
+      }
+      enum "pptp" {
+        value 5;
+      }
+      enum "hbs" {
+        value 6;
+      }
+    }
+  }
+  typedef wanDHCPStatusType {
+    type enumeration {
+      enum "release" {
+        value 0;
+      }
+      enum "renew" {
+        value 1;
+      }
+    }
+  }
+  typedef wanLoginStatusType {
+    type enumeration {
+      enum "disconnect" {
+        value 0;
+      }
+      enum "connect" {
+        value 1;
+      }
+    }
+  }
+  typedef wanLoginUserNameType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef wanLoginPasswordType {
+    type string {
+      length "min .. 64";
+    }
+  }
+  typedef wanWorkingModeType {
+    type enumeration {
+      enum "gateway" {
+        value 1;
+      }
+      enum "router" {
+        value 2;
+      }
+    }
+  }
+  typedef wanConnectedStateType {
+    type enumeration {
+      enum "keepAlive" {
+        value 0;
+      }
+      enum "onDemand" {
+        value 1;
+      }
+    }
+  }
+  typedef wanDnsAutoNegoStatusType {
+    type enumeration {
+      enum "disable" {
+        value 0;
+      }
+      enum "enable" {
+        value 1;
+      }
+    }
+  }
+}

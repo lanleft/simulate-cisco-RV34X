@@ -1,0 +1,8 @@
+Package: mtd-utils-ubirename
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Source: package/openwrt/utils/mtd-utils
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 7002
+Description:  ubirename package from mtd-utils

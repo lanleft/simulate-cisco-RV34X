@@ -1,0 +1,82 @@
+<form name="form" ng-controller="qos_bandwidth_management_main" ng-modification="dataReady">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('WAN_Bandwidth_Management')"></div>
+            <div class="page-button-container ng-hide" ng-show="true">
+                <button ng-click="save()" class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('WAN_Bandwidth_Management_Apply')"></span>
+                </button>
+                <button ng-click="cancel()" class="btn-cancel">
+                    <span ng-bind="DICT('WAN_Bandwidth_Management_Cancel')"></span>
+                </button>
+                <button ng-click="goback()" class="btn-cancel" ng-if="backbtn">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container container-fluid" ng-show="true">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('WAN_Bandwidth_Management_Table')"></div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridBWManage"></div>
+                </div>
+            </div>
+            <div class="page-note-cntr">
+                <span pg-bind-html="combineNote"></span>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="qos_header_bandwidth_upstream.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td ng-bind="grid.appScope.DICT('WAN_Bandwidth_Management_Max_Bandwidth_Provided_By_IPS')"></td>
+        </tr>
+        <tr class="seperator">
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="grid.appScope.DICT('WAN_Bandwidth_Management_Upstream')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="qos_header_bandwidth_downstream.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr>
+            <td></td>
+        </tr>
+        <tr class="seperator">
+            <td></td>
+        </tr>
+        <tr>
+            <td ng-bind="grid.appScope.DICT('WAN_Bandwidth_Management_Downstream')"></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="qos_header_bandwidth_interface.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr class="two-rows">
+            <td ng-bind="grid.appScope.DICT('WAN_Bandwidth_Management_Interface')"></td>
+        </tr>
+    </table>
+</script>
+
+<script type="text/ng-template" id="qos_header_bandwidth_outbond_queuing_policy.html">
+<div class="ui-grid-header-custom-cntr-multi-row">
+    <table>
+        <tr class="two-rows">
+            <td ng-bind="grid.appScope.DICT('WAN_Bandwidth_Management_Outbound_Queuing_Policy')"></td>
+        </tr>
+    </table>
+</script>

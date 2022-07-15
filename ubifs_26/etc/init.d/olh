@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+                                
+START=99
+
+install_olh() {
+        pkg="$1"
+        olh_tarball="$pkg.tar.gz"
+
+        [ -f /usr/share/olh/$olh_tarball ] && {
+                mkdir -p /tmp/www/help && cd /tmp/www/help
+                tar zxf /usr/share/olh/$olh_tarball && ln -sf /tmp/www/help/$pkg help
+        }
+}
+
+start() {
+        board=`uci get systeminfo.sysinfo.pid | cut -d'=' -f2 | cut -d'-' -f1 | tr [a-z] [A-Z]`
+        language="English"                                                                     
+        olh="$board-$language"
+                              
+        [ -d /tmp/www/help/$olh ] || {
+                install_olh "$olh"
+        }
+}  

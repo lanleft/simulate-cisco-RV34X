@@ -1,0 +1,27 @@
+#Mandatory Server parameters
+certfile                |CERTFILE|
+cnwaddr                 |CNWADDR|
+cnetmask                |CNETMASK|
+gwifname                |GWIFNAME|
+gwport                  |GWPORT|
+domain                  |DOMAIN|
+banner                  |BANNER|
+usecryptodev            |USECRYPTODEV|
+
+#Optional Server parameters
+idletimeout             |IDLETIMEOUT|
+sessiontimeout          |SESSIONTIMEOUT|
+cdpdtimeout             |CDPDTIMEOUT|
+gwdpdtimeout            |GWDPDTIMEOUT|
+keepalive               |KEEPALIVE|
+leaseduration           |LEASEDURATION|
+maxmtu                  |MAXMTU|
+rekeymethod             |REKEYMETHOD|
+rekeyinterval           |REKEYINTERVAL|
+
+#Command names to add or delete session info START
+cmdname                 |CMDNAME|
+addopt                  |ADDOPT|
+delopt                  |DELOPT|
+
+#Session Policy parameters START

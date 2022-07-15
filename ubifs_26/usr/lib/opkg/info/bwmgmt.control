@@ -1,0 +1,8 @@
+Package: bwmgmt
+Version: 0.0.2-1
+Depends: libc, librt, libpthread, libnl-tiny
+Source: package/pegatron/bwmgmt
+Section: Pegatron
+Architecture: comcerto2000
+Installed-Size: 7386
+Description:  BandWidth Management

@@ -1,0 +1,132 @@
+#!/bin/sh /etc/rc.common
+. /lib/functions.sh
+. /lib/functions/network.sh
+
+START=95
+
+BWMGMTD="/usr/bin/bwmgmtd"
+BWMGMTT="/usr/bin/bwmgmt-trigger"
+BWRESET="/usr/bin/reset-mobile-statistics"
+CONFDFILE="/etc/bwmgmt"
+MNTDIR="/mnt/configcert/bwmgmt/data"
+TMPDIR="/tmp/bwmgmt/data"
+SETLED="/usr/bin/rv340_led.sh"
+USBFILE1="USB1"
+USBFILE2="USB2"
+
+configure() {
+        local cfg="$1"
+        local device="$2"
+        local file=`echo $cfg | tr '[a-z]' '[A-Z]'`
+        local bwcap=`uci get bwmgmt.$cfg.bwcap 2>/dev/null`
+        local bwcap_threshold=`uci get bwmgmt.$cfg.bwcap_threshold 2>/dev/null`
+        local bwcap_notification=`uci get bwmgmt.$cfg.bwcap_notification 2>/dev/null`
+        local proto=`uci get network.$cfg.proto 2>/dev/null`
+        local ip device
+
+        network_get_wanip ip $cfg
+        [ -n "$device" ] || network_get_device device $cfg
+
+        # bwmgmtd, sendmail example:
+        # /usr/bin/bwmgmtd -i eth3.1 -f USB1 -o /etc/bwmgmt -t 3 -T 50 -c /tmp/1.sh
+        # /usr/bin/sendmail Subject:Subject File:/tmp/2
+        if [ -n "$device" ]; then
+                # 3g interface mapping as 3g-usb1/3g-usb2 for USB1/USB2
+                # 4g interface will create wwan0/wwan1, but not binded to USB1/USB2, driver will create wwan0 on first connected
+                # so we need kill all bwmgmtd for 4g, avoid change interface name
+                if [ "$proto" = "4g" ]; then
+                        `pkill -f "$BWMGMTD .* -f $file"`
+                fi
+
+                exist=`pgrep -f "$BWMGMTD .* -f $file"`
+                if [ -z "$exist" ]; then
+                        if [ ${bwcap_notification:-0} -ne 0 ]; then
+                                # /usr/bin/bwmgmt-trigger USB1 disconnect
+                                # /usr/bin/bwmgmt-trigger USB1 sendmail
+                                $BWMGMTD -i $device -f $file -o $TMPDIR -t 10 -C ${bwcap:-0} -T ${bwcap_threshold:-0} -c $BWMGMTT &
+                        else
+                                $BWMGMTD -i $device -f $file -o $TMPDIR -t 10 -C ${bwcap:-0} -c $BWMGMTT &
+                        fi
+                fi
+
+                # if modem interface already connected and has ip, trigger to start thread
+                # SIGUSR1 to start thread
+                # SIGUSR2 to stop thread
+                ip=`ifconfig "$device" 2>/dev/null | grep "inet addr:" | cut -d':' -f2 | cut -d' ' -f1`
+                pid=`pgrep -f "$BWMGMTD .* -f $file"`
+                if [ -n "$ip" ]; then
+                        `kill -SIGUSR1 $pid`
+                fi
+        fi
+
+}
+
+setting() {
+        local cfg="$1"
+        local device="$2"
+
+        config_get enable "$cfg" enable
+
+        if [ "$enable" = "1" ]; then
+                case "$cfg" in
+                        usb*)
+                                configure $cfg $device
+                        ;;
+                esac
+        fi
+}
+
+reset() {
+        local cfg="$1"
+        local bwcap_enable
+        config_get bwcap_enable "$cfg" bwcap_enable 0
+        local file=`echo $cfg | tr '[a-z]' '[A-Z]'`
+
+        exist=`pgrep -f "$BWMGMTD .* -f $file"`
+        if [ -n "$exist" ]; then
+                `kill -9 $exist >/dev/null 2>&1`
+        fi
+
+        if [ "$bwcap_enable" = "0" ]; then
+                # Reset bandwidth volume
+                `rm "$TMPDIR/$file" >/dev/null 2>&1`
+        else
+                # Clear connection time, section packages
+                `sed -i "s/^[0-9]\+,[0-9]\+,[0-9]\+/0,0,0/g" "$TMPDIR/$file" >/dev/null 2>&1`
+                cp -rf $TMPDIR/$file $MNTDIR
+        fi
+}
+
+start() {
+        local cfg=$1
+        local device=$2
+
+        [ -d $TMPDIR ] || mkdir -p $TMPDIR
+        [ -d $CONFDFILE ] || mkdir -p $CONFDFILE
+        [ -d $MNTDIR ] || mkdir -p $MNTDIR
+
+        # copy mnt to /tmp
+        cp -rf  $MNTDIR/* $TMPDIR
+        # link for interface-state/
+        `ln -s "$TMPDIR" $CONFDFILE >/dev/null 2>&1`
+
+        config_load network
+        if [ -n "$cfg" ]; then
+                setting "$cfg" "$device"
+        else
+                config_foreach setting interface
+        fi
+}
+
+stop() {
+        local cfg=$1
+
+        config_load bwmgmt
+
+        if [ -n "$cfg" ]; then
+                reset "$cfg"
+        else
+                killall -9 bwmgmtd
+                config_foreach reset interface
+        fi
+}

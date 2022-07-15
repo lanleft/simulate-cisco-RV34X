@@ -1,0 +1,91 @@
+<div ng-controller="GreTunnelCtrl">
+    <form name="gre_tunnel" ng-modification="ui-data.data_ready" id="gre-tunnel">
+        <div ng-if="ui_data.data_ready">
+            <div class="page-title-container">
+                <div class="page-title" ng-bind="DICT('Gre_Tunnel_GRE_Tunnel')"></div>
+                <div class="page-button-container">
+                    <button type="button" ng-click="funs.save()" ng-disabled="gre_tunnel.$invalid" class="btn-apply">
+                        <span ng-bind="DICT('Gre_Tunnel_Apply')"></span>
+                    </button>
+                    <button type=button" ng-click="funs.cancel()" class="btn-cancel">
+                        <span ng-bind="DICT('Gre_Tunnel_Cancel')"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="page-content-container">
+                <div ng-show="ui_data.page === 'main'">
+                    <div ng-bind="ui_data.number_of_connect"></div>
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('Gre_Tunnel_GRE_Tunnel_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-btn-cntr">
+                                <button type="button" id="btn_add" class="grid-btn-add" ng-click="funs.add()" ng-disabled="model.gres.length >= ui_data.max_cnt"></button>
+                                <button type="button" id="btn_edit" class="grid-btn-edit" ng-click="funs.edit()" ng-disabled="ui_data.selected.length !== 1"></button>
+                                <button type="button" id="btn_del" class="grid-btn-delete" ng-click="funs.del()" ng-disabled="ui_data.selected.length === 0"></button>
+                            </div>
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridGreTunnelOptions"></div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="ui_data.page === 'edit'">
+                    <table class="page-block-tb-list fill-up">
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Interface_Name_Colon')"></td>
+                            <td>
+                                <select ng-model="edit.name" ng-disabled="edit.type === 'edit'" ng-options="m.name as m.name disable when m.used for m in ui_data.gre_names"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Interface_Description_Colon')"></td>
+                            <td>
+                                <input type="text" name="description" required ng-model="edit.description" ng-change="chk_description()"></input>
+                            </td>
+                            <td ng-show="gre_tunnel.description.$error.repeat" class="validation-error-text-right" ng-bind="DICT('Gre_Tunnel_Description_Repeat')"></td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Enable_Colon')"></td>
+                            <td>
+                                <input type="checkbox" ng-model="edit.enabled"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Tunnel_Source_Colon')"></td>
+                            <td>
+                                <select ng-model="edit.source.interface" ng-options="m.id as m.displayName for m in model.ifs"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Tunnel_Destination_Colon')"></td>
+                            <td>
+                                <input type="text" ipv4-ip ng-model="edit.destination.v4_ip" required></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_IP_Address_Of_Gre_Tunnel')"></td>
+                            <td>
+                                <input type="text" ipv4-ip required ng-model="edit.ipv4.ip"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Subnet_Mask')"></td>
+                            <td>
+                                <input type="text" ipv4-netmask required ng-model="edit.ipv4.netmask"></input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Gre_Tunnel_Mtu')"></td>
+                            <td>
+                                <input type="number" required max="1500" min="256" ng-model="edit.ipv4.mtu"></input>
+                            </td>
+                            <td>
+                                <span class="tip-info" ng-bind="DICT('Gre_Tunnel_Range')"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

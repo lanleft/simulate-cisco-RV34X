@@ -1,0 +1,42 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/netifd/netifd-proto.sh
+
+interface="$1"
+vid_pid="$2"
+
+USBCONN="/tmp/usb_conn_$interface"
+
+[ -f $USBCONN ] || touch $USBCONN
+
+[ -n "$vid_pid" ] && {
+json_load "$(cat /lib/mobile/data/$vid_pid)"
+json_select                                                          
+json_get_vars delay
+}                 
+
+[ -n "$delay" ] || delay=5
+
+logger -t mobile -p local0.info "$interface: Waiting for driver ready ($delay s)"
+
+mobile_debounce() {
+        while [ -f $USBCONN ]
+        do
+                conntime=$(date -r "$USBCONN" +%s)
+                curtime="$(date +%s)"
+
+                if [ $(($curtime - $conntime)) -gt $delay ]; then
+                        logger -t mobile -p local0.info "$interface: Ready to connect"
+
+                        proto_set_available "$interface" 1
+                        ifup $interface
+
+                        rm $USBCONN
+                fi
+
+        sleep 1
+        done
+}
+
+mobile_debounce &

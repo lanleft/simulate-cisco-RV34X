@@ -1,0 +1,108 @@
+module ciscosb-routing {
+    namespace "http://cisco.com/ns/ciscosb/routing";
+    prefix "ciscosb-routing";
+    import ietf-routing { prefix "rt"; }
+    import ietf-ipv4-unicast-routing { prefix "v4ur"; }
+    import ietf-ipv6-unicast-routing { prefix "v6ur"; }
+    import ietf-inet-types { prefix inet; }
+    import ietf-interfaces { prefix "if"; }
+    import ietf-ip { prefix "ip"; }
+    import ciscosb-common { prefix common; }
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-23 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-20 {
+        description
+                "Initial revision.";
+        reference "TODO";
+    }
+    identity rip {
+     base rt:routing-protocol;
+     description
+      "Rip routing protocol";
+    }
+    augment "/rt:routing/rt:routing-instance/rt:routing-protocols/"
+    + "rt:routing-protocol/rt:static-routes/v4ur:ipv4/v4ur:route" {
+     leaf metric {
+      type uint32 {
+       range "0 .. 32766";
+      }
+     }
+    }
+    augment "/rt:routing/rt:routing-instance/rt:routing-protocols/"
+    + "rt:routing-protocol/rt:static-routes/v6ur:ipv6/v6ur:route" {
+     leaf metric {
+      type uint32 {
+       range "0 .. 32766";
+      }
+     }
+    }
+    augment "/rt:routing-state/rt:routing-instance/rt:ribs/rt:rib/"
+    + "rt:routes/rt:route"{
+     leaf metric {
+      type uint32 {
+       range "0 .. 32766";
+      }
+     }
+    }
+    augment "/rt:routing/rt:routing-instance/rt:routing-protocols/"
+    + "rt:routing-protocol/rt:static-routes/v4ur:ipv4/v4ur:route/v4ur:next-hop/v4ur:next-hop-options/v4ur:simple-next-hop"{
+               leaf next-hop-address {
+                 type inet:ipv4-address;
+                 description
+                   "IPv4 address of the next-hop.";
+               }
+    }
+    augment "/rt:routing/rt:routing-instance/rt:routing-protocols/"
+    + "rt:routing-protocol/rt:static-routes/v6ur:ipv6/v6ur:route/v6ur:next-hop/v6ur:next-hop-options/v6ur:simple-next-hop"{
+               leaf next-hop-address {
+                 type inet:ipv6-address;
+                 description
+                   "IPv4 address of the next-hop.";
+               }
+    }
+augment "/if:interfaces/if:interface/ip:ipv6/v6ur:ipv6-router-advertisements" {
+    leaf router-preference{
+        type enumeration{
+            enum high;
+            enum medium;
+            enum low;
+        }
+    }
+    leaf mode{
+        type enumeration{
+            enum unicast;
+            enum unsolicited-multicast;
+        }
+    }
+}
+    augment "/if:interfaces/if:interface/ip:ipv6/v6ur:ipv6-router-advertisements/v6ur:prefix-list/v6ur:prefix"{
+        uses common:IPV6-PREFIX-ORIGIN;
+    }
+    rpc update-routes {
+        description
+            "Update ipv4/ipv6 route from csv file.";
+        input {
+            leaf file-md5 {
+                type string;
+                mandatory false;
+                description
+                    "MD5 checksum of file";
+            }
+            leaf file {
+             type inet:uri;
+                mandatory true;
+                description
+                    "Ip routes csv file. Example of a two-record csv file:
+                    family, op, dst_net, dst_prefix, next_hop, hoplimit, iif
+                    inet4, add, 192.168.100.0, 24, 10.1.1.1, 3, vlan1
+                    inet6, add, 2001:1234:5678::, 64, fe08::1cfc:66ff:fec8:8614, 3, vlan1";
+            }
+        }
+    }
+}

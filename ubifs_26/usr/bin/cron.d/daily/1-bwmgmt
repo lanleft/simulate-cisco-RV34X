@@ -1,0 +1,46 @@
+#!/bin/sh
+. /lib/functions.sh
+
+###########################################
+#	bandwidth mgmt file
+#	save file format : time,111,222,333,444
+#	time: connection time (s)
+#	111: start rx bytes
+#	222: start tx bytes
+#	333: usage rx bytes
+#	444: usage tx bytes
+###########################################
+
+SAVEFILE="/tmp/bwmgmt/data"
+MNTDIR="/mnt/configcert/bwmgmt/data"
+
+configure() {
+	local cfg="$1"
+	local bwcap_enable
+	local bwcap_renew_date
+
+	config_get bwcap_enable "$cfg" bwcap_enable
+	if [ $bwcap_enable -eq 1 ]; then
+		config_get bwcap_renew_date "$cfg" bwcap_renew_date
+		local rdate=`printf %02d $bwcap_renew_date`
+		local file=`echo $cfg | tr '[a-z]' '[A-Z]'`
+		local ndate=`date '+%d'`
+
+		if [ $rdate = $ndate ]; then
+			logger -t mobile -p local0.info "$cfg: reset monthly usage."
+			sed -i "s/[0-9]\+,[0-9]\+$/0,0/g" "$SAVEFILE/$file"
+		fi
+
+		# copy to mnt
+		cp -rf $SAVEFILE/$file $MNTDIR
+	fi
+
+}
+
+start() {
+	config_load bwmgmt
+	config_foreach configure interface
+}
+
+start
+

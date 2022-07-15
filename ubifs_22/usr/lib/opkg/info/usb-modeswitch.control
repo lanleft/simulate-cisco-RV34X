@@ -1,0 +1,10 @@
+Package: usb-modeswitch
+Version: 2017-05-24-453da8e540b1c53d357b897d6c70372cd4633390
+Depends: libc, librt, libpthread, libubox, libblobmsg-json, libusb-1.0
+Source: package/utils/usbmode
+License: GPL-2.0
+Section: utils
+Maintainer: Felix Fietkau <nbd@nbd.name>
+Architecture: comcerto2000
+Installed-Size: 13150
+Description:  USB mode switching utility

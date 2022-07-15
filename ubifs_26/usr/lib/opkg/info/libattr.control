@@ -1,0 +1,10 @@
+Package: libattr
+Version: 20140610-1
+Depends: libc, librt, libpthread
+Source: package/pegatron/attr
+Section: libs
+Maintainer: Maxim Storchak <m.storchak@gmail.com>
+Architecture: comcerto2000
+Installed-Size: 5077
+Description:  Extended attributes support
+ This package provides libattr

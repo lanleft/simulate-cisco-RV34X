@@ -1,0 +1,8 @@
+Package: bccsdk
+Version: 0.7
+Depends: libc, librt, libpthread, libopenssl
+Source: package/freescale/bccsdk
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 76106
+Description:  BCCSDK library for use by Webfiltering module.

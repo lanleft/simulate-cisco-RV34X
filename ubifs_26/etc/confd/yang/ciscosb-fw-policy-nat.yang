@@ -1,0 +1,108 @@
+module ciscosb-fw-policy-nat {
+    yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-policy-nat";
+    prefix "fw-policy-nat";
+    import ciscosb-service {
+      prefix "fw-service";
+    }
+    import ietf-interfaces {
+      prefix "if";
+    }
+    import ciscosb-ipgroup {
+      prefix "ipgroup";
+    }
+    organization
+      "Cisco System, Inc.";
+    contact
+      "Cisco Systems, Inc. 
+       Customer Service
+       E-mail: xinsfang@cisco.com";
+    description
+      "This YANG module defines a component that describes the configuration of firewall policy NAT";
+    revision 2016-06-01{
+      description "Initial";
+      reference "";
+    }
+    typedef device-ip-type {
+        type enumeration {
+            enum wan-ip;
+            enum usb-ip;
+            enum vlan-ip;
+            enum gre-ip;
+        }
+    }
+    grouping TRANSLATED-IP {
+        choice translated-ip {
+            case device-ip {
+                leaf device-ip {
+                    type device-ip-type;
+                }
+                leaf interface {
+                    type if:interface-ref;
+                }
+            }
+            case ipgroup {
+                leaf ipgroup {
+                    type leafref {
+                        path "/ipgroup:ip-groups/ipgroup:ip-group/ipgroup:name";
+                    }
+                }
+            }
+        }
+    }
+    container policy-nat-rules {
+      list policy-nat-rule{
+        key "name";
+        ordered-by user;
+        leaf name{
+          type string;
+        }
+        leaf enabled {
+          type boolean;
+        }
+        leaf interface_from {
+        type if:interface-ref;
+        }
+        leaf interface_to {
+        type if:interface-ref;
+        }
+        container src {
+            leaf enabled {
+                type boolean;
+            }
+            leaf original-ip {
+                type leafref {
+                    path "/ipgroup:ip-groups/ipgroup:ip-group/ipgroup:name";
+                }
+            }
+            uses TRANSLATED-IP;
+        }
+        container dst {
+            leaf enabled {
+                type boolean;
+            }
+            leaf original-ip {
+                type leafref {
+                    path "/ipgroup:ip-groups/ipgroup:ip-group/ipgroup:name";
+                }
+            }
+            uses TRANSLATED-IP;
+        }
+        container service {
+            leaf enabled {
+                type boolean;
+            }
+            leaf original-service {
+                type leafref {
+                    path "/fw-service:services/fw-service:service/fw-service:name";
+                }
+            }
+            leaf translated-service {
+                type leafref {
+                    path "/fw-service:services/fw-service:service/fw-service:name";
+                }
+            }
+        }
+      }
+    }
+}

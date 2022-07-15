@@ -1,0 +1,8 @@
+Package: nbvpn
+Version: 1.0-1
+Depends: libc, librt, libpthread
+Source: package/freescale/nbvpn
+Section: Freescale Packages
+Architecture: comcerto2000
+Installed-Size: 2459
+Description:  This package is for sending NetBIOS packets to remote over VPN 

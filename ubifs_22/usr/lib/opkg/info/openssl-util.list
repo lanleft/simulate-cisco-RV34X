@@ -1,0 +1,4 @@
+/usr/bin/openssl
+/etc/ssl/openssl_ss.cnf
+/etc/ssl/openssl.cnf
+/etc/ssl/openssl_ca.cnf

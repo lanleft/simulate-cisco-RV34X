@@ -1,0 +1,50 @@
+<div ng-controller="systemCtrl">
+	<form name="form" ng-modification="dataReady" ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('System')"></div>
+            <div class="page-button-container">
+                <button class="btn-apply" ng-disabled="form.$invalid || userAccessFlag === 'RO'" ng-click="funs.save()">
+                    <span ng-bind="DICT('System_Apply')"></span>
+                </button>
+                <button class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('System_Cancel')"></span>
+                </button>
+                <button type="button" class="btn-back" ng-show="model.back_btn" ng-click="funs.go_back()">
+                    <span ng-bind="DICT('Back')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('System_Host_Name')"></td>
+                    <td>
+                        <input type='text' id="txt_hostname" name="host_name" required host-name maxlength="63" ng-model='model.hostname'></input>
+                    </td>
+                    <td class="validation-error-text-right" style="padding-left: 1em;">
+                        <span ng-messages="form['host_name'].$error" ng-show="form.host_name.$dirty">
+                            <span ng-show="form['host_name'].$error.hostName || form['host_name'].$error.required">
+                            <span ng-bind="DICT('System_Msg1')"></span><br>
+                            <span ng-bind="DICT('System_Msg2')"></span>
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('System_Domain_Name')"></td>
+                    <td>
+                        <input type='text' id="txt_domainname" name="domain_name" domain-name maxlength="253"  ng-model='model.domainname'></input>
+                    </td>
+                    <td class="validation-error-text-right" style="padding-left: 1em;">
+                         <span ng-messages="form['domain_name'].$error" ng-show="form.domain_name.$dirty">
+                            <span ng-show="form['domain_name'].$error.domainName" ng-bind="DICT('System_Invalid_Value')">
+                            
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+	</form>
+</div>

@@ -1,0 +1,25 @@
+#!/bin/sh
+
+. /lib/functions/network.sh
+. /lib/mobile/mobile-lib.sh
+
+interface=$1
+protocol=$2
+
+[ "$protocol" = "hilink" ] && {
+	start=0
+	while [ $start -eq 0 ] ; do
+		sleep 5
+		network_flush_cache
+		network_get_wanip ip $interface
+		[ -n "$ip" ] && {			
+			mobile_update_devinfo $interface $protocol
+			start=1
+		}		
+	done
+}
+
+while true; do
+	sleep 10		
+	mobile_update_signal $interface $protocol
+done

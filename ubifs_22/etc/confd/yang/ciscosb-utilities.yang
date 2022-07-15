@@ -1,0 +1,466 @@
+module ciscosb-utilities {
+  namespace "http://cisco.com/ns/ciscosb/utilities";
+  prefix ciscosb-utl;
+  import ietf-inet-types { prefix "inet"; }
+  import ciscosb-common{ prefix ciscosb-common; }
+  organization
+    "Cisco Systems
+     170 West Tasman Drive
+     San Jose, CA 95134-1706
+     USA";
+  contact
+    "WILL-BE-DEFINED-LATER";
+  description
+    "The module for entities implementing the ciscosb utility tools.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-10-28 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2013-10-15 {
+    description
+      "Initial Version.";
+  }
+ rpc utility-ping-request {
+        description
+                "This operation is used to allow execute supported PING diagnostic
+                tools on a selected infrastructure device";
+        input {
+            leaf echo-count {
+                type int32;
+                mandatory false;
+                description
+                                " Options: count Number of echo requests to send.";
+            }
+            leaf size {
+                type int32;
+                mandatory false;
+                description
+                                " Options: -l size Send buffer size.";
+            }
+            leaf ttl {
+                type int32;
+                mandatory false;
+                description
+                                " Options: -i TTL Time To Live.";
+            }
+            leaf hops-count {
+                type boolean;
+                mandatory false;
+                description
+                                " Options: -r count enable Record route for count hops (IPv4-only).";
+            }
+            leaf timeout {
+                type int32;
+                mandatory false;
+                units "milliseconds";
+                description
+                                " Options: -w timeout Timeout in milliseconds to wait for each
+                                reply.";
+            }
+            leaf ip-version {
+                mandatory false;
+                description
+                                " Options: Force using IPv4. Force using IPv6.";
+                type enumeration {
+                    enum "ipv4";
+                    enum "ipv6";
+                }
+            }
+            leaf target {
+                type inet:host;
+                mandatory true;
+                description
+                                "Target hostname or IP address.";
+            }
+        }
+        output {
+            leaf job-id{
+                type string;
+            }
+        }
+ }
+  rpc utility-ping-response{
+    description
+       "only return the newest output";
+    input{
+        leaf job-id{
+            type string;
+        }
+    }
+        output {
+            leaf address {
+                type inet:host;
+                mandatory true;
+                description
+                                "Target hostname or IP address.";
+            }
+            list data {
+                description
+                                "Contains the schema content.";
+                choice state {
+                    case reachable {
+                        leaf icmp-seq {
+                            type int32;
+                            mandatory true;
+                            description
+                                                        "ICMP sequence.";
+                        }
+                        leaf ttl {
+                            type int32;
+                            mandatory true;
+                            description
+                                                        "Time To Live(ttl) .";
+                        }
+                        leaf time {
+                            type decimal64 {
+                                fraction-digits 3;
+                            }
+                            mandatory true;
+                            units "milliseconds";
+                            description
+                                                        "Round trip time.";
+                        }
+                    }
+                    case time-out {
+                      leaf time-out {
+                       type empty;
+                         }
+                    }
+                }
+            }
+        }
+  }
+  rpc utility-traceroute-request {
+    description
+      "This operation is used to allow execute supported traceroute diagnostic tools
+       on a selected infrastructure device";
+    input {
+      leaf initial-ttl {
+        type int32;
+        mandatory false;
+        description
+          "Initial Time To Live(ttl)";
+      }
+      leaf max-ttl {
+        type int32;
+        mandatory false;
+        description
+          "Max Time To Live(ttl)";
+      }
+      leaf target {
+        type inet:host;
+        mandatory true;
+        description
+          "Target hostname or IP address.";
+      }
+    }
+    output {
+        leaf job-id{
+            type string;
+        }
+    }
+  }
+  rpc utility-traceroute-response {
+    description
+       "only return the newest output";
+    input {
+        leaf job-id{
+            type string;
+        }
+    }
+    output {
+      leaf results-start-date-time {
+        type string;
+        mandatory false;
+        description
+          "result start date";
+      }
+      leaf target {
+        type inet:host;
+        mandatory false;
+        description
+          "Target hostname or IP address.";
+      }
+      container probe-results {
+        description
+          "traceroute result.";
+        list hop {
+          description
+            "every hop result.";
+          key "hop_id";
+          leaf hop_id {
+            type int32;
+            description
+              "hop id";
+          }
+          list probes {
+            key "retry_id";
+            leaf hop-addr {
+              type inet:host;
+              mandatory false;
+              description
+                "Target hostname or IP address.";
+            }
+            leaf retry_id {
+              type int32;
+              description
+                "retry id";
+            }
+            description
+              "every hop's probe result.";
+            leaf round-trip-time {
+              type decimal64 {
+                fraction-digits 3;
+              }
+              units "milliseconds";
+              mandatory false;
+              description
+                "trace route round trip time.";
+            }
+            leaf response-status {
+              type string;
+              mandatory false;
+              description
+                "response status received or not.";
+            }
+          }
+        }
+      }
+    }
+  }
+  rpc utility-dnslookup {
+    description
+      "This operation is used to look up DNS record
+       on a selected infrastructure device";
+    input {
+      leaf target {
+        type inet:host;
+        mandatory true;
+        description
+          "Target hostname or IP address.";
+      }
+    }
+    output {
+      leaf target {
+        type inet:host;
+        mandatory true;
+        description
+          "Target hostname or IP address.";
+      }
+      leaf server {
+        type string;
+        mandatory true;
+        description
+          "DNS server.";
+      }
+      list responses {
+        key "name";
+        description
+          "Target hostname or IP address.";
+        leaf name {
+          type string;
+          mandatory true;
+          description
+            "DNS record name.";
+        }
+        leaf type {
+          type string;
+          mandatory true;
+          description
+            "A = Address record
+             AAAA = IPv6 address record
+             AFSDB = AFS database record
+             APL = Address Prefix List
+             CAA = Certification Authority Authorization
+             CERT = Certificate record
+             CNAME = Canonical name record
+             DHCID = DHCP identifier
+             DLV = DNSSEC Lookaside Validation record
+             DNAME = Delegation Name
+             DNSKEY = DNS Key record
+             DS = Delegation signer
+             HIP = Host Identity Protocol
+             IPSECKEY = IPsec Key
+             KEY = Key record
+             KX = Key eXchanger record
+             LOC = Location record
+             MX = Mail exchange record
+             NAPTR = Naming Authority Pointer
+             NS = Name server record
+             NSEC = Next-Secure record
+             NSEC3 = NSEC record version 3
+             NSEC3PARAM = NSEC3 parameters
+             PTR = Pointer record
+             RRSIG = DNSSEC signature
+             RP = Responsible person
+             SIG = Signature
+             SOA = Start of [a zone of] authority record
+             SPF = Sender Policy Framework
+             SRV = Service locator
+             SSHFP = SSH Public Key Fingerprint
+             TA = DNSSEC Trust Authorities
+             TKEY = Secret key record
+             TLSA = TLSA certificate association
+             TSIG = Transaction Signature
+             TXT = Text record";
+        }
+        leaf value {
+          type string;
+          mandatory true;
+          description
+            "DNS record value.";
+        }
+      }
+    }
+  }
+  rpc utility-testcables {
+    description
+      "This operation is used to verify the electrical connections in a cable or other wired assembly
+       on a selected infrastructure device";
+    input {
+      leaf eth {
+        type string;
+        mandatory true;
+        description
+          "Target ethernet interface id.";
+      }
+    }
+    output {
+      leaf distance-to-fault {
+        type string;
+        description
+          "the distance in meters to the fault if detected.";
+      }
+      leaf length {
+        type int32;
+        units "Meters";
+        description
+          "the length of the cable.";
+      }
+      leaf status {
+        mandatory true;
+        description
+          "Whether cable is connected or not";
+        type enumeration {
+          enum "good";
+          enum "not connected";
+        }
+      }
+    }
+  }
+  rpc utility-blinkled {
+    description
+      "This operation is used to allow to blink device system LED";
+    input {
+      leaf-list target-leds {
+        type string;
+        description
+          "Indicate one or more LEDS to flash (including all)";
+      }
+      container flash-pattern {
+        leaf-list pattern {
+          type enumeration {
+            enum "platform";
+            enum "hard-on";
+            enum "hard-off";
+            enum "blink-with-cadence";
+          }
+          description
+            "Indicate multiple flash patterns, including controlled by platform,
+             hard on, hard off, and blink with cadence";
+        }
+        list cadence {
+          key "cadence-seq";
+          leaf cadence-seq {
+            type int32;
+            description
+              "cadence sequence  ";
+          }
+          leaf on-time {
+            type int32;
+            units "A Tenth of a Second";
+            description
+              "on times ";
+          }
+          leaf off-time {
+            type int32;
+            units "A Tenth of a Second";
+            description
+              "off times ";
+          }
+          description
+            "list of on/off times";
+        }
+      }
+    }
+  }
+  rpc pkt-capture-request {
+      input {
+          leaf action {
+              type enumeration {
+                enum start;
+                enum stop;
+                enum clear;
+              }
+          }
+          leaf interface-name {
+              type string;
+          }	  
+          leaf job-id {
+              when "../action='stop' or ../action='clear'";
+              type string;
+          }
+      }
+      output {
+          leaf job-id{
+              type string;
+          }
+      }
+  }
+  rpc pkt-capture-response {
+      input {
+          leaf job-id{
+              type string;
+          }
+      }
+      output {
+          leaf state {
+              type enumeration {
+                enum idle;
+                enum capturing;
+                enum stopped;
+              }
+              default idle;
+          }
+          leaf interface-name {
+              type string;
+          }
+          leaf duration {
+              type uint32;
+          }
+          leaf file-size {
+              type uint32;
+          }
+          leaf file-name {
+              type string;
+          }
+      }
+  }
+  rpc is-port-available {
+      input {
+          leaf protocol {
+              type enumeration {
+                  enum TCP;
+                  enum UDP;
+              }
+          }
+          leaf port {
+              type uint16;
+          }
+      }
+  }
+}

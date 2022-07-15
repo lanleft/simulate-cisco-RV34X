@@ -1,0 +1,12 @@
+Package: drill
+Version: 1.6.17-2
+Depends: libc, librt, libpthread, libopenssl, libldns
+Source: package/libs/ldns
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+Maintainer: Nicolas Thill <nico@openwrt.org>
+Architecture: comcerto2000
+Installed-Size: 21745
+Description:  drill is a tool to designed to get all sorts of information out of the DNS. It
+ is specificly designed to be used with DNSSEC.

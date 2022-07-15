@@ -1,0 +1,8 @@
+Package: ciscosb-yang
+Version: 1.0.38-3
+Depends: libc, librt, libpthread
+Source: package/cisco/ciscosb-yang
+Section: Cisco
+Architecture: comcerto2000
+Installed-Size: 1170963
+Description:  ConfD pre-compiled FXS files

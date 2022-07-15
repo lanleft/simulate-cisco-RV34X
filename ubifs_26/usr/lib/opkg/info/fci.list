@@ -1,0 +1,4 @@
+/etc/init.d/fci
+/usr/lib/libfci.so
+/usr/lib/libfci.so.0
+/usr/lib/libfci.so.0.0.0

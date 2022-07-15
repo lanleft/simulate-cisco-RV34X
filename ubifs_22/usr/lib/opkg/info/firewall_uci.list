@@ -1,0 +1,6 @@
+/usr/sbin/iptables-uci
+/etc/init.d/firewall
+/etc/config/firewall
+/usr/sbin/fw_iface_stats.sh
+/usr/sbin/ip6tables-uci
+/etc/hotplug.d/iface/20-firewall

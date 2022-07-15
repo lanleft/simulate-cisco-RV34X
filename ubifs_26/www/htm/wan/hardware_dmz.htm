@@ -1,0 +1,140 @@
+<style>
+    .hddmz_list div {
+        padding-bottom: 10px;
+    }
+</style>
+<form ng-controller="hardwareDMZCtrl" name="hddmz_form" ng-modification="dataReady" id="hardware-dmz">
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('Hardware_DMZ')"></div>
+            <div class="page-button-container">
+                <button type="button" id="btn_save" class="btn-apply" ng-click="funs.save()" ng-disabled="hddmz_form.$invalid || userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('Hardware_DMZ_Apply')"></span>
+                </button>
+                <button type="button" id="btn_cancel" class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('Hardware_DMZ_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+		<confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container hddmz_list">
+            <div>
+                <input type="checkbox" id="chk_hddmz_enable" name="hddmz_enable"
+                    ng-model="model.dmz.enable"
+                    ng-change="updateViewValue(hddmz_form)"	
+                > 
+                    <span ng-bind="DICT('Hardware_DMZ_Enable')"></span>
+                    <span class="ng-hide" ng-show="true" ng-bind="ui_data.dmz_msg"></span>
+                </input>
+            </div>
+            <div ng-class="{nopHint: !model.dmz.enable}">
+                <div>
+                    <input type="radio" id="rdo_hddmz_subnet" name="hddmz_sel_subnet" ng-model="model.dmz.type"
+					ng-disabled="!model.dmz.enable"
+                    value="subnet">
+						<span ng-bind="DICT('Hardware_DMZ_Subnet')"></span>
+					</input>
+                </div>
+                <div class="page-indent2" ng-class="{nopHint: model.dmz.type !== 'subnet'}">
+                    <table class="page-block-tb-list dmz-subnet">
+                        <tr>
+                            <td ng-bind="DICT('Hardware_DMZ_DMZ_IP_Addr')"></td>
+                            <td>
+                                <input type="text" ng-ipv4-ip="model.dmz.enable && model.dmz.type === 'subnet'"
+                                    ng-required="model.dmz.enable && model.dmz.type === 'subnet'" id="txt_hddmz_ip" name="hddmz_ip" ng-model="model.dmz.dmz_ip"
+                                    ng-disabled="!model.dmz.enable"
+                                    ng-change="checkIpAndSubnet()">
+                                </input>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td ng-bind="DICT('Hardware_DMZ_Subnet_Mask')"></td>
+                            <td>
+                                <input type="text"
+                                       id="txt_hddmz_netmask"
+                                       ng-ipv4-netmask="model.dmz.enable && model.dmz.type === 'subnet'"
+                                       ng-required="model.dmz.enable && model.dmz.enable && model.dmz.type === 'subnet'"
+                                       name="hddmz_netmask"
+                                       ng-model="model.dmz.netmask"
+                                       ng-disabled="!model.dmz.enable"
+                                       ng-change="checkIpAndSubnet()">
+                                </input>
+                            </td>
+                        </tr>
+                        <tr ng-show="model.dmz.type === 'subnet' && hddmz_form.hddmz_ip.$error.overlap">
+                            <td></td>
+                            <td>
+                                <span class="validation-error-text" ng-bind="ui_data.subnet_errstr"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <input type="radio" id="rdo_hddmz_range" name="hddmz_sel_range" ng-model="model.dmz.type"
+                        ng-disabled="!model.dmz.enable"
+                        value="range">
+			        <span ng-bind="DICT('Hardware_DMZ_Range')"></span>
+                    </input>
+                </div>
+                <div class="page-indent2" ng-class="{nopHint: model.dmz.type !== 'range'}">
+                    <table class="page-block-tb-list dmz-range">
+                        <tr>
+                            <td ng-bind="DICT('Hardware_DMZ_IP_Range')"></td>
+                            <td>
+                                <input type="text"
+                                       id="txt_hddmz_start"
+                                       name="hddmz_start"
+                                       ng-model="model.dmz.start"
+                                       ng-ipv4-ip="model.dmz.enable && model.dmz.type === 'range'"
+                                       ng-required="model.dmz.enable && model.dmz.type === 'range'"
+                                       ng-disabled="!model.dmz.enable"
+                                       ng-change="checkRange()">
+                                </input>
+                                <span ng-bind="DICT('Hardware_DMZ_To')"></span>
+                                <input type="text"
+                                       id="txt_hddmz_end"
+                                       name="hddmz_end"
+                                       ng-ipv4-ip="model.dmz.enable && model.dmz.type === 'range'"
+                                       ng-required="model.dmz.enable && model.dmz.type === 'range'"
+                                       ng-model="model.dmz.end"
+                                       ng-disabled="!model.dmz.enable"
+                                       ng-change="checkRange()">
+                                </input>
+                            </td>
+                        </tr>
+                        <tr ng-show="model.dmz.type === 'range' && hddmz_form.hddmz_start.$error.overlap">
+                            <td></td>
+                            <td>
+                                <span class="validation-error-text" ng-bind="ui_data.range_errstr"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="hardwareDmzWarningMsg.html">
+    <div>
+        <div ng-bind="model.str1"></div>
+        <br/>
+        <ul>
+            <li>
+                <div ng-bind="DICT('Hardware_DMZ_Msg2')"></div>
+            </li>
+            <li>
+                <div ng-bind="DICT('Hardware_DMZ_Msg3')"></div>
+            </li>
+            <li>
+                <div ng-bind="DICT('Hardware_DMZ_Msg4')"></div>
+            </li>
+            <li>
+                <div ng-bind="DICT('Hardware_DMZ_Msg5')"></div>
+            </li>
+            <li>
+                <div ng-bind="DICT('Hardware_DMZ_Msg6')"></div>
+            </li>
+        </ul>
+    </div>
+</script>

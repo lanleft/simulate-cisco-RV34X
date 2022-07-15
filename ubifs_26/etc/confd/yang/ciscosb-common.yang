@@ -1,0 +1,270 @@
+module ciscosb-common {
+    namespace "http://cisco.com/ns/ciscosb/common";
+    prefix ciscosb-common;
+    import ietf-inet-types { prefix inet; }
+    import ietf-yang-types { prefix yang; }
+    import ietf-interfaces { prefix "if"; }
+    import ietf-ip { prefix ip; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains a collection of YANG common grouping definitions 
+     for Cisco Small Business devices.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-01-21 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-04-30 {
+        description "Proposed";
+        reference "TODO";
+    }
+    grouping RPC-RESPONSE {
+        leaf code {
+            type int32;
+            description
+               "the error code if RPC failed, return 0 if success";
+        }
+        leaf errstr {
+            type string;
+            description
+                        "Error message from the device if RPC failed.";
+        }
+    }
+    grouping AUTO-UPDATE-GLOBAL {
+        description "global auto-update settings";
+        leaf enable {
+            type boolean;
+        }
+        leaf check-frequency {
+            type enumeration {
+                enum none;
+                enum daily;
+                enum weekly;
+                enum monthly;
+            }
+        }
+        container notification {
+            description "A new version firmware notification via GUI or email";
+            container email{
+                leaf enabled{
+                    type boolean;
+                }
+                leaf address{
+                    type string;
+                }
+            }
+            leaf gui{
+                type boolean;
+            }
+        }
+    }
+    grouping AUTO-UPDATE {
+        description "Auto-update settings";
+        leaf notify {
+         type boolean;
+        }
+        leaf update-option {
+            type enumeration {
+                enum never;
+                enum immediately;
+                enum time;
+            }
+        }
+        leaf update-time {
+         type uint8;
+         description
+          "the hour to update, 0,1,...,23h";
+        }
+    }
+    grouping IPSUBNET_V4 {
+        leaf ip {
+            type inet:ipv4-address-no-zone;
+            description
+                        "The IPv4 address on the interface.";
+        }
+        choice subnet {
+            description
+                        "The subnet can be specified as a prefix-length, or, if the server
+                        supports non-contiguous netmasks, as a netmask.";
+            leaf prefix-length {
+                type uint8 {
+                    range "0..32";
+                }
+                description
+                                "The length of the subnet prefix.";
+            }
+            leaf netmask {
+                if-feature ip:ipv4-non-contiguous-netmasks;
+                type yang:dotted-quad;
+                description
+                                "The subnet specified as a netmask.";
+            }
+        }
+    }
+    grouping IPSUBNET_V6 {
+         leaf ip {
+         type inet:ipv6-address-no-zone;
+         description
+           "The IPv6 address on the interface.";
+       }
+       leaf prefix-length {
+         type uint8 {
+           range "0..128";
+         }
+         mandatory true;
+         description
+           "The length of the subnet prefix.";
+      }
+    }
+    grouping IPV6-GROUP {
+        container ipv6 {
+            choice address {
+                case single {
+                    leaf single {
+                        type inet:ipv6-address;
+                        description "This indicates source as single ipaddress";
+                    }
+                }
+                case subnet {
+                    container subnet {
+                     uses IPSUBNET_V6;
+                    }
+                }
+                case range {
+                    container range {
+                        leaf start {
+                            type inet:ipv6-address;
+                            description "This indicates source  start adress of a range";
+                        }
+                        leaf end {
+                            type inet:ipv6-address;
+                            description "This indicates source end address of a range";
+                        }
+                    }
+                }
+            }
+        }
+    }
+    grouping IPV4-GROUP {
+        container ipv4 {
+            choice address {
+                case single {
+                    leaf single {
+                        type inet:ipv4-address;
+                        description "This indicates source as single ipaddress";
+                    }
+                }
+                case subnet {
+                    container subnet {
+                     uses IPSUBNET_V4;
+                    }
+                }
+                case range {
+                    container range {
+                        leaf start {
+                            type inet:ipv4-address;
+                            description "This indicates source  start adress of a range";
+                        }
+                        leaf end {
+                            type inet:ipv4-address;
+                            description "This indicates source end address of a range";
+                        }
+                    }
+                }
+            }
+        }
+    }
+    grouping FIREWALL-ACL-SOURCE-FIELDS {
+        description "This group contains the fields that are common to source and
+                destinations of each firewall ACL Rule ";
+        choice source-address {
+            case source-any {
+                leaf source-any {
+                    type empty;
+                    description "This indicates source address as any";
+                }
+            }
+            case source-ip {
+                choice ip {
+                    case v4 {
+                        uses IPV4-GROUP;
+                    }
+                    case v6 {
+                        uses IPV6-GROUP;
+                    }
+                }
+            }
+        }
+    }
+    grouping FIREWALL-ACL-DESTINATION-FIELDS {
+        choice destination-address {
+            case destination-any {
+                leaf destination-any {
+                    type empty;
+                    description "This indicates destination address as any";
+                }
+            }
+            case destination-ip {
+                choice ip {
+                    case v4 {
+                        uses IPV4-GROUP;
+                    }
+                    case v6 {
+                        uses IPV6-GROUP;
+                    }
+                }
+            }
+        }
+    }
+    grouping TIMERANGE {
+        leaf start {
+            type yang:date-and-time;
+            description
+               "start time";
+        }
+        leaf end {
+         type yang:date-and-time;
+            description
+                        "end time";
+        }
+    }
+    grouping IP-VERSION {
+     leaf ip-version {
+      type enumeration {
+       enum v4;
+       enum v6;
+      }
+     }
+    }
+    grouping IPV6-PREFIX-ORIGIN {
+        choice origin-mode{
+            case static{
+                leaf static{
+                    type empty;
+                }
+            }
+            case isp{
+                container isp{
+                    leaf interface{
+                        type leafref{
+                            path "/if:interfaces/if:interface/if:name";
+                        }
+                    }
+                    leaf prefix-name{
+                        type string;
+                    }
+                    leaf suffix{
+                        type uint32;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,39 @@
+<form name="form" ng-controller="VPNPassthroughCtrl" ng-modification="dataReady" novalidate>
+    <div ng-if="dataReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('VPN_Passthrough')"></div>
+            <div class="page-button-container">
+                <button id="btn_save" class="btn-apply" ng-click="funs.save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('VPN_Passthrough_Apply')"></span></button>
+                <button id="btn_cancel" class="btn-cancel" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('VPN_Passthrough_Cancel')"></span></button>
+            </div>
+        </div>
+        <confirmsave ng-show="success"></confirmsave>
+        <div class="page-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('VPN_Passthrough_IPSec')"></td>
+                    <td>
+                        <input type="checkbox" id="btn_ipsecpassthrough" ng-model="model.ipsec">
+                        <span ng-bind="DICT('VPN_Passthrough_Enable')"></span></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Passthrough_PPTP')"</td>
+                    <td>
+                        <input type="checkbox" id="btn_pptppassthrough" ng-model="model.pptp">
+                        <span ng-bind="DICT('VPN_Passthrough_Enable')"></span></input>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('VPN_Passthrough_L2TP')"></td>
+                    <td>
+                        <input type="checkbox" id="btn_l2tppassthrough" ng-model="model.l2tp">
+                        <span ng-bind="DICT('VPN_Passthrough_Enable')"></span></input>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>

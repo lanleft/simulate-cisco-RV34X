@@ -1,0 +1,14 @@
+/etc/ppp/ip-up.d/l2tp.sh
+/lib/upgrade/keep.d/ppp
+/usr/sbin/pppd
+/usr/sbin/demand-interface-up
+/etc/ppp/filter
+/etc/ppp/pap-secrets
+/lib/netifd/ppp-up
+/etc/ppp/options
+/etc/hotplug.d/iface/92-ppp-demand-mode
+/etc/ppp/chap-secrets
+/etc/ppp/ipv6filter
+/lib/netifd/ppp-down
+/lib/netifd/proto/ppp.sh
+/etc/ppp/resolv.conf

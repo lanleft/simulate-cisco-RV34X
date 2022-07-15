@@ -1,0 +1,8 @@
+Package: mtd-utils-mkfs.ubifs
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils, libuuid, liblzo, zlib
+Source: package/openwrt/utils/mtd-utils
+Section: utils
+Architecture: comcerto2000
+Installed-Size: 27925
+Description:  mkfs.ubifs package from mtd-utils

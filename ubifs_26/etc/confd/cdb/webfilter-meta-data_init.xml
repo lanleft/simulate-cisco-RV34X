@@ -1,0 +1,681 @@
+<config xmlns="http://tail-f.com/ns/config/1.0">
+  <webfilter-meta-data xmlns="http://cisco.com/ns/ciscosb/security-common">
+    <categories>
+      <category>
+        <id>1</id>
+        <parent>2</parent>
+        <name>Real Estate</name>
+        <description>Information on renting, buying, or selling real estate or properties.</description>
+      </category>
+      <category>
+        <id>2</id>
+        <parent>2</parent>
+        <name>Computer and Internet Security</name>
+        <description>Computer/Internet security, security discussion groups.</description>
+      </category>
+      <category>
+        <id>3</id>
+        <parent>2</parent>
+        <name>Financial Services</name>
+        <description>Banking services and other types of financial information, such as loans, accountancy, actuaries, banks, mortgages, and general insurance companies.</description>
+      </category>
+      <category>
+        <id>4</id>
+        <parent>2</parent>
+        <name>Business and Economy</name>
+        <description>Business firms, corporate websites, business information, economics, marketing, management, and entrepreneurship.</description>
+      </category>
+      <category>
+        <id>5</id>
+        <parent>2</parent>
+        <name>Computer and Internet Info</name>
+        <description>General computer and Internet sites, technical information. SaaS sites and other URLs that deliver internet services.</description>
+      </category>
+      <category>
+        <id>6</id>
+        <parent>2</parent>
+        <name>Auctions</name>
+        <description>Sites that support the offering and purchasing of goods between individuals as their main purpose. Does not include classified advertisements.</description>
+      </category>
+      <category>
+        <id>7</id>
+        <parent>2</parent>
+        <name>Shopping</name>
+        <description>Department stores, retail stores, company catalogs and other sites that allow online consumer or business shopping and the purchase of goods and services.</description>
+      </category>
+      <category>
+        <id>8</id>
+        <parent>4</parent>
+        <name>Cult and Occult</name>
+        <description>Methods, means of instruction, or other resources to interpret, affect or influence real events through the use of astrology, spells, curses, magic powers, satanic or supernatural beings. Includes horoscope sites.</description>
+      </category>
+      <category>
+        <id>9</id>
+        <parent>3</parent>
+        <name>Travel</name>
+        <description>Airlines and flight-booking agencies. Travel planning, reservations, vehicle rentals, descriptions of travel destinations, or promotions for hotels or casinos.</description>
+      </category>
+      <category>
+        <id>10</id>
+        <parent>4</parent>
+        <name>Abused Drugs</name>
+        <description>Discussion or remedies for illegal, illicit, or abused drugs.</description>
+      </category>
+      <category>
+        <id>11</id>
+        <parent>1</parent>
+        <name>Adult and Pornography</name>
+        <description>Sexually explicit material and service for the purpose of arousing a sexual or prurient interest. Online groups, including newsgroups and forums, that are sexually explicit in nature.</description>
+      </category>
+      <category>
+        <id>12</id>
+        <parent>3</parent>
+        <name>Home and Garden</name>
+        <description>Home issues and products, including maintenance, home safety, decor, cooking, gardening, home electronics, design, etc.</description>
+      </category>
+      <category>
+        <id>13</id>
+        <parent>6</parent>
+        <name>Military</name>
+        <description>Information on military branches, armed services, and military history.</description>
+      </category>
+      <category>
+        <id>14</id>
+        <parent>6</parent>
+        <name>Social Network</name>
+        <description>These are social networking sites that have user communities where users interact, post messages, pictures, and otherwise communicate.</description>
+      </category>
+      <category>
+        <id>15</id>
+        <parent>8</parent>
+        <name>Dead Sites (db Ops only)</name>
+        <description>Dead sites that do not respond to http queries.</description>
+      </category>
+      <category>
+        <id>16</id>
+        <parent>2</parent>
+        <name>Stock Advice and Tools</name>
+        <description>Promotion and facilitation of securities trading and management of investment assets. Also includes information on financial investment strategies, quotes, and news.</description>
+      </category>
+      <category>
+        <id>17</id>
+        <parent>2</parent>
+        <name>Training and Tools</name>
+        <description>Distance education and trade schools, online courses, vocational training, software training, skills training.</description>
+      </category>
+      <category>
+        <id>18</id>
+        <parent>1</parent>
+        <name>Dating</name>
+        <description>Dating websites focused on establishing personal relationships.</description>
+      </category>
+      <category>
+        <id>19</id>
+        <parent>1</parent>
+        <name>Sex Education</name>
+        <description>Information on reproduction, sexual development, safe sex practices, sexually transmitted diseases, sexuality, birth control and sexual development.</description>
+      </category>
+      <category>
+        <id>20</id>
+        <parent>6</parent>
+        <name>Religion</name>
+        <description>Conventional or unconventional religious or quasi-religious subjects.</description>
+      </category>
+      <category>
+        <id>21</id>
+        <parent>3</parent>
+        <name>Entertainment and Arts</name>
+        <description>Motion pictures, videos, television, music, performing arts, books, comics, movie theatres, galleries, artists or reviews on entertainment, museums, artist sites.</description>
+      </category>
+      <category>
+        <id>22</id>
+        <parent>6</parent>
+        <name>Personal sites and Blogs</name>
+        <description>Personal websites posted by individuals or groups, as well as blogs.</description>
+      </category>
+      <category>
+        <id>23</id>
+        <parent>2</parent>
+        <name>Legal</name>
+        <description>Legal websites, law firms, discussions and analysis of legal issues.</description>
+      </category>
+      <category>
+        <id>24</id>
+        <parent>6</parent>
+        <name>Local Information</name>
+        <description>City guides and tourist information, including restaurants, area/regional information, and local points of interest.</description>
+      </category>
+      <category>
+        <id>25</id>
+        <parent>5</parent>
+        <name>Streaming Media</name>
+        <description>Sales, delivery, or streaming of audio or video content, including sites that provide downloads for such viewers.</description>
+      </category>
+      <category>
+        <id>26</id>
+        <parent>6</parent>
+        <name>Job Search</name>
+        <description>Assistance in finding employment, and tools for locating prospective employers, or employers looking for employees.</description>
+      </category>
+      <category>
+        <id>27</id>
+        <parent>1</parent>
+        <name>Gambling</name>
+        <description>Gambling or lottery web sites that invite the use of real or virtual money.</description>
+      </category>
+      <category>
+        <id>28</id>
+        <parent>8</parent>
+        <name>Translation</name>
+        <description>Language translation sites that allow users to see URL pages in other languages. Some of these sites can allow users to circumvent filtering as the target page's content is presented within the context of the translator's URL.</description>
+      </category>
+      <category>
+        <id>29</id>
+        <parent>2</parent>
+        <name>Reference and Research</name>
+        <description>Personal, professional, or educational reference material, including online dictionaries, maps, census, almanacs, library catalogs, genealogy, and scientific information.</description>
+      </category>
+      <category>
+        <id>30</id>
+        <parent>5</parent>
+        <name>Shareware and Freeware</name>
+        <description>Software, screensavers, icons, wallpapers, utilities, ringtones. Includes downloads that request a donation, and open source projects.</description>
+      </category>
+      <category>
+        <id>31</id>
+        <parent>4</parent>
+        <name>Peer to Peer</name>
+        <description>Peer to peer clients and access. Includes torrents, music download programs.</description>
+      </category>
+      <category>
+        <id>32</id>
+        <parent>4</parent>
+        <name>Marijuana</name>
+        <description>Marijuana use, cultivation, history, culture, legal issues.</description>
+      </category>
+      <category>
+        <id>33</id>
+        <parent>8</parent>
+        <name>Hacking</name>
+        <description>Illegal or questionable access to or the use of communications equipment/software. Development and distribution of programs that may allow compromise of networks and systems.</description>
+      </category>
+      <category>
+        <id>34</id>
+        <parent>3</parent>
+        <name>Games</name>
+        <description>Video games, computer games, electronic games, online sweepstakes, board games and fantasy sports.</description>
+      </category>
+      <category>
+        <id>35</id>
+        <parent>6</parent>
+        <name>Philosophy and Political Advocacy</name>
+        <description>Politics, philosophy, discussions, promotion of a particular viewpoint or stance in order to further a cause.</description>
+      </category>
+      <category>
+        <id>36</id>
+        <parent>4</parent>
+        <name>Weapons</name>
+        <description>Sales, reviews, or descriptions of weapons such as guns, knives or martial arts devices, or provide information on their use, accessories, or other modifications.</description>
+      </category>
+      <category>
+        <id>37</id>
+        <parent>4</parent>
+        <name>Pay to Surf</name>
+        <description>Sites that pay users in the form of cash or prizes, for clicking on or reading specific links, email, or web pages.</description>
+      </category>
+      <category>
+        <id>38</id>
+        <parent>3</parent>
+        <name>Hunting and Fishing</name>
+        <description>Sport hunting, gun clubs, and fishing.</description>
+      </category>
+      <category>
+        <id>39</id>
+        <parent>6</parent>
+        <name>Society</name>
+        <description>A variety of topics, groups, and associations relevant to the general populace, broad issues that impact a variety of people, including safety, children, societies, and philanthropic groups.</description>
+      </category>
+      <category>
+        <id>40</id>
+        <parent>6</parent>
+        <name>Educational Institutions</name>
+        <description>Pre-school, elementary, secondary, high school, college, university, and vocational school and other educational content and information,including enrollment, tuition, and syllabus.</description>
+      </category>
+      <category>
+        <id>41</id>
+        <parent>6</parent>
+        <name>Online Greeting cards</name>
+        <description>Online Greeting card websites.</description>
+      </category>
+      <category>
+        <id>42</id>
+        <parent>3</parent>
+        <name>Sports</name>
+        <description>Team or conference web sites, scores and schedules; sports-related online magazines or newsletters, fantasy sports and virtual sports leagues.</description>
+      </category>
+      <category>
+        <id>43</id>
+        <parent>1</parent>
+        <name>Swimsuits and Intimate Apparel</name>
+        <description>Swimsuits, intimate apparel or other types of suggestive clothing.</description>
+      </category>
+      <category>
+        <id>44</id>
+        <parent>4</parent>
+        <name>Questionable</name>
+        <description>Tasteless humor,  sites, and sites that manipulate the browser user experience or client in some unusual, unexpected, or suspicious manner.</description>
+      </category>
+      <category>
+        <id>45</id>
+        <parent>6</parent>
+        <name>Kids</name>
+        <description>Sites designed specifically for children and teenagers.</description>
+      </category>
+      <category>
+        <id>46</id>
+        <parent>4</parent>
+        <name>Hate and Racism</name>
+        <description>Sites that support content and languages or hate crime and racism such as Nazi, neo-Nazi, Ku Klux Klan, etc.</description>
+      </category>
+      <category>
+        <id>47</id>
+        <parent>5</parent>
+        <name>File Hosting / Storage</name>
+        <description>Online storage and posting of files, music, pictures, and other data. (This is also known as Personal Storage.)</description>
+      </category>
+      <category>
+        <id>48</id>
+        <parent>4</parent>
+        <name>Violence</name>
+        <description>Sites that advocate violence, depictions, and methods, including game/comic violence and suicide.</description>
+      </category>
+      <category>
+        <id>49</id>
+        <parent>8</parent>
+        <name>Keyloggers and Monitoring</name>
+        <description>Downloads and discussion of software agents that track a user's keystrokes or monitor their web surfing habits.</description>
+      </category>
+      <category>
+        <id>50</id>
+        <parent>7</parent>
+        <name>Search Engines</name>
+        <description>Search interfaces using key words or phrases. Returned results may include text, websites, images, videos, and files.</description>
+      </category>
+      <category>
+        <id>51</id>
+        <parent>7</parent>
+        <name>Internet Portals</name>
+        <description>Web sites that aggregate a broader set of Internet content and topics, and which typically serve as the starting point for an end user.</description>
+      </category>
+      <category>
+        <id>52</id>
+        <parent>2</parent>
+        <name>Web Advertisements</name>
+        <description>Advertisements, media, content, and banners.</description>
+      </category>
+      <category>
+        <id>53</id>
+        <parent>4</parent>
+        <name>Cheating</name>
+        <description>Sites that support cheating and contain such materials, including free essays, exam copies, plagiarism, etc.</description>
+      </category>
+      <category>
+        <id>54</id>
+        <parent>4</parent>
+        <name>Gross</name>
+        <description>Vomit and other bodily functions, bloody clothing, etc.</description>
+      </category>
+      <category>
+        <id>55</id>
+        <parent>5</parent>
+        <name>Web based email</name>
+        <description>Sites offering web-based email and email clients.</description>
+      </category>
+      <category>
+        <id>56</id>
+        <parent>8</parent>
+        <name>Malware Sites</name>
+        <description>Malicious content including executables, drive-by infection sites, malicious scripts, viruses, trojans, and code.</description>
+      </category>
+      <category>
+        <id>57</id>
+        <parent>8</parent>
+        <name>Phishing and Other Frauds</name>
+        <description>Phishing, pharming, and other sites that pose as a reputable site, usually to harvest personal information from a user.</description>
+      </category>
+      <category>
+        <id>58</id>
+        <parent>8</parent>
+        <name>Proxy Avoid and Anonymizers</name>
+        <description>Proxy servers and other methods to gain access to URLs in any way that bypasses URL filtering or monitoring. Web-based translation sites that circumvent filtering.</description>
+      </category>
+      <category>
+        <id>59</id>
+        <parent>8</parent>
+        <name>Spyware and Adware</name>
+        <description>Spyware or Adware sites that provide or promote information gathering or tracking that is unknown to, or without the explicit consent of, the end user.</description>
+      </category>
+      <category>
+        <id>60</id>
+        <parent>3</parent>
+        <name>Music</name>
+        <description>Music sales, distribution, streaming, information on musical groups and performances, lyrics, and the music business.</description>
+      </category>
+      <category>
+        <id>61</id>
+        <parent>6</parent>
+        <name>Government</name>
+        <description>Information on government, government agencies and government services. Also includes sites that discuss or explain laws of various governmental entities.</description>
+      </category>
+      <category>
+        <id>62</id>
+        <parent>1</parent>
+        <name>Nudity</name>
+        <description>Nude or seminude depictions of the human body (These depictions are not necessarily sexual in intent or effect, but may include sites containing nude materials.)</description>
+      </category>
+      <category>
+        <id>63</id>
+        <parent>2</parent>
+        <name>News and Media</name>
+        <description>Current events or contemporary issues of the day provided in the mass media.</description>
+      </category>
+      <category>
+        <id>64</id>
+        <parent>4</parent>
+        <name>Illegal</name>
+        <description>Criminal activity, how not to get caught, copyright and intellectual property violations, etc.</description>
+      </category>
+      <category>
+        <id>65</id>
+        <parent>7</parent>
+        <name>Content Delivery Networks</name>
+        <description>Delivery of content and data for third parties, including ads, media, files, images, and video.</description>
+      </category>
+      <category>
+        <id>66</id>
+        <parent>5</parent>
+        <name>Internet Communications</name>
+        <description>Internet telephony, messaging, VoIP services and related businesses.</description>
+      </category>
+      <category>
+        <id>67</id>
+        <parent>8</parent>
+        <name>Bot Nets</name>
+        <description>URLs, typically IP addresses, which are determined to be part of a Bot network, from which network attacks are launched.</description>
+      </category>
+      <category>
+        <id>68</id>
+        <parent>4</parent>
+        <name>Abortion</name>
+        <description>Abortion topics, either pro-life or pro-choice.</description>
+      </category>
+      <category>
+        <id>69</id>
+        <parent>6</parent>
+        <name>Health and Medicine</name>
+        <description>General health, fitness, and well-being topics. Medical information, hospitals and doctor offices. Medical insurance. Cosmetic surgery.</description>
+      </category>
+      <category>
+        <id>71</id>
+        <parent>8</parent>
+        <name>SPAM URLs</name>
+        <description>Sites that are repsonsible for generating SPAM.</description>
+      </category>
+      <category>
+        <id>73</id>
+        <parent>8</parent>
+        <name>Open HTTP Proxies</name>
+        <description>Proxies accessible by anyone on Internet.</description>
+      </category>
+      <category>
+        <id>74</id>
+        <parent>7</parent>
+        <name>Dynamically Generated Content</name>
+        <description>Domains that generate content dynamically based on arguments to their URL or other information (like geo-location) on the incoming web request.</description>
+      </category>
+      <category>
+        <id>75</id>
+        <parent>7</parent>
+        <name>Parked Domains</name>
+        <description>URL's which host limited content or click-through ads which may generate revenue for hosting entities, but generally do not contain content useful to the end-user.</description>
+      </category>
+      <category>
+        <id>76</id>
+        <parent>4</parent>
+        <name>Alcohol and Tobacco</name>
+        <description>Sites that provide information on, promote, or support the sale of alcoholic beverages or tobacco products and associated paraphernalia.</description>
+      </category>
+      <category>
+        <id>78</id>
+        <parent>7</parent>
+        <name>Image and Video Search</name>
+        <description>Photo and image searches, online photo albums/digital photo exchange, image hosting.</description>
+      </category>
+      <category>
+        <id>79</id>
+        <parent>3</parent>
+        <name>Fashion and Beauty</name>
+        <description>Fashion or glamour magazines, beauty, clothes, cosmetics, style.</description>
+      </category>
+      <category>
+        <id>80</id>
+        <parent>3</parent>
+        <name>Recreation and Hobbies</name>
+        <description>Information on recreational pastimes such as collecting, models, outdoor activities, specific arts, craft, or techniques; animal and pet-related information.</description>
+      </category>
+      <category>
+        <id>81</id>
+        <parent>6</parent>
+        <name>Motor Vehicles</name>
+        <description>Vehical reviews, purchasing or sales tips, parts and catalogs. Auto trading, photos, discussion of motorcycles, boats, cars, trucks and RVs. Journals and magazines on vehicle modifications.</description>
+      </category>
+      <category>
+        <id>82</id>
+        <parent>5</parent>
+        <name>Web Hosting Sites</name>
+        <description>Free or paid hosting services for web pages and information concerning their development, publication and promotion.</description>
+      </category>
+      <category>
+        <id>83</id>
+        <parent>6</parent>
+        <name>Food and Dining</name>
+        <description>Information on food, restaurants and cooking.</description>
+      </category>
+    </categories>
+    <groups>
+      <group>
+        <id>1</id>
+        <name>Adult/Mature Content</name>
+        <categories>
+          <categores>11</categores>
+          <categores>18</categores>
+          <categores>19</categores>
+          <categores>27</categores>
+          <categores>43</categores>
+          <categores>62</categores>
+        </categories>
+      </group>
+      <group>
+        <id>2</id>
+        <name>Business/Investment</name>
+        <categories>
+          <categores>1</categores>
+          <categores>2</categores>
+          <categores>3</categores>
+          <categores>4</categores>
+          <categores>5</categores>
+          <categores>6</categores>
+          <categores>7</categores>
+          <categores>16</categores>
+          <categores>17</categores>
+          <categores>23</categores>
+          <categores>29</categores>
+          <categores>52</categores>
+          <categores>63</categores>
+        </categories>
+      </group>
+      <group>
+        <id>3</id>
+        <name>Entertainment</name>
+        <categories>
+          <categores>9</categores>
+          <categores>12</categores>
+          <categores>21</categores>
+          <categores>34</categores>
+          <categores>38</categores>
+          <categores>42</categores>
+          <categores>60</categores>
+          <categores>79</categores>
+          <categores>80</categores>
+        </categories>
+      </group>
+      <group>
+        <id>4</id>
+        <name>Illegal/Questionable</name>
+        <categories>
+          <categores>8</categores>
+          <categores>10</categores>
+          <categores>31</categores>
+          <categores>32</categores>
+          <categores>36</categores>
+          <categores>37</categores>
+          <categores>44</categores>
+          <categores>46</categores>
+          <categores>48</categores>
+          <categores>53</categores>
+          <categores>54</categores>
+          <categores>64</categores>
+          <categores>68</categores>
+          <categores>76</categores>
+        </categories>
+      </group>
+      <group>
+        <id>5</id>
+        <name>IT Resources</name>
+        <categories>
+          <categores>25</categores>
+          <categores>30</categores>
+          <categores>47</categores>
+          <categores>55</categores>
+          <categores>66</categores>
+          <categores>82</categores>
+        </categories>
+      </group>
+      <group>
+        <id>6</id>
+        <name>Lifestyle/Culture</name>
+        <categories>
+          <categores>13</categores>
+          <categores>14</categores>
+          <categores>20</categores>
+          <categores>22</categores>
+          <categores>24</categores>
+          <categores>26</categores>
+          <categores>35</categores>
+          <categores>39</categores>
+          <categores>40</categores>
+          <categores>41</categores>
+          <categores>45</categores>
+          <categores>61</categores>
+          <categores>69</categores>
+          <categores>81</categores>
+          <categores>83</categores>
+        </categories>
+      </group>
+      <group>
+        <id>7</id>
+        <name>Other</name>
+        <categories>
+          <categores>50</categores>
+          <categores>51</categores>
+          <categores>65</categores>
+          <categores>74</categores>
+          <categores>75</categores>
+          <categores>78</categores>
+        </categories>
+      </group>
+      <group>
+        <id>8</id>
+        <name>Security</name>
+        <categories>
+          <categores>15</categores>
+          <categores>28</categores>
+          <categores>33</categores>
+          <categores>49</categores>
+          <categores>56</categores>
+          <categores>57</categores>
+          <categores>58</categores>
+          <categores>59</categores>
+          <categores>67</categores>
+          <categores>71</categores>
+          <categores>73</categores>
+        </categories>
+      </group>
+    </groups>
+    <filter-levels>
+      <filter-level>
+        <level>high</level>
+           <categories>10</categories>
+           <categories>11</categories>
+           <categories>15</categories>
+           <categories>19</categories>
+           <categories>27</categories>
+           <categories>32</categories>
+           <categories>33</categories>
+           <categories>36</categories>
+           <categories>43</categories>
+           <categories>44</categories>
+           <categories>46</categories>
+           <categories>47</categories>
+           <categories>48</categories>
+           <categories>49</categories>
+           <categories>52</categories>
+           <categories>53</categories>
+           <categories>54</categories>
+           <categories>55</categories>
+           <categories>56</categories>
+           <categories>57</categories>
+           <categories>58</categories>
+           <categories>59</categories>
+           <categories>62</categories>
+           <categories>67</categories>
+           <categories>71</categories>
+           <categories>73</categories>
+           <categories>76</categories>
+           <categories>8</categories>
+        </filter-level>
+      <filter-level>
+        <level>low</level>
+           <categories>15</categories>
+           <categories>56</categories>
+           <categories>57</categories>
+           <categories>58</categories>
+           <categories>59</categories>
+           <categories>67</categories>
+           <categories>71</categories>
+           <categories>73</categories>
+        </filter-level>
+      <filter-level>
+        <level>med</level>
+           <categories>10</categories>
+           <categories>11</categories>
+           <categories>15</categories>
+           <categories>27</categories>
+           <categories>32</categories>
+           <categories>43</categories>
+           <categories>44</categories>
+           <categories>46</categories>
+           <categories>49</categories>
+           <categories>54</categories>
+           <categories>56</categories>
+           <categories>57</categories>
+           <categories>58</categories>
+           <categories>59</categories>
+           <categories>62</categories>
+           <categories>67</categories>
+           <categories>71</categories>
+           <categories>73</categories>
+        </filter-level>
+    </filter-levels>
+  </webfilter-meta-data>
+</config>

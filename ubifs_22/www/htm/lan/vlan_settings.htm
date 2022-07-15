@@ -1,0 +1,604 @@
+<form name="vlanform" ng-controller="VLANSettingsCtrl" ng-modification="ui_data.data_ready" id="vlan-setting">
+    <div ng-if="ui_data.data_ready">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('VLAN_membership_Settings')"></div>
+            <div class="page-button-container">
+                <button id="btn_save"
+                        class="btn-apply"
+                        type="button"
+                        ng-disabled="vlanform.$invalid || userAccessFlag === 'RO' || ui_data.untagged_is_invalid"
+                        ng-click="funs.checkAndSave()">
+                    <span ng-bind="DICT('VLAN_membership_Apply')"></span>
+                </button>
+                <button id="btn_cancel" class="btn-cancel" type="button" ng-click="funs.cancel()">
+                    <span ng-bind="DICT('VLAN_membership_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <!--End Title-->
+        <confirmsave class="ng-hide" ng-show="ui_data.success"></confirmsave>
+        <div class="page-content-container">
+            <div class="grid-cntr">
+                <div class="grid-title-cntr">
+                    <div class="grid-title" ng-bind="DICT('VLAN_membership_Table')"></div>
+                </div>
+                <div class="grid-content-cntr dynamic-row">
+                    <div class="grid-btn-cntr">
+                        <button id="btn-add"
+                                type="button"
+                                class="grid-btn-add"
+                                ng-click="funs.add()"
+                                ng-disabled="vlanform.$invalid || userAccessFlag === 'RO'"
+                        ></button>
+                        <button id="btn-edit"
+                                type="button"
+                                class="grid-btn-edit"
+                                ng-disabled="!ui_data.vlan_selected_cnt || userAccessFlag === 'RO'"
+                                ng-click="funs.edit()"
+                        ></button>
+                        <button id="btn-delete"
+                                type="button"
+                                class="grid-btn-delete"
+                                ng-disabled="ui_data.vlan1_is_selected || !ui_data.vlan_selected_cnt || userAccessFlag === 'RO'" 
+                                ng-click="funs.del()"
+                        ></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="gridVLANSettingOptions"></div>
+                </div>
+                <!--End grid-content-cntr-->
+            </div>
+            <!--End grid-cntr-->
+            <div class="grid-seperator"></div>
+            <div class="grid-cntr vlan-tags">
+                <div class="grid-title-cntr">
+                    <div class="grid-title">
+                        <span ng-bind="DICT('VLAN_membership_VLANs_Port_Table')"></span>
+                        <span ng-show="ui_data.untagged_is_invalid" class="grid-title-warning-cntr">
+                            <i class="icon-critical warning-icon"></i>
+                            <span class="warning-msg" ng-bind="DICT('VLAN_membership_Untagged_Warning')"></span>
+                        </span>
+                    </div>
+                </div>
+                <div class="grid-content-cntr">
+                    <div class="grid-btn-cntr">
+                        <button id="btn-edit-tags"
+                                class="grid-btn-edit"
+                                type="button"
+                                ng-click="funs.edit_tag()"
+                        ></button>
+                    </div>
+                    <div class="grid-content" ui-grid-auto-resize ui-grid="gridTagsOptions"></div>
+                    <div class="grid-note-cntr">
+                        <div class="grid-note">
+                            <span ng-bind="'U'" class="green"></span>
+                            <span ng-bind="': ' + DICT('VLAN_membership_Untagged') + ', '"></span>
+                            <span ng-bind="'T'" class="blue"></span>
+                            <span ng-bind="': ' + DICT('VLAN_membership_Tagged') + ', '"></span>
+                            <span ng-bind="'E'" class="red"></span>
+                            <span ng-bind="': ' + DICT('VLAN_membership_Excluded')"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End Content Container-->
+    </div>
+    <!--End data_ready-->
+</form>
+
+<script type="text/ng-template" id="UG_vlan_setting_ipv4_settings.html">
+<div class="ui-grid-custom-cntr ui-grid-multi-entity-a-row">
+    <div ng-show="!row.entity[col.colDef.editRow]">
+        <div ng-repeat="m in MODEL_COL_FIELD.display" ng-bind="m" pgtitle></div>
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <table class="page-block-tb-list ipv4-mode">
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_IPv4_Addr')"></td>
+                <td>
+                    <input type="text"
+                        required
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+						compare-ip-bymask="MODEL_COL_FIELD.prefix_len"
+                        ng-change="grid.appScope.ipv4.changeIP(row)"
+                        ng-model="MODEL_COL_FIELD.ip"
+                        grid-invalid-field="{'vld.v4OverlapWithOtherVlans': 'overlapVlan', 'vld.v4OverlapWithOtherFeatrues': 'overlapFeatures'}"
+                        ipv4-ip
+                        class="ipv4-ip"
+                    ></input>
+                    /
+                    <input type="number"
+                        class="ipv4-prefix-len"
+                        required
+                        ng-model="MODEL_COL_FIELD.prefix_len"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        min="1"
+                        max="30"
+                        size="2"
+                        maxlength="2"
+                        grid-invalid-field="{'vld.v4OverlapWithOtherVlans': 'overlapVlan', 'vld.v4OverlapWithOtherFeatrues': 'overlapFeatures'}"
+                        ng-change="grid.appScope.ipv4.int2Inet(row)"
+                    ></input>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_Subnet_Mask')"></td>
+                <td>
+                    <input type="text"
+                        class="ipv4-netmask"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ipv4-netmask
+                        required
+                        grid-invalid-field="{'vld.v4OverlapWithOtherVlans': 'overlapVlan', 'vld.v4OverlapWithOtherFeatrues': 'overlapFeatures'}"
+                        ng-model="MODEL_COL_FIELD.netmask"
+                        ng-change="grid.appScope.ipv4.inet2Int(row)"
+                    ></input>
+                </td>
+            </tr><!--End VLAN Setting-->
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_DHCP_Type')"></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.dhcp.dhcp_mode" value="disable" ng-change="grid.appScope.ipv4.changeDHCPMode(row)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Disabled')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.dhcp.dhcp_mode" value="server" ng-change="grid.appScope.ipv4.changeDHCPMode(row)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Server')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.dhcp.dhcp_mode" value="relay" ng-change="grid.appScope.ipv4.changeDHCPMode(row)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Relay')"></span>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Lease_Time')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Lease_Time_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="number"
+                        ng-model="MODEL_COL_FIELD.dhcp.lease_time"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        class="ipv4-lease-time"
+                        min="5"
+                        max="43200"
+                        size="5"
+                        maxlength="5"
+                        required
+                    ></input>
+                    <span class="tip-info" ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Min')"></span>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Range_Start')"></td>
+                <td>
+                    <input type="text"
+                        class="ipv4-range-start"
+                        ng-model="MODEL_COL_FIELD.dhcp.range_start"
+                        required
+                        ipv4-ip-format
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        grid-invalid-field="{'vld.v4RANSubS': 'dnValidSubnet', 'vld.v4RANIP': 'dnIpRange'}"
+                        ng-change="grid.appScope.ipv4.checkDHCPRange(row)"
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Range_End')"></td>
+                <td>
+                    <input type="text"
+                        class="ipv4-range-end"
+                        required
+                        ipv4-ip-format
+                        ng-model="MODEL_COL_FIELD.dhcp.range_end"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        grid-invalid-field="{'vld.v4RANSubE': 'dnValidSubnet', 'vld.v4RANIP': 'dnIpRange'}"
+                        ng-change="grid.appScope.ipv4.checkDHCPRange(row)"
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_DNS_Server')"></td>
+                <td ng-if="!grid.appScope.model.opendns">
+                    <select ng-model="MODEL_COL_FIELD.dhcp.dns_type" class="ipv4-dns-type" ng-options="m.id as m.display_name for m in grid.appScope.schema.dns_server"></select>
+                </td>
+                <td ng-if="grid.appScope.model.opendns">
+                    <select ng-model="MODEL_COL_FIELD.dhcp.dns_type"
+                        disabled
+                        class="ipv4-dns-type"
+                        ng-options="m.id as m.display_name for m in grid.appScope.schema.opendns_dns_server"
+                    ></select>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && (MODEL_COL_FIELD.dhcp.dns_type === 'dns-server-static' || MODEL_COL_FIELD.dhcp.dns_type === 'opendns')">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Static_DNS1')"></td>
+                <td>
+                    <input type="text"
+                        ipv4-ip
+                        ng-model="MODEL_COL_FIELD.dhcp.dns[0]"
+                        ng-disabled="grid.appScope.model.opendns"
+                        ng-required="MODEL_COL_FIELD.dhcp.dns[1]"
+                        class="ipv4-dns1"
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && (MODEL_COL_FIELD.dhcp.dns_type === 'dns-server-static' || MODEL_COL_FIELD.dhcp.dns_type === 'opendns')">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Static_DNS2')"></td>
+                <td>
+                    <input type="text"
+                        ipv4-ip
+                        ng-model="MODEL_COL_FIELD.dhcp.dns[1]"
+                        ng-disabled="grid.appScope.model.opendns"
+                        class="ipv4-dns2"
+                        ng-disabled="!MODEL_COL_FIELD.dhcp.dns[0]"
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_WINS_Server')"></td>
+                <td>
+                    <input type="text" ipv4-ip class="ipv4-wins-server" ng-model="MODEL_COL_FIELD.dhcp.wins_server"></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Network_Booting')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Network_Booting_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="checkbox" ng-model="MODEL_COL_FIELD.dhcp.enable_network_boot"></input>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Enabled')"></span>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && MODEL_COL_FIELD.dhcp.enable_network_boot">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Next_Server')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Next_Server_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="text" ng-model="MODEL_COL_FIELD.dhcp.next_server" ipv4-ip required class="ipv4-next-server"></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && MODEL_COL_FIELD.dhcp.enable_network_boot">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Boot_File')"></td>
+                <td>
+                    <input type="text" ng-model="MODEL_COL_FIELD.dhcp.boot_file" required class="ipv4-boot-file" maxlength="256" ng-maxlength="256"></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_DHCP_Options')"></td>
+                <td></td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Option66_Colon')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Option66_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="text" class="ipv4-option66" ng-model="MODEL_COL_FIELD.dhcp.option66" fqdn-ipv4 maxlength="63"></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Option150_Colon')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Option150_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="text" class="ipv4-option150" ng-model="MODEL_COL_FIELD.dhcp.option150" option150></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Option67_Colon')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Option67_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="text" class="ipv4-option67" ng-model="MODEL_COL_FIELD.dhcp.option67" legal-char maxlength="64"></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Option43_Colon')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Option43_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="text" class="ipv4-option43" ng-model="MODEL_COL_FIELD.dhcp.option43" maxlength="127" legal-char></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'relay'">
+                <td></td>
+                <td>
+                    <input type="text"
+                        ipv4-ip
+                        required
+                        placeholder="{{grid.appScope.DICT('VLAN_membership_Remote_Server_Address')}}"
+                        class="ipv4-relay-ip"
+                        ng-model="MODEL_COL_FIELD.dhcp.relay_ip"
+                    ></input>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</script>
+<!--End IPv4 Settings template-->
+
+<script type="text/ng-template" id="UG_vlan_setting_ipv6_settings.html">
+<div class="ui-grid-custom-cntr ui-grid-multi-entity-a-row">
+    <div ng-show="!row.entity[col.colDef.editRow]">
+        <div ng-repeat="m in MODEL_COL_FIELD.display" ng-bind="m" pgtitle></div>
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <table class="page-block-tb-list ipv6-mode">
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_Prefix')"></td>
+                <td>
+                    <input type="radio"
+                        ng-model="MODEL_COL_FIELD.type"
+                        value="static"
+                        ng-change="grid.appScope.ipv6.changeType(row)"
+                    ></input>
+                    <input type="text"
+                        class="ipv6-prefix"
+                        ng-model="MODEL_COL_FIELD.prefix"
+                        chk-ipv6-bylength="MODEL_COL_FIELD.prefix_len"
+                        disalbed-ipv6-bylength="MODEL_COL_FIELD.type !== 'static'"
+                        ng-change="grid.appScope.ipv6.updateDHCPServer(row)"
+                        ng-if="MODEL_COL_FIELD.type === 'static'"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-required="MODEL_COL_FIELD.type === 'static'"
+                        ng-ipv6-ip="MODEL_COL_FIELD.type === 'static'"
+                        grid-invalid-field="{'vld.v6OverlapWithOtherVlans': 'v6OverlapVlan', 'vld.v6OverlapWithOtherFeatrues': 'v6OverlapFeatures'}"
+                    ></input>
+                    <input type="text"
+                        class="ipv6-prefix"
+                        ng-model="MODEL_COL_FIELD.prefix"
+                        ng-disabled="true"
+                        ng-if="MODEL_COL_FIELD.type !== 'static'"
+                    ></input>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio"
+                        ng-model="MODEL_COL_FIELD.type"
+                        value="isp"
+                        ng-change="grid.appScope.ipv6.changeType(row)"
+                    ></input>
+                    <select ng-model="MODEL_COL_FIELD.wan_pd"
+                        class="ipv6-dp"
+                        ng-change="grid.appScope.ipv6.updateDHCPServer(row)"
+                        ng-options="m.id as m.display_name for m in grid.appScope.model.pd_list"
+                        ng-required="MODEL_COL_FIELD.type === 'isp'"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-disabled="MODEL_COL_FIELD.type !== 'isp'"
+                    ></select>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.type === 'isp'">
+                <td></td>
+                <td>
+                    <input type="text"
+                        pattern="^[0-9A-Fa-f]*$"
+                        ng-model="MODEL_COL_FIELD.sub_prefix"
+                        size="4"
+                        maxlength="4"
+                        title="use Hex string(up to 'FFFF')"
+                        placeholder="use Hex string(up to 'FFFF')"
+                        ng-change="grid.appScope.ipv6.updateDHCPServer(row)"
+                        class="ipv6-subprefix"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        grid-invalid-field="{'vld.v6OverlapWithOtherVlans': 'v6OverlapVlan', 'vld.v6OverlapWithOtherFeatrues': 'v6OverlapFeatures'}"
+                        required
+                    ></input>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_Prefix_Length')"></td>
+                <td>
+                    <input type="number"
+                        class="ipv6-prefix-len"
+                        required
+                        ng-model="MODEL_COL_FIELD.prefix_len"
+                        ng-change="grid.appScope.ipv6.updateDHCPServer(row)"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        grid-invalid-field="{'vld.v6OverlapWithOtherVlans': 'v6OverlapVlan', 'vld.v6OverlapWithOtherFeatrues': 'v6OverlapFeatures'}"
+                        min="16"
+                        max="126"
+                        size="3"
+                        maxlength="3"
+                    ></input>
+                </td>
+            </tr>
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_Preview')"></td>
+                <td>
+                    <span class="ipv6-preview" ng-bind="'[' + MODEL_COL_FIELD.preview + ']'"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Interface_Identifier')"></span>
+                    <help-icon context="grid.appScope.DICT('VLAN_membership_Suffix_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.suffix_type" value="eui64" ng-change="grid.appScope.ipv6.changeSuffixType(row, col)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_EUI64')"></span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.suffix_type" value="static" ng-change="grid.appScope.ipv6.changeSuffixType(row, col)"></input>
+                    <input type="text"
+                        class="ipv6-suffix"
+                        ng-disabled="MODEL_COL_FIELD.suffix_type !== 'static'"
+                        ng-model="MODEL_COL_FIELD.suffix"
+                        ng-change="grid.appScope.ipv6.updateDHCPServer(row)"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-required="MODEL_COL_FIELD.suffix_type === 'static'"
+                    ></input>
+                </td>
+            </tr><!--End IPv6 Setting-->
+            <tr>
+                <td ng-bind="grid.appScope.DICT('VLAN_membership_DHCP_Type')"></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.dhcp.dhcp_mode" value="disable" ng-change="grid.appScope.ipv6.changeDHCPMode(row)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Disabled')"></span>
+                <td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="radio" ng-model="MODEL_COL_FIELD.dhcp.dhcp_mode" value="server" ng-change="grid.appScope.ipv6.changeDHCPMode(row)"></input>
+                    <span ng-bind="grid.appScope.DICT('VLAN_membership_Server')"></span>
+                <td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Lease_Time')"></span>
+                    <help-icon context="grid.appScope.DICT('LAN_DHCP_Settings_Lease_Time_Note')"></help-icon>
+                </td>
+                <td>
+                    <input type="number"
+                        min="5"
+                        max="43200"
+                        maxlength="5"
+                        size="5"
+                        required
+                        class="ipv6-lease-time"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-model="MODEL_COL_FIELD.dhcp.lease_time"
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Range_Start')"></span>
+                    <help-icon context="grid.appScope.DICT('VLAN_membership_Range_Start_Note')"></help-icon>
+                </td>
+                <td>
+<!--                    <input type="text"-->
+<!--                        ipv6-ip-->
+<!--                        ng-model="MODEL_COL_FIELD.dhcp.range_start"-->
+<!--                        required-->
+<!--                        class="ipv6-range-start"-->
+<!--                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"-->
+<!--                        ng-change="grid.appScope.ipv6.checkDHCPRange(row)"-->
+<!--                        grid-invalid-field="{'vld.v6RANSubS': 'dnValidSubnet', 'vld.v6RANIP': 'dnIpRange'}"-->
+<!--                    ></input>-->
+                    <table class="page-block-tb-list">
+                        <tr>
+                            <td>
+                                <span ng-bind="MODEL_COL_FIELD.dhcp.range_start_prefix"></span> + 
+                            </td>
+                            <td>
+                                <input type="text"
+                                       required
+                                       ng-model="MODEL_COL_FIELD.dhcp.range_start_suffix"
+                                       pattern="^[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4})*"
+                                       ng-change="grid.appScope.ipv6.checkDHCPRange(row)"
+                                       grid-invalid-field="{'vld.v6RANSubS': 'dnValidSubnet', 'vld.v6RANIP': 'dnIpRange'}"
+                               ></input>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td>
+                    <span ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Range_End')"></span>
+                    <help-icon context="grid.appScope.DICT('VLAN_membership_Range_End_Note')"></help-icon>
+                </td>
+                </td>
+                <td>
+<!--                    <input type="text"-->
+<!--                        ipv6-ip-->
+<!--                        ng-model="MODEL_COL_FIELD.dhcp.range_end"-->
+<!--                        required-->
+<!--                        class="ipv6-range-end"-->
+<!--                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"-->
+<!--                        ng-change="grid.appScope.ipv6.checkDHCPRange(row)"-->
+<!--                        grid-invalid-field="{'vld.v6RANSubE': 'dnValidSubnet', 'vld.v6RANIP': 'dnIpRange'}"-->
+<!--                    ></input>-->
+                    <table class="page-block-tb-list">
+                        <tr>
+                            <td>
+                                <span ng-bind="MODEL_COL_FIELD.dhcp.range_end_prefix"></span> +
+                            </td>
+                            <td>
+                                <input type="text"
+                                       ng-model="MODEL_COL_FIELD.dhcp.range_end_suffix"
+                                       required
+                                       pattern="^[0-9a-fA-F]{1,4}(:[0-9a-fA-F]{1,4})*"
+                                       class="ipv6-range-end"
+                                       grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                                       ng-change="grid.appScope.ipv6.checkDHCPRange(row)"
+                                       grid-invalid-field="{'vld.v6RANSubE': 'dnValidSubnet', 'vld.v6RANIP': 'dnIpRange'}"
+                               ></input>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_DNS_Server')"></td>
+                <td>
+                    <select ng-model="MODEL_COL_FIELD.dhcp.dns_type" class="ipv6-dns-type" ng-options="m.id as m.display_name for m in grid.appScope.schema.dns_server"></select>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && MODEL_COL_FIELD.dhcp.dns_type === 'dns-server-static'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Static_DNS1')"></td>
+                <td>
+                    <input ng-model="MODEL_COL_FIELD.dhcp.dns[0]"
+                        class="ipv6-dns1"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-required="MODEL_COL_FIELD.dhcp.dns[1]"
+                        ipv6-ip
+                    ></input>
+                </td>
+            </tr>
+            <tr ng-if="MODEL_COL_FIELD.dhcp.dhcp_mode === 'server' && MODEL_COL_FIELD.dhcp.dns_type === 'dns-server-static'">
+                <td ng-bind="grid.appScope.DICT('LAN_DHCP_Settings_Static_DNS2')"></td>
+                <td>
+                    <input ng-model="MODEL_COL_FIELD.dhcp.dns[1]"
+                        class="ipv6-dns1"
+                        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+                        ng-disabled="!MODEL_COL_FIELD.dhcp.dns[0]"
+                        ipv6-ip
+                    ></input>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</script>
+<!--End IPv6 Settings template-->
+
+<script type="text/ng-template" id="UG_vlan_setting_tags.html">
+<div class="ui-grid-custom-cntr">
+    <div ng-if="!grid.appScope.model.edit_tag || MODEL_COL_FIELD.is_dmz" class="tag-port">
+        <div ng-class="{green: MODEL_COL_FIELD.value === 'U', blue: MODEL_COL_FIELD.value === 'T', red: MODEL_COL_FIELD.value === 'E'}"ng-bind="MODEL_COL_FIELD.value"></div>
+    </div>
+    <div ng-if="grid.appScope.model.edit_tag && !MODEL_COL_FIELD.is_dmz" class="tag-edit">
+        <select ng-model="MODEL_COL_FIELD.value"
+            ng-options="m.id as m.display_name for m in grid.appScope.schema.tags_list"
+            ng-change="grid.appScope.checkForEditTags(grid.appScope.gridFuns.getRowIndex(row, col, grid), row, col, grid)"
+        ></select>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_vlan_setting_tags_header.html">
+<div class="ui-grid-header-custom-cntr">
+    <span ng-bind="col.displayName"></span>
+    <i ng-if="col.colDef.lagLanGroup" uib-popover="{{col.colDef.lagLanGroup}}" popover-trigger="'mouseenter'" class="icon-eye" popover-append-to-body="true"></i>
+</div>
+</script>

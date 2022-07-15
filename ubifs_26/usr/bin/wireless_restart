@@ -1,0 +1,37 @@
+#!/bin/sh
+
+board="$(/usr/bin/board_check.sh)"
+
+##Commenting wifi model check below. Whoever calls this script has to ensure wifi model checks, if any
+##if [ "$board" = "RV260W" -o "$board" = "RV340W" ]; then
+
+## below snippet leveraged from /usr/bin/wifi_daemon
+## To check, if both WIFI button Off, On issued and below sequence in progress. TODO
+
+WPS_PID_FILE="/var/run/wps_daemon.pid"
+
+wifi_down() {
+        /sbin/wifi down
+        [ -e ${WPS_PID_FILE} ] && {
+                start-stop-daemon -K -q -s SIGTERM -n wps_daemon
+                rm -rf ${WPS_PID_FILE}
+        }
+}
+
+wifi_up() {
+        [ -e ${WPS_PID_FILE} ] || {
+                start-stop-daemon -S -b -m -p ${WPS_PID_FILE} -x wps_daemon
+        }
+
+        /sbin/wifi up
+}
+
+	logger -t wireless "performing wifi down"
+	wifi_down
+	sleep 2s
+	logger -t wireless "performing wifi up"
+	wifi_up
+	logger -t wireless "performing wifi restart completed"
+
+##fi
+

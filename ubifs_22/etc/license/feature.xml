@@ -1,0 +1,9 @@
+<features>
+    <feature>
+        <feature_name>Security-License</feature_name>
+        <feature_desc>RV-Series Security Services License</feature_desc>
+        <entitlement_name>L-RV-Security-1</entitlement_name>
+        <entitlement_tag>regid.2015-08.com.cisco.L-RV-Security-1,1.0_83cb9de6-ae8a-4acc-a5a0-d90b5590ce95</entitlement_tag>
+    </feature>
+</features>
+

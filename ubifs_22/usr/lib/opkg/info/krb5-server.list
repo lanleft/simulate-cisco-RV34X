@@ -1,0 +1,5 @@
+/usr/sbin/kadmin.local
+/usr/bin/sclient
+/etc/init.d/krb5kdc
+/usr/sbin/krb5kdc
+/usr/sbin/kdb5_util

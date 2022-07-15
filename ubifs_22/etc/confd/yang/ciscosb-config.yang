@@ -1,0 +1,44 @@
+module ciscosb-config {
+    namespace "http://cisco.com/ns/ciscosb/config";
+    prefix ciscosb-config;
+    import ietf-yang-types { prefix yang; }
+    organization "Cisco Systems, Inc.";
+    contact
+        "Cisco Systems, Inc. Customer Service Postal: 170 West Tasman
+        Drive San Jose, CA 95134 Tel: +1 800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module contains a collection of YANG definitions for managing
+        the config state on Cisco Small devices. Copyright (c) 2016 by Cisco
+        Systems, Inc. All rights reserved.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-03-09 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2016-03-09 {
+        description "Proposed";
+    }
+    container config-state {
+     config false;
+     description "Return the last time for updating configuration";
+     leaf running-update-time {
+            type yang:date-and-time;
+            description "The last time for updating the running config";
+        }
+     leaf startup-update-time {
+            type yang:date-and-time;
+            description "The last time for updating startup config";
+        }
+     leaf mirror-update-time {
+            type yang:date-and-time;
+            description "The last time for updating mirror config";
+        }
+     leaf backup-update-time {
+            type yang:date-and-time;
+            description "The last time for updating backup config";
+        }
+    }
+}

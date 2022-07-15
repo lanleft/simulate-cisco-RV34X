@@ -1,0 +1,177 @@
+#!/bin/sh
+
+SBINDIR="$(cd $(dirname ${0}) && pwd)"
+SUPPORT_CONF="${SBINDIR}/../fwsupport"
+VERSION_CONF="/etc/usb-modem.ver"
+MODULES_PATH="/lib/modules/$(uname -r)"
+DRIVER_DEFAULT="/etc/usb-modem.tgz"
+SWUPDATE_FILE="/mnt/configcert/config/swupdateinfo"
+DEBUG=0
+
+
+update_swinfo() {
+
+	# Get the active firmware
+	active_firmware=`uci get firmware.firminfo.active`
+	append_version="_usb_latest_version="
+	append_time="_usb_latest_update_time="
+	append_timezone="_usb_latest_update_timezone="
+
+	updated_version=$active_firmware$append_version
+	updated_time="$active_firmware$append_time"
+	updated_timezone="$active_firmware$append_timezone"
+
+	current_driver_version=`cat ${VERSION_CONF}`
+	usb_update_time=`date`
+	update_timezone=`cat /etc/TZ`
+	
+	sed -i "/^$updated_version/ c$updated_version\"$current_driver_version\"" $SWUPDATE_FILE
+	sed -i "/^$updated_time/ c$updated_time\"$usb_update_time\"" $SWUPDATE_FILE
+	sed -i "/^$updated_timezone/ c$updated_timezone\"$update_timezone\"" $SWUPDATE_FILE
+}
+
+version() {
+	local count;
+
+	count=0;
+	if [ $# -eq 1 ]; then
+		for var in $(echo ${1} | sed -e "s/[.-]/ /g");
+		do
+                        var=$(echo "$var" | sed -e "s/^0*//g")
+                        [ -z "$var" ] && var=0
+                        count=$(((${count} << 8) + ${var}));
+		done;
+	fi;
+	echo ${count};
+}
+
+get_fw_version() {
+	local version=`cat /etc/firmware_version`
+
+	echo "v$version"
+}
+
+is_support() {
+	grep '^'$(get_fw_version | sed -e 's|\.|\\.|g')'$' ${SUPPORT_CONF} >/dev/null 2>&1
+}
+
+is_newer() {
+	[ $(version "$(cat ${SBINDIR}/..${VERSION_CONF})") -gt $(version "$(cat ${VERSION_CONF})") ]
+}
+
+unload_driver() {
+	local mod_file="$(ls /etc/modules.d/*-usb-modem 2>/dev/null | head -n1)"
+
+	[ -n "${mod_file}" ] && {
+		[ ${DEBUG} -eq 1 ] && echo "Unload current driver"
+		for mod in $(sed '1!G;h;$!d' ${mod_file} 2>/dev/null); do
+			rmmod ${mod} 2>/dev/null || true
+		done
+	}
+}
+
+load_driver() {
+	local retval=0
+	local mod_file="$(ls ${1}/etc/modules.d/*-usb-modem 2>/dev/null | head -n1)"
+
+	[ -n "${mod_file}" ] && {
+		[ ${DEBUG} -eq 1 ] && printf "Load driver from path - '${1}/'..."
+		for mod in $(cat ${mod_file} 2>/dev/null); do
+			insmod ${1}${MODULES_PATH}/${mod}.ko 2>/dev/null || {
+					retval=1
+					break;
+			}
+		done
+	}
+	[ ${DEBUG} -eq 1 ] && {
+		[ ${retval} -eq 0 ] && echo "Successfully" || echo "Failed"
+	}
+
+	return ${retval}
+}
+
+restore() {
+	local retval=0
+
+	if [ -f ${DRIVER_DEFAULT} ]; then
+		unload_driver
+		uninstall
+		[ ${DEBUG} -eq 1 ] && echo "Restore from default driver - '${DRIVER_DEFAULT}')"
+		tar zxf ${DRIVER_DEFAULT} -C/ && rm -f ${DRIVER_DEFAULT}
+		sync
+		load_driver
+		update_swinfo
+	else
+		echo "Missing default driver backup"
+		retval=11
+	fi
+
+	return ${retval}
+}
+
+backup() {
+	[ -f ${DRIVER_DEFAULT} ] || {
+		[ ${DEBUG} -eq 1 ] && echo "Backup to default driver - '${DRIVER_DEFAULT}'"
+		tar zcf ${DRIVER_DEFAULT} -C/ -T/usr/lib/opkg/info/kmod-usb-modem.list /usr/lib/opkg/info/kmod-usb-modem.* 2>/dev/null
+		sync
+	}
+}
+
+uninstall() {
+	[ ${DEBUG} -eq 1 ] && echo "Uninstall current driver"
+	cat /usr/lib/opkg/info/kmod-usb-modem.list | xargs rm -rf /usr/lib/opkg/info/kmod-usb-modem.list
+	sync
+}
+
+install() {
+	local retval=0
+
+	if [ -f ${SUPPORT_CONF} ]; then
+		if is_support; then
+			#if is_newer; then
+				unload_driver
+				if load_driver ${SBINDIR}/..; then
+					backup
+					uninstall
+					[ ${DEBUG} -eq 1 ] && echo "Install new driver"
+					tar -cC${SBINDIR}/.. -T${SBINDIR}/../install.list | tar -xC/
+					sed -e 's|^|/|g' ${SBINDIR}/../install.list >/usr/lib/opkg/info/kmod-usb-modem.list
+					sync
+					update_swinfo
+					logger -t system -p local0.info "USB dongle driver updated successfully"
+					return ${retval}
+				else
+					logger -t system -p local0.error "USB Load driver test failed"
+					retval=4
+				fi
+				unload_driver
+				load_driver
+				logger -t system -p local0.error "USB Load driver failed"
+				retval=5
+			#else
+			#	logger -t system -p local0.error "Given USB driver's version is not newer than current"
+			#	retval=3
+			#fi
+		else
+			logger -t system -p local0.error "Given USB driver is not support the current F/W"
+			retval=2
+		fi
+	else
+		logger -t system -p local0.error "USB driver: Missing installation file"
+		retval=1
+	fi
+
+	return ${retval}
+}
+
+CMD="${1}"
+STATUS=1
+[ $# -gt 1 ] && shift 1
+case "${CMD}" in
+	install | \
+	restore)
+		${CMD} $@
+		STATUS=$?
+		;;
+esac
+exit ${STATUS}

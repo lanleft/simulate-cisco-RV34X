@@ -1,0 +1,522 @@
+#!/bin/sh
+
+TITLE="$(basename ${0} | tr [a-z] [A-Z])"
+PACKAGE_DIR="/usr/share/unittest/testcase"
+CONFIG_FILE="/tmp/jsonrpcAutomation"
+RECORD_FILE="/tmp/jsonrpcRecord"
+config_testcase=""
+UCIDB="/tmp/etc/config"
+LOAD_CONFIG="/usr/bin/confd_load"
+MANDCMD="/usr/bin/mandcmd"
+CISCOUSER="cisco"
+CISCOPASS="cisco"
+MANDUSER="admin"
+MANDPASS="admin"
+USER=""
+PASS=""
+PASSENC=""
+token=""
+CASENAME=""
+MODEL=""
+errcode=0
+DEFAULT_FILE=
+
+[ -z "${INDIR}" ] && INDIR=/tmp/unittest
+[ -z "${OUTDIR}" ] && OUTDIR=/usr/share/unittest
+
+usage()
+{
+    cat <<EOF
+Usage: unittest [--record_start] [--record_stop]
+             [--config_testcase testcase_name]
+             [--create_data] [--reset_default]
+             [--run_cdb cdb_tree_name] [--run_uci uci_config_name] [--run_page web_page_name] [--run_case test_case]
+
+Usage: unittest --record_start | --record_stop
+       unittest --config_testcase add_vlan2
+       unittest --create_data
+       unittest --run_cdb interfaces
+       unittest --run_uci network
+       unittest --run_page LAN_VLAN
+       unittest --run_case add_vlan
+       unittest --reset_default
+
+ --record_start
+     Start record json post.
+
+ --record_stop
+     Stop record json post.
+
+ --config_testcase
+     Set record config for testcase.
+
+ --create_data
+     Create testcase data.
+
+ --run_cdb
+     Run test case by cdb.
+
+ --run_uci
+     Run test case by uci.
+
+ --run_page
+     Run test case by page.
+
+ --run_case
+     Run single test case.
+
+ --reset_default
+     Reset to default setting.
+
+ --help
+     Print help text.
+
+EOF
+	errcode=1
+}
+
+set_record()
+{
+	local record=$1
+	echo "${record}" > "${RECORD_FILE}"
+}
+
+_log()
+{
+	echo "[${TITLE}][${CASENAME}] ${1}"
+}
+
+_login()
+{
+	local retval=0
+
+	resp=`curl -s -k -X POST -H 'Content-Type: application/json' https://127.0.0.1/jsonrpc.cgi -d '{"jsonrpc":"2.0","method":"login","params":{"user":'\"${USER}\"',"pass":'\"${PASSENC}\"'}}'`
+
+	token=`echo $resp | sed -e 's/^.*"errstr"[ ]*:[ ]*"//' -e 's/".*//'`
+
+	[ -n "${token}" ] || { 
+		retval=1
+	}
+
+	return $retval
+}
+
+_deploy()
+{
+	local retval=0
+	local case=$1
+	local file=$2
+	local dir=${INDIR}/$case
+
+	_log "Deploy testcase"
+
+	[ -d "${INDIR}" ] || mkdir "${INDIR}"
+	[ -d "${dir}" ] || mkdir "${dir}" && rm -rf "${dir}/*"
+
+	tar zxf "${file}" -C "${INDIR}" && {
+		rm `find "${dir}" -type f ! -name "*.json" ! -name config`
+		if [ -d "${dir}" -a -n "${dir}/config" ]; then
+			retval=0
+		else
+			retval=1
+		fi
+	}
+
+	return ${retval}
+}
+
+_init()
+{
+	local retval=0
+	local case=$1
+	local dir=${INDIR}/$case
+
+	_log "Initialization"
+
+	if [ $# -eq 1 -a -d "${dir}" -a -n "${dir}/config" ]; then
+		. "${dir}/config"
+	else
+		exit 255
+	fi
+
+	if [ -x "$(which confd)" ]; then
+		MODEL="cisco"
+		USER=${CISCOUSER}
+		PASS=${CISCOPASS}
+	else
+		MODEL="generic"
+		USER=${MANDUSER}
+		PASS=${MANDPASS}
+	fi
+	PASSENC=$(echo -n ${PASS} | base64)
+
+	if [ "${MODEL}" = "cisco" ]; then
+		if [ -n "${CDBTREES}" -a -n "${UCICFGS}" ]; then
+			[ -n "$(ls ${dir}/[0-9]*.json 2>/dev/null)" ] || {
+				retval=1
+				break
+			}
+
+			_login || retval=1
+
+		else
+			retval=1
+		fi
+	else
+		_login || retval=1
+	fi
+
+	return ${retval}
+}
+
+_export()
+{
+	local retval=0
+	local dir=${INDIR}/$1
+	local case=$2
+	local xpath=""
+
+	if [ $# -eq 2 ]; then
+		[ -d "${dir}" ] || mkdir "${dir}"
+
+		if [ "${MODEL}" = "cisco" ]; then
+			_log "Export confd & uci: ${case}"
+			for tree in ${CDBTREES}; do
+				${LOAD_CONFIG} -F p -p /${tree} > "${dir}/${case}_-_confd-${tree}.xml"
+				if [ "${xpath}" ]; then
+					xpath="${xpath} or local-name()='$tree'"
+				else
+					xpath="local-name()='$tree'"
+				fi
+			done
+			# merge all xml for restore
+			`${LOAD_CONFIG} -F p -P "/*[${xpath}]" > "${dir}/${case}_-_confd.xml"`
+
+			for cfg in ${UCICFGS}; do
+				cp -f "${UCIDB}/${cfg}" "${dir}/${case}_-_uci-${cfg}.uci"
+			done
+		else
+			_log "Export datastore & uci: ${case}"
+			# TODO:add export partial config
+			`$MANDCMD -e "${dir}/${case}_-_datastore.json" 2>/dev/null 1>/dev/null`
+			# automation_uci() will put full_update.sh on ${dir}/full_update.sh
+		fi
+	else
+		retval=1
+	fi
+
+	return ${retval}
+}
+
+_restore()
+{
+	local retval=0
+	local case=$1
+
+	if [ $# -eq 1 ]; then
+		_log "Restore default settings"
+		if [ "${MODEL}" = "cisco" ]; then
+			${LOAD_CONFIG} -r -l -u ${CISCOUSER} "${INDIR}/${case}/default_-_confd.xml"
+		else
+			`$MANDCMD -l "${dir}/${case}_-_datastore.json" 2>/dev/null 1>/dev/null`
+		fi
+	else
+		retval=1
+	fi
+
+	return ${retval}
+}
+
+_testing()
+{
+	local case=$1
+	local dir=${INDIR}/$case
+	local retval=0
+
+	_log "Testing - case: ${case}"
+	[ -n "${token}" ] && {
+		_restore $case && {
+			for json in "$(ls ${dir}/[0-9]*.json | sort 2>/dev/null)"; do
+				_log "Import '${json}'"
+				`curl --cookie 'sessionid='${token} -s -k -X POST -H 'Content-Type: application/json' https://127.0.0.1/jsonrpc.cgi -d "$(cat ${json})" > /dev/null`
+			done
+
+			_export "${case}" "${case}"
+			retval=0
+		}
+	} || {
+		retval=1
+	}
+
+	return ${retval}
+}
+
+_diff()
+{
+	local case=$1
+	local dir=${INDIR}/${case}
+
+	[ -x "$(which diff)" ] && {
+		_log "Generate diff between default with ${case}"
+		
+		# diff cdb and uci
+		if [ "${MODEL}" = "cisco" ]; then
+			# diff xml
+			for tree in ${CDBTREES}; do
+				[ -f "${dir}/default_-_confd-${tree}.xml" -a -f "${dir}/${case}_-_confd-${tree}.xml" ] && {
+					diff "${dir}/default_-_confd-${tree}.xml" "${dir}/${case}_-_confd-${tree}.xml" > "${dir}/${case}_-_confd-${tree}.diff"
+				}
+			done
+			# diff uci
+			for cfg in ${UCICFGS}; do
+				[ -f "${dir}/default_-_uci-${cfg}.uci" -a -f "${dir}/${case}_-_uci-${cfg}.uci" ] && {
+					diff "${dir}/default_-_uci-${cfg}.uci" "${dir}/${case}_-_uci-${cfg}.uci" > "${dir}/${case}_-_uci-${cfg}.diff"
+				}
+			done
+		else
+			# TODO: add diff datastore
+			[ -f "${dir}/default_-_datastore.json" -a -f "${dir}/${case}_-_datastore.json" ] && {
+				diff "${dir}/default_-_datastore.json" "${dir}/${case}_-_datastore.json" > "${dir}/${case}_-_datastore.diff"
+			}
+			# mand has no uci diff, only use full_update.sh to compare
+		fi
+
+		find "${OUTDIR}" -type f -size 0 -name "*.diff" | xargs rm -f
+	}
+
+	return 0
+}
+
+_create()
+{
+	local case="$(basename $1)"
+	CASENAME=$case
+
+	_log "Create data: ${case}"
+	_init $case && 
+	_export $case "default" && 
+	_testing $case && 
+	_restore $case && 
+	_diff $case && {
+		[ -d "${OUTDIR}" ] || mkdir "${OUTDIR}"
+		rm -rf "${OUTDIR}/${case}" && mkdir -p "${OUTDIR}/${case}"
+		cp ${INDIR}/$case/* ${OUTDIR}/$case
+		echo "${OUTDIR}:"
+		ls -al "${OUTDIR}/$case"
+	}
+}
+
+_compare()
+{
+	local pgolden="/tmp/_autotest/golden"
+	local ptest="/tmp/_autotest/test"
+	local retval=0
+
+	if [ $# -eq 2 ]; then
+		_log "Compare: ${case}"
+		rm -rf "/tmp/_autotest"
+
+		mkdir -p "${pgolden}" "${ptest}"
+		tar zxf "${1}" -C "${pgolden}" && { 
+			rm `find "${pgolden}" -type f ! -name "*.diff"`
+		} || {
+			retval=1
+		}
+		# filter diff and full_update.sh file.
+		cp "${INDIR}/${2}" -rf ${ptest} && rm `find "${ptest}" -type f ! -name "*.diff" -type f ! -name full_update.sh`
+
+		[ -d "${pgolden}/${2}" -a -d "${ptest}/${2}" -a -z "$(diff ${pgolden}/${2} ${ptest}/${2})" ] || {
+			retval=1
+		}
+
+		rm -rf "/tmp/_autotest"
+	else
+		retval=1
+	fi
+
+	return ${retval}
+}
+
+run()
+{
+	local case="$(basename $1)"
+	local golden="${PACKAGE_DIR}/${case}.tar.gz"
+	CASENAME=$case
+
+	_log "Run testcase: ${case}"
+	[ -f ${golden} ] &&
+	_deploy $case $golden &&
+	_init $case && 
+	_export $case "default" && 
+	_testing $case && 
+	_restore $case && 
+	_diff $case && {
+		_compare "${golden}" "${case}" && {
+			echo "Success"
+			errcode=1
+		} || {
+			echo "Fail"
+			errcode=1
+		}
+	}
+}
+
+run_filter()
+{
+	local dir=${INDIR}
+	local type=$1
+	local filter=$2
+	local test=""
+
+	[ -n "${dir}" ] && {
+		CASES="$(find ${dir} -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)"
+		for case in ${CASES}; do
+			if [ -f "${dir}/${case}/config" ]; then
+				[ -n "$(grep "${type}=" ${dir}/${case}/config | grep -i ${filter})" ] && {
+					test="${test} ${case}"
+				}
+			fi
+		done
+	}
+
+	for case in ${CASES}; do
+		run "${dir}/${case}"
+	done
+}
+
+run_make_test()
+{
+	local case="$(basename $1)"
+	local golden="${OUTDIR}/${case}"
+	local ret=
+	CASENAME=$case
+
+	_log "Run testcase: ${case}"
+	[ -d ${golden} ] && {
+		set_record 1
+		set_config ${case}
+		rm -rf ${INDIR}/$case/*
+		$MAKE_TEST_JSONCMD -J ${golden}/jsess_*.json
+		diff -Nur ${golden}/full_update.sh ${INDIR}/${case}/full_update.sh > ${INDIR}/${case}/uci_full.diff
+		errcode=$?
+		_log "errcode=${errcode}"
+	}
+}
+
+make_test_default()
+{
+	[ -n "${DEFAULT_FILE}" ] && {
+		`$MAKE_TEST_JSONCMD -l ${DEFAULT_FILE} > /dev/null 2>&1`
+	}
+}
+
+set_config()
+{
+	local config_testcase=$1
+
+	_log "set config"
+	cat <<EOF > "${CONFIG_FILE}"
+{
+  "testcase": "${config_testcase}"
+}
+EOF
+}
+
+reset_system_default()
+{
+	local RUNNING_CONFIG="/var/confd/cdb"
+	local STARTUP_CONFIG="$CONFIG_PART/confd/startup"
+
+	echo "Reset Default processing..."
+	`rm -rf $RUNNING_CONFIG $STARTUP_CONFIG/*.*`
+	config_mgmt.sh timeupdate "config-startup" >/dev/null 2>&1
+	config_mgmt.sh timeupdate "config-running" >/dev/null 2>&1
+	/etc/init.d/confd restart >/dev/null 2>&1
+	echo 0 > /tmp/default_state
+	echo "reset default OK!"
+}
+
+[ $# -eq 0 ] && usage
+
+while [ $# -gt 0 ]; do
+    arg="$1"
+    shift
+    case "$arg" in
+		--record_start)
+			_log "record start"
+			set_record 1
+			errcode=0
+		;;
+		--record_stop)
+			_log "record stop"
+			set_record 0
+			errcode=0
+		;;
+		--config_testcase)
+			set_config $1
+			shift
+		;;
+		--create_data)
+			reset_system_default
+			CASES="$(find ${INDIR} -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)"
+			for case in ${CASES}; do
+				_create ${INDIR}/$case
+			done
+			#exit
+		;;
+		--run_cdb)
+			run_filter "CDBTREES" $1
+			#exit
+		;;
+		--run_uci)
+			run_filter "UCICFGS" $1
+			#exit
+		;;
+		--run_page)
+			run_filter "PAGE" $1
+			#exit
+		;;
+		--run_case)
+			run ${INDIR}/$1
+			#exit
+		;;
+		--reset_default)
+			reset_system_default
+			#exit
+		;;
+		--run_make_test)
+			#CASES="$(find ${OUTDIR} -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | sort)"
+			#for case in ${CASES}; do
+				[ -n "$(echo $1 | grep -E '[0-9]*_01' )" ] && make_test_default
+				run_make_test ${OUTDIR}/$1
+			#done
+			#exit
+		;;
+		--outdir)
+			OUTDIR=$1
+			shift
+		;;
+		--indir)
+			INDIR=$1
+			shift
+		;;
+		--default_file)
+			DEFAULT_FILE=$1
+			shift
+		;;
+		--jsoncmd)
+			MAKE_TEST_JSONCMD=$1
+			shift
+		;;
+        -h | --help)
+            usage
+            exit
+		;;
+        *)
+            echo "${arg}: Unknown option"
+		;;
+	esac
+done
+
+exit ${errcode}
+

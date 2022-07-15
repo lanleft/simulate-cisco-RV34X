@@ -1,0 +1,42 @@
+#!/bin/sh
+
+errcode=1
+errstring="Invalid Arguments"
+
+session_id=`echo $@ | awk '{for (I=1;I<=NF;I=I+2) if ($I == "session-id") {print $(I+1)};}'`
+
+if [ "$1" = "stop" ]; then
+        if [ "$#" = 1 ]; then
+                `/usr/bin/sslvpnd stop >/dev/null 2>&1`
+                errcode=$?
+                if [ "$errcode" -ne 0 ];then                                                
+                        errstring="SSL VPN disable failed"
+                else
+                        errstring="Success"
+                fi
+        fi
+elif [ "$1" = "restart" ]; then
+        if [ "$#" = 1 ]; then
+                `/usr/bin/sslvpnd stop >/dev/null 2>&1`
+                `/usr/bin/sslvpnd start >/dev/null 2>&1`
+                errcode=$?
+                if [ "$errcode" -ne 0 ];then                                                
+                        errstring="SSL VPN enable failed"
+                else
+                        errstring="Success"
+                fi
+        fi
+
+elif [ "$1" = "clear" -a "$2" = "session" ]; then
+        if [ "$#" = 4 ]; then
+                `/usr/bin/sslvpnd clear session $session_id >/dev/null 2>&1`
+                errcode=$?
+                if [ "$errcode" -ne 0 ];then                                                
+                        errstring="SSL VPN disconnect failed"
+                else
+                        errstring="Success"
+                fi
+        fi                               
+fi
+
+echo "code $errcode errstr \"$errstring\"" 

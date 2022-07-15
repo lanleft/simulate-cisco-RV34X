@@ -1,0 +1,13 @@
+Package: iptables-mod-iprange
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-iprange
+Source: package/network/utils/iptables
+License: GPL-2.0
+Section: net
+Architecture: comcerto2000
+Installed-Size: 3251
+Description:  iptables extensions for matching ip ranges.
+ 
+ Matches:
+ - iprange
+ 

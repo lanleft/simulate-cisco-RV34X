@@ -1,0 +1,11 @@
+Package: kmod-usb-storage-extras
+Version: 4.1.8-1
+Depends: kernel (=4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-storage
+Source: package/kernel/linux
+License: GPLv2
+Section: kernel
+Status: unknown hold not-installed
+Architecture: comcerto2000
+Installed-Size: 32819
+Description:  Say Y here if you want to have some more drivers,
+ such as for SmartMedia card readers

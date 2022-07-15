@@ -1,0 +1,204 @@
+<form name="snmpform" ng-controller="snmp_controller" ng-modification="loadReady" id="sys-snmp">
+    <div class="page-title-container">
+	    <div class="page-title" ng-bind="DICT('SNMP')"></div>
+        <div class="page-button-container">
+            <button type="button" class="btn-apply" ng-disabled="snmpform.$invalid || userAccessFlag === 'RO'" ng-click="save()">
+                <span ng-bind="DICT('SNMP_Apply')"></span>
+            </button>
+            <button type="button" class="btn-cancel" ng-click="cancel()">
+                <span ng-bind="DICT('SNMP_Cancel')"></span>
+            </button>
+        </div>
+    </div>
+	<confirmsave ng-show="success"></confirmsave>
+	<div class="page-content-container">
+	
+		<table class="page-block-tb-list snmp-tb-list fill-up" id="t1">
+			<tr>
+				<td ng-bind="DICT('SNMP_Enable')"></td>
+				<td>
+                    <input type="checkbox" id="chk_snmp_enable" ng-model="model.d.enabled"/>
+                </td>
+			</tr>
+            <tbody ng-class="{nopHint: !model.d.enabled}">
+                <tr>
+                    <td ng-bind="DICT('SNMP_Allow_From_Internet')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_snmp_allowfrominternet" ng-model="model.d.allow_access_from_wan"/>
+                    </td>
+                </tr>
+                <tr ng-if="!ruFlag">
+                    <td ng-bind="DICT('SNMP_Allow_From_VPN')"></td>
+                    <td>
+                        <input type="checkbox" id="chk_snmp_allowfromvpn" ng-model="model.d.allow_access_from_vpn"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('SNMP_Ver')"></td>
+                    <td>
+                        <select id="slct_snmp_version" ng-model="model.d.version" 
+                            ng-options="m.id as m.displayName for m in schema.versions"
+                        ></select>
+                    </td>
+                </tr>
+            </tbody>
+		</table>
+
+        <table class="page-block-tb-list snmp-tb-list fill-up" id="t2" ng-class="{nopHint: !model.d.enabled}">
+			<tr>
+				<td ng-bind="DICT('SNMP_System_Name')"></td>
+                <td>
+                    <input type="text" ng-model="model.d.system_name" id="txt_sys_name" legal-char maxlength="127"/>
+                </td>
+			</tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_System_Contact')"></td>
+				<td><input type="text" ng-model="model.d.system_contact" id="txt_sys_contact" legal-char maxlength="127"/></td>
+			</tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_System_Location')"></td>
+				<td><input type="text" ng-model="model.d.system_location" id="txt_sys_location" legal-char maxlength="127"/></td>
+			</tr>
+			<tr ng-hide="model.d.version === 'v3'">
+				<td ng-bind="DICT('SNMP_Get_Community')"></td>
+				<td><input type="text" ng-model="model.d.get_community" id="txt_get_community" ng-required="model.d.enabled && model.d.version !== 'v3'"/></td>
+			</tr>
+			<tr ng-hide="model.d.version === 'v3'">
+				<td ng-bind="DICT('SNMP_Set_Community')"></td>
+				<td><input type="text" ng-model="model.d.set_community" id="txt_set_community" ng-required="model.d.enabled && model.d.version !== 'v3'"/></td>
+			</tr>
+		</table>
+		<div ng-show="model.d.version === 'v3'">
+		<table class="page-block-tb-list snmp-tb-list fill-up" id="t3" ng-class="{nopHint: !model.d.enabled}">
+			<tr>
+				<td ng-bind="DICT('SNMP_Username')"></td>
+				<td>
+                    <input type="radio" ng-model="model.d.username" value="guest" id="rdo_guest" ng-change="change_username()">
+						<span ng-bind="DICT('SNMP_Guest')"></span></input>
+                    <input type="radio" ng-model="model.d.username" value="admin" id="rdo_admin" ng-change="change_username()">
+						<span ng-bind="DICT('SNMP_Admin')"></span></input>
+				</td>
+			</tr>
+            <tr>
+                <td ng-bind="DICT('SNMP_Access_Privilege')"></td>
+                <td ng-show="model.d.username === 'guest'" ng-bind="DICT('SNMP_Read')"></span>
+                <td ng-show="model.d.username === 'admin'" ng-bind="DICT('SNMP_Read_Write')"></span>
+            </tr>
+            <tr>
+                <td ng-bind="DICT('SNMP_Authentication_Algorithm')"></td>
+                <td>
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].auth_alg"
+                        ng-value="schema.auth_algs[0].id"
+                        ng-change="change_auth_method()"
+                        id="rdo_auth_none"
+                    >{{schema.auth_algs[0].displayName}}
+                    </input>
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].auth_alg"
+                        ng-value="schema.auth_algs[1].id"
+                        ng-change="change_auth_method()"
+                        id="rdo_auth_md5"
+                    >{{schema.auth_algs[1].displayName}}
+                    </input>
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].auth_alg"
+                        ng-value="schema.auth_algs[2].id"
+                        ng-change="change_auth_method()"
+                        id="rdo_auth_sha1"
+                    >{{schema.auth_algs[2].displayName}}
+                    </input>
+                </td>
+            </tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_Authentication_Pwd')"></td>
+				<td>
+                    <input type="password"
+                        ng-model="model.d.v3[model.d.username].auth"
+                        ng-disabled="model.d.v3[model.d.username].auth_alg === schema.auth_algs[0].id"
+                        ng-required="model.d.v3[model.d.username].auth_alg !== schema.auth_algs[0].id && model.d.enabled && model.d.version === 'v3'"
+                        ng-password="model.d.enabled && model.d.version === 'v3'"
+                        name="v3_auth"
+                        ng-change="change_auth()"
+                        id="txt_auth_password"/>
+				</td>
+			</tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_Encryption_Algorithm')"></td>
+				<td ng-class="{nopHint: model.d.v3[model.d.username].auth_alg === schema.auth_algs[0].id}">
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].encryption_alg"
+                        ng-value="schema.ecr_algs[0].id"
+                        ng-change="change_encryption_method()"
+                        id="rdo_encry_none"
+                    >{{schema.ecr_algs[0].displayName}}
+                    </input>
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].encryption_alg"
+                        ng-value="schema.ecr_algs[1].id"
+                        ng-change="change_encryption_method()"
+                        id="rdo_encry_des"
+                    >{{schema.ecr_algs[1].displayName}}
+                    </input>
+                    <input type="radio"
+                        ng-model="model.d.v3[model.d.username].encryption_alg"
+                        ng-value="schema.ecr_algs[2].id"
+                        ng-change="change_encryption_method()"
+                        id="rdo_encry_aes"
+                    >{{schema.ecr_algs[2].displayName}}
+                    </input>
+				</td>
+			</tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_Encryption_Pwd')"></td>
+				<td ng-class="{nopHint: model.d.v3[model.d.username].auth_alg === schema.auth_algs[0].id}">
+                    <input type="password"
+                        ng-model="model.d.v3[model.d.username].encryption"
+                        ng-disabled="model.d.v3[model.d.username].encryption_alg === schema.ecr_algs[0].id"
+                        ng-required="model.d.v3[model.d.username].encryption_alg !== schema.ecr_algs[0].id && model.d.enabled && model.d.version === 'v3' && 
+									model.d.v3[model.d.username].auth_alg !== schema.auth_algs[0].id"
+                        name="v3_encryption" 
+                        ng-password="model.d.enabled && model.d.version === 'v3' && model.d.v3[model.d.username].auth_alg !== schema.auth_algs[0].id"
+                        ng-change="change_encryption()"
+                        id="txt_encry_password"/>
+				</td>
+			</tr>
+			<!--
+			<tr>
+				<td>AES Size</td>
+				<td>
+					<select id="slct_snmp_aes" ng-model="model.d.v3[model.d.username].aessize" style="margin-left:0px;" 
+                        ng-options="m.id as m.displayName for m in schema.aes_sizes"
+                    >
+					</select>
+				</td>
+			</tr>
+			-->
+		</table>
+		</div>
+        <div class="page-content-seperator"></div>
+        <div class="page-block-title-cntr">
+		    <div class="page-block-title" ng-bind="DICT('SNMP_Trap_Configuration')"></div>
+        </div>
+		<table class="page-block-tb-list snmp-tb-list fill-up" id="t4" ng-class="{nopHint: !model.d.enabled}">
+			<tr>
+				<td ng-bind="DICT('SNMP_Trap_Receiver_IP_Addr')"></td>
+				<td>
+					<input type="text" ng-model="model.d.trap_ip" id="txt_trap_ip" ip/>
+                    <span class="tip-info" ng-bind="DICT('SNMP_Hint')"></span>
+				</td>
+			</tr>
+			<tr>
+				<td ng-bind="DICT('SNMP_Trap_Receiver_Port')"></td>
+				<td>
+					<input type="number" number ng-model="model.d.trap_port" id="txt_trap_port" min="1" max="65535"
+						ng-change="checkTrapPort()"
+					/>
+					<span class="validation-error-text-right" ng-if="trapPortFlag" ng-bind="DICT('SNMP_Trap_Port_Error')">
+						
+					</span>
+				</td>
+			</tr>
+		</table>	
+	</div>	
+</form>

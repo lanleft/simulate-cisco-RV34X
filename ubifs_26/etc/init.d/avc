@@ -1,0 +1,85 @@
+#!/bin/sh /etc/rc.common                                                               
+START=88
+STOP=11
+
+. /lib/config/uci.sh
+. /etc/boardInfo
+
+enable_avc_onwanifaces() {
+        local allWANiface=`uci show network | grep  "=interface" | cut -f 1 -d = | cut -f 2 -d . | grep -ie ^[wu]`
+
+        lcsh iface wan reset
+        lcsh ips psd watch flush
+
+        for iface in $allWANiface
+        do
+                realDev=$(uci_get_state network "$iface" ifname)
+                if [ "$realDev" != "" ]
+                then
+
+                        echo " Lionic: Enabling on Wan interface:$realDev !!"
+                        lcsh iface wan set $realDev
+                        lcsh ips psd watch add $realDev
+                fi
+
+        done
+}
+
+boot()  {
+        avcpartionfiles=$(ls $AvcSignPartitionPath | wc -l)
+        rootfsfiles=$(ls /root/lionic/sig/ | wc -l)
+        # Sample list of files
+        #       dm.tab  lips_full.siglist.zip  protocol.tab
+        #       lips_full.imp2p lips_full.zip
+        #       lips_full.info  lips_full.zip.md5
+
+        echo " Lionic: '$avcpartionfiles', '$rootfsfiles' "
+        [ "$avcpartionfiles" -lt 29 -o "$rootfsfiles" -ne 0 ] && {
+                echo "Copying signature to partition '$AvcSignPartitionPath'"
+                mv /root/lionic/sig/* $AvcSignPartitionPath
+                sync
+        }
+
+        start
+}
+
+start() {
+        ysmir-start.sh
+        enable_avc_onwanifaces
+
+        # Bring up the stat
+        ysmir-config.sh stat
+
+        # Set time to ensure statistics counters since boot-up also
+        echo 0 > /tmp/stats/avc_last_reset_time
+        echo 0 > /tmp/stats/av_last_reset_time
+        echo 0 > /tmp/stats/ips_last_reset_time
+        echo 0 > /tmp/stats/security_last_reset_time
+}
+
+stop() {
+        md5sum /etc/config/application | awk -F ' ' '{print $1}' > /mnt/configcert/application-md5sum
+        md5sum /etc/config/device | awk -F ' ' '{print $1}' > /mnt/configcert/device-md5sum
+        sync
+        /etc/init.d/webfilter stop
+        ysmir-stop.sh
+}
+
+reload() {
+
+        #/root/lionic/script/ysmir-config.sh avc_init
+        ysmir-config.sh ips
+        ysmir-config.sh av
+        ysmir-config.sh apg
+
+        enable_avc_onwanifaces
+
+        # also check and set AVC status accordingly
+        #/root/lionic/script/ysmir-config.sh apg
+}
+
+restart() {
+        stop
+        start
+}
+

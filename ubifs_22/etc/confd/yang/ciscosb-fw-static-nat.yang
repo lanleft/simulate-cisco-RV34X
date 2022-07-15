@@ -1,0 +1,71 @@
+module ciscosb-fw-static-nat {
+  yang-version 1;
+    namespace "http://cisco.com/ns/ciscosb/fw-static-nat";
+  prefix "fw-static-nat";
+  import ietf-inet-types {
+    prefix "inet";
+  }
+  import ciscosb-service {
+    prefix "fw-service";
+  }
+  import ietf-interfaces {
+   prefix if;
+  }
+  organization
+    "Freescale Semiconductors Pvt Ltd";
+  contact
+    "Freescale";
+  description
+   "This YANG module defines a component that describes the configuration of firewall static NAT related modules.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-05-23 {
+      description "Change key of static-nat-entry to service interface private-ip public-ip";
+      reference "";
+  }
+  revision 2016-04-25 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2015-04-24 {
+    description "Initial version of yang model for firewall static NAT module";
+    reference "RFC 6020";
+  }
+  container static-nat-rules {
+    description "This container contains list of static nat rules";
+    list static-nat-entry {
+      key "service interface private-ip public-ip";
+   ordered-by user;
+      description "Static NAT rule";
+      leaf private-ip {
+        type inet:ip-address;
+        description "Private ip-address range ";
+      }
+      leaf public-ip {
+        type inet:ip-address;
+        description "Public ip-address range ";
+      }
+      leaf range-length {
+        type uint32;
+        description "Range of ipaddress";
+      }
+      leaf service {
+      description
+      "Service selection to apply action";
+      type leafref {
+       path "/fw-service:services/fw-service:service/fw-service:name";
+      }
+      }
+      leaf interface {
+      type if:interface-ref;
+         description "Port forwarding interface";
+      }
+      leaf status {
+           type boolean;
+           description "Enable/disable NAT";
+      }
+    }
+  }
+}

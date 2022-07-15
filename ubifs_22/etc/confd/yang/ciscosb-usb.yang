@@ -1,0 +1,73 @@
+module ciscosb-usb {
+    namespace "http://cisco.com/ns/ciscosb/usb";
+    prefix ciscosb-usb;
+    import ietf-yang-types { prefix yang; }
+    import ciscosb-common { prefix ciscosb-common; }
+    organization
+        "Cisco Systems, Inc.";
+    contact
+        " Cisco Systems, Inc. Customer Service Postal: 170 W Tasman Drive
+        San Jose, CA 95134 Tel: +1 1800 553-NETS E-mail: cs-yang@cisco.com";
+    description
+        "This module for USB dongle and USB device.";
+  revision 2016-06-01 {
+      description "Add revision ";
+      reference "";
+  }
+  revision 2016-02-22 {
+      description "Add revision ";
+      reference "";
+  }
+    revision 2015-05-22 {
+        description "Proposed";
+        reference "TODO";
+    }
+    container dongle-driver-state {
+     config false;
+        leaf version {
+         description "Lastest driver applied version in current image";
+            type string;
+        }
+        leaf latest-update-time {
+            description "The time when we performed firmware update last time";
+            type yang:date-and-time;
+     }
+        leaf available-version {
+            description "This is latest version available on cisco.com";
+            type string;
+        }
+        leaf last-check-time {
+            type yang:date-and-time;
+            description "The last time for ASD client to check against cisco.com";
+        }
+    }
+    container dongle-driver {
+        container auto-update {
+            uses ciscosb-common:AUTO-UPDATE;
+        }
+    }
+    rpc usb-check-attached {
+        description
+                "Check whether USB device is attached or not ";
+        output {
+            list usbs {
+                leaf name {
+                    type string;
+                    description
+                                        "USB interface ";
+                }
+                leaf attached {
+                    type boolean;
+                }
+                leaf usbs-type {
+                    type enumeration {
+                     enum 3g;
+                     enum 4g;
+                     enum mass-storage;
+                     enum other;
+                    }
+                 }
+            }
+        }
+    }
+}

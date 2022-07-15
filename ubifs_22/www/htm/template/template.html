@@ -1,0 +1,1881 @@
+<!-- README
+    This template.html will amplify ng-grid function, Original features unchanged.
+    If want to use this, please see every template detail.
+-->
+
+<!--    Table column template           -->
+<!--    column is images         
+
+
+-->
+<script type="text/ng-template" id="T_table_image.html"><div>
+   <img ng-repeat="r in row.entity.img"
+        ng-src="{{r.imgSrc}}"
+        popover="{{r.toast}}"
+        popover-trigger="'mouseenter'"
+        popover-placement="right"
+        popover-append-to-body="true"
+        ng-click="$event.stopPropagation(); r.click(row.entity.UIId)"
+        height='24' width='20'/>
+</div>
+</script>
+
+
+<!--    column is buttons
+Usage: 
+    data: [
+        {   
+            buttonExp: [
+                {
+                    cbk: function(rowIndex, row.entity){..},        //click callback function
+                    displayName: string,                //Button display name
+                    [style: {width: 100, ...}],         //Button style
+                    [disabled: boolean]                 //Button disabled or enable, default is enable
+                }
+                [,{...}...]
+            ]
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   
+                field: "buttonExp",
+                cellTemplate: "T_table_buttons.html"
+            }
+        ]
+
+-->
+<script type="text/ng-template" id="T_table_buttons.html">
+<span ng-repeat="r in COL_FIELD">
+    <button 
+            id="{{'btn_' + row.entity.name + '_' + r.displayName}}"
+            ng-click="r.cbk(row.rowIndex, row.entity)"
+            ng-style="r.style"
+            ng-disabled="r.disabled">
+            {{r.displayName}} 
+    </button>
+</span>
+</script>
+
+<script type="text/ng-template" id="UG_table_buttons.html">
+<div class="ui-grid-custom-cntr">
+<span ng-repeat="(idx, r) in MODEL_COL_FIELD">
+    <button  
+        id="{{'btn' + (col.colDef.id ?  col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid) + "_" + idx}}"
+        ng-click="grid.appScope.gridFuns.ugInvokeCbk(r.cbk, row, col, grid)"
+        ng-style="r.style"
+        ng-disabled="r.disabled">
+        <span ng-bind="r.displayName" pgtitle></span>
+    </button>
+</span>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_icons.html">
+<div class="ui-grid-custom-cntr">
+<span class="ui-grid-icons-cntr">
+    <button  
+        ng-repeat="(idx, r) in MODEL_COL_FIELD"
+        ng-click="grid.appScope.gridFuns.ugInvokeCbk(r.cbk, row, col, grid)"
+        ng-class="[r.className]"
+        title="{{r.displayName}}"
+        ng-disabled="r.disabled"
+    ></button>
+</span>
+</div>
+</script>
+<!--    column is radio button
+Description: There is a radio button at column cell
+
+Usage:
+
+    data: {
+                [ disableRadio: true/false ],
+                [ hideRadio: true/false]
+          }
+
+    gridOption: {
+        columnDefs: [
+        {   
+            changedCbk: radioCbk,                        // function radioCbk(rowIndex, row) {};  
+            isRadio: true,
+                                                                // PS: callback wil be invoked by user select by radio
+            [ cellTemplate: "ngRadioSelectTemplate.html" ],
+            [ width: 25 ],                                      // If not row width will be assigned by ng-grid
+            [ radioInit: 0 ]                                    // assigned radio checked when page load
+            [ hideField: 'hideRadio' ]
+            [ disableRadioField: 'disableRadio' ]             // disable checkbox flag
+        }
+    }
+-->
+<script type="text/ng-template" id="ngRadioSelectTemplate.html">
+<div class="ngSelectionCellRadio" ng-click="col.radioSelect = row.rowIndex; col.colDef.changedCbk && col.colDef.changedCbk(col.radioSelect, row)">
+    <input type="radio"
+        ng-checked="col.radioSelect === row.rowIndex"
+        id="{{col.colDef.id ? 'rdo_' + col.colDef.id + '_' + row.rowIndex : 'rdo_' + row.rowIndex}}"
+        ng-init="col.colDef.radioInit !== undefined ? (col.radioSelect = col.colDef.radioInit) : (col.radioSelect = -1)"
+        ng-disabled="col.colDef.disableRadioField ? row.entity[col.colDef.disableRadioField] : false"
+        ng-value="row.rowIndex"
+    </input>
+</div>
+</script>
+
+<script type="text/ng-template" id="UGRadioSelectTemplate.html">
+<div class="ui-grid-custom-cntr ui-grid-selector"
+    ng-click="grid.appScope.gridFuns.ugRadioClick(row, col, grid)"
+    ng-disabled="col.colDef.disableRadioField ? row.entity[col.colDef.disableRadioField] === true : false"
+    id="{{'rdo_' + (col.colDef.id ?  col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+    ng-class="{'ui-grid-row-selected': grid.appScope.gridFuns.ugRowIsSelected(row, col, grid)}"
+    ng-hide="col.colDef.hideField ? row.entity[col.colDef.hideField] : false"
+    ng-init=" grid.appScope.gridFuns.ugRadioInit(row, col, grid);"
+>
+    <input type="radio"
+        ng-disabled="col.colDef.disableRadioField ? row.entity[col.colDef.disableRadioField] === true : false"
+        ng-checked="col.colDef.radioSelectUid === row.uid"
+    ></input>
+</div>
+</script>
+
+<!--    column is checkbox button
+Description: There is a checkbox button at column cell
+
+Usage:
+    data: {
+            checked: true,
+            [ hideCheckbox: true/false ]
+            [ edit: true, ]
+            [ disableChkBox: true ]
+          }
+
+    gridOption: {
+        columnDefs: [
+        {   
+            cellTemplate: "ngCheckboxTemplate.html",
+            field: 'checked',
+            [ editRow: 'edit' ]                                 // if not undefined, will support inline edit, default is editable
+            [ changed: cbk]                                     // cbk = function(rows) {...}, ps: rows will be a array [row1, row2, row3] or a object row1
+            [ width: 25 ],                                      // If not row width will be assigned by ng-grid
+            [ hideField: 'hideCheckbox' ]
+            [ disableChkBoxField: 'disableChkBox' ]             // disable checkbox flag
+        }
+    }
+-->
+<script type="text/ng-template" id="ngCheckboxTemplate.html">
+    <div class="ngSelectionCheckbox" style="margin-top: 5px">
+        <span ng-click="!row.entity[col.colDef.disableChkBoxField] ? COL_FIELD = !COL_FIELD : ''"
+            ng-checkbox-chk
+        >
+            <input type="checkbox" 
+                id="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + row.rowIndex : 'chk_' + row.rowIndex}}"
+                name="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + row.rowIndex : 'chk_' + row.rowIndex}}"
+                ng-checked="COL_FIELD" 
+                ng-disabled="col.colDef.disableChkBoxField ? row.entity[col.colDef.disableChkBoxField] : false"
+            </input>
+        </span>
+</div>
+</script>
+
+<!--    column is checkbox button
+Description: There is a checkbox button at column cell
+
+Usage:
+    data: {
+            checked: true,
+            [ edit: true, ]
+            [ disableChkBox: true ]
+          }
+
+    gridOption: {
+        columnDefs: [
+        {   
+            field: 'checked',
+            isCheckbox: true,
+            [ changedCbk: cbk]                                     // cbk = function(rows) {...}, ps: rows will be a array [row1, row2, row3] or a object row1
+            [ width: 25 ],                                      // If not row width will be assigned by ng-grid
+            [ disableChkBoxField: 'disableChkBox' ]             // disable checkbox flag
+        }
+    }
+-->
+<script type="text/ng-template" id="UGCheckboxSelectTemplate.html">
+<div class="ui-grid-custom-cntr ui-grid-selector"
+    id="{{'chk_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+    name="{{'chk_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+    ng-click="grid.appScope.gridFuns.ugCheckboxClick(row, col, grid);"
+    ng-disabled="col.colDef.disableChkBoxField ? (row.entity[col.colDef.disableChkBoxField] && MODEL_COL_FIELD): false"
+    ng-hide="col.colDef.hideField ? row.entity[col.colDef.hideField] : false"
+    ng-init="grid.appScope.gridFuns.ugCheckboxInit(row, col, grid);"
+    ng-class="{'ui-grid-row-selected': grid.appScope.gridFuns.ugRowIsSelected(row, col, grid)}">
+    <input type="checkbox" ng-checked="MODEL_COL_FIELD"
+        ng-disabled="col.colDef.disableChkBoxField ? (row.entity[col.colDef.disableChkBoxField] && MODEL_COL_FIELD) : false"
+    ></input>
+</div>
+</script>
+<!--    header column is checkbox button
+Description: There is a checkbox button at column cell
+
+Usage:
+    gridOption: {
+        columnDefs: [
+        {   
+            cellTemplate: "ngHeaderCheckboxTemplate.html",
+            [ changed: cbk]                                     // cbk = function(rows) {...}, ps: rows will be a array [row1, row2, row3] or a object row1
+                                                                   ==> it is the same with ngCheckboxTemplate.html changed, please reference headerChkBoxClick at app.js
+            headerChanged: function(val) {},                    // When click will invoke headerChanged cbk, return allSelected value,  please reference headerChkBoxClick at app.js
+        }
+    }
+
+    PS: if your want to operate allSelected value, please use 
+        gridOption.columnDefs[0].allSelected = true or false
+-->
+<script type="text/ng-template" id="ngHeaderCheckboxTemplate.html">
+    <input type="checkbox" 
+        id="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + 'selectall' : 'chk_header_selectall'}}"
+        ng-click="col.clickHeaderChk = true; col.colDef.allSelected = !col.colDef.allSelected"
+        ng-checked="col.colDef.allSelected"
+        ng-header-checkbox-chk
+    </input>
+</div>
+</script>
+
+<!--    header column is checkbox button
+Description: There is a checkbox button at column cell
+
+Usage:
+    gridOption: {
+        columnDefs: [
+        {   
+            isCheckbox: true,
+            [ changed: cbk]                                     // cbk = function(rows) {...}, ps: rows will be a array [row1, row2, row3] or a object row1
+            [headerChangedCbk]: function(val) {},                    // When click will invoke headerChangedCbk cbk, return allSelected value,  please reference headerChkBoxClick at app.js
+        }
+    }
+-->
+
+<script type="text/ng-template" id="UGHeaderCheckboxTemplate.html">
+<div class="ui-grid-header-checkbox"
+    id="{{col.colDef.id ? 'chk_header_' + col.colDef.id + '_' + 'selectall' : 'chk_header_selectall'}}"
+    ng-click="grid.appScope.gridFuns.ugHeaderCheckboxClick(col, grid)"
+>
+    <input type="checkbox" 
+        ng-checked="col.colDef.allCheckboxSelected"
+    </input>
+</div>
+</script>
+<!--    column is checkbox with inline edit ----
+Usage: 
+    data: [
+        {   
+            exp: {
+                data: string,
+            },
+            [editFlag: boolean]    //Name can be changed, and can use this variable to decide inline edit or not (default is false)
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   field: "exp",
+                cellTemplate: "T_table_checkbox_with_inline_edit.html"
+                [editRow: "editFlag"],                                      //default is false
+                [ changedCbk: function(idx, row, col, grid) ]
+                [ editable: true/false ]                                    //default value is false
+                [ trueValue: string],                                       //default value is true
+                [ falseValue: string]                                       //default value is false
+            }
+        ]
+-->
+<script type="text/ng-template" id="T_table_checkbox_with_inline_edit.html"><div class="ngCellCheckbox">
+    <input type="checkbox" ng-disabled="!row.entity[col.colDef.editRow] && !col.colDef.editable" ng-model="COL_FIELD"
+        id="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + row.rowIndex : 'chk_' + row.rowIndex}}"
+        ng-true-value="{{col.colDef.trueValue || true}}"
+        ng-false-value="{{col.colDef.falseValue || false}}">
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_checkbox_with_inline_edit.html">
+<div class="ui-grid-custom-cntr">
+    <input type="checkbox" ng-disabled="!row.entity[col.colDef.editRow] && !col.colDef.editable" ng-model="MODEL_COL_FIELD"
+        id="{{'chk_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-change="grid.appScope.gridFuns.ugInvokeCbk(col.colDef.changedCbk, row, col, grid)"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-custom-vld="col.colDef.customVldCbk"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ng-true-value="{{col.colDef.trueValue || true}}"
+        ng-false-value="{{col.colDef.falseValue || false}}"
+    ></input>
+    <info-icon ng-if="col.colDef.infoField && row.entity[col.colDef.infoField]" context="row.entity[col.colDef.infoField]"></info-icon>
+</div>
+</script>
+
+<!-- column is checkbox and can disable it or not
+Usage: 
+    data: [
+        {   
+            exp: {
+                data: string,
+            },
+            [editFlag: boolean]     //Name can be changed, and can use this variable to decide inline edit or not (default is false)
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   field: "exp",
+                cellTemplate: "ngCellCheckbox.html"
+                [editRow: "editFlag"],                  //default is false
+                [ disableEdit: boolean]                 //disable checkbox, default is false
+                [ trueValue: string],                   //default is true
+                [ falseValue: string]                   //default is false
+            }
+        ] 
+
+-->
+<script type="text/ng-template" id="T_table_checkbox.html"><div class="ngCellCheckbox">
+    <input type="checkbox" ng-disabled="col.colDef.disableEdit" ng-model="COL_FIELD"
+        id="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + row.rowIndex : 'chk_' + row.rowIndex}}"
+        name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+        ng-true-value="{{col.colDef.trueValue || true}}"
+        ng-false-value="{{col.colDef.falseValue || false}}"
+        data-ng-expansion
+        >
+</div>
+</script>
+
+<script type="text/ng-template" id="T_table_checkbox_2.html"><div class="ngCellCheckbox">
+    <input type="checkbox" ng-model="COL_FIELD"
+        id="{{col.colDef.id ? 'chk_' + col.colDef.id + '_' + row.rowIndex : 'chk_' + row.rowIndex}}"
+        ng-true-value="{{col.colDef.trueValue || true}}"
+        ng-false-value="{{col.colDef.falseValue || false}}"
+        data-ng-expansion
+        >
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_checkbox_2.html">
+<div class="ui-grid-custom-cntr">
+    <input type="checkbox" ng-model="MODEL_COL_FIELD"
+        id="{{'chk_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-true-value="{{col.colDef.trueValue || true}}"
+        ng-false-value="{{col.colDef.falseValue || false}}"
+        data-ng-expansion
+        >
+</div>
+</script>
+<!-- column is text and support inline edit
+Usage: 
+    data: [
+        {  
+            exp: {
+                data: string,
+            },
+            [editFlag: boolean]     //Name can be changed, and can use this variable to decide inline edit or not (default is false)
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   field: "exp",
+                editRow: "editFlag",
+                cellTemplate: "T_table_text_with_inline_edit.html"
+                [editTextWidth: number],                                    //default is column width - 12 which compute dynaimc
+                [editTextHeight: number],                                   //default is rowHeight - 4 which compute dynaimc
+                [emptyStr: string],                                         //defautl is empty, bind data is empty, webpage will display emptyStr
+                [placeholder: string],                                      //default is empty, display hint
+                [changed: function]                                         //
+                [validationCbk: "function name"],                           //will return row validation result.
+                [required: boolean],                                        //default is false
+            }
+        ] 
+-->
+<script type="text/ng-template" id="T_table_text_with_inline_edit.html"><div>
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="COL_FIELD+'' || col.colDef.emptyStr || ''"/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <input type="text"
+        id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+        name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+        ng-required="col.colDef.required"
+        grid-invalid-field="col.colDef.invalidField"
+        id="{{col.colDef.id ? col.colDef.id + '_' + row.rowIndex : row.rowIndex}}"
+        ng-style="{height: (col.colDef.editTextHeight || rowHeight-4) +'px', margin: '2px 2px 2px 8px', width: (col.colDef.editTextWidth || col.width-12) + 'px'}"
+        placeholder="{{col.colDef.placeholder}}"
+        ng-change="col.colDef.changed && col.colDef.changed(row, col)"
+        ng-model="COL_FIELD"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        data-ng-expansion>
+        </input>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_text_with_inline_edit.html">
+<div class="ui-grid-custom-cntr">
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="MODEL_COL_FIELD+'' || col.colDef.emptyStr || ''" pgtitle/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]" ng-if="row.entity[col.colDef.editRow]">
+        <input type="text" 
+        id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-change="col.colDef.change && col.colDef.change(row, col, grid)"
+        ng-required="col.colDef.required"
+        ng-style="{width: (col.colDef.editTextWidth || (isNaN(parseInt(col.width, 10)) ? '100%' : (col.width-20) + 'px'))}"
+        placeholder="{{col.colDef.placeholder}}"
+        ng-model="MODEL_COL_FIELD"
+        pgtitle
+        ng-class="{'ng-invalid':row.entity.isError === true}"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-custom-vld="col.colDef.customVldCbk"
+        data-ng-expansion>
+    </div>
+</div>
+</script>
+
+<!-- column is number text and support inline number edit
+Usage: 
+    data: [
+        {
+            exp: 12,
+            [edit: true]
+        }
+    ]
+
+    columnDefs: [
+        {   field: "exp",
+            cellTemplate: "T_table_text_with_inline_number_edit.html",
+            [editRow: "edit"],                      //Default is false
+            [min: number],                          //Default is empty
+            [max: number],                          //Default is empty
+            [required: boolean],                    //Default is false
+            [validationCbk: "function name"],                           //will return row validation result.
+            [change: function(row) {...}]           //Default is null
+        }
+    ]
+-->
+<script type="text/ng-template" id="T_table_text_with_inline_number_edit.html"><div>
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="COL_FIELD+'' || col.colDef.emptyStr || ''"/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <input type="number" number
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+            ng-style="{height: (rowHeight-4) +'px', margin: '2px 8px', width: (col.width-12) + 'px'}"
+            min="{{col.colDef.min+'' || ''}}"
+            max="{{col.colDef.max+'' || ''}}"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            ng-required="{{col.colDef.required === true}}"
+            ng-change="col.colDef.change && col.colDef.change(row)"
+            ng-model="COL_FIELD"
+            data-ng-expansion>
+        </input>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_text_with_inline_number_edit.html">
+<div class="ui-grid-custom-cntr">
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="MODEL_COL_FIELD+'' || col.colDef.emptyStr || ''" pgtitle/> 
+    </div>
+    <div ng-show="row.entity[col.colDef.editRow]">
+        <input type="number" number
+            id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            name="{{col.field + '_' + col.index + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            min="{{col.colDef.min+'' || ''}}"
+            max="{{col.colDef.max+'' || ''}}"
+            ng-required="{{col.colDef.required === true}}"
+            ng-change="grid.appScope.gridFuns.ugInvokeCbk(col.colDef.changedCbk, row, col, grid)"
+            ng-model="MODEL_COL_FIELD"
+            pgtitle
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            grid-invalid-field="col.colDef.invalidField"
+            grid-custom-vld="col.colDef.customVldCbk"
+            data-ng-expansion>
+        </input>
+    </div>
+</div>
+</script>
+
+<!-- column is inline number edit
+Usage: 
+    data: [
+        {
+            exp: 12,
+            [edit: true]
+        }
+    ]
+
+    columnDefs: [
+        {   field: "exp",
+            cellTemplate: "UG_table_inline_number_edit.html",
+            [editRow: "edit"],                      //Default is false
+            [required: boolean],                    //Default is false
+            [validationCbk: "function name"],                           //will return row validation result.
+            [change: function(row) {...}]           //Default is null
+        }
+
+        PS: validation 'min', 'max' please use templateCache.get("xx").replace(/data-ng-expansion/, "min='2'")rto add
+    ]
+-->
+<script type="text/ng-template" id="UG_table_inline_number_edit.html">
+<div class="ui-grid-custom-cntr">
+    <input type="number" number
+        id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        name="{{col.field + '_' + col.index + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-required="{{col.colDef.required === true}}"
+        ng-change="col.colDef.change && col.colDef.change(row)"
+        ng-model="MODEL_COL_FIELD"
+        pgtitle
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-custom-vld="col.colDef.customVldCbk"
+        data-ng-expansion>
+    </input>
+</div>
+</script>
+
+<!-- column is select and support inline edit, when is not edit mode, it will display text
+Usage:
+    data: [
+        {
+            exp: {
+                select: '',
+                list: [{id: 'a', displayName: 'xxx'}, ...],                 //id will set to select when user select a item
+                [disabled: true/false]                                      //Select tag should be editable or not
+            },
+            [edit: true/false]                                              //Default is false
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {
+                field: 'exp',
+                cellTemplate: "T_table_text_with_inline_select_edit.html",
+                [editRow: 'edit'],                                         //Default is false
+                [optDefStr: string],
+                [change: function(row) {...}]           //Default is null
+            }
+        ]
+-->
+<script type="text/ng-template" id="T_table_text_with_inline_select_edit.html"><div>
+<div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]" ng-if="!row.entity[col.colDef.editRow]"
+    ng-class="{nopHint: row.entity[col.colDef.disabled]}">
+    <div class="ng-binding" ng-bind="gridFuns.getSelectDisplayNameFromList(COL_FIELD.select, COL_FIELD.list) || col.colDef.emptyStr || ''"/> 
+</div>
+<div ng-show="row.entity[col.colDef.editRow]" ng-if="row.entity[col.colDef.editRow]">
+    <select class="tmpNgInlineSelect"
+            id="{{col.colDef.id ? 'slct_' + col.colDef.id + '_' + row.rowIndex : 'slct_' + row.rowIndex}}"
+            name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+            ng-style="{width: (col.width-12) + 'px'}"
+            ng-class="{nopHint: COL_FIELD.disabled === true}"
+            ng-disabled="COL_FIELD.disabled === true"
+            ng-model="COL_FIELD.select"
+            ng-options="m.id as m.displayName for m in COL_FIELD.list"
+            ng-change="col.colDef.change && col.colDef.change(row, col)"
+            data-ng-expansion>
+            <!--<option value="">{{col.colDef.optDefStr || ""}} </option>-->
+        </select>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_text_with_inline_select_edit.html">
+<div class="ui-grid-custom-cntr full-width">
+    <div class="ngCellText ng-scope" ng-show="!row.entity[col.colDef.editRow]">
+        <div class="ng-binding" ng-bind="grid.appScope.gridFuns.getSelectDisplayNameFromList(MODEL_COL_FIELD.select, MODEL_COL_FIELD.list) || col.colDef.emptyStr || ''" pgtitle/> 
+    </div>
+    <div ng-if="row.entity[col.colDef.editRow]" class="ng-cloak">
+        <select 
+            id="{{'slct_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            ng-style="{width: (_.isNumber(col.width) ? (col.width-20) + 'px' : '100%')}"
+            grid-invalid-field="col.colDef.invalidField"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            grid-custom-vld="col.colDef.customVldCbk"
+            ng-disabled="MODEL_COL_FIELD.disabled === true"
+            ng-model="MODEL_COL_FIELD.select"
+            pgtitle
+            ng-change="col.colDef.change && col.colDef.change(row, col, grid)"
+            ng-options="m.id as m.displayName for m in MODEL_COL_FIELD.list">
+<!--            <option ng-repeat="m in MODEL_COL_FIELD.list" value="{{m.id}}" ng-selected="m.id === MODEL_COL_FIELD.select" ng-bind="m.displayName"></option>-->
+        </select>
+    </div>
+</div>
+</script>
+
+<!--
+    Usage: User can design custom options at Javascript
+
+    $scope.list = [{id: "a", displayName: "A"}, ...]   // select list 
+
+    data: [
+            { select: 'a', edit: true, ....}
+          ]
+
+    gridOptions:
+        columnDefs: [
+        {
+            field: 'select',
+            cellTemplate: $templateCache.get("UG_table_text_with_inline_select_edit_and_custom_options.html").
+                replace(/NGOPTIONS/, "m.id as m.displayName for m in grid.appScope.list").
+                replace(/data-ng-expansion/, "required"),
+            list: list,
+            editRow: "edit"
+       }
+-->
+<script type="text/ng-template" id="UG_table_text_with_inline_select_edit_and_custom_options.html">
+<div class="ui-grid-custom-cntr full-width">
+    <span ng-if="!row.entity[col.colDef.editRow]"
+        ng-bind="grid.appScope.gridFuns.getSelectDisplayNameFromList(MODEL_COL_FIELD, col.colDef.list) || col.colDef.emptyStr || ''" pgtitle/>
+    </span>
+    <span ng-if="row.entity[col.colDef.editRow]">
+        <select
+            ng-style="{width: (_.isNumber(col.width) ? (col.width-20) + 'px' : '100%')}"
+            id="{{'slct_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            name="{{col.field + '_' + col.index + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            ng-model="MODEL_COL_FIELD"
+            pgtitle
+            ng-options="NGOPTIONS"
+            grid-invalid-field="col.colDef.invalidField"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            grid-custom-vld="col.colDef.customVldCbk"
+            data-ng-expansion
+        ></select>
+    </span>
+</div>
+</script>
+
+<!-- column is input type data and support inline edit
+Usage:
+    data: [
+        {
+            exp: "00:00:00",
+            [edit: true/false]                                              //Default is false
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {
+                field: 'exp',
+                displayName: "Column Display Name",
+                cellTemplate: "T_table_date_with_inline_date_edit.html",
+                [ required: true ],                                         //Deafult is false
+                [ editRow: 'edit' ],                                        //Default is false
+            }
+        ]
+-->
+<script type="text/ng-template" id="T_table_date_with_inline_time_edit.html"><div>
+    <input type="text"
+        id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_time_' + row.rowIndex}}"
+        ng-model="COL_FIELD"
+        ng-style="{height: (col.colDef.txtHeight || rowHeight-4) +'px', margin: '2px 2px 2px 8px', width: (col.colDef.editTextWidth || col.width-12) + 'px'}"
+        ng-disabled="!row.entity[col.colDef.editRow]"
+        time24hms-form
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ng-required="col.colDef.required">
+    </input>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_date_with_inline_time_edit.html">
+<div class="ui-grid-custom-cntr">
+    <input type="text"
+        id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-model="MODEL_COL_FIELD"
+        ng-disabled="!row.entity[col.colDef.editRow]"
+        pgtitle
+        time24hms-form
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        ng-required="col.colDef.required">
+    </input>
+</div>
+</script>
+
+<script type="text/ng-template" id="T_table_input_text.html"><div>
+        <input type="text"
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+            ng-style="{height: (rowHeight-4) +'px', margin: '2px 8px', width: (col.colDef.editTextWidth || col.width-20) + 'px'}"
+            ng-model="COL_FIELD"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            grid-invalid-field="col.colDef.invalidField"
+            data-ng-expansion
+        />
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_table_input_num.html"><div>
+        <input type="number" number
+            id="{{col.colDef.id ? 'txt_' + col.colDef.id + '_' + row.rowIndex : 'txt_' + row.rowIndex}}"
+            ng-style="{height: (rowHeight-4) +'px', margin: '2px 8px', width: (col.colDef.editTextWidth || col.width-20) + 'px'}"
+            ng-model="COL_FIELD"
+            data-ng-expansion>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_table_input_num.html"><div>
+        <input type="number" number
+            id="{{'txt_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+            ng-model="MODEL_COL_FIELD" pgtitle
+            data-ng-expansion>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_table_input.html"><div>
+        <input
+            id="{{col.colDef.id ? col.colDef.id + '_' + row.rowIndex : 'tableinput_' + row.rowIndex}}"
+            name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+            ng-style="{height: (rowHeight-4) +'px', margin: '2px 8px', width: (col.colDef.editTextWidth || col.width-20) + 'px'}"
+            ng-model="COL_FIELD"
+            grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+            data-ng-expansion>
+        </input>
+    </div>
+</script>
+
+<!-- column is select and support inline edit, when is not edit mode, it will display select (disable)
+Usage:
+    data: [
+        {
+            exp: {
+                select: '',
+                list: [{id: 'a', displayName: 'xxx'}, ...],                 //id will set to select when user select a item
+                [disabled: true/false]                                      //Select tag should be editable or not
+            },
+            [edit: true/false]                                              //Default is false
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {
+                field: 'exp',
+                cellTemplate: "T_table_select_with_inline_edit.html",
+                [editRow: 'edit'],                                          //Default is false
+                [change: function(row) {...}]                               //Default is null
+            }
+        ]
+-->
+<script type="text/ng-template" id="T_table_select_with_inline_edit.html"><div>
+        <select 
+            ng-class="col.colDef.autosize ? '' : 'colt' + col.index"
+            id="{{col.colDef.id ? 'slct_' + col.colDef.id + '_' + row.rowIndex : 'slct_' + row.rowIndex}}"
+            ng-disabled="!row.entity[col.colDef.editRow] || COL_FIELD.disabled === true"
+            ng-model="COL_FIELD.select"
+            ng-options="m.id as m.displayName for m in COL_FIELD.list"
+            ng-change="col.colDef.change && col.colDef.change(row)"
+            ng-style="{width: (col.colDef.editTextWidth || col.width-20) + 'px'}"
+            data-ng-expansion
+        ></select>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_table_select_with_inline_edit.html">
+<div class="ui-grid-custom-cntr full-width">
+    <select 
+        id="{{'slct_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        ng-class="col.colDef.autosize ? '' : 'colt' + col.index"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        grid-custom-vld="col.colDef.customVldCbk"
+        ng-disabled="!row.entity[col.colDef.editRow]"
+        ng-model="MODEL_COL_FIELD.select"
+        pgtitle
+        ng-options="m.id as m.displayName for m in MODEL_COL_FIELD.list"
+        ng-change="grid.appScope.gridFuns.ugInvokeCbk(col.colDef.changedCbk, row, col, grid)"
+        data-ng-expansion
+    </select>
+</div>
+</script>
+
+<!-- column is select and support inline edit, when is not edit mode, it will display select (disable)
+Usage:
+    data: [
+        {
+            exp: '',
+            [edit: true/false]                                              //Default is false,
+            list: [{id: '', displayName: ""}, ...]
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {
+                field: 'exp',
+                cellTemplate: "T_table_select1_with_inline_edit.html",
+                listField: "list",
+                [editRow: 'edit'],                                          //Default is false
+                [changedCbk: function(row) {...}]                           //Default is null
+            }
+        ]
+-->
+<script type="text/ng-template" id="UG_table_select1_with_inline_edit.html">
+<div class="ui-grid-custom-cntr full-width">
+    <select 
+        id="{{'slct_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        grid-custom-vld="col.colDef.customVldCbk"
+        ng-disabled="!row.entity[col.colDef.editRow]"
+        ng-model="MODEL_COL_FIELD"
+        pgtitle
+        ng-options="m.id as m.displayName for m in row.entity[col.colDef.listField]"
+        ng-change="grid.appScope.gridFuns.ugInvokeCbk(col.colDef.changedCbk, row, col, grid)"
+        data-ng-expansion
+    </select>
+</div>
+</script>
+<!-- column is select and support inline edit, when is not edit mode, it will display select (disable)
+Usage:
+    data: [
+        {
+            exp: '',
+            [edit: true/false]                                              //Default is false,
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {
+                field: 'exp',
+                cellTemplate: "T_table_select2_with_inline_edit.html",
+                list: SELECTLIST,
+                [editRow: 'edit'],                                          //Default is false
+                [change: function(row) {...}]                               //Default is null
+            }
+        ]
+-->
+<script type="text/ng-template" id="UG_table_select2_with_inline_edit.html">
+<div class="ui-grid-custom-cntr full-width">
+    <select 
+        id="{{'slct_' + (col.colDef.id ? col.colDef.id + '_' : '') + grid.appScope.gridFuns.getRowIndex(row, col, grid)}}"
+        grid-invalid-field="col.colDef.invalidField"
+        grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+        grid-custom-vld="col.colDef.customVldCbk"
+        ng-disabled="!row.entity[col.colDef.editRow]"
+        ng-model="MODEL_COL_FIELD"
+        pgtitle
+        ng-options="m.id as m.displayName for m in col.colDef.list"
+        ng-change="grid.appScope.gridFuns.ugInvokeCbk(col.colDef.changedCbk, row, col, grid)"
+        data-ng-expansion
+    </select>
+</div>
+</script>
+<!-- End Tabel column template -->
+
+
+<!-- Directive template -->
+
+<!-- Directive template -->
+<!-- T_list_radio.html
+    [title]  o desc [ o desc, ...]
+             o desc [ o desc, ...]
+             o desc [ o desc, ...]
+             ....
+-->
+<script type="text/ng-template" id="T_list_radio.html">
+    <div>
+        <table>
+            <tr ng-repeat="r in obj.radioList.data">
+                <td style="{{obj.title.style}}" ng-show="obj.title.str.length> 0">{{$first? obj.title.str : ""}}</td>
+                <td ng-repeat="i in r" style="{{obj.radioList.style}}">
+                    <input type="radio" id="{{i.objid}}"
+                        ng-class="ngClass"
+                        ng-model="obj.selected"
+                        ng-value="i.id"
+                        ng-change="obj.change && obj.change()"
+                    ></input>
+                    <span ng-bind="i.displayName"></span>
+                    <sapn ng-show="i.reference" ng-bind="i.reference" class="reference" style="position: relative"></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_checkboxHeader.html"><input
+    class="ngSelectionCheckbox"
+    type="checkbox"
+    ng-show="multiSelect"
+    ng-model="allSelected"
+    ng-change="toggleSelectAll(allSelected)" >
+</input>
+</script>
+
+
+<script type="text/ng-template" id="T_input_pwd.html">
+    <ng-form name="{{name}}">
+        <input type="password"
+            ng-model="pwd"
+            id="pwd_encry{{id}}" name="pwd_encry"
+            ng-show="!isplain"
+            ng-change="change()"
+            ng-disabled="disabled"
+            ng-maxlength="maxLength"
+            ng-legal-char="legalChar"
+            select-when-focus
+            placeholder="{{placeholder}}"
+            ng-class="{'ng-invalid': invalid}"
+        ></input>
+        <input type="text"
+            ng-model="pwd"
+            id="pwd_plain{{id}}" name="pwd_plain"
+            ng-change="change()"
+            ng-disabled="disabled"
+            ng-show="isplain"
+            ng-maxlength="maxLength"
+            ng-legal-char="legalChar"
+            placeholder="{{placeholder}}"
+            select-when-focus
+            ng-class="{'ng-invalid': invalid}"
+        ></input>
+    </ng-form>
+</script>
+
+<script type="text/ng-template" id="UG_table_text_with_three_rows.html">
+<div class="ui-grid-custom-cntr">
+    <div ng-repeat="m in MODEL_COL_FIELD" ng-bind="m" pgtitle></div>
+</div>
+</script>
+
+<script type="text/ng-template" id="T_checkboxHeader_hide_checkall.html"><input
+    class="ngSelectionCheckbox"
+    type="checkbox"
+    ng-show="false"
+    ng-model="allSelected"
+    ng-change="toggleSelectAll(allSelected)" >
+</input>
+</script>
+
+<script type="text/ng-template" id="T_editWithNoFoucs_by_rowEditableState.html"><div>
+        <div ng-edit-cell-if="!( (selected.rowEditableState[row.rowIndex] == 2))">
+            DISPLAY_CELL_TEMPLATE
+        </div>
+        <div ng-edit-cell-if=" (selected.rowEditableState[row.rowIndex] == 2)">
+            EDITABLE_CELL_TEMPLATE
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_editWithNoFoucs_by_rowEditableState_objs.html"><div>
+        <div ng-show="!( (selected.rowEditableState[row.rowIndex].state == 2))">
+            DISPLAY_CELL_TEMPLATE
+        </div>
+        <div ng-show=" (selected.rowEditableState[row.rowIndex].state == 2)">
+            EDITABLE_CELL_TEMPLATE
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_editWithNoFoucs_by_inner_rs_objs.html"><div>
+        <div ng-show="!( (row.entity['RSNAME'].isEdit))">
+            DISPLAY_CELL_TEMPLATE
+        </div>
+        <div ng-show=" (row.entity['$$rowstate'].isEdit === true)">
+            EDITABLE_CELL_TEMPLATE
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="T_CellText_empty_filled_dash.html"><div class="ngCellText" data-ng-expansion>
+    {{(COL_FIELD==undefined? "-" : COL_FIELD)}}
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_CellText_empty_filled_dash.html">
+<div class="ui-grid-custom-cntr">
+    <div data-ng-expansion>
+        {{(MODEL_COL_FIELD==undefined? "-" : MODEL_COL_FIELD)}}
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="T_CellText_false_filled_dash.html"><div class="ngCellText" data-ng-expansion>
+    {{(COL_FIELD==false? "-" : COL_FIELD)}}
+</div>
+</script>
+
+<script type="text/ng-template" id="T_CellText_Key_required.html"><div class="ngCellText" data-ng-expansion>
+    {{COL_FIELD}}
+    </div>
+    <input type="hidden" name="hidden_key" required ng-model="COL_FIELD" 
+    grid-validation-result-cbk="{{col.colDef.validationCbk}}"
+    />
+</script>
+
+<script type="text/ng-template" id="T_CellText.html"><div class="ngCellText" data-ng-expansion>
+    {{(COL_FIELD)}}
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_CellText.html">
+<div class="ui-grid-custom-cntr" data-ng-expansion>
+    <span ng-bind="MODEL_COL_FIELD" pgtitle></span>
+</div>
+</script>
+
+
+<script type="text/ng-template" id="T_Boolean_to_Radios.html"><div class="ngCellText">
+    <input type="radio" ng-model="COL_FIELD" ng-value="idFalse" />No
+    <input type="radio" ng-model="COL_FIELD" ng-value="idTrue"/>Yes
+</div>
+</script>
+
+<script type="text/ng-template" id="T_genericSelect.html">
+    <select
+        id="{{col.colDef.id ? 'slct_' + col.colDef.id + '_' + row.rowIndex : 'slct_' + row.rowIndex}}"
+        name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+        ng-model="COL_FIELD"
+        class="tmpNgInlineSelect"
+        ng-style="{width: (col.colDef.editTextWidth || col.width-12) + 'px'}"
+        ng-options="NGOPTIONS"
+        data-ng-expansion
+    >
+    </select>
+</script>
+
+<script type="text/ng-template" id="UG_genericSelect.html">
+<div class="ui-grid-custom-cntr full-width">
+    <select
+        id="{{col.colDef.id ? 'slct_' + col.colDef.id + '_' + grid.appScope.gridFuns.getRowIndex(row, col, grid) : 'slct_' + row.rowIndex}}"
+        name="{{col.field + '_' + col.index + '_' + row.rowIndex}}"
+        ng-model="MODEL_COL_FIELD"
+        class="tmpNgInlineSelect"
+        pgtitle
+        ng-style="{width: (col.colDef.editTextWidth || col.drawnWidth-12) + 'px'}"
+        ng-options="NGOPTIONS"
+        data-ng-expansion
+    >
+    </select>
+</dvi>
+</script>
+<script type="text/ng-template" id="Dir_toggle.html"><img
+    ng-model="ngModel"
+    class="toggleButton {{class}}"
+    style="{{style}}"
+    ng-style="ngStyle"
+    ng-class="ngClass"
+    ng-click="value=!value;"
+    ng-src="{{icon[value.toString()]}}">
+</img>
+</script>
+
+<script type="text/ng-template" id="menuTemplate_2.html"><div>
+    <div ng-show="false" ng-mark-show="showColumnMenu || showFilter"  class="ngHeaderButton" ng-click="toggleShowMenu()">
+        <div class="ngHeaderButtonArrow"></div>
+    </div>
+    <div ng-show="showMenu" class="ngColMenu">
+        <div ng-show="showFilter">
+            <input placeholder="{{i18n.ngSearchPlaceHolder}}" type="text" ng-model="filterText"/>
+        </div>
+        <div ng-show="showColumnMenu">
+            <span class="ngMenuText">{{i18n.ngMenuText}}</span>
+<style>
+ul.ngColList {
+    -moz-column-count: 3;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 3;
+    -webkit-column-gap: 20px;
+    column-count: 3;
+    column-gap: 20px;
+}
+</style>
+            <ul class="ngColList">
+                <li class="ngColListItem" ng-repeat="col in columns | ngColumns_hideInMenu">
+                    <label><input ng-disabled="col.pinned" type="checkbox" class="ngColListCheckbox" ng-model="col.visible"/>{{col.displayName}}</label>
+                    <!-- <a title="Group By" ng-class="col.groupedByClass()" ng-show="col.groupable && col.visible" ng-click="groupBy(col)"></a> -->
+                    <span class="ngGroupingNumber" ng-show="col.groupIndex > 0">{{col.groupIndex}}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="USB_list.htm">
+<span ng-controller="Controller_USB_list">
+    <span ng-if="usb_sel_file_ctx === undefined">
+    Error: <code>usb_sel_file_ctx</code> Not exist
+    </span>
+    <div ng-if="false">
+        No Device Attached
+    </div>
+    <span>
+        USB Device
+        <div>
+            
+            <select id="slct_usbdevice" style="min-width:150px;"
+                ng-model="usb_sel_file_ctx['usb_dev']"
+                ng-init="usblist_init()"
+                ng-options="item for item in usb_sel_file_ctx.usbDevList"
+                ng-change="usblist_reset_path(); get_usblist();"
+            >
+            </select>
+        </div>
+    </span>
+
+    <span>
+        File List
+        <span ng-if="usb_sel_file_ctx['path'].length > 0">
+            of Path /{{ usb_sel_file_ctx['path'].join('/') }}/
+        </span>
+        <div>
+            <select id="slct_files" multiple size="7" style="min-width:150px;"
+                ng-model="usb_sel_file_ctx['selitem']"
+                ng-options="item as ( filename_rule(item) ) for item in ctx.USB_list"
+                ng-change="udpate_selected_file(usb_sel_file_ctx)"
+                ng-dblclick="get_usblist()"
+            >
+            </select>
+        </div>
+        Selected Item: {{ usb_sel_file_ctx['file']['file-name'] }}
+        <input type="hidden" required ng-model="usb_sel_file_ctx['file']['full-file-name']">
+        <span ng-if="usb_sel_file_ctx['file']['directory']">
+            <button ng-click="get_usblist()">
+                Change Directory
+            </button>
+        </span>
+    </span>
+</span>
+</script>
+
+<script type="text/ng-template" id="session_timeout.html"><div>
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Confirm')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table>
+                <tr>
+                    <td class="align-top">
+                        <i class="fa modal-icon icon-warning" aria-hidden="true"></i>
+                    </td>
+                    <td ng-bind="note" class="page-indent14"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" id="btn_sessiontimeout_resume" autofocus class="btn-primary" ng-click="reset()">
+                <span ng-bind="DICT('Continue')"></span>
+            </button>
+            <button type="button" id="btn_sessiontimeout_cancel" class="btn-secondary" ng-click="cancel()">
+                <span ng-bind="DICT('Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="cc_confirm_save.html">
+    <div class="success-info-cntr" ng-hide="true">
+        <img src="themes/img/icon/Status_success_icon.png" width="32" height="32"></img>
+        <span>Success. To permanently save the configuration. Go to <a href="#/Admin_Config_Management">Configuration Management</a> page or click Save icon.</span>
+    </div>
+</script>
+
+<script type="text/ng-template" id="pwd_strength.html"><div>
+    <table class="pwd-strength-tb">
+        <tr>
+            <td ng-repeat="m in layer" ng-show="m.enable" ng-style="{'background-color': m.bg, 'width': m.width}"></td>
+        </tr>
+    </table>
+</div>
+</script>
+
+<script type="text/ng-template" id="safari_download.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title">Download Changes</div>
+        </div>
+        <div class="modal-content-container">
+            Your browsers only supports manual saving. <br>
+            <br>
+            Please right click on download link below and select "Download file" or "Save file", and then choose the folder and filename.<br>
+            <br>
+            On smartphones that do not allow files to be downloaded you can instead bookmark the link, and then sync your bookmarks to a desktop computer from where the file can be saved normally.
+            <br>
+            <br>
+            <a ng-href="{{url}}" style="background-color: yellow">Right-click to save file</a>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" id="bt_close" autofocus class="btn-primary" ng-click="close()">Close</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="del_intf_alert.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title">Warning</div>
+        </div>
+        <div class="modal-content-container">
+            <div ng-show="model.needToDelACL">
+                There are ACL rules using the interface(s) that you want to delete.<br>
+                You can go to Access Rules page to check.</br>
+                <a href="#/Firewall_Access_Rules" ng-click="cancel()">Go to Access Rules Page</a>
+                <br><br>
+            </div>
+            <div ng-show="model.needToDelPT">
+                There are Port Triggering rules using the interface(s) that you want to delete.<br>
+                You can go to Port Triggering page to check.</br>
+                <a href="#/Firewall_Port_triggering" ng-click="cancel()">Go to Port Triggering Page</a>
+                <br><br>
+            </div>
+            <div ng-show="model.needToDelPF">
+                There are Port Forwarding rules using the interface(s) that you want to delete.<br>
+                You can go to Port Forwarding page to check.<br>
+                <a href="#/Firewall_port_forwarding" ng-click="cancel()">Go to Port Forwarding Page</a>
+                <br><br>
+            </div>
+            <div>
+                You can press "OK" button, Router will delete the rules using the interface that you want to delete.
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button type="button" id="bt_ok" class="btn-secondary" ng-click="ok()">OK</button>
+            <button type="button" id="bt_cancel" autofocus class="btn-primary" ng-click="cancel()">Cancel</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="tmpl_wlan_wps.htm">
+<style>
+.ORmargin {
+    margin-left: 230px;
+    font-weight: bold;
+    font-size: 20px;
+}
+</style>
+    <div class="page-title-container" ng-show="wps.flag !== 1" ng-if="loadReady">
+        <div class="page-title">
+            <span ng-bind="DICT('WPS')"></span>
+        </div>
+    </div>
+    <div class="page-content-container" ng-class="{'page-fontsize-12': wps.flag === 1}">
+        <div ng-if="!model.wifi_button_state && loadReady" style="color: red">
+            <span ng-bind="DICT('Captive_Portal_WiFi_Push_Button_OFF')"></span>
+        </div>
+        <div ng-if="model.len === 0 && loadReady" class="warning-container">
+            <span pg-bind-html="combineStr"></span>
+            <!--
+            <span>In order to use WPS, please ensure you have enabled SSID and WPS, go to 
+                <a href="#/wlan_settings">Wireless Basic Settings</a> to manage.
+            </span>
+            -->
+        </div>
+        <div data-x-tmp="{{ ssids = model['wlans']['ssid'] }}" ng-class="{nopHint: !model.wifi_button_state || model.len === 0}" ng-if="loadReady">
+            <div ng-show="wps.flag !== 1" class="page-block-title-cntr">
+                <div class="page-block-title"><span ng-bind="DICT('WPS_WiFi_Protected_Setup')"></span> &trade;</div>
+            </div>
+            <div  ng-class="{nopHint: (!ssid_radio_wps() || !chkSecurity() || !ssid_radio_enable()) && wps.flag == 1}">
+            <p ng-if="loadReady">
+                <span ng-bind="DICT('WPS')+':'"></span>
+                <select id="slct_sel_ssid" ng-model="ctx.wps.ssididx" style="margin-left: 100px; margin-right: 30px;" 
+                    ng-options="idx as item.ssid for (idx, item) in ssids"
+                    ng-if="loadReady"
+                    ng-init="RPC_ret_wps_pin()"
+                    ng-change="RPC_ret_wps_pin()"
+                    ng-disabled="wps.flag == 1"
+                >
+                </select>
+                
+                <span ng-bind="DICT('WPS_Radio')+':'"></span>
+                <select id="slct_sel_radio" style="margin-left: 10px"
+                    ng-model="ssid_radio_owner_rpc"
+                    ng-model-options=" {getterSetter: true }"
+                    ng-change="RPC_ret_wps_pin()"
+                >
+                    <!--<option value="both" ng-if="ssid_radio_owner() === 'both'">Both</option>-->
+                    <option value="2g" ng-if="ssid_radio_owner() !== '5g'" ng-bind="DICT('WPS_24G')"></option>
+                    <option value="5g" ng-if="ssid_radio_owner() !== '2g'" ng-bind="DICT('WPS_5G')"></option>
+                </select>
+            </p>
+            </div>
+            <div ng-show="wps.flag !== 1" ng-if="loadReady">
+            <br><br><br>
+            </div>
+            <div ng-class="{nopHint: !ssid_radio_wps() || !chkSecurity() || !ssid_radio_enable()}">
+            <p>
+                <span ng-bind="DICT('WPS_Use_Supported_Device')"></span>
+            </p>
+            <div ng-if="!(userAccessFlag === 'RO')" ng-show="!(userAccessFlag === 'RO')" ng-init="imgsrc='themes/img/icon/WFA_WPS_Solo.gif'">
+                <p>
+                <span ng-bind="DICT('WPS_Click1')"></span> <img ng-src="{{imgsrc}}" ng-mouseover="imgsrc='themes/img/icon/WFA_WPS_Solo2.gif'"
+                ng-mouseout="imgsrc='themes/img/icon/WFA_WPS_Solo.gif'" height="67px" width="67px" ng-click="press_wps()">
+                </p>
+            </div>
+            <div ng-if="userAccessFlag === 'RO'" ng-show="userAccessFlag === 'RO'" ng-init="imgsrc='themes/img/icon/WFA_WPS_Solo1.gif'">
+                <p>
+                <span ng-bind="DICT('WPS_Click1')"></span> <img ng-src="{{imgsrc}}" height="67px" width="67px">
+                </p>
+            </div>
+            <p class="ORmargin">
+                <span ng-bind="DICT('WPS_OR')"></span>
+            </p>
+            <p>
+                <span ng-bind="DICT('WPS_Click2')"></span>
+                
+                <input type="text" name="pin" size="8" wps-pin minlength=1 maxlength=9
+                    ng-model="ctx.wps.user_pincode" ng-change="resetModified()"
+                ></input>
+                
+                <span ng-bind="DICT('WPS_And_Click')"></span>
+                
+                <button ng-disabled="form.pin.$invalid || !ctx.wps.user_pincode || userAccessFlag === 'RO'" ng-click="register_wps_pin(ctx.wps.user_pincode)">Register</button>
+            </p>
+            <p class="ORmargin">
+                <span ng-bind="DICT('WPS_OR')"></span>
+            </p>
+            <p>
+                <span ng-bind="DICT('WPS_Click3')"></span>
+                <table class="page-block-tb-list" style="margin-left: 40px;">
+                    <tr>
+                        <td ng-bind="DICT('WPS_Device_PIN_Status')+':'">
+                            
+                        </td>
+                        <td>
+                            {{ctx.wps.device_pin_status}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WPS_Device_PIN')+':'">
+                            
+                        </td>
+                        <td>
+                            <input type="text" id="txt_pin" name="" size="8"
+                                ng-model="ctx.wps.device_pin"
+                                readonly disabled="disabled"
+                                ng-change="resetModified()"
+                            ></input>
+                            <button
+                                ng-click="RPC_gen_wps_pin(undefined, ctx.wps.lifetime)" ng-disabled="userAccessFlag === 'RO'"
+                            >
+                                <span ng-bind="DICT('WPS_Generate')"></span></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WPS_PIN_Lifetime')+':'">
+                            
+                        </td>
+                        <td>
+                            <select style="margin-left:0px;"
+                                ng-model="ctx.wps.lifetime"
+                                ng-init="ctx.wps.lifetime = '20'"
+                                ng-change="lifetimechk()"
+                            >
+                                <option value="0" ng-bind="DICT('WPS_0_Static')"></option>
+                                <option value="20" ng-bind="DICT('WPS_20_Minutes')"></option>
+                                <option value="60" ng-bind="DICT('WPS_1_Hours')"></option>
+                                <option value="120" ng-bind="DICT('WPS_2_Hours')"></option>
+                                <option value="240" ng-bind="DICT('WPS_4_Hours')"></option>
+                                <option value="480" ng-bind="DICT('WPS_8_Hours')"></option>
+                                <option value="1440" ng-bind="DICT('WPS_24_Hours')"></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WPS_WiFi_Protected_Setup_Status')+':'">
+                            
+                        </td>
+                        <td>
+                            {{ssid_radio_wps() ? DICT('WPS_Enabled') : DICT('WPS_Disabled')}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td ng-bind="DICT('WPS_Security')+':'">
+                            
+                        </td>
+                        <td>
+                            {{getSecurity()}}
+                        </td>
+                    </tr>
+                </table>
+                </p>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_modal.htm">
+<div name="wpsname">
+    <div ng-if="page === 1" ng-include="'wlan_wps_progress.htm'"></div>
+    <div ng-if="page === 2" ng-include="'wlan_wps_fail.htm'"></div>
+    <div ng-if="page === 3" ng-include="'wlan_wps_timeout.htm'"></div>
+    <div ng-if="page === 4" ng-include="'wlan_wps_pin_invalid.htm'"></div>
+    <div ng-if="page === 5" ng-include="'wlan_wps_success.htm'"><div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_progress.htm">
+    <div class="modal-container" style="min-width: 380px; width: 100%">
+        <div class="modal-header-container">
+            <div class='modal-title' ng-bind="DICT('WPS_Progress_Modal_Title')"></div>
+        </div>
+        <div class="modal-content-container no-button-container">
+            <div ng-bind="DICT('WPS_Please_Wait')"></div>
+            <br></br>
+            <div ng-bind="DICT('WPS_Connecting_Msg')"></div>
+            <br></br>
+            <p style="text-align: center;">{{progress}}%</p>
+            <div class = "progress progress-striped active">
+                <div class = "progress-bar progress-bar-success"
+                    aria-valuenow="{{progress}}" aria-valuemin = "0" aria-valuemax = "100" ng-style="{'width':progress+'%'}">
+                    <i ng-show="progress === 100"><span ng-bind="DICT('WPS_Completed')"></span></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_success.htm">
+    <div class="modal-container wps-modal-cntr">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('WPS_Connection_Success')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table>
+                <tr>
+                    <td>
+                        <img ng-src="themes/img/icon/Status_success_icon.gif" height="32px" width="32px"></img>
+                    </td>
+                    <td>
+                        <div ng-bind="DICT('WPS_Press_OK_To_Continue')"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()" autofocus class="btn-primary">OK</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_fail.htm">
+    <div class="modal-container wps-modal-cntr">
+    <div class="modal-header-container">
+        <div class="modal-title" ng-bind="DICT('WPS_Connection_Failure')"></div>
+    </div>
+      <div class="modal-content-container">
+          <table>
+              <tr>
+                  <td>
+                      <img ng-src="themes/img/icon/Status_criticalerror_icon.gif" height="32px" width="32px"></img>
+                  </td>
+                  <td>
+                        <div ng-bind="DICT('WPS_Connection_Failure_Msg1')"></div>
+                        <div ng-bind="DICT('WPS_Connection_Failure_Msg2')"></div>
+                        <div ng-bind="DICT('WPS_Press_OK_To_Continue')"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()" autofocus class="btn-primary">OK</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_timeout.htm">
+    <div class="modal-container wps-modal-cntr">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('WPS_Connection_Timeout')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table>
+                <tr>
+                    <td>
+                        <img ng-src="themes/img/icon/Status_criticalerror_icon.gif" height="32px" width="32px"></img>
+                    </td>
+                    <td>
+                        <div ng-bind="DICT('WPS_Connection_Failure_Msg1')"></div>
+                        <div ng-bind="DICT('WPS_Connection_Failure_Msg2')"></div>
+                        <div ng-bind="DICT('WPS_Press_OK_To_Continue')"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()" autofocus class="btn-primary">OK</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wlan_wps_pin_invalid.htm">
+    <div class="modal-container wps-modal-cntr">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('WPS_Invalid_PIN')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table>
+                <tr>
+                    <td>
+                        <img ng-src="themes/img/icon/Status_warning_icon.gif" height="32px" width="32px"></img>
+                    </td>
+                    <td>
+                        <div ng-bind="DICT('WPS_PIN_Checksum_failure')"></div>
+                        <div ng-bind="DICT('WPS_Press_OK_To_Continue')"></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button ng-click="funs.close()" autofocus class="btn-primary">OK</button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="funs.close('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="dialogBox.html">
+<div class="modal-container">
+    <div class="dialog-header-container" ng-show="title.length">
+        <div class="dialog-title" ng-bind="title"></div>
+    </div>
+    <div class="dialog-content-container">
+        <div class="dialog-context" pg-bind-html="msg"></div>
+    </div>
+    <div class="dialog-button-container">
+        <button type="button" ng-show="btn_yes_str.length" ng-click="yes()" class="btn-secondary"><span ng-bind="btn_yes_str"></span></button>
+        <button type="button" ng-show="btn_no_str.length" ng-click="no()" autofocus class="btn-primary"><span ng-bind="btn_no_str"></span></button>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="alertBox.html">
+<div class="modal-container">
+    <div class="alertbox-header-container" ng-show="title.length">
+        <div class="modal-title" ng-bind="title"></div>
+    </div>
+    <div class="alertbox-content-container">
+        <table>
+            <tr>
+                <td class="align-top">
+                    <i class="fa modal-icon" ng-class="iconClass" aria-hidden="true"></i>
+                </td>
+                <td>
+                    <div class="modal-context" ng-show="msg" pg-bind-html="msg"></div>
+                    <div class="modal-context" ng-show="templateUrl" ng-include="templateUrl"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="alertbox-button-container">
+        <button type="button" ng-show="btn_yes_str.length" ng-click="yes()" class="btn-secondary"><span ng-bind="btn_yes_str"></span></button>
+        <button type="button" ng-show="btn_no_str.length" ng-click="no()" autofocus class="btn-primary"><span ng-bind="btn_no_str"></span></button>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="notificationBox.html">
+<div class="modal-container">
+    <div class="notificationbox-header-container" ng-show="title.length">
+        <table>
+            <tr>
+                <td class="align-top">
+                    <i class="fa modal-icon" ng-class="iconClass" aria-hidden="true"></i>
+                </td>
+                <td>
+                    <div class="modal-title" ng-bind="title"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="notificationbox-content-container">
+        <table>
+            <tr>
+                <td>
+                    <div class="modal-context" pg-bind-html="msg"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+</script>
+
+<script type="text/ng-template" id="messageBox.html">
+    <div class="message-box-container">
+        <div ng-transclude></div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="wizard.html">
+<div class="wizard-container">
+    <form name="wizardform">
+        <div class="wizard-appearance">
+            <div class="wizard-title-cntr">
+                <span class="wizard-title" ng-bind="title"></span>
+            </div>
+            <div class="wizard-content-cntr">
+                <div class="wizard-step-name-cntr">
+                    <div ng-repeat="(idx, step) in step_list" ng-class="{'focus-step': idx === current_step, 'future-step': idx > current_step, 'completed-step': idx < current_step}">
+                        <img src="themes/img/speciel/_blank.gif" class="wizard-blank-icon" ng-show="idx >= current_step"></img>
+                        <span class="wizard-check-circle" ng-show="idx < current_step"></span>
+                        <span class="wizard-step-name" ng-bind="step.name"></span>
+                    </div>
+                </div>
+                <div ng-repeat="(idx, step) in step_list" class="wizard-content" ng-show="current_step === idx">
+                    <ng-form name="{{'step'+idx}}" ng-show="current_step === idx">
+                        <div ng-include="step.templateUrl"></div>
+                    </ng-form>
+                </div>
+            </div>
+            <div class="wizard-btn-cntr">
+                <button type="button" class="btn-back" ng-click="back()" ng-show="current_step !== 0">
+                    <span ng-bind="DICT('Wizard_Back')"></span>
+                </button>
+                <button type="button" class="btn-next" ng-click="next()" ng-show="!show_submit_btn" ng-disabled="wizardform['step'+current_step].$invalid">
+                    <span ng-bind="DICT('Wizard_Next')"></span>
+                </button>
+                <button type="button" class="btn-apply" ng-click="submit()" ng-show="show_submit_btn" ng-disabled="wizardform['step'+current_step].$invalid">
+                    <span ng-bind="DICT('Wizard_Submit')"></span>
+                </button>
+                <button type="button" ng-click="skip()" ng-show="show_skip_btn">
+                    <span ng-bind="DICT('Wizard_Skip')"></span>
+                </button>
+                <button type="button" class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('Wizard_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</script>
+<!--
+Description: column will be a icon, and it do popover alert
+
+Usage: 
+    data: [
+        {   
+            element: [
+            {
+                popoverExp: "<div></div>"       // should be html language
+            },
+            ...
+            ]
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   
+                field: "popoverExp",
+                cellTemplate: "T_table_icon_with_popover_html.html"
+            }
+        ]
+
+-->
+<script type="text/ng-template" id="T_table_icon_with_popover_html.html">
+    <div style="margin-left: 8px;">
+        <img src="themes/img/icon/Status_information_icon.png"
+            ng-style="{top: (rowHeight-rowHeight%2)/2}"
+            popover-trigger="'mouseenter'" 
+            popover-append-to-body="true"
+            uib-popover-html="COL_FIELD"
+            width="12" height="12"
+        ></img>
+    </div>
+</script>
+
+<script type="text/ng-template" id="UG_table_icon_with_popover_html.html">
+    <div style="margin-left: 8px;">
+        <img src="themes/img/icon/Status_information_icon.png"
+            ng-style="{top: (rowHeight-rowHeight%2)/2}"
+            popover-trigger="'mouseenter'" 
+            popover-append-to-body="true"
+            uib-popover-html="MODEL_COL_FIELD"
+            width="12" height="12"
+        ></img>
+    </div>
+</script>
+<!--
+Description: column will be a icon, and it do popover alert
+
+Usage: 
+At Javascript file:
+    data: [
+        {   
+            element: [
+            {
+                popoverExp: "abc.html"       // should be html language
+            },
+            ...
+            ]
+        }
+    ]
+
+    gridOption:
+        columnDefs: [
+            {   
+                field: "popoverExp",
+                cellTemplate: "T_table_icon_with_popover_template.html"
+            }
+        ]
+
+
+At HTML:
+    <script type="text/ng-template" id="atc.html">
+        ....
+    </script>
+-->
+<script type="text/ng-template" id="T_table_icon_with_popover_template.html">
+    <div style="margin-left: 8px;">
+        <img src="themes/img/icon/Status_information_icon.png"
+            ng-style="{top: (rowHeight-rowHeight%2)/2}"
+            popover-trigger="'mouseenter'" 
+            popover-append-to-body="true"
+            uib-popover-template="COL_FIELD"
+            width="12" height="12"
+        ></img>
+    </div>
+</script>
+
+<script type="text/ng-template" id="pl-option.htm"><fieldset style="margin:2px;height:26px;">
+    <!-- ng-form name="innerForm" -->
+        
+        <span for="{{forname}}" class="col-xs-4 col-sm-3" ng-hide="title==''" >{{title}}</span>
+        
+        <span class="col-xs-8 col-sm-8">
+            <span ng-transclude >
+            </span>
+            <span>{{unit}}</span>
+            <span class="tip-info">{{tipinfo}}</span>
+        </span>
+    <!-- /ng-form -->
+</fieldset>
+</script>
+
+<script type="text/ng-template" id="helpIcon.html">
+    <i class="icon-online-help help-icon-default"
+        popover-append-to-body="true"
+        popover-placement="{{placement}}"
+        popover-popup-close-delay="{{closedelay}}"
+        popover-trigger="trigger"
+        popover-class="help-icon-content"
+        popover-is-open="isopen"
+        uib-popover-template="'popoverIconContent.html'"
+    ></i>
+</script>
+
+<script type="text/ng-template" id="infoIcon.html">
+    <i class="icon-about help-icon-default"
+        popover-append-to-body="true"
+        popover-placement="{{placement}}"
+        popover-popup-close-delay="{{closedelay}}"
+        popover-trigger="trigger"
+        popover-class="help-icon-content"
+        popover-is-open="isopen"
+        uib-popover-template="'popoverIconContent.html'"
+    ></i>
+</script>
+
+<script type="text/ng-template" id="popoverIconContent.html">
+    <div pg-bind-html="context"></div>
+</script>
+
+<script type="text/ng-template" id="UG_table_text_with_inline_href_click.html">
+<div class="ui-grid-custom-cntr">
+    <a class="btn-href" ng-click="col.colDef.click && col.colDef.click(MODEL_COL_FIELD, row, col, grid)"
+    ><span ng-bind="MODEL_COL_FIELD" pgtitle></span>
+    </a>
+</div>
+</script>
+
+<script type="text/ng-template" id="UG_table_empty.html">
+<div class="ui-grid-custom-cntr">
+</div>
+</script>
+
+<script type="text/ng-template" id="grid_tableaction_btn.html"><span>
+    <button type="button"
+        ng-disabled="disabled"
+        title="{{title}}"
+        uib-popover-enable="!disabled"
+        class="grid-btn-tableaction-s"
+        uib-popover-template="'grid_tableaction_list.html'"
+        popover-is-open="isopen"
+        ng-click="clickaction()"
+        popover-trigger="'outsideClick'"
+        popover-placement="bottom"
+    ></button>
+</span>
+</script>
+
+<script type="text/ng-template" id="grid_tableaction_list.html">
+<div class="grid-columns-action">
+    <table>
+        <tr ng-repeat="m in columns">
+            <td>
+                <input type="checkbox" ng-click="clickvisiable(m)" ng-checked="m.visible"></input>
+            </td>
+            <td ng-bind="m.displayName" class="grid-column-name">
+        </tr>
+    </table>
+ </div>
+</script>
+
+
+<script type="text/ng-template" id="UG_table_text_with_wrap.html">
+<div class="ui-grid-custom-cntr">
+    <div class="grid-text-wrap" ng-bind="MODEL_COL_FIELD" pgtitle></div>
+</div>
+</script>
+
+<script type="text/ng-template" id="pg_upload.html">
+<label for="{{id}}">
+    <span class="btn-browse" pgtitle ng-bind="DICT('Browse')"></span>
+    <span class="btn-file-name" ng-class="{'warning-msg': !file && ngRequired || isInvalid}" pgtitle ng-bind="file_name"></span>
+</label>
+<input type="file" id="{{id}}" ng-change="change(file)" ngf-select="" ng-model="file" class="btn-browse-file" ng-disabled="ngDisabled" ng-required="ngRequired"></input>
+</script>
+
+
+<script type="text/ng-template" id="wait_reboot_modal.htm">
+	<div class="modal-container" id="modalBox">
+        <div class="modal-content-container no-button-container">
+            <table class="align-top">
+                <tr>
+                    <td rowspan="2">
+                        <span class="icon-loading reboot-loading-icon"></span>
+                    </td>
+                    <td ng-bind="DICT('Reboot_Rebooting')"></td>
+                </tr>
+                <tr>
+                    <td ng-bind="DICT('Reboot_Rebooting_Msg2')"></td>
+                </tr>
+            </table>
+        </div>
+	</div>
+</script>
+
+<script type="text/ng-template" id="ui_grid_pagination_op.htm">
+    <div>
+        <span class="ui-grid-pagination-ctrl" ng-if="uiGridOption && uiGridOption.data && uiGridOption.data.length && m.show">
+            <button id="btn_first" class="grid-btn-goto-first" ng-disabled="m.pageIdx === undefined || m.pageIdx === 1" ng-click="goToFirst()"></button>
+            <button id="btn_previous" class="grid-btn-previous" ng-disabled="m.pageIdx === undefined || m.pageIdx === 1" ng-click="goToPrevious()"></button>
+            <span ng-repeat="p in m.pp">
+                <button type="button" ng-if="p.isEllipsis" ng-click="p.cbk()">
+                    <span ng-bind="p.id"></span>
+                </button>
+                <button type="button" ng-if="!p.isEllipsis" ng-click="goTo(p.id)" ng-class="{'selected': m.pageIdx === p.id}">
+                    <span ng-bind="p.id"></span>
+                </button>
+            </span>
+            <button id="btn_next" class="grid-btn-next" ng-disabled="m.pageIdx === undefined || m.pageIdx === m.lastPageNum" ng-click="goToNext()"></button>
+            <button id="btn_last" class="grid-btn-goto-last" ng-disabled="m.pageIdx === undefined || m.pageIdx === m.lastPageNum" ng-click="goToLast()"></button>
+            <select id="slct_pagingSize" ng-model="m.pagingSize" ng-options="p as p for p in m.pages" ng-change="changePageSize()"></select>
+            <span ng-bind="DICT('View_Logs_Lines_Per_Page')"></span>
+            <span class="ui-grid-pagination-pages">
+                <span ng-bind="m.pageStr"></span>
+            </span>
+        </span>
+    </div>
+</script>

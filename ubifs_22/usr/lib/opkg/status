@@ -1,0 +1,3466 @@
+Package: strongswan-mod-eap-identity
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: mtd-utils-mtdinfo
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-usb-storage
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-scsi-core, kmod-usb-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: terminfo
+Version: 5.9-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: ldconfig
+Version: 2.19-1
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-stp
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-llc
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: smcroute
+Version: 2.0.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: libpam
+Version: 1.1.8-4
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: smart_agent
+Version: 1.0.0-7
+Depends: libc, librt, libpthread, xoslib, firmware
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: kmod-lib-textsearch
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: libc
+Version: 2.19-1
+Depends: libgcc
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-ebtables
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-bridge
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: kmod-l2tp
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6, kmod-udptunnel4, kmod-udptunnel6
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: comgt-directip
+Version: 0.32-29
+Depends: libc, librt, libpthread, comgt, kmod-usb-serial, kmod-usb-serial-sierrawireless, kmod-usb-net, kmod-usb-net-sierrawireless
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: sysstat
+Version: 10.1.2-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/sysstat/sysstat.ioconf cf38d9eabcbbc9949b5a3e0b0d68cc6cbb
+ /etc/sysstat/config ded6ecae233a2aef23777ae79944b6b708
+Installed-Time: 1623618142
+
+Package: kmod-nbvpn
+Version: 4.1.8+1.0-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: gre
+Version: 1-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: libnetfilter-cthelper
+Version: 1.0.0-1
+Depends: libc, librt, libpthread, libmnl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perl-crypt-rijndael
+Version: 1.13-1
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-ip6-tunnel
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6, kmod-iptunnel6
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: dnsmasq-dhcpv6
+Version: 2.84-1
+Depends: libc, librt, libpthread, kmod-ipv6
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/dhcp cadda0eed99ef829b6f87f4290dd952f85
+ /etc/dnsmasq.conf 1e6ab19c1ae5e70d609ac7b6246541d520
+Installed-Time: 1623618134
+
+Package: ntpclient
+Version: 2007_365-4
+Depends: libc, librt, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/ntpclient e0d47fa0e075466d0cf49e9fd6a21a4826
+Installed-Time: 1623618138
+
+Package: opkg
+Version: 9c97d5ecd795709c8584e972bfdf3aee3a5b846d-7
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/opkg.conf f3f47fec7381d71f741de1b54bf322ae7f
+Installed-Time: 1623618138
+
+Package: ipsec-tools
+Version: 0.8.1-1
+Depends: libc, librt, libpthread, libopenssl, kmod-ipsec
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/racoon.conf 7e229a008ffe4826cf47790a696818fe64
+ /etc/racoon/psk.txt e2132dd8f5bb6b88e732cd742c2d6ad8f2
+Installed-Time: 1623618136
+
+Package: iptables-mod-extra
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-extra
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: owipcalc
+Version: 3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: perlbase-io
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-base, perlbase-bytes, perlbase-config, perlbase-errno, perlbase-essential, perlbase-fcntl, perlbase-list, perlbase-posix, perlbase-scalar, perlbase-selectsaver, perlbase-socket, perlbase-symbol, perlbase-tie, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: iperf
+Version: 2.0.5-1
+Depends: libc, librt, libpthread, libstdcpp
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-usb-core
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: python-pip
+Version: 1.5.6-1
+Depends: libc, librt, libpthread, python, python-setuptools
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: ip
+Version: 4.0.0-1
+Depends: libc, librt, libpthread, libnl-tiny
+Conflicts: ip-full
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/iproute2/rt_tables 08c418b8469951cd5c59da91e4b116cd62
+Installed-Time: 1623618136
+
+Package: libpthread
+Version: 2.19-1
+Depends: libgcc
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: ubus
+Version: 2015-05-25-f361bfa5fcb2daadf3b160583ce665024f8d108e
+Depends: libc, librt, libpthread, libubus, libblobmsg-json, ubusd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: python-codecs
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-crypto-manager
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-aead, kmod-crypto-hash, kmod-crypto-pcompress, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-crypto-pcompress
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-bridge
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-stp
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: mtd-utils-ubirsvol
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-constraints
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: bccsdk
+Version: 0.7
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: busybox
+Version: 1.23.2-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: bwmgmt
+Version: 0.0.2-1
+Depends: libc, librt, libpthread, libnl-tiny
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: kmod-usb-net-qmi-wwan
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-net, kmod-usb-wdm
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: ip-full
+Version: 4.0.0-1
+Depends: libc, librt, libpthread, libnl-tiny
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/iproute2/rt_tables 08c418b8469951cd5c59da91e4b116cd62
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: call_home_lib
+Version: 2.3.0-7
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: chat
+Version: 2.4.8-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: kmod-nfnetlink
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: perlbase-bytes
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-crypto-iv
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-rng, kmod-crypto-wq, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd-utils-ubinize
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-crypto-hash
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: binutils
+Version: 2.24-3
+Depends: libc, librt, libpthread, objdump, ar
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: libopenldap
+Version: 2.4.23-4
+Depends: libc, librt, libpthread, libopenssl, libsasl2
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/openldap/ldap.conf b79af04396ef5b0718511dd1b1c1a8c28c
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: realtek-ssdk
+Version: 1.3.4-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-tun
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: glib2
+Version: 2.41.1-2
+Depends: libc, librt, libpthread, zlib, libpthread, libffi, libattr
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: perlbase-symbol
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: kmod-crypto-aead
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: ppp-mod-radius
+Version: 2.4.8-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-usb-wdm
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: hardwaredmz
+Version: 1.00-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-crypto-deflate
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-lib-zlib, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: strongswan-mod-sha1
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: strongswan-mod-sha2
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: conntrack-tools
+Version: 0.9.12-1
+Depends: libc, librt, libpthread, libnetfilter-conntrack
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/conntrackd/conntrackd.conf 54ca138b15f0a1458ba31aba5721dd8c22
+Installed-Time: 1623618134
+
+Package: ebtables
+Version: 2.0.10-4-3
+Depends: libc, librt, libpthread, kmod-ebtables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: libthread-db
+Version: 2.19-1
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: strace
+Version: 4.8-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: system
+Version: fsl-1
+Depends: libc, librt, libpthread, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: libtree
+Version: 1.0.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: net-tools-rarp
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: mtd-utils-ubirename
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: usb-modem-mgmt
+Version: 1.0.00.03-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: kmod-crypto-md5
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-hash, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: libcurl
+Version: 7.40.0-3
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: openssl-util
+Version: 1.0.2o-1
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/ssl/openssl.cnf 06baa8f15992bacd3e5b113cd571d828c0
+Installed-Time: 1623618138
+
+Package: kmod-usb-serial-sierrawireless
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-serial
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: pd69200
+Version: 2_0_18
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: python-db
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, libdb47
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-ipt-filter
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-lib-textsearch, kmod-ipt-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-lib-crc-ccitt
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: mtd-utils-flash-erase
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: perlbase-socket
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: strongswan-mod-xauth-pam
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, libpam
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: confd_relay
+Version: 1.0-1
+Depends: libc, librt, libpthread, confd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: kmod-ipt-nat-extra
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-ipt-nat
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-ipsec
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-authenc, kmod-crypto-iv, kmod-crypto-des, kmod-crypto-hmac, kmod-crypto-md5, kmod-crypto-sha1, kmod-crypto-deflate, kmod-crypto-cbc
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: swupdate
+Version: 3.1
+Depends: libc, librt, libpthread, curl, cjson, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: dropbearconvert
+Version: 2015.67-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: libnetfilter-queue
+Version: 1.0.2-1
+Depends: libc, librt, libpthread, libmnl, libnfnetlink
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: kmod-gre
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6, kmod-iptunnel
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: mtd-utils-ubidetach
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-nf-nathelper
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-nat
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-pppoe
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp, kmod-pppox
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: net-tools-slattach
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: sslvpn
+Version: 1.0-24
+Depends: libc, librt, libpthread, libopenssl, smart_client, libpam, confd, kmod-tun, libxml2
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: krb5-libs
+Version: 1.8-2
+Depends: libc, librt, libpthread, libncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: rdisc6
+Version: 1.0.2-1
+Depends: libc, librt, libpthread, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-pppox
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: mmiotool
+Version: 1.00-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-ipt-conntrack
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-nf-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-broadcom_esdk_wlan
+Version: 4.1.8+5.1.4.1-5.00.3-3
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), broadcom_esdk_wlan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: base-files
+Version: 157-r46692
+Depends: libc, librt, libpthread, netifd, procd, jsonfilter
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/network f77b2c981cf7edcac62a07519fade5205a
+ /etc/config/system 986aae3af2e19909ef56aeb5ae04ae540e
+ /etc/hosts 081ef9d5367595d16e30b4b4549d9f4353
+ /etc/inittab 5de82234288d9db930756534127616151b
+ /etc/group 35b63adf31591ac37358e918a5e8d4f9c1
+ /etc/passwd d1ad0ad9deb5b064c00abd9c93efaa5dfc
+ /etc/shadow da686659cbdbfd54ec3a7717b7a4cef966
+ /etc/profile 8f6934b19e6a9e47708f8c070c1015cf60
+ /etc/protocols edede1354b2d18b1403125b305049d4b5c
+ /etc/services 47f3393d265c8cefc2d1ec72f8b0b02cde
+ /etc/shells 8b35ce73c18161a7d7ed16fa244410993b
+ /etc/sysctl.conf 9a2b5aa284f48454464904fe2e0f4c5b3a
+ /etc/rc.local 515018aa94eb4937dade12dc0d69890b35
+ /etc/sysupgrade.conf 9e87b05fe2f12c84d1c465b39632274847
+ /etc/config/vap5 74f2ebf521eb48cbd5beb39115df8b15a1
+ /etc/config/vap3 df28c5ea19c728be9d7122bf940b98ba15
+ /etc/config/vap0 533b2743e832d8723f46c89b53f2c0a132
+ /etc/config/vap6 50168d38b4c9fa9bf785be9af61bac529e
+ /etc/config/vap2 20efb8a7d2067b085ee91dc167bbbb51ff
+ /etc/config/network f77b2c981cf7edcac62a07519fade5205a
+ /etc/config/vap1 3fccd763b0b3e09c10777f15ea3918e58d
+ /etc/config/vap7 81176c0721241c2150281f409dd3d227cb
+ /etc/config/system 986aae3af2e19909ef56aeb5ae04ae540e
+ /etc/config/wireless 5a942bdf67d7efc29f4b11b083c851228a
+ /etc/config/vap4 025bb3f4ee087cdcdf678bf959db1475f9
+Installed-Time: 1623618132
+
+Package: pfe
+Version: 0.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-nf-nat
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-conntrack, kmod-nf-ipt
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: libpcre
+Version: 8.35-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: dnscrypt-proxy
+Version: 1.9.5-8
+Depends: libc, librt, libpthread, libsodium, dnscrypt-proxy-resolvers, libltdl, libldns
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/dnscrypt-proxy 7a855906e1437b83c96becd362bda54ca8
+Installed-Time: 1623618134
+
+Package: kmod-ebtables-watchers
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ebtables
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perlbase-getopt
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: rdnssd
+Version: 1.0.2-1
+Depends: libc, librt, libpthread, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: opsdb
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, ciscosb-yang, libsqlite3
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: netifd
+Version: 2014-09-08.1-46c569989f984226916fec28dd8ef152a664043e
+Depends: libc, librt, libpthread, libuci, libnl-tiny, libubus, ubus, ubusd, jshn, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libmnl
+Version: 1.0.3-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: ddns-scripts
+Version: 1.0.0-21
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: all
+Conffiles:
+ /etc/config/ddns 4b701d89f8bd521bc6ed088b76f09aa24a
+Installed-Time: 1623618134
+
+Package: python-decimal
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: snmpmod
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: 6in4
+Version: 21-2
+Depends: libc, librt, libpthread, kmod-ipv6, kmod-sit
+Status: install user installed
+Architecture: all
+Installed-Time: 1623618132
+
+Package: python-light
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-base, libffi, libbz2
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: libnetfilter-cttimeout
+Version: 1.0.0-1
+Depends: libc, librt, libpthread, libmnl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: quagga-watchquagga
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: xoslib
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: libwebsockets
+Version: 2016-05-05-5500643f3c4561b6fe46259109a558c1e4c05545
+Depends: libc, librt, libpthread, zlib, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-pem
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: python-distutils
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: perlbase-list
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: hostip
+Version: 1.9.5-8
+Depends: libc, librt, libpthread, libsodium
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-mii
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: strongswan-mod-rc2
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: strongswan-mod-eap-mschapv2
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, strongswan-mod-md4, strongswan-mod-des
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: procd
+Version: 2015-08-16-0da5bf2ff222d1a499172a6e09507388676b5a08
+Depends: libc, librt, libpthread, ubusd, ubus, libjson-script, ubox, libubox, libubus
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: dnscrypt-proxy-resolvers
+Version: 1.9.5+git-20171001-2d43be3-8
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: resolveip
+Version: 2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: mtd-utils-ubiformat
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-eap-md5
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: mtd-utils-nandwrite
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libblkid
+Version: 2.25.2-4
+Depends: libc, librt, libpthread, libuuid
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-crypto-ocf
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-crypto-hmac
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: iptables-mod-nat-extra
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-nat-extra
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: ubusd
+Version: 2015-05-25-f361bfa5fcb2daadf3b160583ce665024f8d108e
+Depends: libc, librt, libpthread, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libbfd
+Version: 2.24-3
+Depends: libc, librt, libpthread, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: mtd-utils-mkfs.ubifs
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils, libuuid, liblzo, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libustream-openssl
+Version: 2015-07-09-c2d73c22618e8ee444e8d346695eca908ecb72d3
+Depends: libc, librt, libpthread, libubox, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: python-pydoc
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: xos_ds
+Version: 2.3.0-3
+Depends: libc, librt, libpthread, xos_ipc_cmt, namesvr, xoslib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: libwrap
+Version: 7.6-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: epavis-dpi
+Version: ysmir-20180130
+Depends: libc, librt, libpthread, libuci, libcurl, libncurses, libreadline, libxml2, kmod-ipt-conntrack, smart_client
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+
+Package: kmod-llc
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: qos_uci
+Version: 1.0-1
+Depends: libc, librt, libpthread, libuci, libubus, libxtables, iptables, ip6tables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: strongswan
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, libpthread, ip, kmod-crypto-authenc, kmod-ipsec, kmod-ipsec4, kmod-ipsec6, kmod-ipt-ipsec, iptables-mod-ipsec
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/ipsec.conf e1a6e75b3809b78eba2170b76dff02a255
+ /etc/ipsec.secrets 78572ad5646ae7cc3d4bb2dd5c216110cd
+ /etc/ipsec.user 1c2c5d1f546463d4cf901f9d000a3138b4
+ /etc/strongswan.d/scepclient.conf 05d02c2119b951d0916c459e2362e3f1fa
+ /etc/strongswan.d/pki.conf 7f21cf175c89cfa6fc13d889f83266c3a5
+ /etc/strongswan.d/swanctl.conf 00d6e342809ce4796aa29d7259ecfe8014
+ /etc/strongswan.d/charon/ezvpn.conf c04b5436b26674516728ad04976249ae53
+ /etc/strongswan.d/starter.conf c70f7227d05c18455e908d321268c34c0c
+ /etc/strongswan.d/charon.conf ecd00bdf1f2f10755368dd438ea1527039
+ /etc/strongswan.d/charon-logging.conf 3a9a75a16ddc9d2d533c3e155c19014d49
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: syslog-ng3
+Version: 3.0.8-5
+Depends: libc, librt, libpthread, libpcre, glib2, libeventlog, libopenssl, libwrap, libpthread, librt, zlib, libdbi
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: quagga-vtysh
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra, libreadline, libncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: python
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, python-ctypes, python-pydoc, python-multiprocessing, python-logging, python-codecs, python-sqlite3, python-gdbm, python-email, python-distutils, python-xml, python-compiler, python-db, python-openssl, python-decimal, python-unittest, python-ncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: iptables-mod-ipsec
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-ipsec
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-iptunnel
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-c2k_gpio_reset
+Version: 4.1.8+-comcerto2000-
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: strongswan-mod-aes
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: python-base
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, libpthread, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: strongswan-mod-pgp
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-pptp
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp, kmod-gre, kmod-pppox
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: avahi-nodbus-daemon
+Version: 0.6.31-12
+Depends: libc, librt, libpthread, libavahi-nodbus-support, libexpat, librt, libdaemon
+Provides: avahi-daemon
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/avahi/avahi-daemon.conf 7233b2fa02d3d3c1ee54b1a7b0bb3908f6
+Installed-Time: 1623618132
+
+Package: olh
+Version: 2020-11-02
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-sshkey
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: block-mount
+Version: 2015-05-24-09027fc86babc3986027a0e677aca1b6999a9e14
+Depends: libc, librt, libpthread, ubox, libubox, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: kmod-usbmon
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: python-unittest
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: kmod-fs-vfat
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: strongswan-mod-xcbc
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: strongswan-mod-random
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: iptables-mod-iprange
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-iprange
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: miniupnpd
+Version: 1.9.20151212-1
+Depends: libc, librt, libpthread, iptables, libip4tc, libip6tc, ip6tables
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/upnpd b8824a9e635b93d6f13df52e0097f7fc5e
+Installed-Time: 1623618138
+
+Package: libldap
+Version: 186-1
+Depends: libc, librt, libpthread, openldap-server, libpam
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: comgt
+Version: 0.32-29
+Depends: libc, librt, libpthread, chat
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: libxml2
+Version: 2.9.2-3
+Depends: libc, librt, libpthread, libpthread, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: nbvpn
+Version: 1.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-nf-ipt
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-ipt-conntrack-extra
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-ipt-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: quagga-ripngd
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/quagga/ripngd.conf 097000d95751ef79d3b63e5464d2935d20
+Installed-Time: 1623618140
+
+Package: libsodium
+Version: 1.0.16-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: confd
+Version: 6.5.2
+Depends: libc, librt, libpthread, libopenssl, libpam, libncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: sqlite3-cli
+Version: 3210000-1
+Depends: libc, librt, libpthread, libsqlite3, libncurses, libreadline
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: perlbase-scalar
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-list
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: 802.1x
+Version: 1-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: mcproxy
+Version: 2014-12-31-b7bd2d0809a0d1f177181c361b9a6c83e193b79a-3
+Depends: libc, librt, libpthread, libpthread, libstdcpp
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/mcproxy.conf b17435fea144814c7fffc73143e71e7df8
+ /etc/config/mcproxy c06f7f4297a79113abd7ee5b74013519c2
+Installed-Time: 1623618138
+
+Package: strongswan-mod-pkcs1
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-msp-coredump
+Version: 4.1.8+1.00.0-comcerto2000-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-usb-net-sierrawireless
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-net
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: python-email
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: tc
+Version: 4.0.0-1
+Depends: libc, librt, libpthread, kmod-sched-core
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: libuci
+Version: 2015-08-27.1-1
+Depends: libc, librt, libpthread, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libevent
+Version: 1.4.14b-2
+Depends: libc, librt, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: liblua
+Version: 5.1.5-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: libip4tc
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, libxtables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: perlbase-tie
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-fcntl, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: tcpdump
+Version: 4.9.2-1
+Depends: libc, librt, libpthread, libpcap
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: strongswan-mod-dnskey
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-ip6tables
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-ipt6, kmod-ipt-core, kmod-ipt-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd-utils
+Version: 1.5.0-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+Auto-Installed: yes
+
+Package: libopcodes
+Version: 2.24-3
+Depends: libc, librt, libpthread, libbfd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: webfilter
+Version: fsl-1
+Depends: libc, librt, libpthread, epavis-dpi, bccsdk, libopenssl, libcommon
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: odhcp6c
+Version: 2014-10-06-d6fe99f6d03873e7a670c9b6f26fa03b219422f5
+Depends: libc, librt, libpthread, kmod-ipv6
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: fstools
+Version: 2015-05-24-09027fc86babc3986027a0e677aca1b6999a9e14
+Depends: libc, librt, libpthread, ubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-udptunnel4
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: libdaemon
+Version: 0.14-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-udptunnel6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: msmtp
+Version: 1.6.1-3
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/msmtprc 9441cf220aaea0a364b593128afc4390f4
+Installed-Time: 1623618138
+
+Package: strongswan-utils
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-ipt-extra
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: xos_ipc_cms
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: xos_ipc_cmt
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: vpn-clear-connections
+Version: fsl-1
+Depends: libc, librt, libpthread, libnetfilter-conntrack
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: iptables-mod-ipopt
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-ipopt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: smart_daemon
+Version: 2.3.0-8
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, libcurl, libevent, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, smart_agent, firmware
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: kmod-auto_bridge
+Version: 4.1.8+1.00-0
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: ethtool
+Version: 3.7-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+
+Package: kmod-usb-modem
+Version: 4.1.8+1.0.00.03-P3
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), comgt, comgt-ncm, comgt-directip, uqmi, usb-modeswitch, libqmi, bwmgmt, usb-modem-mgmt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: uci
+Version: 2015-08-27.1-1
+Depends: libc, librt, libpthread, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: python-ctypes
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: python-gdbm
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, libgdbm
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: strongswan-mod-hmac
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-ebtables-ipv4
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ebtables
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: ppp-mod-pppol2tp
+Version: 2.4.8-2
+Depends: libc, librt, libpthread, kmod-pppol2tp
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-ebtables-ipv6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ebtables
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: dropbear
+Version: 2015.67-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/dropbear/dropbear_rsa_host_key e3b0c44298fc1c149afbf4c8996fb92427
+ /etc/dropbear/dropbear_dss_host_key e3b0c44298fc1c149afbf4c8996fb92427
+ /etc/config/dropbear 0198dbc97b5a9aac76a5c6233684571ccd
+Installed-Time: 1623618134
+
+Package: python-ncurses
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, libncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: libnetfilter-conntrack
+Version: 1.0.4-1
+Depends: libc, librt, libpthread, libnfnetlink, kmod-nf-conntrack-netlink, libmnl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: curl
+Version: 7.40.0-3
+Depends: libc, librt, libpthread, libcurl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: firewall_uci
+Version: 1.0-1
+Depends: libc, librt, libpthread, libuci, libubus, libxtables, iptables, ip6tables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: sbr-gui
+Version: 1.0.2.11-14
+Depends: libc, librt, libpthread, confd, libjson-c, libuci, libwebsockets, libpcre
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: perl-digest-sha1
+Version: 2.13-1
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: perlbase-xsloader
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: strongswan-mod-xauth-eap
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: libqmi
+Version: 1.8.0-1
+Depends: libc, librt, libpthread, glib2, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: perlbase-dynaloader
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-config
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: strongswan-charon
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: xl2tpd
+Version: 1.3.1-1
+Depends: libc, librt, libpthread, ppp-mod-pppol2tp, ip, resolveip, cmm
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/xl2tpd/xl2tp-secrets a1cfae4314863abf017d942678504b0fbd
+Installed-Time: 1623618142
+
+Package: libradius
+Version: 1.4.0-1
+Depends: libc, librt, libpthread, libpam
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: perlbase-essential
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: kmod-nls-cp437
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: libstdcpp
+Version: 4.8-linaro-1
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd
+Version: 21
+Depends: libc, librt, libpthread, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libltdl
+Version: 2.4-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: mutt
+Version: 1.5.16-2
+Depends: libc, librt, libpthread, libopenssl, libncurses
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-crypto-cbc
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: pnp
+Version: 1.8.0.dev13-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-crypto-core
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: perlbase-config
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: fci
+Version: 2.00-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: Umbrella
+Version: 1.0-1
+Depends: libc, librt, libpthread, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: perlbase-digest
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-dynaloader, perlbase-essential, perlbase-fcntl, perlbase-integer
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: strongswan-mod-eap-radius
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: mtd-utils-ubirmvol
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libjson-c
+Version: 0.11-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libgcc
+Version: 4.8-linaro-1
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: poe
+Version: fsl-1
+Depends: libc, librt, libpthread, confd, pd69200, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: smart_client
+Version: 2.3.0-7
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, call_home, libxml2, curl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: strongswan-mod-des
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-crypto-authenc
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: usb-modeswitch
+Version: 2017-05-24-453da8e540b1c53d357b897d6c70372cd4633390
+Depends: libc, librt, libpthread, libubox, libblobmsg-json, libusb-1.0
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: mtd-utils-flashcp
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: mtd-utils-nandtest
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-fips-prf
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, strongswan-mod-sha1
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: libreadline
+Version: 6.3-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: sudo
+Version: 1.8.14p3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/sudoers 67797f145f3429db6e72b4f1b20a13abd0
+Installed-Time: 1623618141
+
+Package: cjson
+Version: 0.1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: libip6tc
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, libxtables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: net-tools-plipconfig
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: strongswan-mod-socket-default
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: libffi
+Version: 3.0.13-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-crypto-wq
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: libuuid
+Version: 2.25.2-4
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libcli
+Version: 1.9.4-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: ppp
+Version: 2.4.8-2
+Depends: libc, librt, libpthread, kmod-ppp, libpam
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/ppp/chap-secrets f157c7b167f2ec04cc71d333dc1b9d1cb8
+ /etc/ppp/filter 1d76ae12b906259f7c5226646da135898f
+ /etc/ppp/options 037ee337218eb25061f081ddfe3b6f1ef1
+Installed-Time: 1623618139
+
+Package: strongswan-mod-resolve
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: python-setuptools
+Version: 5.2-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: objdump
+Version: 2.24-3
+Depends: libc, librt, libpthread, libopcodes
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: vpnresourcemgmt
+Version: fsl-1
+Depends: libc, librt, libpthread, strongswan, pptpd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: libubox
+Version: 2015-06-14-d1c66ef1131d14f0ed197b368d03f71b964e45f8
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: whereis
+Version: 2.25.2-4
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: firmware
+Version: 1-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libusb-1.0
+Version: 1.0.19-1
+Depends: libc, librt, libpthread, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: strongswan-mod-pubkey
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: net-tools-nameif
+Version: 1.60-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: liblzo
+Version: 2.08-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: gdb
+Version: 7.8-2
+Depends: libc, librt, libpthread, libthread-db, zlib, libreadline, libncurses, zlib
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: quagga-libzebra
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: ppp-mod-pptp
+Version: 0.8.5-3
+Depends: libc, librt, libpthread, kmod-pptp
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/ppp/options.pptp f2529158019834c3bc78dd3aadce15c385
+Installed-Time: 1623618139
+
+Package: libsmartcols
+Version: 2.25.2-4
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: libjson
+Version: 0.11-2
+Depends: libc, librt, libpthread, libjson-c
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-usb-net
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-mii, kmod-usb-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: librt
+Version: 2.19-1
+Depends: libpthread
+Status: install hold installed
+Essential: yes
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: krb5-client
+Version: 1.8-2
+Depends: libc, librt, libpthread, krb5-libs
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: mtd-utils-ubiattach
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-pfe_ctrl
+Version: 4.1.8+0.0-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: rtk-ms-sdk
+Version: 2.1.4.53590-1
+Depends: libc, librt, libpthread, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-usb-serial
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: perlbase-fcntl
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: libjson-script
+Version: 2015-06-14-d1c66ef1131d14f0ed197b368d03f71b964e45f8
+Depends: libc, librt, libpthread, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: strongswan-mod-kernel-netlink
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: python-sqlite3
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, libsqlite3
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: kmod-usb-net-cdc-ncm
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-net
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: swap-utils
+Version: 2.25.2-4
+Depends: libc, librt, libpthread, libblkid
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: librpc
+Version: 2015-04-10-308e9964bfb623773dc0dcc99ef9d18d1551d6ae
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: cmm
+Version: 2.01-8
+Depends: libc, librt, libpthread, kmod-fci, libnetfilter-conntrack, ip-full, libcli, kmod-nfnetlink, kmod-nf-conntrack-netlink, libpcap
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: cyclesoak
+Version: none-1
+Depends: libc, librt, libpthread, libgdbm
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: libavahi-nodbus-support
+Version: 0.6.31-12
+Depends: libc, librt, libpthread, libpthread
+Provides: libavahi
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libblobmsg-json
+Version: 2015-06-14-d1c66ef1131d14f0ed197b368d03f71b964e45f8
+Depends: libc, librt, libpthread, libjson-c, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: call_home
+Version: 2.3.0-9
+Depends: libc, librt, libpthread, xos_ipc_cmt, xos_ipc_cms, libopenssl, libcurl, xoslib, xos_pl, xos_ds, namesvr, zlib, call_home_lib, trustpool, firmware
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: opsdb_cisco
+Version: 1.0-4
+Depends: libc, librt, libpthread, confd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: mtd-utils-mtd-debug
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-fci
+Version: 4.1.8+2.00-3
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), fci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-crypto-ecb
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-manager, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: iptables
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, kmod-ipt-core, libip4tc, libip6tc, libxtables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: iptables-mod-filter
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-filter
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: hotplug2
+Version: 1.0-beta-4
+Depends: libc, librt, libpthread, libbsd
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/hotplug2.rules 242113d64222691963262818b53706d750
+Installed-Time: 1623618136
+
+Package: perl-net-snmpkey
+Version: 5.2.0-1
+Depends: libc, librt, libpthread, perl, perl-crypt-des, perl-digest-sha1, perl-digest-hmac
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-nf-conntrack-netlink
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nfnetlink, kmod-ipt-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-crypto-des
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-sit
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6, kmod-iptunnel, kmod-iptunnel4
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: python-compiler
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-nf-nathelper-extra
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-nat, kmod-lib-textsearch
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: ds-lite
+Version: 7-1
+Depends: libc, librt, libpthread, kmod-ipv6, kmod-ip6-tunnel, resolveip
+Status: install user installed
+Architecture: all
+Installed-Time: 1623618134
+
+Package: perl
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, libbsd, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: jshn
+Version: 2015-06-14-d1c66ef1131d14f0ed197b368d03f71b964e45f8
+Depends: libc, librt, libpthread, libjson-c, libubox, libblobmsg-json
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: xos_pl
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: drill
+Version: 1.6.17-2
+Depends: libc, librt, libpthread, libopenssl, libldns
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: mtd-utils-ubimkvol
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libncurses
+Version: 5.9-2
+Depends: libc, librt, libpthread, terminfo
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-ipt-core
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-ipt
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: libpcap
+Version: 1.5.3-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-ipv6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: python-xml
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: mtd-utils-ubiupdatevol
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-ipt-ipsec
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: ca-certificates
+Version: 20180409-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: libpolarssl
+Version: 1.3.12-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-ppp
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-lib-crc-ccitt, kmod-slhc
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: libbsd
+Version: 0.3.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd-utils-ubinfo
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libnfnetlink
+Version: 1.0.1-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: strongswan-default
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, strongswan-charon, strongswan-mod-aes, strongswan-mod-attr, strongswan-mod-constraints, strongswan-mod-des, strongswan-mod-dnskey, strongswan-mod-fips-prf, strongswan-mod-gmp, strongswan-mod-hmac, strongswan-mod-kernel-netlink, strongswan-mod-md5, strongswan-mod-nonce, strongswan-mod-pem, strongswan-mod-pgp, strongswan-mod-pkcs1, strongswan-mod-pubkey, strongswan-mod-random, strongswan-mod-rc2, strongswan-mod-resolve, strongswan-mod-revocation, strongswan-mod-sha1, strongswan-mod-sha2, strongswan-mod-socket-default, strongswan-mod-sshkey, strongswan-mod-stroke, strongswan-mod-updown, strongswan-mod-x509, strongswan-mod-xauth-generic, strongswan-mod-xauth-pam, strongswan-mod-xcbc, strongswan-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: perlbase-integer
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: strongswan-mod-updown
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: python-openssl
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: mtd-utils-flash-lock
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libubus
+Version: 2015-05-25-f361bfa5fcb2daadf3b160583ce665024f8d108e
+Depends: libc, librt, libpthread, libubox
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libiconv
+Version: 7
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: python-multiprocessing
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: openldap-server
+Version: 2.4.23-4
+Depends: libc, librt, libpthread, libopenldap, libuuid
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/openldap/slapd.conf ac4dd015f98fb7fea2575dac3a56cc1c5a
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: libeventlog
+Version: 0.2.13-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-iptunnel4
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-nf-conntrack
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: uqmi
+Version: 2016-12-19-3
+Depends: libc, librt, libpthread, libubox, libblobmsg-json, kmod-usb-net, kmod-usb-net-qmi-wwan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: kmod-iptunnel6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: kmod-ipsec4
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipsec, kmod-iptunnel4
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-ipsec6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipsec, kmod-iptunnel6
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: iptables-mod-conntrack-extra
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, iptables, kmod-ipt-conntrack-extra
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: strongswan-mod-nonce
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: strongswan-mod-xauth-generic
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: libxtables
+Version: 1.4.21-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+Auto-Installed: yes
+
+Package: ip6tables
+Version: 1.4.21-1
+Depends: libc, librt, libpthread, kmod-ip6tables, iptables
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-epn1802-ocf
+Version: 4.1.8+1.00-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-ocf
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: uwsgi
+Version: 2.0.15-1
+Depends: libc, librt, libpthread, libopenssl, libpthread, libxml2, zlib, libpcre, libuuid
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/uwsgi/upload.ini d652d815f8cd42d518231c4ed8a0b32bff
+ /etc/uwsgi/blockpage.ini 1b2409f7b14eb38e90f7d29e32d6e63b50
+ /etc/uwsgi/jsonrpc.ini f08aa92baa668df90a6acbdd61cdb6fa3d
+Installed-Time: 1623618142
+
+Package: rtk-switch
+Version: 1.0-1
+Depends: libc, librt, libpthread, realtek-ssdk
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: zlib
+Version: 1.2.8-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: boardinfo
+Version: 1.0
+Depends: libc, librt, libpthread, firmware
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: perl-crypt-des
+Version: 2.07-1
+Depends: libc, librt, libpthread, perl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-nf-ipt6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nf-ipt, kmod-nf-conntrack6
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: pam-krb5
+Version: 4.7-1
+Depends: libc, librt, libpthread, krb5-libs, libpam, openldap-server
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: libpcrecpp
+Version: 8.35-2
+Depends: libc, librt, libpthread, libpcre, libstdcpp
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: comgt-ncm
+Version: 0.32-29
+Depends: libc, librt, libpthread, comgt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: perl-digest-hmac
+Version: 1.03-1
+Depends: libc, librt, libpthread, perl, perl-digest-sha1
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: strongswan-mod-x509
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: mwan3
+Version: 1.4-25
+Depends: libc, librt, libpthread, ip, iptables, iptables-mod-conntrack-extra, iptables-mod-ipopt
+Status: install user installed
+Architecture: all
+Conffiles:
+ /etc/config/mwan3 e3b0c44298fc1c149afbf4c8996fb92427
+Installed-Time: 1623618138
+
+Package: libldns
+Version: 1.6.17-2
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: strongswan-mod-unity
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+
+Package: kmod-nls-iso8859-15
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: ar
+Version: 2.24-3
+Depends: libc, librt, libpthread, zlib, libbfd
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: perlbase-base
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: python-logging
+Version: 2.7.12-1
+Depends: libc, librt, libpthread, python-light
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: kmod-nls-iso8859-1
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nls-base
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: broadcom_esdk_wlan
+Version: 5.1.4.1-5.00.3-3
+Depends: libc, librt, libpthread, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: kmod-ipt-ipopt
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd-utils-nanddump
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: pptpd
+Version: 1.3.3-1
+Depends: libc, librt, libpthread, kmod-ppp, kmod-gre, ppp
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: liblocaldb
+Version: 1.0-1
+Depends: libc, librt, libpthread, libpam, openldap-server
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-crypto-rng
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: fdisk
+Version: 2.25.2-4
+Depends: libc, librt, libpthread, libblkid, libsmartcols
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618135
+
+Package: radvd
+Version: 1.9.1-2
+Depends: libc, librt, libpthread, kmod-ipv6, libdaemon
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/radvd bddb98cf59ee0bbfa4616bc29e50e61031
+Installed-Time: 1623618140
+
+Package: kmod-nf-conntrack6
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipv6, kmod-nf-conntrack
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: quagga
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, librt
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+Auto-Installed: yes
+
+Package: libgmp
+Version: 6.0.0-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perlbase-selectsaver
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-symbol
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: libsqlite3
+Version: 3210000-1
+Depends: libc, librt, libpthread, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: namesvr
+Version: 2.3.0-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: rp-pppoe-relay
+Version: 3.8-1
+Depends: libc, librt, libpthread, ppp, cmm
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618140
+
+Package: haserl
+Version: 0.9.32-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: strongswan-mod-stroke
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, strongswan-charon, strongswan-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: strongswan-mod-attr
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: krb5-server
+Version: 1.8-2
+Depends: libc, librt, libpthread, krb5-libs, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: libexpat
+Version: 2.0.1-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: ubox
+Version: 2015-07-14-907d046c8929fb74e5a3502a9498198695e62ad8
+Depends: libc, librt, libpthread, libubox, ubusd, ubus, libubus, libuci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kernel
+Version: 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426
+Depends: libc, librt, libpthread
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: libnl-tiny
+Version: 0.1-4
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: ciscosb-yang
+Version: 1.0.38-3
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+
+Package: libbz2
+Version: 1.0.6-2
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perlbase-math
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-config, perlbase-essential, perlbase-scalar, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: blkid
+Version: 2.25.2-4
+Depends: libc, librt, libpthread, libblkid, libuuid
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+
+Package: strongswan-mod-revocation
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-lib-zlib
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: mtd-utils-ubicrc32
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: quagga-ripd
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/quagga/ripd.conf 097000d95751ef79d3b63e5464d2935d20
+Installed-Time: 1623618140
+
+Package: kmod-nfnetlink-queue
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-nfnetlink
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: mtd-utils-flash-eraseall
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils, mtd-utils-flash-erase
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: quagga-zebra
+Version: 0.99.22.4-2
+Depends: libc, librt, libpthread, quagga, quagga-libzebra
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/quagga/zebra.conf 097000d95751ef79d3b63e5464d2935d20
+Installed-Time: 1623618140
+
+Package: trustpool
+Version: 2.3.0-3
+Depends: libc, librt, libpthread, libopenssl
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: kmod-usb-storage-extras
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-usb-storage
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: kmod-mppe
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp, kmod-crypto-core, kmod-crypto-arc4, kmod-crypto-sha1, kmod-crypto-ecb
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: 6rd
+Version: 2-1
+Depends: libc, librt, libpthread, kmod-ipv6, kmod-sit
+Status: install user installed
+Architecture: all
+Installed-Time: 1623618132
+
+Package: wifi_check
+Version: fsl-1
+Depends: libc, librt, libpthread, uci
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618142
+
+Package: kmod-nls-base
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618133
+Auto-Installed: yes
+
+Package: lldpd
+Version: 0.6.0-1
+Depends: libc, librt, libpthread, libpthread, libevent
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/config/lldpd 0e465fc8040d14541ea14f2d80466d5b58
+Installed-Time: 1623618138
+
+Package: libgdbm
+Version: 1.10-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+Auto-Installed: yes
+
+Package: jsonfilter
+Version: 2014-06-19-cdc760c58077f44fc40adbbe41e1556a67c1b9a9
+Depends: libc, librt, libpthread, libubox, libjson-c
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: hping3
+Version: 20051105-1
+Depends: libc, librt, libpthread, libpcap, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+
+Package: kmod-crypto-arc4
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: libattr
+Version: 20140610-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: kmod-crypto-sha1
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-crypto-hash, kmod-crypto-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: strongswan-mod-gmp
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan, libgmp
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-pppol2tp
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ppp, kmod-pppox, kmod-l2tp
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: libopenssl
+Version: 1.0.2o-1
+Depends: libc, librt, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618132
+Auto-Installed: yes
+
+Package: kmod-scsi-core
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perlbase-errno
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-config, perlbase-essential
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-slhc
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-lib-crc-ccitt
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+Auto-Installed: yes
+
+Package: nginx
+Version: 1.12.2-1
+Depends: libc, librt, libpthread, libpcre, libopenssl, zlib, libpthread
+Status: install user installed
+Architecture: comcerto2000
+Conffiles:
+ /etc/nginx/mime.types 9397cf2a721555e14ee9986ed7faec74c0
+ /etc/nginx/conf.d/sec.misc.conf 936e6f117b000455ac04425bbb971b8fc0
+ /etc/nginx/conf.d/web.conf eedc5606802ac58420604e7f702775a6ae
+ /etc/nginx/conf.d/web.websocket.conf c0f1aac69a0ff482a8c8d10674b0061c2d
+ /etc/nginx/conf.d/sec.ssl.redirect.conf 85bb6bb55b1993302f2019bf15cba77771
+ /etc/nginx/conf.d/sec.ssl.only.conf 23b4551a24307eb6ae48489712e49e6dd0
+ /etc/nginx/conf.d/proxy.portal.conf 6249176c10dc3761c908c331b39b7f69d2
+ /etc/nginx/conf.d/rest.url.conf 4b10af7bb84cacfbb43d052303d781f1ac
+ /etc/nginx/conf.d/sec.ssl.conf 0c504edf7d957b4631b461c8edaf697117
+ /etc/nginx/conf.d/perf.gzip.conf 33af8b4a93491691f3954be23fefd1b58c
+ /etc/nginx/conf.d/proxy.websocket.conf 97b9abd7d5c4de2b2d0d770fa0026c323a
+ /etc/nginx/conf.d/wan.https.conf e3b0c44298fc1c149afbf4c8996fb92427
+ /etc/nginx/conf.d/sec.browser.conf 7d6df09940b9d0bf62603f67c9d98f74a3
+ /etc/nginx/conf.d/lan.https.conf 37e769a648af36c4119310f75386ea1f4a
+ /etc/nginx/conf.d/sec.overflow.conf 387bbb90c7617857a4c5c4d27bf6c3b870
+ /etc/nginx/conf.d/web.upload.conf c8d2b09018c33fabe9841f0880afe08f6c
+ /etc/nginx/conf.d/lan.http.conf e79b14d3d580fa7b07777fbed4343a78b4
+ /etc/nginx/conf.d/proxy.conf 931f06a9fb8db08312242321904adefb3a
+ /etc/nginx/conf.d/perf.timeout.conf 86016503c4443ceeb5749eccebca3a6f7e
+ /etc/nginx/conf.d/misc.conf 8143e2b9fd3bf0b9b0150be18359df5c30
+ /etc/nginx/conf.d/perf.cache.conf c7f2a51a28c50852598578bbce94897e03
+ /etc/nginx/conf.d/wan.http.conf e3b0c44298fc1c149afbf4c8996fb92427
+ /etc/nginx/sites-available/web-lan 8b92eeac145362c0f70a1d516112bf5eb0
+ /etc/nginx/sites-available/web-rest-wan 27df555e5df32799801b79a5d8bec010b0
+ /etc/nginx/sites-available/web-rest-lan 8835514056eb4548e3ff499818b6d9f390
+ /etc/nginx/sites-available/web-wan 5a9c6fce99ce81036c724dc92086665abe
+ /etc/nginx/sites-available/rest 6ebfd9c621661f9733ba43704dbe20553b
+ /etc/nginx/naxsi_core.rules 6e100808e76767809f0647ef0b61b58b26
+ /etc/nginx/win-utf 55adf050bad0cb60cbfe18649f8f17cd40
+ /etc/nginx/koi-win de518a9eafe86c8bc705e296d0ef261358
+ /etc/nginx/koi-utf b5f8a6d411db5e5d11d151d50cd1e96244
+ /etc/nginx/fastcgi_params f37852d0113de30fa6bfc3d9b180ef9938
+ /etc/nginx/nginx.conf f46347869cb6fa61c5935964b7f2a743c6
+ /etc/nginx/uwsgi_params 015cb581c2eb84b1a1ac9b575521d5881f
+Installed-Time: 1623618138
+
+Package: libdb47
+Version: 4.7.25.NC-6
+Depends: libc, librt, libpthread, libxml2
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: perlbase-posix
+Version: 5.22.0-0
+Depends: libc, librt, libpthread, perl, perlbase-essential, perlbase-fcntl, perlbase-tie, perlbase-xsloader
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+Auto-Installed: yes
+
+Package: ppp-mod-pppoe
+Version: 2.4.8-2
+Depends: libc, librt, libpthread, kmod-pppoe
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: pnp_platform
+Version: 1.8.0.dev4-1
+Depends: libc, librt, libpthread, pnp, PKILL, NOHUP, UDHCPC
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618139
+
+Package: kmod-ipt-nat
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core, kmod-nf-nat
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+
+Package: strongswan-mod-md4
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: kmod-sched-core
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426)
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618137
+
+Package: cportal
+Version: 1.34-1
+Depends: libc, librt, libpthread, libopenssl, libtree, libpam, libnetfilter-queue
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618134
+
+Package: strongswan-mod-md5
+Version: 5.5.1-1
+Depends: libc, librt, libpthread, strongswan
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618141
+Auto-Installed: yes
+
+Package: mtd-utils-flash-unlock
+Version: 1.5.0-2
+Depends: libc, librt, libpthread, mtd-utils
+Status: install user installed
+Architecture: comcerto2000
+Installed-Time: 1623618138
+
+Package: kmod-ipt-iprange
+Version: 4.1.8-1
+Depends: kernel (= 4.1.8-1-ac50ed54b46d416c5e0ae870c092e426), kmod-ipt-core
+Status: install hold installed
+Architecture: comcerto2000
+Installed-Time: 1623618136
+Auto-Installed: yes
+

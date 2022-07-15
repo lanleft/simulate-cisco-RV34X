@@ -1,0 +1,72 @@
+<div>
+<style>
+/*
+.tmpNgInlineSelect {
+    top: 2px;
+}
+*/
+._greyout {
+	color: #888;
+}
+</style>
+<form name="form" ng-controller="lan_8021x_main" ng-modification="loadReady">
+    <div ng-if="loadReady">
+        <div class="page-title-container">
+            <div class="page-title" ng-bind="DICT('802.1X_Configuration')"></div>
+            <div class="page-button-container ng-hide" ng-show="true">
+                <button id="btn_save" class="btn-apply" ng-click="save()" ng-disabled="userAccessFlag === 'RO'">
+                    <span ng-bind="DICT('802.1X_Configuration_Apply')"></span>
+                </button>
+                <button id="btn_cancel" class="btn-cancel" ng-click="cancel()">
+                    <span ng-bind="DICT('802.1X_Configuration_Cancel')"></span>
+                </button>
+            </div>
+        </div>
+        <confirmsave class="ng-hide" ng-show="success"></confirmsave>
+        <div class="page-content-container" ng-show="true">
+            <div>
+                <input type="checkbox" id="chk_enableportbasedauth" ng-model="model.dot1x.enable">
+                    <span ng-bind="DICT('802.1X_Configuration_Enable_Port_Based_Authentication')"></span>
+                </input>
+                <div class="page-note-cntr">
+                    <table class="page-note-tb-list">
+                        <tr>
+                            <td>
+                                <span pg-bind-html="template_note"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+                    <div class="grid-cntr">
+                        <div class="grid-title-cntr">
+                            <div class="grid-title" ng-bind="DICT('802.1X_Configuration_Configuration_Table')"></div>
+                        </div>
+                        <div class="grid-content-cntr">
+                            <div class="grid-content" ui-grid-auto-resize ui-grid-resize-columns ui-grid="grid8021X.Options"/>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+</div>
+
+<script type="text/ng-template" id="T_8021x_PortStatus.html">
+<div class="ui-grid-custom-cntr" data-x-tmp="{{ (linkstat = row.entity.s_ref['link-status']) }}" data-ng-expansion>
+	<span ng-if="linkstat != undefined"
+	      data-x-tmp="{{  (up_flag =  linkstat === 'Connected') }}"
+	      data-auth-str="{{authstr = schema.auth_str[MODEL_COL_FIELD['auth-status']] || MODEL_COL_FIELD['auth-status']  }}">
+		{{ grid.appScope.schema.link_status( linkstat ) }}
+		<span ng-if="up_flag && authstr">/{{authstr}}
+			<span ng-if="MODEL_COL_FIELD['auth-status']=='authorized' && MODEL_COL_FIELD['user']">
+				(User: {{MODEL_COL_FIELD['user']}})
+			</span>
+		</span>
+	</span>
+	<span ng-if="linkstat == undefined" ng-bind="grid.appScope.DICT('802.1X_Configuration_No_Data')"></span>
+</div>
+</script>

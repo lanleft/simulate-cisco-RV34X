@@ -1,0 +1,238 @@
+<form name="form" ng-controller="diagnostic_main" id="admin-diagnostic">
+    <div class="page-title-container">
+        <div class="page-title" ng-bind="DICT('Diagnostic')"></div>
+    </div>
+    <div class="page-content-container container-fluid">
+        <div>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title " ng-bind="DICT('Diagnostic_Ping_Trace')"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td ng-bind="DICT('Diagnostic_IP_Domain')"></td>
+                    <td>
+                        <input id="txt_pingipdomain" name="ping_traceroute" type="text"
+                            required domain-ip
+                            ng-model="model.ping_traceroute_target"
+                        ></input>
+                        <span class="tip-info" ng-bind="DICT('Diagnostic_Hint_IP')"></span>
+                        <span ng-messages="form['ping_traceroute'].$error" 
+                            ng-if="form['ping_traceroute'].$error.required && form.ping_traceroute.$dirty"
+                        >
+                            <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button id="btn_ping" type="button" ng-click='RPC_ping_start()' ng-disabled="form['ping_traceroute'].$invalid">
+                            <span ng-bind="DICT('Diagnostic_Ping')"></span></button>
+                        <span class="indent"></span>
+                        <button id="btn_traceroute" type="button" ng-click='RPC_traceroute_start()' ng-disabled="form['ping_traceroute'].$invalid">
+                            <span ng-bind="DICT('Diagnostic_Traceroute')"></span></button>
+                    </td>
+                </tr>
+            </table>
+            <div class="show-section" ng-if="rpc_ping.console_text !== undefined">
+                <textarea readonly>{{ rpc_ping.console_text }}</textarea>
+            </div>
+            <div class="show-section" ng-if="rpc_traceroute.console_text !== undefined">
+                <textarea readonly>{{ rpc_traceroute.console_text }}</textarea>
+            </div>
+            <hr class="page-content-seperator"></hr>
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('Diagnostic_Perform_DNS')"></div>	
+            </div>
+            <table class="page-block-tb-list">
+            <tr>
+                <td ng-bind="DICT('Diagnostic_IP_Domain')"></td>
+                <td>
+                    <input name="lookup" type="text" id="txt_lookup_target"
+                        domain-ip required
+                        ng-model="model.lookup_target"
+                    ></input>
+                    <span class="tip-info" ng-bind="DICT('Diagnostic_Hint_Lookup')"></span>
+                    <span ng-messages="form['lookup'].$error"
+                        ng-if="form['lookup'].$error.required && form.lookup.$dirty"
+                    >
+                        <span ng-messages-include src="{{::messagesInclUrl}}"></span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="button" id="btn_dnslookup" ng-click='RPC_dnslookup_start()' ng-disabled="form['lookup'].$invalid">
+                        <span ng-bind="DICT('Diagnostic_Lookup')"></span></button>
+                </td>
+            </tr>
+            </table>
+            <div class="show-section" ng-if="rpc_dnslookup.console_text !== undefined">
+                <textarea readonly>{{ rpc_dnslookup.console_text }}</textarea>
+            </div>
+            
+            <hr class="page-content-seperator"></hr>
+            
+            <div class="page-block-title-cntr">
+                <div class="page-block-title" ng-bind="DICT('Diagnostic_Export_Technical_Support_Report')"></div>
+            </div>
+            <table class="page-block-tb-list">
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="button" id="btn_export_to_pc"
+                            ng-click="export_toggle('fg_export_pc');RPC_export_to_pc()"
+                        >
+                            <span ng-bind="DICT('Diagnostic_Export_To_PC')"></span>
+                        </button>
+                    </td>
+                    <td>
+                        
+                        <button type="button" id="btn_export_to_usb"
+                            ng-click="report_to_usb()"
+                        >
+                            <span ng-bind="DICT('Diagnostic_Export_To_USB')"></span>
+                        </button>
+                        <!--
+                        <button type="button" id="btn_export_to_usb"
+                            ng-click="export_toggle('fg_export_usb')"
+                            ng-disabled="!rpc_export_to_usb.dest"
+                        >
+                            <span ng-bind="DICT('Diagnostic_Export_To_USB')"></span>
+                        </button>
+                        -->
+                    </td>
+                    <td>
+                        <button type="button" id="btn_export_to_email"
+                            ng-click="report_to_email()"
+                        >
+                            <span ng-bind="DICT('Diagnostic_Email_to')"></span>
+                        </button>
+                        <!--
+                        <button type="button" id="btn_export_to_email"
+                            ng-click="export_toggle('fg_email_to')"
+                        >
+                            <span ng-bind="DICT('Diagnostic_Email_to')"></span>
+                        </button>
+                        -->
+                    </td>
+                    
+                </tr>
+                <tr ng-if="false">
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                        <span ng-if="fg_export_usb">
+                            Choose USB Device
+                            
+                            <br/>
+                            <span ng-repeat="item in rpc_usb_state.usbDevList">
+                                <input type="radio" id="rdo_export_dest_usb_{{$index}}" name="cert_export_dest"
+                                    value="{{item}}"
+                                    ng-model="rpc_export_to_usb.dest"
+                                >
+                                </input>
+                                {{item}}
+                                <br/>
+                            </span>
+                            <button type="button" id="btn_export_to_usb" ng-click='RPC_export_to_usb()'
+                                ng-disabled="!rpc_export_to_usb.dest"
+                            >
+                                <span ng-bind="DICT('Diagnostic_Export')"></span>
+                            </button>
+                            <span class="show-section" ng-if="console_text !== undefined">
+                                <span>{{ console_text }}</span>
+                            </span>
+                        </span>
+                    </td>
+                    <td>
+                        <span ng-if="fg_email_to">
+                            Email Address:
+                            <br/>
+                            <input type="text" email ng-model="rpc_email_to.email">
+                            <br/>
+                            <button type="button" id="btn_export_to_usb" ng-click='RPC_email_to()'
+                                ng-disabled="!rpc_email_to.email"
+                            >
+                                <span ng-bind="DICT('Diagnostic_Send')"></span>
+                            </button>
+                            <span class="show-section" ng-if="console_text !== undefined">
+                                <span>{{ console_text }}</span>
+                            </span>
+                        </span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</form>
+
+<script type="text/ng-template" id="tech_report_export_to_usb.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Diagnostic_Export_USB')"></div>
+        </div>
+        <div class="modal-content-container">
+            <table class="page-block-tb-list">
+                <tr>
+                    <td colspan="2">
+                        <span ng-bind="DICT('Diagnostic_Choose_USB_Drive')"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio" id="rdo_usb1" ng-model="usb_name" ng-disabled="!usbs_avaiable.USB1" value="USB1">
+                            <span ng-bind="DICT('Diagnostic_USB1')"></span>
+                        </input>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="radio"id="rdo_usb2"  ng-model="usb_name" ng-disabled="!usbs_avaiable.USB2" value="USB2">
+                            <span ng-bind="DICT('Diagnostic_USB2')"></span>
+                        </input>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="modal-button-container">
+            <button id="btn_export" type="button" ng-click="save()" ng-disabled="!usb_name" class="btn-primary" autofocus>
+                <span ng-bind="DICT('Diagnostic_Export')"></span>
+            </button>
+            <button id="btn_cancel" type="button" ng-click="cancel()" class="btn-secondary">
+                <span ng-bind="DICT('Diagnostic_Cancel')"></span>
+            </button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="tech_report_export_to_email.html">
+    <div class="modal-container">
+        <div class="modal-header-container">
+            <div class="modal-title" ng-bind="DICT('Diagnostic_Email_to')"></div>
+        </div>
+        <div class="modal-content-container">
+            <div ng-bind="DICT('Diagnostic_Email_Address')"></div>
+            <div class="indent1">
+                <input type="text" id="txt_email" name="txt_email" email
+                    ng-model="param.email"
+                    placeholder="YourName@domain.name"
+                    size="64"
+                    maxlength="127"
+                >
+                </input>
+            </div>
+        </div>
+        <div class="modal-button-container">
+            <button id="btn_export" type="button" ng-click="save()" ng-disabled="!param.email" class="btn-primary" autofocus>
+                <span ng-bind="DICT('Diagnostic_Send')"></span></button>
+            <button id="btn_cancel" type="button" ng-click="cancel()" class="btn-secondary">
+                <span ng-bind="DICT('Diagnostic_Cancel')"></span></button>
+        </div>
+        <button type="button" class="modal-close-btn" ng-click="cancel('close')"></button>
+    </div>
+</script>

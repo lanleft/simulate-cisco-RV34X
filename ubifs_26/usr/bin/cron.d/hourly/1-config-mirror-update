@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#######################################################
+#                                                     #
+# copy running config to mirror config every 24 hours #
+#                                                     #
+# 2016-05-09  first version                           #
+# 2016-07-12  change handle to config_mgmt.sh         #
+#                                                     #
+#######################################################
+
+
+CONFIG_SCRIPT="/usr/sbin/config_mgmt.sh"
+
+$CONFIG_SCRIPT mirrorupdate
